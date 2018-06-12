@@ -6,7 +6,7 @@ Please make sure you are familiar with the [Flow Integration Overview](https://d
 
 ## Flow Integration
 
-This module provides all the major components for integrating with Flow.
+This module provides the core components for integrating with Flow.
 
 ### Product Catalog
 
@@ -17,22 +17,17 @@ This module will sync product information to Flow in two ways:
 1. Product updates (and deletes) are queued with an observer. This queue is processed with a cron task every minute, with additional workers spawned every minute the queue is not empty.
 2. There is a cron task that will sync the entire product catalog to Flow. By default, this will sync twice a day.
 
-### Flow.js
-
-Documentation: [Flow.js](https://docs.flow.io/shopify/flow-js)
-
-This module will add the Flow.js library and the required annotations to the DOM to enable localization. If you are using a custom theme, you will need to implement something similar to the default code provided.
-
 ### Hosted Checkout
 
 Documentation: [Flow Hosted Checkout](https://docs.flow.io/checkout/checkout)
 
-Once your Magento Catalog is fully synced with Flow, customers can be sent to Flow Hosted Checkout using javascript provided by Flow.js. This module will provide a default implementation of the Flow.js hosted checkout redirect. If you are using a custom theme, you will need to implement something similar as the default code provided.
+Once your Magento Catalog is fully synced with Flow, customers can be sent to Flow Hosted Checkout. There is a redirect URL included in this module that will send the user's cart and information to Flow Hosted Checkout.
 
-For testing without Flow.js, a redirect is provided that will send cart and user information to the Flow Hosted Checkout:
 ```
 /flowconnector/checkout/redirecttoflow?country=FRA
 ```
+
+For localization of pricing data, please refer to the [Flow.js](https://docs.flow.io/shopify/flow-js) documentation.
 
 ### Webhook Processing
 

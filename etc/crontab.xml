@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="flow_flowconnector">
+        <job name="flow_flowconnector_catalog_sync_queue_all_task" instance="Flow\FlowConnector\Cron\CatalogSyncQueueAllTask" method="execute">
+            <schedule>15 4,16 * * *</schedule>
+        </job>
+        <job name="flow_flowconnector_catalog_sync_process_task" instance="Flow\FlowConnector\Cron\CatalogSyncProcessTask" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
+        <job name="flow_flowconnector_webhook_event_process_task" instance="Flow\FlowConnector\Cron\WebhookEventProcessTask" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
+    </group>
+</config>

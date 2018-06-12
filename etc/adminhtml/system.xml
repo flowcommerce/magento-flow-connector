@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="flow" translate="label" sortOrder="10">
+            <label>Flow</label>
+        </tab>
+        <section id="flow" translate="label" showInDefault="1" showInWebsite="0" showInStore="0">
+            <class>separator-top</class>
+            <label>Connector Settings</label>
+            <tab>flow</tab>
+            <resource>Flow_FlowConnector::connector_config</resource>
+            <group id="connector" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Flow Credentials</label>
+                <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <config_path>flow/connector/enabled</config_path>
+                </field>
+                <field id="organization_id" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Organization Id</label>
+                    <validate>required-entry</validate>
+                    <config_path>flow/connector/organization_id</config_path>
+                    <comment>Flow Organization Id</comment>
+                </field>
+                <field id="api_token" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>API Token</label>
+                    <validate>required-entry</validate>
+                    <config_path>flow/connector/api_token</config_path>
+                    <comment>Flow API Token</comment>
+                </field>
+            </group>
+        </section>
+        <section id="payment">
+            <group id="flowpayment" translate="label" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Flow Payment</label>
+                <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+       </section>
+    </system>
+</config>

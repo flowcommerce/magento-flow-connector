@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Console\Command;
+namespace FlowCommerce\FlowConnector\Console\Command;
 
 use Symfony\Component\Console\{
     Command\Command,
@@ -20,7 +20,7 @@ final class CatalogSyncProcessCommand extends BaseCommand {
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Flow\FlowConnector\Model\Sync\CatalogSync $catalogSync
+        \FlowCommerce\FlowConnector\Model\Sync\CatalogSync $catalogSync
     ) {
         $this->catalogSync = $catalogSync;
         parent::__construct($objectManager);

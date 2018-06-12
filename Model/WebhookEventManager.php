@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Model;
+namespace FlowCommerce\FlowConnector\Model;
 
 use Magento\Framework\UrlInterface;
 use Zend\Http\{
@@ -23,8 +23,8 @@ class WebhookEventManager {
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Flow\FlowConnector\Model\Util $util,
-        \Flow\FlowConnector\Model\WebhookEventFactory $webhookEventFactory,
+        \FlowCommerce\FlowConnector\Model\Util $util,
+        \FlowCommerce\FlowConnector\Model\WebhookEventFactory $webhookEventFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\ObjectManagerInterface $objectManager
     ) {

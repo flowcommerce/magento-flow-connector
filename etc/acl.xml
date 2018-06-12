@@ -6,7 +6,7 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Flow_FlowConnector::connector_config" title="Flow Connector Config"/>
+                            <resource id="FlowCommerce_FlowConnector::connector_config" title="Flow Connector Config"/>
                         </resource>
                     </resource>
                 </resource>

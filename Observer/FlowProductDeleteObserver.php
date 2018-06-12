@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Observer;
+namespace FlowCommerce\FlowConnector\Observer;
 
 use Magento\Framework\Event\{
     ObserverInterface,
@@ -19,7 +19,7 @@ class FlowProductDeleteObserver implements ObserverInterface {
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Flow\FlowConnector\Model\Sync\CatalogSync $catalogSync
+        \FlowCommerce\FlowConnector\Model\Sync\CatalogSync $catalogSync
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;

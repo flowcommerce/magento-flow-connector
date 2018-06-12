@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Test\Integration\Model;
+namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
 /**
  * Test class for WebhookEvent.
@@ -55,14 +55,14 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase {
         $this->methodList = $this->createMock(\Magento\Payment\Model\MethodList::class);
         $this->orderRepository = $this->createMock(\Magento\Sales\Api\OrderRepositoryInterface::class);
         $this->searchCriteriaBuilder = $this->createMock(\Magento\Framework\Api\SearchCriteriaBuilder::class); $this->quotePaymentFactory = $this->createMock(\Magento\Quote\Model\Quote\PaymentFactory::class); $this->eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->localItemFactory = $this->createMock(\Flow\FlowConnector\Model\LocalItemFactory::class);
+        $this->localItemFactory = $this->createMock(\FlowCommerce\FlowConnector\Model\LocalItemFactory::class);
     }
 
     /**
      * Test WebhookEvent.process
      */
     public function testProcess() {
-        // $webhookEvent = new \Flow\FlowConnector\Model\WebhookEvent(
+        // $webhookEvent = new \FlowCommerce\FlowConnector\Model\WebhookEvent(
         //     $this->context,
         //     $this->registry,
         //     $this->logger,

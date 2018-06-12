@@ -1,9 +1,9 @@
 <?php
 
-namespace Flow\FlowConnector\Model\ResourceModel\WebhookEvent;
+namespace FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Flow\FlowConnector\Model\{
+use FlowCommerce\FlowConnector\Model\{
     WebhookEvent,
     ResourceModel
 };

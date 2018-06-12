@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Test\Integration\Model;
+namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
 /**
  * Test class for WebhookEventManager.
@@ -31,18 +31,18 @@ class WebhookEventManagerTest extends \PHPUnit\Framework\TestCase {
                 return json_decode($data, true);
             }));
 
-        $this->util = $this->createMock(\Flow\FlowConnector\Model\Util::class);
+        $this->util = $this->createMock(\FlowCommerce\FlowConnector\Model\Util::class);
 
-        $this->webhookEvent = $this->createMock(\Flow\FlowConnector\Model\WebhookEvent::class);
+        $this->webhookEvent = $this->createMock(\FlowCommerce\FlowConnector\Model\WebhookEvent::class);
         $this->webhookEvent->expects($this->once())->method('save');
 
-        $this->webhookEventFactory = $this->createMock(\Flow\FlowConnector\Model\WebhookEventFactory::class);
+        $this->webhookEventFactory = $this->createMock(\FlowCommerce\FlowConnector\Model\WebhookEventFactory::class);
         $this->webhookEventFactory->method('create')->willReturn($this->webhookEvent);
 
         $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
         $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
 
-        $this->webhookEventManager = new \Flow\FlowConnector\Model\WebhookEventManager(
+        $this->webhookEventManager = new \FlowCommerce\FlowConnector\Model\WebhookEventManager(
             $this->logger,
             $this->jsonHelper,
             $this->util,

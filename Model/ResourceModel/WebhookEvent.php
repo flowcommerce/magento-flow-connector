@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Model\ResourceModel;
+namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
 use Magento\Framework\{
     Model\ResourceModel\Db\AbstractDb,

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Cron;
+namespace FlowCommerce\FlowConnector\Cron;
 
 /**
  * Cron Task wrapper class to run webhook event processing.
@@ -13,8 +13,8 @@ class WebhookEventProcessTask {
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Flow\FlowConnector\Model\Util $util,
-        \Flow\FlowConnector\Model\WebhookEventManager $webhookEventManager
+        \FlowCommerce\FlowConnector\Model\Util $util,
+        \FlowCommerce\FlowConnector\Model\WebhookEventManager $webhookEventManager
     ) {
         $this->logger = $logger;
         $this->util = $util;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Flow\FlowConnector\Test\Integration\Model;
+namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
-use Flow\FlowConnector\Model\Util;
+use FlowCommerce\FlowConnector\Model\Util;
 
 /**
  * Test class for CatalogSync.
@@ -61,7 +61,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
         $this->client->method('send')->willReturn($this->response);
         $this->client->expects($this->once())->method('send');
 
-        $this->util = $this->createMock(\Flow\FlowConnector\Model\Util::class);
+        $this->util = $this->createMock(\FlowCommerce\FlowConnector\Model\Util::class);
         $this->util->method('isFlowEnabled')->willReturn(true);
         $this->util->method('getFlowClient')->willReturn($this->client);
 
@@ -90,18 +90,18 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
         $this->imageBuilder = $this->createMock(\Magento\Catalog\Block\Product\ImageBuilder::class);
         $this->eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
 
-        $this->syncSkuCollection = $this->createMock(\Flow\FlowConnector\Model\ResourceModel\SyncSku\Collection::class);
+        $this->syncSkuCollection = $this->createMock(\FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Collection::class);
         $this->syncSkuCollection->method('addFieldToFilter')->will($this->returnSelf());
         $this->syncSkuCollection->method('setPageSize')->will($this->returnSelf());
 
-        $this->syncSku = $this->createMock(\Flow\FlowConnector\Model\SyncSku::class);
+        $this->syncSku = $this->createMock(\FlowCommerce\FlowConnector\Model\SyncSku::class);
         $this->syncSku->method('getCollection')->willReturn($this->syncSkuCollection);
         $this->syncSku->expects($this->once())->method('save');
 
-        $this->syncSkuFactory = $this->createMock(\Flow\FlowConnector\Model\SyncSkuFactory::class);
+        $this->syncSkuFactory = $this->createMock(\FlowCommerce\FlowConnector\Model\SyncSkuFactory::class);
         $this->syncSkuFactory->method('create')->willReturn($this->syncSku);
 
-        $this->catalogSync = new \Flow\FlowConnector\Model\Sync\CatalogSync(
+        $this->catalogSync = new \FlowCommerce\FlowConnector\Model\Sync\CatalogSync(
             $this->logger,
             $this->jsonHelper,
             $this->util,

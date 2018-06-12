@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Model;
+namespace FlowCommerce\FlowConnector\Model;
 
 use Magento\Framework\UrlInterface;
 use Zend\Http\{
@@ -14,13 +14,13 @@ use Zend\Http\{
 class Util {
 
     // Store configuration key for Flow Enabled
-    const FLOW_ENABLED = 'flow/connector/enabled';
+    const FLOW_ENABLED = 'flowcommerce/flowconnector/enabled';
 
     // Store configuration key for Flow Organization Id
-    const FLOW_ORGANIZATION_ID = 'flow/connector/organization_id';
+    const FLOW_ORGANIZATION_ID = 'flowcommerce/flowconnector/organization_id';
 
     // Store configuration key for Flow API Token
-    const FLOW_API_TOKEN = 'flow/connector/api_token';
+    const FLOW_API_TOKEN = 'flowcommerce/flowconnector/api_token';
 
     // Flow API base endpoint
     const FLOW_API_BASE_ENDPOINT = 'https://api.flow.io/';

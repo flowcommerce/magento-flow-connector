@@ -1,11 +1,11 @@
 <?php
-namespace Flow\FlowConnector\Model\Payment;
+namespace FlowCommerce\FlowConnector\Model\Payment;
 
 use Zend\Http\{
     Client,
     Request
 };
-use Flow\FlowConnector\Model\WebhookEvent;
+use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
@@ -24,7 +24,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_jsonHelper;
 
     /**
-     * @var \Flow\FlowConnector\Model\Util
+     * @var \FlowCommerce\FlowConnector\Model\Util
      */
     protected $_util;
 
@@ -50,7 +50,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Flow\FlowConnector\Model\Util $util,
+        \FlowCommerce\FlowConnector\Model\Util $util,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []

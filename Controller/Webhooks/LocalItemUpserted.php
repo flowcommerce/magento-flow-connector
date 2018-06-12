@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Controller\Webhooks;
+namespace FlowCommerce\FlowConnector\Controller\Webhooks;
 
 /**
  * Receives local_item_upserted webhook events.

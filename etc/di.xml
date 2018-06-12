@@ -3,9 +3,9 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="flow_flowconnector_catalog_sync_queue_all" xsi:type="object">Flow\FlowConnector\Console\Command\CatalogSyncQueueAllCommand</item>
-                <item name="flow_flowconnector_catalog_sync_process" xsi:type="object">Flow\FlowConnector\Console\Command\CatalogSyncProcessCommand</item>
-                <item name="flow_flowconnector_webhook_event_process" xsi:type="object">Flow\FlowConnector\Console\Command\WebhookEventProcessCommand</item>
+                <item name="flowcommerce_flowconnector_catalog_sync_queue_all" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CatalogSyncQueueAllCommand</item>
+                <item name="flowcommerce_flowconnector_catalog_sync_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand</item>
+                <item name="flowcommerce_flowconnector_webhook_event_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookEventProcessCommand</item>
             </argument>
         </arguments>
     </type>

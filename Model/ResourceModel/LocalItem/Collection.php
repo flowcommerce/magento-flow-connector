@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Model\ResourceModel\WebhookItem;
+namespace FlowCommerce\FlowConnector\Model\ResourceModel\WebhookItem;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Coedition\ConnectorCommon\Model\{

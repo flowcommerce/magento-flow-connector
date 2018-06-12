@@ -1,10 +1,10 @@
 <?php
 
-namespace Flow\FlowConnector\Controller\Checkout;
+namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
 use Magento\Framework\Controller\ResultFactory;
-use Flow\FlowConnector\Model\Util;
-use Flow\FlowConnector\Model\WebhookEvent;
+use FlowCommerce\FlowConnector\Model\Util;
+use FlowCommerce\FlowConnector\Model\WebhookEvent;
 
 /**
  * Controller class for redirecting to Flow's hosted checkout.
@@ -29,7 +29,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
         \Magento\Framework\App\Action\Context $context,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Flow\FlowConnector\Model\Util $util,
+        \FlowCommerce\FlowConnector\Model\Util $util,
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Customer\Model\Session $customerSession,

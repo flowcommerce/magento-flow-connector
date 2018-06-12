@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Observer;
+namespace FlowCommerce\FlowConnector\Observer;
 
 use Magento\Framework\Event\{
     ObserverInterface,
@@ -19,8 +19,8 @@ class FlowConnectorSettingsObserver implements ObserverInterface {
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Flow\FlowConnector\Model\Util $util,
-        \Flow\FlowConnector\Model\WebhookEventManager $webhookEventManager,
+        \FlowCommerce\FlowConnector\Model\Util $util,
+        \FlowCommerce\FlowConnector\Model\WebhookEventManager $webhookEventManager,
         \Magento\Framework\Message\ManagerInterface $messageManager
     ) {
         $this->logger = $logger;

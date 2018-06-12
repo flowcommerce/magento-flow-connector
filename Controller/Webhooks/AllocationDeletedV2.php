@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Controller\Webhooks;
+namespace FlowCommerce\FlowConnector\Controller\Webhooks;
 
 /**
  * Receives allocation_deleted_v2 webhook events.

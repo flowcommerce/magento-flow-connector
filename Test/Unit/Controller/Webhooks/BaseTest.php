@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Test\Integration\Controller;
+namespace FlowCommerce\FlowConnector\Test\Integration\Controller;
 
 /**
  * Test class for webhook controllers.
@@ -8,72 +8,72 @@ namespace Flow\FlowConnector\Test\Integration\Controller;
 class BaseTest extends \PHPUnit\Framework\TestCase {
 
     public function testAllocationDeletedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\AllocationDeletedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AllocationDeletedV2');
         $controller->execute();
     }
 
     public function testAllocationUpserteedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\AllocationUpsertedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AllocationUpsertedV2');
         $controller->execute();
     }
 
     public function testAuthorizationDeletedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
         $controller->execute();
     }
 
     public function testCaptureUpsertedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\CaptureUpsertedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\CaptureUpsertedV2');
         $controller->execute();
     }
 
     public function testCardAuthorizationUpsertedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\CardAuthorizationUpsertedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\CardAuthorizationUpsertedV2');
         $controller->execute();
     }
 
     public function testFraudStatusChanged() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\FraudStatusChanged');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged');
         $controller->execute();
     }
 
     public function testLocalItemDeleted() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\LocalItemDeleted');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\LocalItemDeleted');
         $controller->execute();
     }
 
     public function testLocalItemUpserted() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\LocalItemUpserted');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\LocalItemUpserted');
         $controller->execute();
     }
 
     public function testOnlineAuthorizationUpsertedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2');
         $controller->execute();
     }
 
     public function testOrderDeleted() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\OrderDeleted');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeleted');
         $controller->execute();
     }
 
     public function testOrderUpserted() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\OrderUpserted');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderUpserted');
         $controller->execute();
     }
 
     public function testRefundCaptureUpsertedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2');
         $controller->execute();
     }
 
     public function testRefundUpsertedV2() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\RefundUpsertedV2');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2');
         $controller->execute();
     }
 
     public function testTrackingLabelEventUpserted() {
-        $controller = $this->getController('\Flow\FlowConnector\Controller\Webhooks\TrackingLabelEventUpserted');
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\TrackingLabelEventUpserted');
         $controller->execute();
     }
 
@@ -100,7 +100,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
         $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
         $eventManager->expects($this->once())->method('dispatch');
 
-        $webhookEventManager = $this->createMock(\Flow\FlowConnector\Model\WebhookEventManager::class);
+        $webhookEventManager = $this->createMock(\FlowCommerce\FlowConnector\Model\WebhookEventManager::class);
         $webhookEventManager->expects($this->once())
             ->method('queue')
             ->with($this->equalTo($reflection->getConstants()['EVENT_TYPE']));

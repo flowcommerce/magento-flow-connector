@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Model;
+namespace FlowCommerce\FlowConnector\Model;
 
 use Magento\Framework\{
     Model\AbstractModel,
@@ -10,8 +10,8 @@ use Magento\Sales\Model\{
     Order,
     OrderInterface
 };
-use Flow\FlowConnector\Model\LocalItem;
-use Flow\FlowConnector\Exception\WebhookException;
+use FlowCommerce\FlowConnector\Model\LocalItem;
+use FlowCommerce\FlowConnector\Exception\WebhookException;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -91,7 +91,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Model\Quote\PaymentFactory $quotePaymentFactory,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Flow\FlowConnector\Model\LocalItemFactory $localItemFactory,
+        \FlowCommerce\FlowConnector\Model\LocalItemFactory $localItemFactory,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []

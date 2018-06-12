@@ -1,5 +1,5 @@
 <config>
-    <group id="flow_flowconnector">
+    <group id="flowcommerce_flowconnector">
         <schedule_generate_every>1</schedule_generate_every>
         <schedule_ahead_for>4</schedule_ahead_for>
         <schedule_lifetime>2</schedule_lifetime>

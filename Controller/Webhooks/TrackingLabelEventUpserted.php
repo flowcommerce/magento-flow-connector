@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Controller\Webhooks;
+namespace FlowCommerce\FlowConnector\Controller\Webhooks;
 
 /**
  * Receives tracking_label_event_upserted webhook events.

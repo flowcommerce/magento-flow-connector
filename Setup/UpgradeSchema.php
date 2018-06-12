@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Setup;
+namespace FlowCommerce\FlowConnector\Setup;
 
 use Magento\Framework\{
     Setup\ModuleContextInterface,

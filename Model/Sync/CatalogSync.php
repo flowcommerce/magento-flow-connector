@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Model\Sync;
+namespace FlowCommerce\FlowConnector\Model\Sync;
 
 use Magento\Framework\UrlInterface;
 use Zend\Http\{
@@ -9,8 +9,8 @@ use Zend\Http\{
 };
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Flow\FlowConnector\Exception\CatalogSyncException;
-use Flow\FlowConnector\Model\SyncSku;
+use FlowCommerce\FlowConnector\Exception\CatalogSyncException;
+use FlowCommerce\FlowConnector\Model\SyncSku;
 
 /**
  * Main class for syncing product data to Flow.
@@ -60,7 +60,7 @@ class CatalogSync {
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Flow\FlowConnector\Model\Util $util,
+        \FlowCommerce\FlowConnector\Model\Util $util,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\ConfigurableProduct\Api\LinkManagementInterface $linkManagement,
@@ -77,7 +77,7 @@ class CatalogSync {
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Flow\FlowConnector\Model\SyncSkuFactory $syncSkuFactory
+        \FlowCommerce\FlowConnector\Model\SyncSkuFactory $syncSkuFactory
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
@@ -110,7 +110,7 @@ class CatalogSync {
 
     /**
      * Queue product for syncing to Flow.
-     * @return \Flow\FlowConnector\Model\SyncSku
+     * @return \FlowCommerce\FlowConnector\Model\SyncSku
      */
     public function queue($product) {
         $syncSku = $this->syncSkuFactory->create();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Model;
+namespace FlowCommerce\FlowConnector\Model;
 
 use Magento\Framework\{
     Model\AbstractModel,

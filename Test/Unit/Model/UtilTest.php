@@ -1,8 +1,8 @@
 <?php
 
-namespace Flow\FlowConnector\Test\Unit\Model;
+namespace FlowCommerce\FlowConnector\Test\Unit\Model;
 
-use Flow\FlowConnector\Model\Util;
+use FlowCommerce\FlowConnector\Model\Util;
 
 /**
  * Test class for Util.

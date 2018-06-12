@@ -1,9 +1,9 @@
 <?php
 
-namespace Flow\FlowConnector\Controller\Webhooks;
+namespace FlowCommerce\FlowConnector\Controller\Webhooks;
 
 use Magento\Framework\Controller\ResultFactory;
-use Flow\FlowConnector\Model\WebhookEvent;
+use FlowCommerce\FlowConnector\Model\WebhookEvent;
 
 /**
  * Base controller to help with webhook events.
@@ -24,7 +24,7 @@ abstract class Base extends \Magento\Framework\App\Action\Action {
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\ResponseInterface $response,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Flow\FlowConnector\Model\WebhookEventManager $webhookEventManager
+        \FlowCommerce\FlowConnector\Model\WebhookEventManager $webhookEventManager
     ) {
         $this->logger = $logger;
         $this->response = $response;

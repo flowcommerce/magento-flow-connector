@@ -1,9 +1,9 @@
 <?php
 
-namespace Flow\FlowConnector\Model\ResourceModel\SyncSku;
+namespace FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Flow\FlowConnector\Model\{
+use FlowCommerce\FlowConnector\Model\{
     SyncSku,
     ResourceModel
 };

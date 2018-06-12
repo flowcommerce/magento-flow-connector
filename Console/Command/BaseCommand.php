@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Console\Command;
+namespace FlowCommerce\FlowConnector\Console\Command;
 
 use Symfony\Component\Console\{
     Command\Command,

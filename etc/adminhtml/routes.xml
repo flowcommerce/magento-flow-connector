@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="admin">
         <route id="flowconnector" frontName="flowconnector">
-			<module name="Flow_FlowConnector"/>
+			<module name="FlowCommerce_FlowConnector"/>
 		</route>
     </router>
 </config>

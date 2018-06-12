@@ -1,6 +1,6 @@
 <?php
 
-namespace Flow\FlowConnector\Console\Command;
+namespace FlowCommerce\FlowConnector\Console\Command;
 
 use Symfony\Component\Console\{
     Command\Command,
@@ -20,7 +20,7 @@ final class WebhookEventProcessCommand extends BaseCommand {
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Flow\FlowConnector\Model\WebhookEventManager $webhookEventManager
+        \FlowCommerce\FlowConnector\Model\WebhookEventManager $webhookEventManager
     ) {
         $this->webhookEventManager = $webhookEventManager;
         parent::__construct($objectManager);

@@ -52,6 +52,16 @@ This module will dispatch several events that observers can listen to:
 
 ## Administration
 
+### Installation
+
+In the `require` section of your `composer.json`, require the `flowcommerce/flowconnector` module.
+
+```
+"require": {
+    "flowcommerce/flowconnector": "^1.0.0"
+}
+```
+
 ### Initial Setup
 
 Login to your Magento Admin:

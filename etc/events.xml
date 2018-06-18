@@ -6,7 +6,7 @@
     <event name="catalog_product_delete_after">
         <observer name="FlowProductDeleteObserver" instance="FlowCommerce\FlowConnector\Observer\FlowProductDeleteObserver" />
     </event>
-    <event name="admin_system_config_changed_section_flow">
+    <event name="admin_system_config_changed_section_flowcommerce">
         <observer name="FlowConnectorSettingsObserver" instance="FlowCommerce\FlowConnector\Observer\FlowConnectorSettingsObserver" />
     </event>
 </config>

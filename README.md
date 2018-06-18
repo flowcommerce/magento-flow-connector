@@ -82,7 +82,8 @@ Login to your Magento Admin:
 Console commands provided by this module:
 
 ```
-flow:flowconnector:catalog-sync-queue-all Queues all products for sync to Flow catalog.
-flow:flowconnector:catalog-sync-process   Process sync skus queue and send to Flow.
-flow:flowconnector:webhook-event-process  Process Flow webhook events.
+flow:flow-connector:catalog-sync-process       Process sync skus queue and send to Flow.
+flow:flow-connector:catalog-sync-queue-all     Queue all products for sync to Flow catalog.
+flow:flow-connector:webhook-event-process      Process Flow webhook events.
+flow:flow-connector:webhook-register-webhooks  Register webhooks with Flow.
 ```

@@ -29,8 +29,10 @@ abstract class BaseCommand extends Command {
      * Initialize Magento for CLI usage.
      */
     protected function initCLI() {
-        [$registry, $appState] = array_map([$this->objectManager, 'get'], ['Magento\Framework\Registry', 'Magento\Framework\App\State']);
+        $registry = $this->objectManager->get('Magento\Framework\Registry');
         $registry->register('isSecureArea', true);
-        $appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
+
+        $appState = $this->objectManager->get('Magento\Framework\App\State');
+        $appState->setAreaCode(\Magento\Framework\App\Area
     }
 }

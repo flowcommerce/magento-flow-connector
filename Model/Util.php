@@ -43,6 +43,13 @@ class Util {
     }
 
     /**
+    * Set the logger (used by console command).
+    */
+    public function setLogger($logger) {
+        $this->logger = $logger;
+    }
+
+    /**
      * Returns true if Flow is enabled in the Admin Store Configuration.
      */
     public function isFlowEnabled() {

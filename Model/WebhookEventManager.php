@@ -41,6 +41,7 @@ class WebhookEventManager {
     */
     public function setLogger($logger) {
         $this->logger = $logger;
+        $this->util->setLogger($logger);
     }
 
     /**

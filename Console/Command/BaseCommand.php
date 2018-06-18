@@ -33,6 +33,6 @@ abstract class BaseCommand extends Command {
         $registry->register('isSecureArea', true);
 
         $appState = $this->objectManager->get('Magento\Framework\App\State');
-        $appState->setAreaCode(\Magento\Framework\App\Area
+        $appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
     }
 }

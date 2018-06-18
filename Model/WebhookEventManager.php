@@ -97,6 +97,10 @@ class WebhookEventManager {
     * Registers webhooks with Flow.
     */
     public function registerWebhooks() {
+        if (! $this->util->isFlowEnabled()) {
+            throw new \Exception('Flow module is disabled.');
+        }
+
         $this->deleteAllWebhooks();
         $this->registerWebhook('allocationdeletedv2', 'allocation_deleted_v2');
         $this->registerWebhook('allocationupsertedv2', 'allocation_upserted_v2');

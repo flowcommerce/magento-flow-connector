@@ -62,6 +62,14 @@ In the `require` section of your `composer.json`, require the `flowcommerce/flow
 }
 ```
 
+Then from your console run:
+
+```
+composer update
+compose install
+./bin/magento setup:upgrade
+```
+
 ### Initial Setup
 
 Login to your Magento Admin:

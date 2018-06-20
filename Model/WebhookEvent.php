@@ -1054,8 +1054,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         foreach ($deliveries as $delivery) {
             if (array_key_exists('options', $delivery)) {
                 foreach ($delivery['options'] as $option) {
-                    $order->setShippingMethod($option['service']['name']);
-                    $order->setShippingAmount($option['cost']);
+                    $order->setShippingMethod($option['service']['carrier']['id'] . '_' . $option['service']['name']);
+                    $order->setShippingAmount($option['cost']['amount']);
                     break;
                 }
             }

@@ -365,9 +365,11 @@ class CatalogSync {
         $data = [];
         foreach($attributes as $attr) {
             try {
-                if ($attrValue = $attr->getFrontend()->getValue($product)) {
-                    if (!is_array($attrValue)) {
-                        $data[$attr->getAttributeCode()] = (string)$attrValue;
+                if ($frontEnd = $attr->getFrontend()) {
+                    if ($attrValue = $frontEnd->getValue($product)) {
+                        if (!is_array($attrValue)) {
+                            $data[$attr->getAttributeCode()] = (string)$attrValue;
+                        }
                     }
                 }
             } catch (\Exception $e) {

@@ -37,16 +37,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
         $controller->execute();
     }
 
-    public function testLocalItemDeleted() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\LocalItemDeleted');
-        $controller->execute();
-    }
-
-    public function testLocalItemUpserted() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\LocalItemUpserted');
-        $controller->execute();
-    }
-
     public function testOnlineAuthorizationUpsertedV2() {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2');
         $controller->execute();

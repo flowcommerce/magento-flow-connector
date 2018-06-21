@@ -18,7 +18,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.0.1', '<=')) {
             $this->installWebhookEventsTable($installer);
-            $this->installLocalItemsTable($installer);
             $this->updateSalesOrderExtOrderId($installer);
             $this->installSyncSkusTable($installer);
         }
@@ -59,44 +58,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
             ['deleted_at'],
             AdapterInterface::INDEX_TYPE_INDEX
         );
-    }
-
-    /**
-     * Create the local items table.
-     */
-    private function installLocalItemsTable($installer) {
-        $tableName = $installer->getTable('flow_connector_local_items');
-
-        if ($installer->getConnection()->isTableExists($tableName)) {
-            return;
-        } // table already exists, no need to install now
-
-        $table = $installer->getConnection()
-            ->newTable($tableName)
-            ->addColumn('id', Table::TYPE_TEXT, 255, ['nullable' => false, 'primary' => true], 'Globally unique identifier')
-            ->addColumn('experience_id', Table::TYPE_TEXT, 255, ['nullable' => false], 'Experience ID')
-            ->addColumn('experience_key', Table::TYPE_TEXT, 255, ['nullable' => false], 'Experience Key')
-            ->addColumn('experience_name', Table::TYPE_TEXT, 255, ['nullable' => false], 'Experience Name')
-            ->addColumn('experience_country', Table::TYPE_TEXT, 3, ['nullable' => true], 'ISO 3166 3 currency code as defined in https://api.flow.io/reference/countries. Example: CAN')
-            ->addColumn('experience_currency', Table::TYPE_TEXT, 3, ['nullable' => true], 'The ISO 4217-3 code for the currency. Case insensitive. See https://api.flow.io/reference/currencies. Example: CAD')
-            ->addColumn('experience_language', Table::TYPE_TEXT, 2, ['nullable' => true], 'ISO 639 2 language code as defined in https://api.flow.io/reference/languages. Example: en')
-            ->addColumn('catalog_item_id', Table::TYPE_TEXT, 255, ['nullable' => false], 'Catalog Item Reference ID')
-            ->addColumn('catalog_item_number', Table::TYPE_TEXT, 255, ['nullable' => false], 'Client\'s unique identifier for this object')
-            ->addColumn('local_item_price_currency', Table::TYPE_TEXT, 255, ['nullable' => false], 'Price currency')
-            ->addColumn('local_item_price_amount', Table::TYPE_TEXT, 255, ['nullable' => false], 'Price amount')
-            ->addColumn('local_item_price_label', Table::TYPE_TEXT, 255, ['nullable' => false], 'Price label')
-            ->addColumn('local_item_price_base_currency', Table::TYPE_TEXT, 255, ['nullable' => false], 'Base price currency')
-            ->addColumn('local_item_price_base_amount', Table::TYPE_TEXT, 255, ['nullable' => false], 'Base price currency')
-            ->addColumn('local_item_price_base_label', Table::TYPE_TEXT, 255, ['nullable' => false], 'Base price currency')
-            ->addColumn('status', Table::TYPE_TEXT, 255, ['nullable' => false], 'Status indicating availability of a subcatalog item in an experience.')
-            ->addColumn('created_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT], 'Created At')
-            ->addColumn('updated_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT_UPDATE], 'Updated At')
-            ->addColumn('deleted_at', Table::TYPE_TIMESTAMP, null, ['nullable' => true], 'Deleted At')
-            ->setComment('Flow Local Items')
-            ->setOption('type', 'InnoDB')
-            ->setOption('charset', 'utf8');
-
-        $installer->getConnection()->createTable($table);
     }
 
     /**

@@ -29,7 +29,6 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase {
     protected $searchCriteriaBuilder;
     protected $quotePaymentFactory;
     protected $eventManager;
-    protected $localItemFactory;
 
     protected function setUp() {
 
@@ -55,7 +54,6 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase {
         $this->methodList = $this->createMock(\Magento\Payment\Model\MethodList::class);
         $this->orderRepository = $this->createMock(\Magento\Sales\Api\OrderRepositoryInterface::class);
         $this->searchCriteriaBuilder = $this->createMock(\Magento\Framework\Api\SearchCriteriaBuilder::class); $this->quotePaymentFactory = $this->createMock(\Magento\Quote\Model\Quote\PaymentFactory::class); $this->eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
-        $this->localItemFactory = $this->createMock(\FlowCommerce\FlowConnector\Model\LocalItemFactory::class);
     }
 
     /**
@@ -87,7 +85,6 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase {
         //     $this->searchCriteriaBuilder,
         //     $this->quotePaymentFactory,
         //     $this->eventManager,
-        //     $this->localItemFactory,
         //     null,
         //     null,
         //     []

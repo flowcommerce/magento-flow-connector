@@ -10,7 +10,6 @@ use Magento\Sales\Model\{
     Order,
     OrderInterface
 };
-use FlowCommerce\FlowConnector\Model\LocalItem;
 use FlowCommerce\FlowConnector\Exception\WebhookException;
 
 /**
@@ -64,7 +63,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     protected $searchCriteriaBuilder;
     protected $quotePaymentFactory;
     protected $eventManager;
-    protected $localItemFactory;
 
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -91,7 +89,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Model\Quote\PaymentFactory $quotePaymentFactory,
         \Magento\Framework\Event\ManagerInterface $eventManager,
-        \FlowCommerce\FlowConnector\Model\LocalItemFactory $localItemFactory,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -118,7 +115,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->quotePaymentFactory = $quotePaymentFactory;
         $this->eventManager = $eventManager;
-        $this->localItemFactory = $localItemFactory;
 
         parent::__construct(
             $context,
@@ -171,12 +167,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     break;
                 case 'card_authorization_upserted_v2':
                     $this->processCardAuthorizationUpsertedV2();
-                    break;
-                case 'local_item_deleted':
-                    $this->processLocalItemDeleted();
-                    break;
-                case 'local_item_upserted':
-                    $this->processLocalItemUpserted();
                     break;
                 case 'online_authorization_upserted_v2':
                     $this->processOnlineAuthorizationUpsertedV2();
@@ -590,86 +580,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         } else {
             throw new WebhookException('Event data does not have order number.');
         }
-    }
-
-    /**
-    * Process local_item_deleted webhook event data
-    *
-    * https://docs.flow.io/type/local-item-deleted
-    */
-    private function processLocalItemDeleted() {
-        $this->logger->info('Processing local_item_deleted data');
-
-        $data = $this->getPayloadData();
-        $model = $this->localItemFactory->create();
-
-        if (array_key_exists('local_item', $data) &&
-            array_key_exists('id', $data['local_item'])) {
-            $model->load($data['local_item']['id'], 'id');
-            if ($model->getId()) {
-                $model->delete();
-            } else {
-                throw new WebhookException("Unable to find LocalItem {$data['local_item']['id']} for deletion.");
-            }
-        } else {
-            throw new WebhookException("Invalid payload for webhook local_item_deleted event {$this->getId()}");
-        }
-
-        $this->setStatus(self::STATUS_DONE);
-        $this->save();
-    }
-
-    /**
-    * Process local_item_upserted webhook event data
-    *
-    * https://docs.flow.io/type/local-item-upserted
-    */
-    private function processLocalItemUpserted() {
-        $this->logger->info('Processing local_item_upserted data');
-
-        $data = $this->getPayloadData();
-
-        if (array_key_exists('local_item', $data)) {
-            $localItem = $data['local_item'];
-
-            $model = $this->localItemFactory->create();
-            $model->load($localItem['id'], 'id');
-
-            if ($model->getId() == null) {
-                $model->setId($localItem['id']);
-            }
-
-            $model->setExperienceId($localItem['experience']['id']);
-            $model->setExperienceKey($localItem['experience']['key']);
-            $model->setExperienceName($localItem['experience']['name']);
-
-            if (array_key_exists('country', $localItem['experience'])) {
-                $model->setExperienceCountry($localItem['experience']['country']);
-            }
-            if (array_key_exists('currency', $localItem['experience'])) {
-                $model->setExperienceCurrency($localItem['experience']['currency']);
-            }
-            if (array_key_exists('language', $localItem['experience'])) {
-                $model->setExperienceLanguage($localItem['experience']['language']);
-            }
-
-            $model->setCatalogItemId($localItem['item']['id']);
-            $model->setCatalogItemNumber($localItem['item']['number']);
-            $model->setLocalItemPriceCurrency($localItem['pricing']['price']['currency']);
-            $model->setLocalItemPriceAmount($localItem['pricing']['price']['amount']);
-            $model->setLocalItemPriceLabel($localItem['pricing']['price']['label']);
-            $model->setLocalItemPriceBaseCurrency($localItem['pricing']['price']['base']['currency']);
-            $model->setLocalItemPriceBaseAmount($localItem['pricing']['price']['base']['amount']);
-            $model->setLocalItemPriceBaseLabel($localItem['pricing']['price']['base']['label']);
-            $model->setStatus($localItem['status']);
-            $model->save();
-
-        } else {
-            throw new WebhookException("Invalid payload for webhook local_item_deleted event {$this->getId()}");
-        }
-
-        $this->setStatus(self::STATUS_DONE);
-        $this->save();
     }
 
     /**

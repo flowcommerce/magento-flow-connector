@@ -109,8 +109,6 @@ class WebhookEventManager {
         $this->registerWebhook('authorizationupserted', 'authorization_upserted');
         $this->registerWebhook('captureupsertedv2', 'capture_upserted_v2');
         $this->registerWebhook('cardauthorizationupsertedv2', 'card_authorization_upserted_v2');
-        $this->registerWebhook('localitemdeleted', 'local_item_deleted');
-        $this->registerWebhook('localitemupserted', 'local_item_upserted');
         $this->registerWebhook('onlineauthorizationupsertedv2', 'online_authorization_upserted_v2');
         $this->registerWebhook('orderdeleted', 'order_deleted');
         $this->registerWebhook('orderupserted', 'order_upserted');

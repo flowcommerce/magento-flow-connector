@@ -929,7 +929,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $order->setOrderCurrencyCode($data['total']['currency']);
 
         $order->setState(Order::STATE_NEW);
-        $order->setIsVirtual(false);
         $order->setEmailSent(0);
 
         // Store Flow order number
@@ -967,6 +966,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     // The details of shipping costs for the order.
                     $order->setShippingAmount($price['amount']);
                     $order->setBaseShippingAmount($price['base']['amount']);
+                    $order->setIsVirtual($price['base']['amount'] == 0);
                     break;
                 case 'insurance':
                     // The details of insurance costs for the order.

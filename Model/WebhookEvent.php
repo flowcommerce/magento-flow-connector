@@ -260,8 +260,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
 
-            $shippingHandling = 0.0;
-            $baseShippingHandling = 0.0;
+            $shippingAmount = 0.0;
+            $baseShippingAmount = 0.0;
 
             foreach ($data['allocation']['details'] as $detail) {
 
@@ -278,8 +278,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                         if ($item) {
                             // noop, adjustment only applies to order
                         } else {
-                            $shippingHandling += $detail['total']['amount'];
-                            $baseShippingHandling += $detail['total']['base']['amount'];
+                            $shippingAmount += $detail['total']['amount'];
+                            $baseShippingAmount += $detail['total']['base']['amount'];
                         }
                         break;
 
@@ -339,8 +339,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                         if ($item) {
                             // noop, shipping only applies to order
                         } else {
-                            $shippingHandling += $detail['total']['amount'];
-                            $baseShippingHandling += $detail['total']['base']['amount'];
+                            $shippingAmount += $detail['total']['amount'];
+                            $baseShippingAmount += $detail['total']['base']['amount'];
                         }
                         break;
 
@@ -362,7 +362,9 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 }
             }
 
-            $order->setShippingAmount($shippingHandling);
+            $order->setShippingAmount($shippingAmount);
+            $order->setBaseShippingAmount($baseShippingAmount);
+
             $order->setGrandTotal($data['allocation']['total']['amount']);
             $order->setBaseGrandTotal($data['allocation']['total']['base']['amount']);
             $order->save();
@@ -943,8 +945,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $order->setBaseCurrencyCode($data['total']['base']['currency']);
         $order->setOrderCurrencyCode($data['total']['currency']);
 
-        $shippingHandling = 0.0;
-        $baseShippingHandling = 0.0;
+        $shippingAmount = 0.0;
+        $baseShippingAmount = 0.0;
 
         // Set order prices
         // https://docs.flow.io/type/order-price-detail
@@ -953,8 +955,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             switch($price['key']) {
                 case 'adjustment':
                     // The details of any adjustments made to the order.
-                    $shippingHandling += $price['amount'];
-                    $baseShippingHandling += $price['base']['amount'];
+                    $shippingAmount += $price['amount'];
+                    $baseShippingAmount += $price['base']['amount'];
                     break;
                 case 'subtotal':
                     // The details of the subtotal for the order, including item prices, margins, and rounding.
@@ -973,8 +975,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     break;
                 case 'shipping':
                     // The details of shipping costs for the order.
-                    $shippingHandling += $price['amount'];
-                    $baseShippingHandling += $price['base']['amount'];
+                    $shippingAmount += $price['amount'];
+                    $baseShippingAmount += $price['base']['amount'];
                     break;
                 case 'insurance':
                     // The details of insurance costs for the order.

@@ -930,9 +930,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         // Order level settings
         ////////////////////////////////////////////////////////////
 
-        $order->setBaseCurrencyCode($data['total']['base']['currency']);
-        $order->setOrderCurrencyCode($data['total']['currency']);
-
         $order->setState(Order::STATE_NEW);
         $order->setEmailSent(0);
 
@@ -943,6 +940,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         // https://docs.flow.io/type/localized-total
         $order->setBaseTotalPaid($data['total']['base']['amount']);
         $order->setTotalPaid($data['total']['amount']);
+        $order->setBaseCurrencyCode($data['total']['base']['currency']);
+        $order->setOrderCurrencyCode($data['total']['currency']);
 
         $shippingHandling = 0.0;
         $baseShippingHandling = 0.0;

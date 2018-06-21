@@ -934,6 +934,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         $order->setState(Order::STATE_NEW);
         $order->setEmailSent(0);
+        $order->setIsVirtual(false);
 
         // Store Flow order number
         $order->setExtOrderId($data['number']);
@@ -994,7 +995,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         $order->setShippingAmount($shippingAmount);
         $order->setBaseShippingAmount($baseShippingAmount);
-        $order->setIsVirtual($baseShippingAmount == 0);
 
         ////////////////////////////////////////////////////////////
         // Deliveries

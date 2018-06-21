@@ -327,7 +327,12 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                         break;
 
                     case 'duty':
-                        // TODO: add field and adjust UI for duty
+                        if ($item) {
+                            // noop, duty only applies to order
+                        } else {
+                            $order->setDuty($detail['total']['amount']);
+                            $order->setBaseDuty($detail['total']['base']['amount']);
+                        }
                         break;
 
                     case 'shipping':
@@ -939,6 +944,9 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $order->setBaseTotalPaid($data['total']['base']['amount']);
         $order->setTotalPaid($data['total']['amount']);
 
+        $shippingHandling = 0.0;
+        $baseShippingHandling = 0.0;
+
         // Set order prices
         // https://docs.flow.io/type/order-price-detail
         $prices = $data['prices'];
@@ -946,6 +954,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             switch($price['key']) {
                 case 'adjustment':
                     // The details of any adjustments made to the order.
+                    $shippingHandling += $price['amount'];
+                    $baseShippingHandling += $price['base']['amount'];
                     break;
                 case 'subtotal':
                     // The details of the subtotal for the order, including item prices, margins, and rounding.
@@ -964,12 +974,12 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     break;
                 case 'shipping':
                     // The details of shipping costs for the order.
-                    $order->setShippingAmount($price['amount']);
-                    $order->setBaseShippingAmount($price['base']['amount']);
-                    $order->setIsVirtual($price['base']['amount'] == 0);
+                    $shippingHandling += $price['amount'];
+                    $baseShippingHandling += $price['base']['amount'];
                     break;
                 case 'insurance':
                     // The details of insurance costs for the order.
+                    // noop, this is a placeholder and not implemented by Flow.
                     break;
                 case 'discount':
                     // The details of any discount applied to the order.
@@ -980,6 +990,10 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     throw new WebhookException('Invalid order price type');
             }
         }
+
+        $order->setShippingAmount($shippingAmount);
+        $order->setBaseShippingAmount($baseShippingAmount);
+        $order->setIsVirtual($baseShippingAmount == 0);
 
         ////////////////////////////////////////////////////////////
         // Deliveries

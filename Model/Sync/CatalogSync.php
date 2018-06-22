@@ -199,7 +199,7 @@ class CatalogSync {
                     }
 
                 } catch (\Exception $e) {
-                    $this->logger->warning('Error syncing product ' . $product->getSku() . ': ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+                    $this->logger->warning('Error syncing product ' . $syncSku->getSku() . ': ' . $e->getMessage() . '\n' . $e->getTraceAsString());
                     $syncSku->setStatus(SyncSku::STATUS_ERROR);
                     $syncSku->setMessage(substr($e->getMessage(), 0, 200));
                     $syncSku->save();

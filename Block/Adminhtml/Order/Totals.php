@@ -35,9 +35,7 @@ class Totals extends \Magento\Sales\Block\Adminhtml\Totals//\Magento\Sales\Block
         /**
          * Add shipping
          */
-        if (!$this->getSource()->getIsVirtual() && ((double)$this->getSource()->getShippingAmount() ||
-            $this->getSource()->getShippingDescription())
-        ) {
+        if ((double)$this->getSource()->getShippingAmount()) {
             $this->_totals['shipping'] = new \Magento\Framework\DataObject(
                 [
                     'code' => 'shipping',
@@ -51,7 +49,7 @@ class Totals extends \Magento\Sales\Block\Adminhtml\Totals//\Magento\Sales\Block
         /**
          * Add duty (FlowConnector)
          */
-        if (!$this->getSource()->getIsVirtual() && ((double)$this->getSource()->getDuty())) {
+        if ((double)$this->getSource()->getDuty() != 0) {
             $this->_totals['duty'] = new \Magento\Framework\DataObject(
                 [
                     'code' => 'duty',

@@ -227,6 +227,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
             if ($order = $this->getOrderByFlowOrderNumber($allocation['order']['number'])) {
                 $order->setTotalCanceled($allocation['total']['amount']);
+                $order->setBaseTotalCanceled($allocation['total']['base']['amount']);
                 $order->setState(Order::STATE_HOLDED);
                 $order->save();
 
@@ -259,7 +260,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
 
-            $shippingHandling = 0.0;
+            $shippingAmount = 0.0;
+            $baseShippingAmount = 0.0;
 
             foreach ($data['allocation']['details'] as $detail) {
 
@@ -276,34 +278,43 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                         if ($item) {
                             // noop, adjustment only applies to order
                         } else {
-                            $shippingHandling += $detail['total']['amount'];
+                            $shippingAmount += $detail['total']['amount'];
+                            $baseShippingAmount += $detail['total']['base']['amount'];
                         }
                         break;
 
                     case 'subtotal':
                         if ($item) {
                             $vatPrice = 0.0;
+                            $baseVatPrice = 0.0;
                             foreach($detail['included'] as $included) {
                                 if ($included['key'] == "item_price") {
                                     $item->setOriginalPrice($included['total']['amount']);
                                     $item->setPrice($included['total']['amount']);
+                                    $item->setBasePrice($included['total']['base']['amount']);
                                     $item->setRowTotal($included['total']['amount'] * $detail['quantity']);
+                                    $item->setBaseRowTotal($included['total']['base']['amount'] * $detail['quantity']);
                                 } elseif ($included['key'] == 'rounding') {
                                     // add rounding to vat
                                     $vatPrice += $included['total']['amount'];
+                                    $baseVatPrice += $included['total']['base']['amount'];
                                 } elseif ($included['key'] == 'vat_item_price') {
                                     $item->setTaxPercent($included['rate'] * 100);
                                     $vatPrice += $included['total']['amount'];
+                                    $baseVatPrice += $included['total']['base']['amount'];
                                 } elseif ($included['key'] == 'item_discount') {
                                     $item->setDiscountAmount($included['total']['amount']);
+                                    $item->setBaseDiscountAmount($included['total']['base']['amount']);
                                 }
                             }
 
                             $item->setTaxAmount($vatPrice);
+                            $item->setBaseTaxAmount($baseVatPrice);
                             $item->save();
 
                         } else {
                             $order->setSubtotal($detail['total']['amount']);
+                            $order->setBaseSubtotal($detail['total']['base']['amount']);
                         }
                         break;
 
@@ -316,14 +327,20 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                         break;
 
                     case 'duty':
-                        // TODO: add field and adjust UI for duty
+                        if ($item) {
+                            // noop, duty only applies to order
+                        } else {
+                            $order->setDuty($detail['total']['amount']);
+                            $order->setBaseDuty($detail['total']['base']['amount']);
+                        }
                         break;
 
                     case 'shipping':
                         if ($item) {
                             // noop, shipping only applies to order
                         } else {
-                            $shippingHandling += $detail['total']['amount'];
+                            $shippingAmount += $detail['total']['amount'];
+                            $baseShippingAmount += $detail['total']['base']['amount'];
                         }
                         break;
 
@@ -336,6 +353,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                             // noop, this is included in the subtotal for line items
                         } else {
                             $order->setDiscountAmount($detail['total']['amount']);
+                            $order->setBaseDiscountAmount($detail['total']['base']['amount']);
                         }
                         break;
 
@@ -344,9 +362,11 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 }
             }
 
-            $order->setShippingAmount($shippingHandling);
-            $order->setOrderCurrency($data['allocation']['total']['currency']);
+            $order->setShippingAmount($shippingAmount);
+            $order->setBaseShippingAmount($baseShippingAmount);
+
             $order->setGrandTotal($data['allocation']['total']['amount']);
+            $order->setBaseGrandTotal($data['allocation']['total']['base']['amount']);
             $order->save();
 
             $this->setMessage(null);
@@ -722,8 +742,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         $quote = $this->quoteFactory->create();
         $quote->setStore($store);
-        $quote->setBaseCurrencyCode($data['total']['currency']);
         $quote->setQuoteCurrencyCode($data['total']['currency']);
+        $quote->setBaseCurrencyCode($data['total']['base']['currency']);
         $quote->assignCustomer($customer);
 
         ////////////////////////////////////////////////////////////
@@ -735,6 +755,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             $this->logger->info('Looking up product: ' . $line['item_number']);
             $product = $this->productRepository->get($line['item_number']);
             $product->setPrice($line['price']['amount']);
+            $product->setBasePrice($line['price']['base']['amount']);
 
             $this->logger->info('Adding product to quote: ' . $product->getSku());
             $quote->addProduct($product, $line['quantity']);
@@ -883,7 +904,9 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         if (array_key_exists('discount', $data)) {
             $discountAmount = $data['discount']['amount'];
+            $baseDiscountAmount = $data['discount']['base']['amount'];
             $quote->setCustomDiscount(-$discountAmount);
+            $quote->setBaseCustomDiscount(-$baseDiscountAmount);
         }
 
         ////////////////////////////////////////////////////////////
@@ -911,13 +934,20 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         $order->setState(Order::STATE_NEW);
         $order->setEmailSent(0);
+        $order->setIsVirtual(false);
 
         // Store Flow order number
         $order->setExtOrderId($data['number']);
 
         // Set order total
         // https://docs.flow.io/type/localized-total
+        $order->setBaseTotalPaid($data['total']['base']['amount']);
         $order->setTotalPaid($data['total']['amount']);
+        $order->setBaseCurrencyCode($data['total']['base']['currency']);
+        $order->setOrderCurrencyCode($data['total']['currency']);
+
+        $shippingAmount = 0.0;
+        $baseShippingAmount = 0.0;
 
         // Set order prices
         // https://docs.flow.io/type/order-price-detail
@@ -926,33 +956,45 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             switch($price['key']) {
                 case 'adjustment':
                     // The details of any adjustments made to the order.
+                    $shippingAmount += $price['amount'];
+                    $baseShippingAmount += $price['base']['amount'];
                     break;
                 case 'subtotal':
                     // The details of the subtotal for the order, including item prices, margins, and rounding.
                     $order->setSubtotal($price['amount']);
+                    $order->setBaseSubtotal($price['base']['amount']);
                     break;
                 case 'vat':
                     // The details of any VAT owed on the order.
                     $order->setCustomerTaxvat($price['amount']);
+                    $order->setBaseCustomerTaxvat($price['base']['amount']);
                     break;
                 case 'duty':
                     // The details of any duties owed on the order.
+                    $order->setDuty($price['amount']);
+                    $order->setBaseDuty($price['base']['amount']);
                     break;
                 case 'shipping':
                     // The details of shipping costs for the order.
-                    $order->setShippingAmount($price['amount']);
+                    $shippingAmount += $price['amount'];
+                    $baseShippingAmount += $price['base']['amount'];
                     break;
                 case 'insurance':
                     // The details of insurance costs for the order.
+                    // noop, this is a placeholder and not implemented by Flow.
                     break;
                 case 'discount':
                     // The details of any discount applied to the order.
                     $order->setDiscountAmount($price['amount']);
+                    $order->setBaseDiscountAmount($price['base']['amount']);
                     break;
                 default:
                     throw new WebhookException('Invalid order price type');
             }
         }
+
+        $order->setShippingAmount($shippingAmount);
+        $order->setBaseShippingAmount($baseShippingAmount);
 
         ////////////////////////////////////////////////////////////
         // Deliveries

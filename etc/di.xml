@@ -10,4 +10,5 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
 </config>

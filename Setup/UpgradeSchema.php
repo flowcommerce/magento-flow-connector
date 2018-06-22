@@ -16,7 +16,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $installer = $setup;
         $installer->startSetup();
 
-        if (version_compare($context->getVersion(), '1.0.1', '<=')) {
+        if (version_compare($context->getVersion(), '1.0.1', '<')) {
             $this->installWebhookEventsTable($installer);
             $this->updateSalesOrderExtOrderId($installer);
             $this->installSyncSkusTable($installer);

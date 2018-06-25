@@ -702,11 +702,14 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $customer->setWebsiteId($store->getWebsiteId());
 
         // Check for existing customer
-        if (array_key_exists('number', $data['customer'])) {
-            $this->logger->info('Retrieving existing user by id: ' . $data['customer']['number']);
-            $customer->loadById($data['customer']['number']);
+        if (array_key_exists('attributes', $data) &&
+            array_key_exists(self::CUSTOMER_ID, $data['attributes'])) {
+
+            $customerId = $data['attributes'][self::CUSTOMER_ID];
+            $this->logger->info('Retrieving existing user by id: ' . $customerId);
+            $customer->loadById($customerId);
             if ($customer->getEntityId()) {
-                $this->logger->info('Found customer by id: ' . $data['customer']['number']);
+                $this->logger->info('Found customer by id: ' . $customerId);
 
                 // Fire event to alert if customer email changed
                 if (array_key_exists('email', $data['customer'])) {

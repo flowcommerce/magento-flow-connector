@@ -99,7 +99,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
         }
 
         if ($customer = $this->customerSession->getCustomer()) {
-            $attribs[WebhookEvent::CUSTOMER_ID] = $this->customerSession->getId();
+            $attribs[WebhookEvent::CUSTOMER_ID] = $customer->getId();
             $attribs[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
 
             // Add customer info

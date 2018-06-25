@@ -930,6 +930,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $order->setTotalPaid($data['total']['amount']);
         $order->setBaseCurrencyCode($data['total']['base']['currency']);
         $order->setOrderCurrencyCode($data['total']['currency']);
+        $order->setBaseToOrderRate($data['total']['base']['amount'] / $data['total']['amount']);
 
         $shippingAmount = 0.0;
         $baseShippingAmount = 0.0;

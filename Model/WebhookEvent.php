@@ -37,6 +37,12 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     const EVENT_FLOW_SUFFIX_AFTER = '_after';
     const EVENT_FLOW_CHECKOUT_EMAIL_CHANGED = 'flow_checkout_email_changed';
 
+    // Number of seconds to delay before reprocessing
+    const REQUEUE_DELAY_INTERVAL = 30;
+
+    // Maximum age in seconds for a WebhookEvent to requeue
+    const REQUEUE_MAX_AGE = 86400;
+
     const CACHE_TAG = 'flow_connector_webhook_events';
     protected $_cacheTag = 'flow_connector_webhook_events';
     protected $_eventPrefix = 'flow_connector_webhook_events';
@@ -236,12 +242,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 $this->save();
 
             } else {
-                $date = new \DateTime();
-                $date->add(\DateInterval::createFromDateString('30 seconds'));
-                $this->setTriggeredAt($date);
-                $this->setMessage('Unable to find order right now, reprocess.');
-                $this->setStatus(self::STATUS_NEW);
-                $this->save();
+                $this->requeue('Unable to find order right now, reprocess.');
             }
 
         } else {
@@ -380,12 +381,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             $this->save();
 
         } else {
-            $date = new \DateTime();
-            $date->add(\DateInterval::createFromDateString('30 seconds'));
-            $this->setMessage('Unable to find order right now, reprocess.');
-            $this->setStatus(self::STATUS_NEW);
-            $this->setTriggeredAt($date);
-            $this->save();
+            $this->requeue('Unable to find order right now, reprocess.');
         }
     }
 
@@ -417,12 +413,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                         }
                     }
                 } else {
-                    $date = new \DateTime();
-                    $date->add(\DateInterval::createFromDateString('30 seconds'));
-                    $this->setTriggeredAt($date);
-                    $this->setMessage('Unable to find order right now, reprocess.');
-                    $this->setStatus(self::STATUS_NEW);
-                    $this->save();
+                    $this->requeue('Unable to find order right now, reprocess.');
                 }
 
                 if ($orderPayment) {
@@ -489,12 +480,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 }
 
             } else {
-                $date = new \DateTime();
-                $date->add(\DateInterval::createFromDateString('30 seconds'));
-                $this->setTriggeredAt($date);
-                $this->setMessage('Unable to find order right now, reprocess.');
-                $this->setStatus(self::STATUS_NEW);
-                $this->save();
+                $this->requeue('Unable to find order right now, reprocess.');
             }
 
         } else {
@@ -595,12 +581,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 $this->save();
 
             } else {
-                $date = new \DateTime();
-                $date->add(\DateInterval::createFromDateString('30 seconds'));
-                $this->setTriggeredAt($date);
-                $this->setMessage('Unable to find order right now, reprocess.');
-                $this->setStatus(self::STATUS_NEW);
-                $this->save();
+                $this->requeue('Unable to find order right now, reprocess.');
             }
 
         } else {
@@ -624,12 +605,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 throw new WebhookException('Online payments are currently not supported.');
 
             } else {
-                $date = new \DateTime();
-                $date->add(\DateInterval::createFromDateString('30 seconds'));
-                $this->setTriggeredAt($date);
-                $this->setMessage('Unable to find order right now, reprocess.');
-                $this->setStatus(self::STATUS_NEW);
-                $this->save();
+                $this->requeue('Unable to find order right now, reprocess.');
             }
 
         } else {
@@ -654,6 +630,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 }
 
                 $order->delete();
+                $this->setMessage(null);
                 $this->setStatus(self::STATUS_DONE);
                 $this->save();
 
@@ -1133,7 +1110,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 $this->save();
 
             } else {
-                throw new WebhookException('Unable to find payment corresponding payment.');
+                throw new WebhookException('Unable to find corresponding payment.');
             }
 
         } else {
@@ -1152,12 +1129,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         $order = $this->orderFactory->create()->load($data['order']['number'], 'ext_order_id');
         if (!$order->getId()) {
-            $date = new \DateTime();
-            $date->add(\DateInterval::createFromDateString('30 seconds'));
-            $this->setTriggeredAt($date);
-            $this->setMessage('Unable to find order right now, reprocess.');
-            $this->setStatus(self::STATUS_NEW);
-            $this->save();
+            $this->requeue('Unable to find order right now, reprocess.');
             return;
         }
 
@@ -1191,12 +1163,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         $order = $this->orderFactory->create()->load($data['order_number'], 'ext_order_id');
         if (!$order->getId()) {
-            $date = new \DateTime();
-            $date->add(\DateInterval::createFromDateString('30 seconds'));
-            $this->setTriggeredAt($date);
-            $this->setMessage('Unable to find order right now, reprocess.');
-            $this->setStatus(self::STATUS_NEW);
-            $this->save();
+            $this->requeue('Unable to find order right now, reprocess.');
             return;
         }
 
@@ -1234,5 +1201,29 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             }
         }
         return $item;
+    }
+
+    /**
+    * Helper method to requeue this WebhookEvent. Sets event as error if more
+    * than DURATION has passed.
+    *
+    * @param msg Messsage for requeue
+    */
+    private function requeue($msg) {
+        $interval = \DateInterval::createFromDateString(self::REQUEUE_MAX_AGE . ' seconds');
+        $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $this->getCreatedAt());
+        $triggeredAt = \DateTime::createFromFormat('Y-m-d H:i:s', $this->getTriggeredAt());
+        if ($createdAt->add($interval) < $triggeredAt) {
+            $this->setMessage('REQUEUE_MAX_AGE of ' . self::REQUEUE_MAX_AGE . ' seconds reached');
+            $this->setStatus(self::STATUS_ERROR);
+            $this->save();
+        } else {
+            $date = new \DateTime();
+            $date->add(\DateInterval::createFromDateString(self::REQUEUE_DELAY_INTERVAL . ' seconds'));
+            $this->setTriggeredAt($date);
+            $this->setMessage($msg);
+            $this->setStatus(self::STATUS_NEW);
+            $this->save();
+        }
     }
 }

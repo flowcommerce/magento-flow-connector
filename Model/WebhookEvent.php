@@ -285,10 +285,12 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
                     case 'subtotal':
                         if ($item) {
+                            $vatPct = 0.0;
                             $vatPrice = 0.0;
                             $baseVatPrice = 0.0;
                             foreach($detail['included'] as $included) {
                                 if ($included['key'] == "item_price") {
+                                    $item->setBaseOriginalPrice($included['total']['base']['amount']);
                                     $item->setOriginalPrice($included['total']['amount']);
                                     $item->setPrice($included['total']['amount']);
                                     $item->setBasePrice($included['total']['base']['amount']);
@@ -299,7 +301,11 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                                     $vatPrice += $included['total']['amount'];
                                     $baseVatPrice += $included['total']['base']['amount'];
                                 } elseif ($included['key'] == 'vat_item_price') {
-                                    $item->setTaxPercent($included['rate'] * 100);
+                                    $vatPct += $included['rate'];
+                                    $vatPrice += $included['total']['amount'];
+                                    $baseVatPrice += $included['total']['base']['amount'];
+                                } elseif ($included['key'] == 'duties_item_price') {
+                                    $vatPct += $included['rate'];
                                     $vatPrice += $included['total']['amount'];
                                     $baseVatPrice += $included['total']['base']['amount'];
                                 } elseif ($included['key'] == 'item_discount') {
@@ -307,7 +313,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                                     $item->setBaseDiscountAmount($included['total']['base']['amount']);
                                 }
                             }
-
+                            $item->setTaxPercent($vatPct * 100);
                             $item->setTaxAmount($vatPrice);
                             $item->setBaseTaxAmount($baseVatPrice);
                             $item->save();
@@ -1006,6 +1012,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             if (array_key_exists('options', $delivery)) {
                 foreach ($delivery['options'] as $option) {
                     $order->setShippingMethod($option['service']['carrier']['id'] . '_' . $option['service']['name']);
+                    $order->setShippingDescription($option['service']['carrier']['id'] . ': ' . $option['service']['name']);
                     break;
                 }
             }

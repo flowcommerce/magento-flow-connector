@@ -217,7 +217,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process allocation_deleted_v2 webhook event data
+    * Process allocation_deleted_v2 webhook event data.
     *
     * https://docs.flow.io/type/allocation-deleted-v-2
     */
@@ -251,7 +251,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process allocation_upserted_v2 webhook event data
+    * Process allocation_upserted_v2 webhook event data.
     *
     * https://docs.flow.io/type/allocation-upserted-v-2
     */
@@ -386,7 +386,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process authorization_deleted_v2 webhook event data
+    * Process authorization_deleted_v2 webhook event data.
     *
     * https://docs.flow.io/type/authorization-deleted-v-2
     */
@@ -438,7 +438,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process capture_upserted_v2 webhook event data
+    * Process capture_upserted_v2 webhook event data.
     *
     * https://docs.flow.io/type/capture-upserted-v-2
     */
@@ -489,7 +489,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process card_authorization_upserted_v2 webhook event data
+    * Process card_authorization_upserted_v2 webhook event data.
     *
     * https://docs.flow.io/type/card-authorization-upserted-v-2
     */
@@ -590,7 +590,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process online_authorization_upserted_v2 webhook event data
+    * Process online_authorization_upserted_v2 webhook event data.
     *
     * https://docs.flow.io/type/online-authorization-upserted-v-2
     */
@@ -614,7 +614,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process order_deleted webhook event data
+    * Process order_deleted webhook event data.
     *
     * https://docs.flow.io/type/order-deleted
     */
@@ -644,7 +644,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process order_upserted webhook event data
+    * Process order_upserted webhook event data.
     *
     * https://docs.flow.io/type/order-upserted
     */
@@ -1022,7 +1022,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process refund_capture_upserted_v2 webhook event data
+    * Process refund_capture_upserted_v2 webhook event data.
     *
     * https://docs.flow.io/type/refund-capture-upserted-v-2
     */
@@ -1071,7 +1071,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process refund_upserted_v2 webhook event data
+    * Process refund_upserted_v2 webhook event data.
     *
     * https://docs.flow.io/type/refund-upserted-v-2
     */
@@ -1120,7 +1120,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Process fraud_status_changed webhook event data
+    * Process fraud_status_changed webhook event data.
     *
     * https://docs.flow.io/type/fraud-status-changed
     */
@@ -1128,33 +1128,33 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->logger->info('Processing fraud_status_changed data');
         $data = $this->getPayloadData();
 
-        $order = $this->orderFactory->create()->load($data['order']['number'], 'ext_order_id');
-        if (!$order->getId()) {
+        if ($order = $this->getOrderByFlowOrderNumber($data['order']['number'])) {
+            if ($order->getState() != Order::STATE_COMPLETE &&
+                $order->getState() != Order::STATE_CLOSED &&
+                $order->getState() != Order::STATE_CANCELED)
+            {
+                if ($data['status'] == 'pending') {
+                    $order->setState(Order::STATE_PAYMENT_REVIEW);
+                } else if ($data['status'] == 'approved') {
+                    $order->setState(Order::STATE_PROCESSING);
+                } else if ($data['status'] == 'declined') {
+                    $order->setStatus(Order::STATUS_FRAUD);
+                }
+                $order->save();
+            }
+
+            $this->setMessage(null);
+            $this->setStatus(self::STATUS_DONE);
+            $this->save();
+
+        } else {
             $this->requeue('Unable to find order right now, reprocess.');
             return;
         }
-
-        if ($order->getState() != Order::STATE_COMPLETE &&
-            $order->getState() != Order::STATE_CLOSED &&
-            $order->getState() != Order::STATE_CANCELED)
-        {
-            if ($data['status'] == 'pending') {
-                $order->setState(Order::STATE_PAYMENT_REVIEW);
-            } else if ($data['status'] == 'approved') {
-                $order->setState(Order::STATE_PROCESSING);
-            } else if ($data['status'] == 'declined') {
-                $order->setStatus(Order::STATUS_FRAUD);
-            }
-            $order->save();
-        }
-
-        $this->setMessage(null);
-        $this->setStatus(self::STATUS_DONE);
-        $this->save();
     }
 
     /**
-    * Process tracking_label_event_upserted webhook event data
+    * Process tracking_label_event_upserted webhook event data.
     *
     * https://docs.flow.io/type/tracking-label-event-upserted
     */
@@ -1162,19 +1162,50 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->logger->info('Processing tracking_label_event_upserted data');
         $data = $this->getPayloadData();
 
-        $order = $this->orderFactory->create()->load($data['order_number'], 'ext_order_id');
-        if (!$order->getId()) {
+        if ($order = $this->getOrderByFlowOrderNumber($data['order_number'])) {
+            $order->setData('tracking_numbers', [$data['carrier_tracking_number']]);
+            $order->setData('flow_tracking_number', $data['flow_tracking_number']);
+            $order->save();
+
+            $this->setMessage(null);
+            $this->setStatus(self::STATUS_DONE);
+            $this->save();
+
+        } else {
             $this->requeue('Unable to find order right now, reprocess.');
             return;
         }
+    }
 
-        $order->setData('tracking_numbers', [$data['carrier_tracking_number']]);
-        $order->setData('flow_tracking_number', $data['flow_tracking_number']);
-        $order->save();
+    /**
+    * Process label_upserted webhook event data.
+    *
+    * https://docs.flow.io/type/label-upserted
+    */
+    private function processLabelUpserted() {
+        $this->logger->info('Processing label_upserted data');
+        $data = $this->getPayloadData();
 
-        $this->setMessage(null);
-        $this->setStatus(self::STATUS_DONE);
-        $this->save();
+        if (array_key_exists('order_identifier', $data)) {
+            if ($order = $this->getOrderByFlowOrderNumber($data['order_identifier'])) {
+                $order->setData('tracking_numbers', [$data['carrier_tracking_number']]);
+                $order->setData('flow_tracking_number', $data['flow_tracking_number']);
+                $order->save();
+
+                $this->setMessage(null);
+                $this->setStatus(self::STATUS_DONE);
+                $this->save();
+
+            } else {
+                $this->requeue('Unable to find order right now, reprocess.');
+                return;
+            }
+
+        } else {
+            $this->setMessage('Order identifier not present');
+            $this->setStatus(self::STATUS_ERROR);
+            $this->save();
+        }
     }
 
     /**
@@ -1206,7 +1237,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
     /**
     * Helper method to requeue this WebhookEvent. Sets event as error if more
-    * than DURATION has passed.
+    * than REQUEUE_MAX_AGE has passed.
     *
     * @param msg Messsage for requeue
     */

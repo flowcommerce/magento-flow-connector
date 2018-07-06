@@ -116,6 +116,7 @@ class WebhookEventManager {
         $this->registerWebhook('refundupsertedv2', 'refund_upserted_v2');
         $this->registerWebhook('fraudstatuschanged', 'fraud_status_changed');
         $this->registerWebhook('trackinglabeleventupserted', 'tracking_label_event_upserted');
+        $this->registerWebhook('labelupserted', 'label_upserted');
         return true;
     }
 

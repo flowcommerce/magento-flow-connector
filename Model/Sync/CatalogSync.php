@@ -327,16 +327,17 @@ class CatalogSync {
      * https://docs.flow.io/type/image-form
      */
     protected function getProductImageData($product) {
-        return [
-            [
-                'url' => $this->getImageUrl($product, 'product_page_image_small'),
-                'tags' => ['thumbnail']
-            ],
-            [
-                'url' => $this->getImageUrl($product, 'product_page_image_medium'),
-                'tags' => ['checkout']
-            ]
-        ];
+        $images = [];
+
+        if ($thumbImgUrl = $this->getImageUrl($product, 'product_page_image_small')) {
+            array_push($images, [ 'url' => $thumbImgUrl, 'tags' => ['thumbnail'] ]);
+        }
+
+        if ($checkoutImgUrl = $this->getImageUrl($product, 'product_page_image_medium')) {
+            array_push($images, [ 'url' => $checkoutImgUrl, 'tags' => ['checkout'] ]);
+        }
+
+        return $images;
     }
 
     /**
@@ -344,14 +345,20 @@ class CatalogSync {
      */
     protected function getImageUrl($product, string $imageType = '') {
         $storeId = $this->storeManager->getStore()->getId();
+        $imageUrl = null;
 
-        $this->appEmulation->startEnvironmentEmulation($storeId, \Magento\Framework\App\Area::AREA_FRONTEND, true);
+        try {
+            $this->appEmulation->startEnvironmentEmulation($storeId, \Magento\Framework\App\Area::AREA_FRONTEND, true);
+            $imageBlock = $this->blockFactory->createBlock('Magento\Catalog\Block\Product\ListProduct');
+            $productImage = $imageBlock->getImage($product, $imageType);
+            $imageUrl = $productImage->getImageUrl();
 
-        $imageBlock = $this->blockFactory->createBlock('Magento\Catalog\Block\Product\ListProduct');
-        $productImage = $imageBlock->getImage($product, $imageType);
-        $imageUrl = $productImage->getImageUrl();
+        } catch (\Exception $e) {
+            // Ignore any exceptions here, just return imageUrl as null.
 
-        $this->appEmulation->stopEnvironmentEmulation();
+        } finally {
+            $this->appEmulation->stopEnvironmentEmulation();
+        }
 
         return $imageUrl;
     }

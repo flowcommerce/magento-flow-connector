@@ -158,7 +158,7 @@ class WebhookEventManager {
         if ($response->isSuccess()) {
             $this->logger->info('Webhook event registered: ' . $response->getContent());
         } else {
-            $this->logger->info('Webhook event registration failed: ' , $response->getContent());
+            $this->logger->info('Webhook event registration failed: ' . $response->getContent());
         }
     }
 

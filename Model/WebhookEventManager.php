@@ -96,39 +96,41 @@ class WebhookEventManager {
 
     /**
     * Registers webhooks with Flow.
+    * @param storeId ID of store
     */
-    public function registerWebhooks() {
-        if (! $this->util->isFlowEnabled()) {
+    public function registerWebhooks($storeId) {
+        if (! $this->util->isFlowEnabled($storeId)) {
             throw new \Exception('Flow module is disabled.');
         }
 
-        $this->deleteAllWebhooks();
-        $this->registerWebhook('allocationdeletedv2', 'allocation_deleted_v2');
-        $this->registerWebhook('allocationupsertedv2', 'allocation_upserted_v2');
-        $this->registerWebhook('authorizationdeletedv2', 'authorization_deleted_v2');
-        $this->registerWebhook('authorizationupserted', 'authorization_upserted');
-        $this->registerWebhook('captureupsertedv2', 'capture_upserted_v2');
-        $this->registerWebhook('cardauthorizationupsertedv2', 'card_authorization_upserted_v2');
-        $this->registerWebhook('onlineauthorizationupsertedv2', 'online_authorization_upserted_v2');
-        $this->registerWebhook('orderdeleted', 'order_deleted');
-        $this->registerWebhook('orderupserted', 'order_upserted');
-        $this->registerWebhook('refundcaptureupsertedv2', 'refund_capture_upserted_v2');
-        $this->registerWebhook('refundupsertedv2', 'refund_upserted_v2');
-        $this->registerWebhook('fraudstatuschanged', 'fraud_status_changed');
-        $this->registerWebhook('trackinglabeleventupserted', 'tracking_label_event_upserted');
-        $this->registerWebhook('labelupserted', 'label_upserted');
+        $this->deleteAllWebhooks($storeId);
+        $this->registerWebhook($storeId, 'allocationdeletedv2', 'allocation_deleted_v2');
+        $this->registerWebhook($storeId, 'allocationupsertedv2', 'allocation_upserted_v2');
+        $this->registerWebhook($storeId, 'authorizationdeletedv2', 'authorization_deleted_v2');
+        $this->registerWebhook($storeId, 'authorizationupserted', 'authorization_upserted');
+        $this->registerWebhook($storeId, 'captureupsertedv2', 'capture_upserted_v2');
+        $this->registerWebhook($storeId, 'cardauthorizationupsertedv2', 'card_authorization_upserted_v2');
+        $this->registerWebhook($storeId, 'onlineauthorizationupsertedv2', 'online_authorization_upserted_v2');
+        $this->registerWebhook($storeId, 'orderdeleted', 'order_deleted');
+        $this->registerWebhook($storeId, 'orderupserted', 'order_upserted');
+        $this->registerWebhook($storeId, 'refundcaptureupsertedv2', 'refund_capture_upserted_v2');
+        $this->registerWebhook($storeId, 'refundupsertedv2', 'refund_upserted_v2');
+        $this->registerWebhook($storeId, 'fraudstatuschanged', 'fraud_status_changed');
+        $this->registerWebhook($storeId, 'trackinglabeleventupserted', 'tracking_label_event_upserted');
+        $this->registerWebhook($storeId, 'labelupserted', 'label_upserted');
         return true;
     }
 
     /**
     * Delete all Flow connector webhooks.
+    * @param storeId ID of store
     */
-    private function deleteAllWebhooks() {
-        $webhooks = $this->getRegisteredWebhooks();
+    private function deleteAllWebhooks($storeId) {
+        $webhooks = $this->getRegisteredWebhooks($storeId);
         foreach($webhooks as $webhook) {
             if (strpos($webhook['url'], '/flowconnector/webhooks/')) {
                 $this->logger->info('Deleting webhook: ' . $webhook['url']);
-                $client = $this->util->getFlowClient('/webhooks/' . $webhook['id']);
+                $client = $this->util->getFlowClient($storeId, '/webhooks/' . $webhook['id']);
                 $client->setMethod(Request::METHOD_DELETE);
                 $client->send();
             }
@@ -137,9 +139,10 @@ class WebhookEventManager {
 
     /**
     * Registers a webhook with Flow.
+    * @param storeId ID of store
     */
-    private function registerWebhook($endpointStub, $event) {
-        $baseUrl = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_WEB);
+    private function registerWebhook($storeId, $endpointStub, $event) {
+        $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB);
 
         $data = [
             "url" => $baseUrl . "flowconnector/webhooks/{$endpointStub}",
@@ -150,7 +153,7 @@ class WebhookEventManager {
 
         $dataStr = $this->jsonHelper->jsonEncode($data);
 
-        $client = $this->util->getFlowClient('/webhooks');
+        $client = $this->util->getFlowClient($storeId, '/webhooks');
         $client->setMethod(Request::METHOD_POST);
         $client->setRawBody($dataStr);
         $response = $client->send();
@@ -164,13 +167,14 @@ class WebhookEventManager {
 
     /**
     * Returns a list of webhooks registered with Flow.
+    * @param storeId ID of store
     */
-    private function getRegisteredWebhooks() {
-        if ($this->util->getFlowOrganizationId() == null) {
+    private function getRegisteredWebhooks($storeId) {
+        if ($this->util->getFlowOrganizationId($storeId) == null) {
             return [];
         }
 
-        $client = $this->util->getFlowClient('/webhooks');
+        $client = $this->util->getFlowClient($storeId, '/webhooks');
         $response = $client->send();
 
         if ($response->isSuccess()) {

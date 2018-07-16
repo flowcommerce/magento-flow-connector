@@ -34,15 +34,17 @@ class FlowConnectorSettingsObserver implements ObserverInterface {
     * Admin Store Configuration.
     */
     public function execute(Observer $observer) {
-        $this->logger->info('Updating Flow webhooks');
+        $storeId = $observer->getStore(); // string of store ID
 
-        $organizationId = $this->util->getFlowOrganizationId();
-        $apiToken = $this->util->getFlowApiToken();
-        $enabled = $this->util->isFlowEnabled();
+        $this->logger->info('Updating Flow webhooks for store: ' . $storeId);
+
+        $organizationId = $this->util->getFlowOrganizationId($storeId);
+        $apiToken = $this->util->getFlowApiToken($storeId);
+        $enabled = $this->util->isFlowEnabled($storeId);
 
         if ($enabled) {
             if ($organizationId != null && $apiToken != null) {
-                if ($this->webhookEventManager->registerWebhooks()) {
+                if ($this->webhookEventManager->registerWebhooks($storeId)) {
                     $this->messageManager->addSuccess('Successfully registered webhooks.');
                     $this->logger->info('Successfully registered webhooks');
                 } else {

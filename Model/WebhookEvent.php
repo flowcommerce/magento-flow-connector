@@ -205,6 +205,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             $this->eventManager->dispatch($eventName, [
                 'type' => $this->getType(),
                 'payload' => $this->getPayload(),
+                'storeId' => $this->getStoreId(),
                 'logger' => $this->logger
             ]);
 
@@ -225,7 +226,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->logger->info('Processing allocation_deleted_v2 data');
         $data = $this->getPayloadData();
 
-        $client = $this->util->getFlowClient('/orders/allocations/' . $data['id']);
+        $client = $this->util->getFlowClient($this->getStoreId(), '/orders/allocations/' . $data['id']);
         $response = $client->send();
 
         if ($response->isSuccess()) {
@@ -394,7 +395,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->logger->info('Processing authorization_deleted_v2 data');
         $data = $this->getPayloadData();
 
-        $client = $this->util->getFlowClient('/authorizations?id=' . $data['id']);
+        $client = $this->util->getFlowClient($this->getStoreId(), '/authorizations?id=' . $data['id']);
         $response = $client->send();
 
         if ($response->isSuccess()) {

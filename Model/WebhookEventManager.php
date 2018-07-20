@@ -47,7 +47,7 @@ class WebhookEventManager {
     /**
     * Queue webhook event for processing.
     */
-    public function queue($type, $payload) {
+    public function queue($type, $payload, $storeId) {
         $this->logger->info('Queue webhook event type: ' . $type);
 
         $payloadData = $this->jsonHelper->jsonDecode($payload);
@@ -56,6 +56,7 @@ class WebhookEventManager {
         $model = $this->webhookEventFactory->create();
         $model->setType($type);
         $model->setPayload($payload);
+        $model->setStoreId($storeId);
         $model->setStatus(WebhookEvent::STATUS_NEW);
         $model->setTriggeredAt($timestamp);
         $model->save();
@@ -145,7 +146,7 @@ class WebhookEventManager {
         $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB);
 
         $data = [
-            "url" => $baseUrl . "flowconnector/webhooks/{$endpointStub}",
+            "url" => $baseUrl . "flowconnector/webhooks/{$endpointStub}?storeId={$storeId}",
             "events" => $event
         ];
 

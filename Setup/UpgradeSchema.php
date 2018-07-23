@@ -24,6 +24,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.0.3', '<')) {
             $this->addStoreIdToWebhookEventsTable($installer);
+            $this->addStoreIdToSyncSkusTable($installer);
         }
 
         $installer->endSetup();
@@ -142,6 +143,41 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
             $connection->addForeignKey(
                 $installer->getFkName('flow_connector_webhook_events', 'store_id', 'store', 'store_id'),
+                $tableName,
+                'store_id',
+                $installer->getTable('store'),
+                'store_id',
+                Table::ACTION_CASCADE
+            );
+        }
+    }
+
+    /**
+     * Adds a store_id columen to sync skus table.
+     */
+    private function addStoreIdToSyncSkusTable($installer) {
+        $tableName = $installer->getTable('flow_connector_sync_skus');
+        $connection = $installer->getConnection();
+        $columnName = 'store_id';
+
+        if ($connection->tableColumnExists($tableName, $columnName) === false) {
+            $connection->addColumn($tableName, $columnName, [
+                'type'      => Table::TYPE_SMALLINT,
+                'nullable'  => false,
+                'unsigned'  => true,
+                'after'     => 'id',
+                'comment'   => 'Store ID'
+            ]);
+
+            $connection->addIndex(
+                $tableName,
+                $installer->getIdxName($tableName, ['store_id'], AdapterInterface::INDEX_TYPE_INDEX),
+                ['store_id'],
+                AdapterInterface::INDEX_TYPE_INDEX
+            );
+
+            $connection->addForeignKey(
+                $installer->getFkName('flow_connector_sync_skus', 'store_id', 'store', 'store_id'),
                 $tableName,
                 'store_id',
                 $installer->getTable('store'),

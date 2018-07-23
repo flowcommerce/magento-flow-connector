@@ -74,6 +74,7 @@ compose install
 
 Login to your Magento Admin:
 - From the left menu, click on Stores -> Configuration.
+- Change the Scope to your store (or default store).
 - In the Flow -> Connector Settings, enable the connector and fill out your Flow Organization Id and Flow API Token.
 - After saving the configuration, the module will connect to Flow and register webhooks. You can view webhooks from your Flow Console -> Organization Settings.
 

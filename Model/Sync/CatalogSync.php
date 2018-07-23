@@ -116,19 +116,26 @@ class CatalogSync {
     public function queue($product) {
         $syncSku = $this->syncSkuFactory->create();
 
-        // Check if product is queued and unprocessed.
-        $collection = $syncSku->getCollection()
-        ->addFieldToFilter('sku', $product->getSku())
-        ->addFieldToFilter('status', SyncSku::STATUS_NEW)
-        ->setPageSize(1);
+        // Check if connector is enabled for store
+        if (!$this->util->isFlowEnabled($product->getStoreId())) {
+            $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
 
-        // Only queue if product is not already queued.
-        if ($collection->getSize() == 0) {
-            $syncSku->setSku($product->getSku());
-            $syncSku->save();
-            $this->logger->info('Queued product for sync: ' . $product->getSku());
         } else {
-            $this->logger->info('Product already queued, skipping: ' . $product->getSku());
+            // Check if product is queued and unprocessed.
+            $collection = $syncSku->getCollection()
+            ->addFieldToFilter('sku', $product->getSku())
+            ->addFieldToFilter('status', SyncSku::STATUS_NEW)
+            ->setPageSize(1);
+
+            // Only queue if product is not already queued.
+            if ($collection->getSize() == 0) {
+                $syncSku->setSku($product->getSku());
+                $syncSku->setStoreId($product->getStoreId());
+                $syncSku->save();
+                $this->logger->info('Queued product for sync: ' . $product->getSku());
+            } else {
+                $this->logger->info('Product already queued, skipping: ' . $product->getSku());
+            }
         }
     }
 
@@ -136,12 +143,28 @@ class CatalogSync {
      * Queue all products for sync to Flow catalog.
      */
     public function queueAll() {
-        $this->logger->info("Queueing all products for sync to Flow.");
+        $this->logger->info('Queueing all products for sync to Flow.');
 
-        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        $sql = 'insert into flow_connector_sync_skus(sku, status) select sku, \'' . SyncSku::STATUS_NEW . '\' from catalog_product_entity';
-        $connection->query($sql);
+        // Get list of stores with enabled connectors
+        $storeIds = [];
+        foreach ($this->storeManager->getStores() as $store) {
+            $this->logger->info('store: ' . $store->getStoreId());
+            if ($this->util->isFlowEnabled($store->getStoreId())) {
+                array_push($storeIds, $store->getStoreId());
+                $this->logger->info('Flow enabled for store.');
+            } else {
+                $this->logger->info('Flow not enabled for store.');
+            }
+        }
+
+        if (count($storeIds) > 0) {
+            // TODO: write DDL to insert only products with matching store id
+
+            $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
+            $connection = $resource->getConnection();
+            $sql = 'insert into flow_connector_sync_skus(sku, status) select sku, \'' . SyncSku::STATUS_NEW . '\' from catalog_product_entity';
+            $connection->query($sql);
+        }
     }
 
     /**
@@ -220,7 +243,7 @@ class CatalogSync {
      * Syncs the specified product to the Flow catalog.
      */
     public function syncProduct($product) {
-        if (! $this->util->isFlowEnabled()) {
+        if (! $this->util->isFlowEnabled($product->getStoreId())) {
             throw new CatalogSyncException('Flow module is disabled.');
         }
 
@@ -232,7 +255,7 @@ class CatalogSync {
             $itemStr = $this->jsonHelper->jsonEncode($item);
             $this->logger->info('Syncing item: ' . $itemStr);
 
-            $client = $this->util->getFlowClient($urlStub);
+            $client = $this->util->getFlowClient($product->getStoreId(), $urlStub);
             $client->setMethod(Request::METHOD_PUT);
             $client->setRawBody($itemStr);
 
@@ -254,11 +277,11 @@ class CatalogSync {
      * Deletes the sku from Flow.
      */
     protected function deleteProduct($syncSku) {
-        if (! $this->util->isFlowEnabled()) {
+        if (! $this->util->isFlowEnabled($syncSku->getStoreId())) {
             throw new CatalogSyncException('Flow module is disabled.');
         }
 
-        $client = $this->util->getFlowClient('/catalog/items/' . $syncSku->getSku());
+        $client = $this->util->getFlowClient($syncSku->getStoreId(), '/catalog/items/' . $syncSku->getSku());
         $client->setMethod(Request::METHOD_DELETE);
         $response = $client->send();
 

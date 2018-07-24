@@ -129,7 +129,8 @@ class WebhookEventManager {
     private function deleteAllWebhooks($storeId) {
         $webhooks = $this->getRegisteredWebhooks($storeId);
         foreach($webhooks as $webhook) {
-            if (strpos($webhook['url'], '/flowconnector/webhooks/')) {
+            if (strpos($webhook['url'], '/flowconnector/webhooks/') &&
+                strpos($webhook['url'], 'storeId=' . $storeId)) {
                 $this->logger->info('Deleting webhook: ' . $webhook['url']);
                 $client = $this->util->getFlowClient($storeId, '/webhooks/' . $webhook['id']);
                 $client->setMethod(Request::METHOD_DELETE);

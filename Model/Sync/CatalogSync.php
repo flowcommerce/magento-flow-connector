@@ -13,8 +13,8 @@ use FlowCommerce\FlowConnector\Exception\CatalogSyncException;
 use FlowCommerce\FlowConnector\Model\SyncSku;
 
 /**
- * Main class for syncing product data to Flow.
- */
+* Main class for syncing product data to Flow.
+*/
 class CatalogSync {
 
     // Flow unit measurements mapped to abbreviations.
@@ -102,17 +102,17 @@ class CatalogSync {
     }
 
     /**
-     * Set the logger (used by console command).
-     */
+    * Set the logger (used by console command).
+    */
     public function setLogger($logger) {
         $this->logger = $logger;
         $this->util->setLogger($logger);
     }
 
     /**
-     * Queue product for syncing to Flow.
-     * @return \FlowCommerce\FlowConnector\Model\SyncSku
-     */
+    * Queue product for syncing to Flow.
+    * @return \FlowCommerce\FlowConnector\Model\SyncSku
+    */
     public function queue($product) {
         $syncSku = $this->syncSkuFactory->create();
 
@@ -140,38 +140,49 @@ class CatalogSync {
     }
 
     /**
-     * Queue all products for sync to Flow catalog.
-     */
+    * Queue all products for sync to Flow catalog.
+    */
     public function queueAll() {
         $this->logger->info('Queueing all products for sync to Flow.');
 
         // Get list of stores with enabled connectors
         $storeIds = [];
         foreach ($this->storeManager->getStores() as $store) {
-            $this->logger->info('store: ' . $store->getStoreId());
             if ($this->util->isFlowEnabled($store->getStoreId())) {
                 array_push($storeIds, $store->getStoreId());
-                $this->logger->info('Flow enabled for store.');
+                $this->logger->info('Including products from store: ' . $store->getName() . ' [id=' . $store->getStoreId() . ']');
             } else {
-                $this->logger->info('Flow not enabled for store.');
+                $this->logger->info('Not including products from store: ' . $store->getName() . ' [id=' . $store->getStoreId() . '] - Flow disabled');
             }
         }
 
         if (count($storeIds) > 0) {
-            // TODO: write DDL to insert only products with matching store id
-
             $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
             $connection = $resource->getConnection();
-            $sql = 'insert into flow_connector_sync_skus(sku, status) select sku, \'' . SyncSku::STATUS_NEW . '\' from catalog_product_entity';
+            $sql = '
+            insert into flow_connector_sync_skus(store_id, sku, status)
+            select store.store_id, sku, \'' . SyncSku::STATUS_NEW . '\'
+              from catalog_product_entity,
+                   catalog_product_website,
+                   store
+             where catalog_product_entity.entity_id = catalog_product_website.product_id
+               and catalog_product_website.website_id = store.website_id
+               and store.store_id in (\'' . implode('\',\'', $storeIds) . '\')
+               and store.is_active = 1
+             group by store.store_id, sku
+            ';
             $connection->query($sql);
+
+        } else {
+            $this->logger->info('Flow connector disabled on all stores, zero items queued.');
         }
     }
 
     /**
-     * Process the SyncSku queue.
-     * @param numToProcess Number of records to process.
-     * @param keepAlive Number of seconds to keep alive after/between processing.
-     */
+    * Process the SyncSku queue.
+    * @param numToProcess Number of records to process.
+    * @param keepAlive Number of seconds to keep alive after/between processing.
+    */
     public function process($numToProcess = 1000, $keepAlive = 60) {
         $this->logger->info('Starting sync sku processing');
 
@@ -240,8 +251,8 @@ class CatalogSync {
     }
 
     /**
-     * Syncs the specified product to the Flow catalog.
-     */
+    * Syncs the specified product to the Flow catalog.
+    */
     public function syncProduct($product) {
         if (! $this->util->isFlowEnabled($product->getStoreId())) {
             throw new CatalogSyncException('Flow module is disabled.');
@@ -274,8 +285,8 @@ class CatalogSync {
     }
 
     /**
-     * Deletes the sku from Flow.
-     */
+    * Deletes the sku from Flow.
+    */
     protected function deleteProduct($syncSku) {
         if (! $this->util->isFlowEnabled($syncSku->getStoreId())) {
             throw new CatalogSyncException('Flow module is disabled.');
@@ -293,22 +304,22 @@ class CatalogSync {
     }
 
     /**
-     * Converts product to Flow item-form.
-     *
-     * https://docs.flow.io/type/item-form
-     *
-     * @return array An array of item-form elements
-     */
+    * Converts product to Flow item-form.
+    *
+    * https://docs.flow.io/type/item-form
+    *
+    * @return array An array of item-form elements
+    */
     protected function convertProductToFlowData($product, $parentProduct = null) {
         $this->logger->info('Converting product to Flow data: ' . $product->getSku());
 
         if ($product->getTypeId() == Configurable::TYPE_CODE) {
-             $children = $this->linkManagement->getChildren($product->getSku());
-             $data = [];
-             foreach($children as $child) {
-                 $data = array_merge($data, $this->convertProductToFlowData($child, $product));
-             }
-             return $data;
+            $children = $this->linkManagement->getChildren($product->getSku());
+            $data = [];
+            foreach($children as $child) {
+                $data = array_merge($data, $this->convertProductToFlowData($child, $product));
+            }
+            return $data;
         }
 
         $itemData = [
@@ -328,8 +339,8 @@ class CatalogSync {
     }
 
     /**
-     * Returns an array of category names for the specified product.
-     */
+    * Returns an array of category names for the specified product.
+    */
     protected function getProductCategoryNames($product) {
         $catNames = [];
 
@@ -346,9 +357,9 @@ class CatalogSync {
     }
 
     /**
-     * Returns an array of image data for specified product.
-     * https://docs.flow.io/type/image-form
-     */
+    * Returns an array of image data for specified product.
+    * https://docs.flow.io/type/image-form
+    */
     protected function getProductImageData($product) {
         $images = [];
 
@@ -364,8 +375,8 @@ class CatalogSync {
     }
 
     /**
-     * Returns the public image url for the product by image type.
-     */
+    * Returns the public image url for the product by image type.
+    */
     protected function getImageUrl($product, string $imageType = '') {
         $storeId = $this->storeManager->getStore()->getId();
         $imageUrl = null;
@@ -387,8 +398,8 @@ class CatalogSync {
     }
 
     /**
-     * Returns a map of product attributes.
-     */
+    * Returns a map of product attributes.
+    */
     protected function getProductAttributeMap($product, $parentProduct = null) {
         $attributes = $product->getAttributes();
 
@@ -424,9 +435,9 @@ class CatalogSync {
     }
 
     /**
-     * Returns Flow product dimension data.
-     * https://docs.flow.io/type/dimension
-     */
+    * Returns Flow product dimension data.
+    * https://docs.flow.io/type/dimension
+    */
     protected function getProductDimensionData($product) {
         if ($product->getWeight()) {
             $weightUnit = $this->scopeConfig->getValue(
@@ -447,8 +458,8 @@ class CatalogSync {
     }
 
     /**
-     * Converts Magento weight unit to Flow weight unit.
-     */
+    * Converts Magento weight unit to Flow weight unit.
+    */
     protected function convertWeightUnit($weightUnit) {
         foreach(self::FLOW_UNIT_MEASUREMENTS as $k => $v)  {
             if (in_array($weightUnit, $v)) {
@@ -459,8 +470,8 @@ class CatalogSync {
     }
 
     /**
-     * Returns the next unprocessed event.
-     */
+    * Returns the next unprocessed event.
+    */
     private function getNextUnprocessedEvent() {
         $collection = $this->syncSkuFactory->create()->getCollection();
         $collection->addFieldToFilter('status', SyncSku::STATUS_NEW);
@@ -475,8 +486,8 @@ class CatalogSync {
     }
 
     /**
-     * Deletes old processed items.
-     */
+    * Deletes old processed items.
+    */
     private function deleteOldQueueDoneItems() {
         $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
         $connection = $resource->getConnection();
@@ -485,8 +496,8 @@ class CatalogSync {
     }
 
     /**
-     * Reset any items that have been stuck processing for too long.
-     */
+    * Reset any items that have been stuck processing for too long.
+    */
     private function resetOldQueueProcessingItems() {
         $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
         $connection = $resource->getConnection();

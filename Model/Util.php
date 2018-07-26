@@ -6,7 +6,8 @@ use Magento\Framework\UrlInterface;
 use \Magento\Store\Model\ScopeInterface;
 use Zend\Http\{
     Client,
-    Request
+    Request,
+    Client\Adapter\Exception\RuntimeException
 };
 
 /**
@@ -31,6 +32,12 @@ class Util {
 
     // Name of Flow session cookie
     const FLOW_SESSION_COOKIE = '_f60_session';
+
+    // Timeout for Flow http client
+    const FLOW_CLIENT_TIMEOUT = 10;
+
+    // Number of seconds to delay before retrying
+    const FLOW_CLIENT_RETRY_DELAY = 10;
 
     protected $logger;
     protected $scopeConfig;
@@ -93,11 +100,30 @@ class Util {
         $url = $this->getFlowApiEndpoint($storeId, $urlStub);
         $this->logger->info('Flow Client URL: ' . $url);
 
-        $client = new Client($url);
+        $client = new Client($url, [
+            'timeout' => self::FLOW_CLIENT_TIMEOUT
+        ]);
         $client->setMethod(Request::METHOD_GET);
         $client->setAuth($this->getFlowApiToken($storeId), '');
         $client->setEncType('application/json');
         return $client;
+    }
+
+    /**
+     * Wrapper function to retry on timeout for http client send().
+     */
+    public function sendFlowClient($client, $numRetries = 0) {
+        try {
+            return $client->send();
+        } catch (RuntimeException $e) {
+            if ($numRetries <= 0) {
+                throw $e;
+            } else {
+                $this->logger->info('Error sending client request, retries remaining: ' . $numRetries . ', trying again in ' . self::FLOW_CLIENT_RETRY_DELAY . ' seconds');
+                sleep(self::FLOW_CLIENT_RETRY_DELAY);
+                $this->sendFlowClient($client, $numRetries - 1);
+            }
+        }
     }
 
     /**
@@ -108,4 +134,5 @@ class Util {
         return self::FLOW_CHECKOUT_BASE_URL .
             $this->getFlowOrganizationId($storeId) . '/order/';
     }
+
 }

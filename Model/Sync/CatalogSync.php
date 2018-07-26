@@ -110,6 +110,78 @@ class CatalogSync {
     }
 
     /**
+    * Initializes the connector with Flow.
+    */
+    public function initFlowConnector($storeId) {
+        $data = [
+            'intent' => 'price',
+            'type' => 'decimal',
+            'options' => [
+                'required' => false,
+                'show_in_catalog' => false,
+                'show_in_harmonization' => false
+            ]
+        ];
+
+        $priceCodes = [
+            'base_price',
+            'bundle_option',
+            'bundle_selection',
+            'catalog_rule_price',
+            'configured_price',
+            'configured_regular_price',
+            'custom_option_price',
+            'final_price',
+            'link_price',
+            'max_price',
+            'min_price',
+            'msrp_price',
+            'regular_price',
+            'special_price',
+            'tier_price',
+        ];
+
+        $isSuccess = true;
+
+        foreach ($priceCodes as $priceCode) {
+            $priceData = array_merge($data, ['key' => $priceCode]);
+            if (!$this->upsertFlowAttribute($storeId, $priceData)) {
+                $isSuccess = false;
+            }
+        }
+
+        return $isSuccess;
+    }
+
+    /**
+    * Helper function to upsert Flow attributes.
+    */
+    protected function upsertFlowAttribute($storeId, $data) {
+        $urlStub = '/attributes/' . $data['key'];
+
+        $dataStr = $this->jsonHelper->jsonEncode($data);
+        $this->logger->info('Updating Flow attribute: ' . $dataStr);
+
+        $client = $this->util->getFlowClient($storeId, $urlStub);
+        $client->setMethod(Request::METHOD_PUT);
+        $client->setRawBody($dataStr);
+
+        $response = $this->util->sendFlowClient($client, 3);
+
+        if ($response->isSuccess()) {
+            $this->logger->info('CatalogSync->upsertFlowAttribute ' . $urlStub . ': success');
+            $this->logger->info('Status code: ' . $response->getStatusCode());
+            $this->logger->info('Body: ' . $response->getBody());
+        } else {
+            $this->logger->error('CatalogSync->upsertFlowAttribute ' . $urlStub . ': failed');
+            $this->logger->error('Status code: ' . $response->getStatusCode());
+            $this->logger->error('Body: ' . $response->getBody());
+        }
+
+        return $response->isSuccess();
+    }
+
+    /**
     * Queue product for syncing to Flow.
     * @return \FlowCommerce\FlowConnector\Model\SyncSku
     */
@@ -145,6 +217,10 @@ class CatalogSync {
     public function queueAll() {
         $this->logger->info('Queueing all products for sync to Flow.');
 
+        $this->resetOldQueueProcessingItems();
+        $this->deleteQueueErrorDoneItems();
+        $this->deleteOldQueueDoneItems();
+
         // Get list of stores with enabled connectors
         $storeIds = [];
         foreach ($this->storeManager->getStores() as $store) {
@@ -161,7 +237,7 @@ class CatalogSync {
             $connection = $resource->getConnection();
             $sql = '
             insert into flow_connector_sync_skus(store_id, sku, status)
-            select store.store_id, sku, \'' . SyncSku::STATUS_NEW . '\'
+            select store.store_id, catalog_product_entity.sku, \'' . SyncSku::STATUS_NEW . '\'
               from catalog_product_entity,
                    catalog_product_website,
                    store
@@ -169,6 +245,12 @@ class CatalogSync {
                and catalog_product_website.website_id = store.website_id
                and store.store_id in (\'' . implode('\',\'', $storeIds) . '\')
                and store.is_active = 1
+               and not exists (
+                     select 1
+                       from flow_connector_sync_skus
+                      where flow_connector_sync_skus.sku = catalog_product_entity.sku
+                        and flow_connector_sync_skus.status = \'' . SyncSku::STATUS_NEW . '\'
+                   )
              group by store.store_id, sku
             ';
             $connection->query($sql);
@@ -185,9 +267,6 @@ class CatalogSync {
     */
     public function process($numToProcess = 1000, $keepAlive = 60) {
         $this->logger->info('Starting sync sku processing');
-
-        $this->deleteOldQueueDoneItems();
-        $this->resetOldQueueProcessingItems();
 
         while ($keepAlive > 0) {
             while($numToProcess > 0) {
@@ -261,7 +340,7 @@ class CatalogSync {
         $data = $this->convertProductToFlowData($product);
 
         foreach ($data as $item) {
-            $urlStub = '/catalog/items/' . $item['number'];
+            $urlStub = '/catalog/items/' . urlencode($item['number']);
 
             $itemStr = $this->jsonHelper->jsonEncode($item);
             $this->logger->info('Syncing item: ' . $itemStr);
@@ -270,7 +349,8 @@ class CatalogSync {
             $client->setMethod(Request::METHOD_PUT);
             $client->setRawBody($itemStr);
 
-            $response = $client->send();
+            $response = $this->util->sendFlowClient($client, 3);
+
             if ($response->isSuccess()) {
                 $this->logger->info('CatalogSync->syncProduct: success');
                 $this->logger->info('Status code: ' . $response->getStatusCode());
@@ -294,7 +374,7 @@ class CatalogSync {
 
         $client = $this->util->getFlowClient($syncSku->getStoreId(), '/catalog/items/' . $syncSku->getSku());
         $client->setMethod(Request::METHOD_DELETE);
-        $response = $client->send();
+        $response = $this->util->sendFlowClient($client, 3);
 
         if ($response->isSuccess()) {
             $this->logger->info('Sucessfully deleted sku from Flow: ' . $syncSku->getSku());
@@ -323,16 +403,16 @@ class CatalogSync {
         }
 
         $itemData = [
-            "number" => $product->getSku(),
-            "name" => $product->getName(),
-            "description" => $product->getDescription(),
-            "locale" => $this->localeResolver->getLocale(),
-            "price" => $product->getPrice(),
-            "currency" => $this->storeManager->getStore()->getCurrentCurrencyCode(),
-            "categories" => $this->getProductCategoryNames($product),
-            "attributes" => $this->getProductAttributeMap($product, $parentProduct),
-            "images" => $this->getProductImageData($product),
-            "dimensions" => $this->getProductDimensionData($product)
+            'number' => $product->getSku(),
+            'name' => $product->getName(),
+            'description' => $product->getDescription(),
+            'locale' => $this->localeResolver->getLocale(),
+            'price' => $product->getPrice(),
+            'currency' => $this->storeManager->getStore()->getCurrentCurrencyCode(),
+            'categories' => $this->getProductCategoryNames($product),
+            'attributes' => $this->getProductAttributeMap($product, $parentProduct),
+            'images' => $this->getProductImageData($product),
+            'dimensions' => $this->getProductDimensionData($product)
         ];
 
         return [$itemData];
@@ -419,9 +499,19 @@ class CatalogSync {
             }
         }
 
+        // Add all pricing information
+        foreach ($product->getPriceInfo()->getPrices() as $price) {
+            if ($price->getValue()) {
+                $this->logger->info('Add price code: ' . $price->getPriceCode() . ', amount: ' . $price->getAmount());
+                $data[$price->getPriceCode()] = "{$price->getAmount()}";
+            } else {
+                $this->logger->info('Skipping price code: ' . $price->getPriceCode() . ', value is null');
+            }
+        }
+
+        // Add parent sku
         if ($parentProduct) {
             $data['parent_sku'] = $parentProduct->getSku();
-
         } else {
             $productIds = $this->configurable->getParentIdsByChild($product->getId());
             if (isset($productIds[0])) {
@@ -486,22 +576,49 @@ class CatalogSync {
     }
 
     /**
-    * Deletes old processed items.
-    */
-    private function deleteOldQueueDoneItems() {
-        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        $sql = 'delete from flow_connector_sync_skus where status=\'' . SyncSku::STATUS_DONE . '\' and updated_at < date_sub(now(), interval 96 hour)';
-        $connection->query($sql);
-    }
-
-    /**
     * Reset any items that have been stuck processing for too long.
     */
     private function resetOldQueueProcessingItems() {
         $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
         $connection = $resource->getConnection();
-        $sql = 'update flow_connector_sync_skus set status=\'' .  SyncSku::STATUS_NEW . '\' where status=\'' . SyncSku::STATUS_PROCESSING . '\' and updated_at < date_sub(now(), interval 4 hour)';
+        $sql = '
+        update flow_connector_sync_skus
+           set status=\'' .  SyncSku::STATUS_NEW . '\'
+         where status=\'' . SyncSku::STATUS_PROCESSING . '\'
+           and updated_at < date_sub(now(), interval 4 hour)
+        ';
+        $connection->query($sql);
+    }
+
+    /**
+    * Deletes items with errors where there is a new record that is done.
+    */
+    private function deleteQueueErrorDoneItems() {
+        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
+        $connection = $resource->getConnection();
+        $sql = '
+        delete s1
+          from flow_connector_sync_skus s1
+          join flow_connector_sync_skus s2
+            on s1.sku = s2.sku
+           and s1.status = \'' . SyncSku::STATUS_ERROR . '\'
+           and s2.status = \'' . SyncSku::STATUS_DONE . '\'
+           and s1.updated_at < s2.updated_at
+        ';
+        $connection->query($sql);
+    }
+
+    /**
+    * Deletes old processed items.
+    */
+    private function deleteOldQueueDoneItems() {
+        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
+        $connection = $resource->getConnection();
+        $sql = '
+        delete from flow_connector_sync_skus
+         where status=\'' . SyncSku::STATUS_DONE . '\'
+           and updated_at < date_sub(now(), interval 96 hour)
+        ';
         $connection->query($sql);
     }
 }

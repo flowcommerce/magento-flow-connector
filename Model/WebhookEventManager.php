@@ -147,8 +147,8 @@ class WebhookEventManager {
         $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB);
 
         $data = [
-            "url" => $baseUrl . "flowconnector/webhooks/{$endpointStub}?storeId={$storeId}",
-            "events" => $event
+            'url' => $baseUrl . 'flowconnector/webhooks/' . $endpointStub . '?storeId=' . $storeId,
+            'events' => $event
         ];
 
         $this->logger->info('Registering webhook event '. $event . ': ' . $data['url']);
@@ -209,7 +209,11 @@ class WebhookEventManager {
     private function deleteOldProcessedEvents() {
         $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
         $connection = $resource->getConnection();
-        $sql = 'delete from flow_connector_webhook_events where status=\'' . WebhookEvent::STATUS_DONE . '\' and updated_at < date_sub(now(), interval 96 hour)';
+        $sql = '
+        delete from flow_connector_webhook_events
+         where status=\'' . WebhookEvent::STATUS_DONE . '\'
+           and updated_at < date_sub(now(), interval 96 hour)
+        ';
         $connection->query($sql);
     }
 
@@ -219,7 +223,12 @@ class WebhookEventManager {
     private function resetOldErrorEvents() {
         $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
         $connection = $resource->getConnection();
-        $sql = 'update flow_connector_webhook_events set status=\'' . WebhookEvent::STATUS_NEW . '\' where status=\'' . WebhookEvent::STATUS_PROCESSING . '\' and updated_at < date_sub(now(), interval 4 hour)';
+        $sql = '
+        update flow_connector_webhook_events
+           set status=\'' . WebhookEvent::STATUS_NEW . '\'
+         where status=\'' . WebhookEvent::STATUS_PROCESSING . '\'
+           and updated_at < date_sub(now(), interval 4 hour)
+        ';
         $connection->query($sql);
     }
 }

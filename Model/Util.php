@@ -3,9 +3,11 @@
 namespace FlowCommerce\FlowConnector\Model;
 
 use Magento\Framework\UrlInterface;
+use \Magento\Store\Model\ScopeInterface;
 use Zend\Http\{
     Client,
-    Request
+    Request,
+    Client\Adapter\Exception\RuntimeException
 };
 
 /**
@@ -31,6 +33,12 @@ class Util {
     // Name of Flow session cookie
     const FLOW_SESSION_COOKIE = '_f60_session';
 
+    // Timeout for Flow http client
+    const FLOW_CLIENT_TIMEOUT = 10;
+
+    // Number of seconds to delay before retrying
+    const FLOW_CLIENT_RETRY_DELAY = 10;
+
     protected $logger;
     protected $scopeConfig;
 
@@ -51,52 +59,80 @@ class Util {
 
     /**
      * Returns true if Flow is enabled in the Admin Store Configuration.
+     * @param storeId ID of store
      */
-    public function isFlowEnabled() {
-        return $this->scopeConfig->getValue(self::FLOW_ENABLED);
+    public function isFlowEnabled($storeId) {
+        return $this->scopeConfig->getValue(self::FLOW_ENABLED, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**
      * Returns the Flow Organization Id set in the Admin Store Configuration.
+     * @param storeId ID of store
      */
-    public function getFlowOrganizationId() {
-        return $this->scopeConfig->getValue(self::FLOW_ORGANIZATION_ID);
+    public function getFlowOrganizationId($storeId) {
+        return $this->scopeConfig->getValue(self::FLOW_ORGANIZATION_ID, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**
      * Returns the Flow API Token set in the Admin Store Configuration.
+     * @param storeId ID of store
      */
-    public function getFlowApiToken() {
-        return $this->scopeConfig->getValue(self::FLOW_API_TOKEN);
+    public function getFlowApiToken($storeId) {
+        return $this->scopeConfig->getValue(self::FLOW_API_TOKEN, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**
      * Returns the Flow API endpoint with the specified url stub.
+     * @param storeId ID of store
+     * @param urlStub Url stub for the client
      */
-    public function getFlowApiEndpoint($urlStub) {
+    public function getFlowApiEndpoint($storeId, $urlStub) {
         return self::FLOW_API_BASE_ENDPOINT .
-            $this->getFlowOrganizationId() . $urlStub;
+            $this->getFlowOrganizationId($storeId) . $urlStub;
     }
 
     /**
      * Returns a Zend Client preconfigured for the Flow API.
+     * @param storeId ID of store
+     * @param urlStub Url stub for the client
      */
-    public function getFlowClient($urlStub) {
-        $url = $this->getFlowApiEndpoint($urlStub);
+    public function getFlowClient($storeId, $urlStub) {
+        $url = $this->getFlowApiEndpoint($storeId, $urlStub);
         $this->logger->info('Flow Client URL: ' . $url);
 
-        $client = new Client($url);
+        $client = new Client($url, [
+            'timeout' => self::FLOW_CLIENT_TIMEOUT
+        ]);
         $client->setMethod(Request::METHOD_GET);
-        $client->setAuth($this->getFlowApiToken(), '');
+        $client->setAuth($this->getFlowApiToken($storeId), '');
         $client->setEncType('application/json');
         return $client;
     }
 
     /**
-     * Returns the Flow Checkout Url
+     * Wrapper function to retry on timeout for http client send().
      */
-    public function getFlowCheckoutUrl() {
-        return self::FLOW_CHECKOUT_BASE_URL .
-            $this->getFlowOrganizationId() . '/order/';
+    public function sendFlowClient($client, $numRetries = 0) {
+        try {
+            return $client->send();
+        } catch (RuntimeException $e) {
+            if ($numRetries <= 0) {
+                throw $e;
+            } else {
+                $this->logger->info('Error sending client request, retries remaining: ' . $numRetries . ', trying again in ' . self::FLOW_CLIENT_RETRY_DELAY . ' seconds');
+                sleep(self::FLOW_CLIENT_RETRY_DELAY);
+                $this->sendFlowClient($client, $numRetries - 1);
+            }
+        }
     }
+
+    /**
+     * Returns the Flow Checkout Url
+     * @param storeId ID of store
+     */
+    public function getFlowCheckoutUrl($storeId) {
+        return self::FLOW_CHECKOUT_BASE_URL .
+            $this->getFlowOrganizationId($storeId) . '/order/';
+    }
+
 }

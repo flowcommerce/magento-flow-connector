@@ -81,7 +81,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
     * @param country Country code for the experience
     */
     private function getCheckoutUrlWithCart($items, $country = null) {
-        $url = $this->util->getFlowCheckoutUrl() . '?';
+        $url = $this->util->getFlowCheckoutUrl($this->storeManager->getStore()->getId()) . '?';
 
         // Additional custom attributes to pass through hosted checkout
         $attribs = [];

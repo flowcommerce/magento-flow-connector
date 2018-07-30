@@ -41,13 +41,16 @@ class Util {
 
     protected $logger;
     protected $scopeConfig;
+    protected $storeManager;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -133,6 +136,13 @@ class Util {
     public function getFlowCheckoutUrl($storeId) {
         return self::FLOW_CHECKOUT_BASE_URL .
             $this->getFlowOrganizationId($storeId) . '/order/';
+    }
+
+    /**
+     * Returns the ID of the current store
+     */
+    public function getCurrentStoreId() {
+        $this->storeManager->getStore()->getId();
     }
 
 }

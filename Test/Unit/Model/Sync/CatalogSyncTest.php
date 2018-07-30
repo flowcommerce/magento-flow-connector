@@ -58,12 +58,12 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
         $this->response->method('isSuccess')->willReturn(true);
 
         $this->client = $this->createMock(\Zend\Http\Client::class);
-        $this->client->method('send')->willReturn($this->response);
-        $this->client->expects($this->once())->method('send');
 
         $this->util = $this->createMock(\FlowCommerce\FlowConnector\Model\Util::class);
         $this->util->method('isFlowEnabled')->willReturn(true);
         $this->util->method('getFlowClient')->willReturn($this->client);
+        $this->util->method('sendFlowClient')->willReturn($this->response);
+        $this->util->expects($this->once())->method('sendFlowClient');
 
         $this->store = $this->createMock(\Magento\Store\Model\Store::class);
         $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);

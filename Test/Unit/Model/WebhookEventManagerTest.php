@@ -61,7 +61,7 @@ class WebhookEventManagerTest extends \PHPUnit\Framework\TestCase {
             'timestamp' => '1/1/2018'
         ];
         $payload = json_encode($payloadData);
-        $this->webhookEventManager->queue(self::WEBHOOK_EVENT_TYPE, $payload);
+        $this->webhookEventManager->queue(self::WEBHOOK_EVENT_TYPE, $payload, 0);
     }
 
 }

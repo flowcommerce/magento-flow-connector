@@ -132,7 +132,7 @@ class WebhookEventManager {
             if (strpos($webhook['url'], '/flowconnector/webhooks/') &&
                 strpos($webhook['url'], 'storeId=' . $storeId)) {
                 $this->logger->info('Deleting webhook: ' . $webhook['url']);
-                $client = $this->util->getFlowClient($storeId, '/webhooks/' . $webhook['id']);
+                $client = $this->util->getFlowClient('/webhooks/' . $webhook['id'], $storeId);
                 $client->setMethod(Request::METHOD_DELETE);
                 $client->send();
             }
@@ -155,7 +155,7 @@ class WebhookEventManager {
 
         $dataStr = $this->jsonHelper->jsonEncode($data);
 
-        $client = $this->util->getFlowClient($storeId, '/webhooks');
+        $client = $this->util->getFlowClient('/webhooks', $storeId);
         $client->setMethod(Request::METHOD_POST);
         $client->setRawBody($dataStr);
         $response = $client->send();
@@ -172,11 +172,11 @@ class WebhookEventManager {
     * @param storeId ID of store
     */
     private function getRegisteredWebhooks($storeId) {
-        if ($this->util->getFlowOrganizationId($storeId) == null) {
+        if (!$this->util->isFlowEnabled($storeId)) {
             return [];
         }
 
-        $client = $this->util->getFlowClient($storeId, '/webhooks');
+        $client = $this->util->getFlowClient('/webhooks', $storeId);
         $response = $client->send();
 
         if ($response->isSuccess()) {

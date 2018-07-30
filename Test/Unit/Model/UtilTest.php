@@ -17,6 +17,7 @@ class UtilTest extends \PHPUnit\Framework\TestCase {
 
     protected $logger;
     protected $scopeConfig;
+    protected $storeManager;
     protected $util;
 
     protected function setUp() {
@@ -24,15 +25,21 @@ class UtilTest extends \PHPUnit\Framework\TestCase {
         $this->logger = $this->createMock(\Psr\Log\LoggerInterface::class);
 
         $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
-
         $this->scopeConfig->method('getValue')
             ->will($this->returnCallback(function($key) {
                 return self::SCOPE_CONFIG_VALUE_MAP[$key];
             }));
 
+        $this->store = $this->createMock(\Magento\Store\Model\Store::class);
+        $this->store->method('getId')->willReturn(0);
+
+        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
+        $this->storeManager->method('getStore')->willReturn($this->store);
+
         $this->util = new Util(
             $this->logger,
-            $this->scopeConfig
+            $this->scopeConfig,
+            $this->storeManager
         );
     }
 

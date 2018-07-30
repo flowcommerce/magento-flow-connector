@@ -226,7 +226,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->logger->info('Processing allocation_deleted_v2 data');
         $data = $this->getPayloadData();
 
-        $client = $this->util->getFlowClient($this->getStoreId(), '/orders/allocations/' . $data['id']);
+        $urlStub = '/orders/allocations/' . $data['id'];
+        $client = $this->util->getFlowClient($urlStub, $this->getStoreId());
         $response = $client->send();
 
         if ($response->isSuccess()) {
@@ -395,7 +396,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->logger->info('Processing authorization_deleted_v2 data');
         $data = $this->getPayloadData();
 
-        $client = $this->util->getFlowClient($this->getStoreId(), '/authorizations?id=' . $data['id']);
+        $urlStub = '/authorizations?id=' . $data['id'];
+        $client = $this->util->getFlowClient($urlStub, $this->getStoreId());
         $response = $client->send();
 
         if ($response->isSuccess()) {

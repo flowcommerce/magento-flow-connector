@@ -120,7 +120,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                 ]
             ];
 
-            $client = $this->_util->getFlowClient('/captures');
+            $client = $this->_util->getFlowClient('/captures', $this->getStore());
             $client->setMethod(Request::METHOD_POST);
             $client->setRawBody($this->_jsonHelper->jsonEncode($data));
 
@@ -177,7 +177,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                  ]
              ];
 
-             $client = $this->_util->getFlowClient('/refunds');
+             $client = $this->_util->getFlowClient('/refunds', $this->getStore());
              $client->setMethod(Request::METHOD_POST);
              $client->setRawBody($this->_jsonHelper->jsonEncode($data));
 

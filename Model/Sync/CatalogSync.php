@@ -162,7 +162,7 @@ class CatalogSync {
         $dataStr = $this->jsonHelper->jsonEncode($data);
         $this->logger->info('Updating Flow attribute: ' . $dataStr);
 
-        $client = $this->util->getFlowClient($storeId, $urlStub);
+        $client = $this->util->getFlowClient($urlStub, $storeId);
         $client->setMethod(Request::METHOD_PUT);
         $client->setRawBody($dataStr);
 
@@ -345,11 +345,11 @@ class CatalogSync {
             $itemStr = $this->jsonHelper->jsonEncode($item);
             $this->logger->info('Syncing item: ' . $itemStr);
 
-            $client = $this->util->getFlowClient($product->getStoreId(), $urlStub);
+            $client = $this->util->getFlowClient($urlStub, $product->getStoreId());
             $client->setMethod(Request::METHOD_PUT);
             $client->setRawBody($itemStr);
 
-            $response = $this->util->sendFlowClient($client, 3);
+            $response = $this->util->sendFlowClient($client);
 
             if ($response->isSuccess()) {
                 $this->logger->info('CatalogSync->syncProduct: success');
@@ -372,9 +372,10 @@ class CatalogSync {
             throw new CatalogSyncException('Flow module is disabled.');
         }
 
-        $client = $this->util->getFlowClient($syncSku->getStoreId(), '/catalog/items/' . $syncSku->getSku());
+        $urlStub = '/catalog/items/' . urlencode($syncSku->getSku());
+        $client = $this->util->getFlowClient($urlStub, $syncSku->getStoreId());
         $client->setMethod(Request::METHOD_DELETE);
-        $response = $this->util->sendFlowClient($client, 3);
+        $response = $this->util->sendFlowClient($client);
 
         if ($response->isSuccess()) {
             $this->logger->info('Sucessfully deleted sku from Flow: ' . $syncSku->getSku());
@@ -500,12 +501,14 @@ class CatalogSync {
         }
 
         // Add all pricing information
-        foreach ($product->getPriceInfo()->getPrices() as $price) {
-            if ($price->getValue()) {
-                $this->logger->info('Add price code: ' . $price->getPriceCode() . ', amount: ' . $price->getAmount());
-                $data[$price->getPriceCode()] = "{$price->getAmount()}";
-            } else {
-                $this->logger->info('Skipping price code: ' . $price->getPriceCode() . ', value is null');
+        if ($product->getPriceInfo()) {
+            foreach ($product->getPriceInfo()->getPrices() as $price) {
+                if ($price->getValue()) {
+                    $this->logger->info('Add price code: ' . $price->getPriceCode() . ', amount: ' . $price->getAmount());
+                    $data[$price->getPriceCode()] = "{$price->getAmount()}";
+                } else {
+                    $this->logger->info('Skipping price code: ' . $price->getPriceCode() . ', value is null');
+                }
             }
         }
 

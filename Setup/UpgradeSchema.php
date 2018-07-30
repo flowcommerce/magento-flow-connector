@@ -153,7 +153,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     }
 
     /**
-     * Adds a store_id columen to sync skus table.
+     * Adds a store_id column to sync skus table.
      */
     private function addStoreIdToSyncSkusTable($installer) {
         $tableName = $installer->getTable('flow_connector_sync_skus');

@@ -156,7 +156,7 @@ class Util {
             } else {
                 $this->logger->info('Error sending client request, retries remaining: ' . $numRetries . ', trying again in ' . self::FLOW_CLIENT_RETRY_DELAY . ' seconds');
                 sleep(self::FLOW_CLIENT_RETRY_DELAY);
-                $this->sendFlowClient($client, $numRetries - 1);
+                return $this->sendFlowClient($client, $numRetries - 1);
             }
         }
     }

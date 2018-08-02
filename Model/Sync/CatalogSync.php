@@ -380,7 +380,7 @@ class CatalogSync {
         if ($response->isSuccess()) {
             $this->logger->info('Sucessfully deleted sku from Flow: ' . $syncSku->getSku());
         } else {
-            throw new CatalogSyncException('Unable to delete: ' . $response->getContent());
+            throw new CatalogSyncException('Unable to delete: ' . $syncSku->getSku());
         }
     }
 

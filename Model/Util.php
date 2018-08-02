@@ -39,18 +39,26 @@ class Util {
     // Number of seconds to delay before retrying
     const FLOW_CLIENT_RETRY_DELAY = 10;
 
+    // User agent for connecting to Flow
+    const HTTP_USERAGENT = 'Flow-M2';
+
     protected $logger;
     protected $scopeConfig;
     protected $storeManager;
+    protected $moduleList;
+    protected $moduleVersion;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\Module\ModuleListInterface $moduleList
     ) {
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
+        $this->moduleList = $moduleList;
+        $this->moduleVersion = $this->moduleList->getOne('FlowCommerce_FlowConnector')['setup_version'];
     }
 
     /**
@@ -120,10 +128,12 @@ class Util {
             $storeId = $this->getCurrentStoreId();
         }
 
+        $useragent = self::HTTP_USERAGENT . '-' . $this->moduleVersion;
         $url = $this->getFlowApiEndpoint($urlStub, $storeId);
-        $this->logger->info('Flow Client URL: ' . $url);
+        $this->logger->info('Flow Client [' . $useragent . '] URL: ' . $url);
 
         $client = new Client($url, [
+            'useragent' => $useragent,
             'timeout' => self::FLOW_CLIENT_TIMEOUT
         ]);
         $client->setMethod(Request::METHOD_GET);

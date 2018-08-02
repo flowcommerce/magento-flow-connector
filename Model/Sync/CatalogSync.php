@@ -500,6 +500,9 @@ class CatalogSync {
             }
         }
 
+        // Add product ID
+        $data['product_id'] = $product->getId();
+
         // Add all pricing information
         if ($product->getPriceInfo()) {
             foreach ($product->getPriceInfo()->getPrices() as $price) {
@@ -515,12 +518,14 @@ class CatalogSync {
         // Add parent sku
         if ($parentProduct) {
             $data['parent_sku'] = $parentProduct->getSku();
+            $data['parent_id'] = $parentProduct->getId();
         } else {
             $productIds = $this->configurable->getParentIdsByChild($product->getId());
             if (isset($productIds[0])) {
                 $this->logger->info('Found parent product Id: ' . $productIds[0]);
                 $parentProduct = $this->productFactory->create()->load($productIds[0]);
                 $data['parent_sku'] = $parentProduct->getSku();
+                $data['parent_id'] = $parentProduct->getId();
             }
         }
 

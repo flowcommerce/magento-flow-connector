@@ -262,14 +262,14 @@ class CatalogSync {
 
     /**
     * Process the SyncSku queue.
-    * @param numToProcess Number of records to process.
+    * @param numToProcess Number of records to process. Pass in -1 to process all records.
     * @param keepAlive Number of seconds to keep alive after/between processing.
     */
     public function process($numToProcess = 1000, $keepAlive = 60) {
         $this->logger->info('Starting sync sku processing');
 
         while ($keepAlive > 0) {
-            while($numToProcess > 0) {
+            while($numToProcess != 0) {
                 $syncSku = $this->getNextUnprocessedEvent();
                 if ($syncSku == null) {
                     break;

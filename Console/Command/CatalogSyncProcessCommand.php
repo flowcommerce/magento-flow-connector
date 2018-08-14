@@ -28,13 +28,19 @@ final class CatalogSyncProcessCommand extends BaseCommand {
 
     public function configure() {
         $this->setName('flow:flow-connector:catalog-sync-process')
-            ->setDescription('Process sync skus queue and send to Flow.');
+            ->setDescription('Process sync skus queue and send to Flow.')
+            ->addArgument('num-to-process', InputArgument::OPTIONAL, 'Number of records to process. Defaults to processing all records.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
+        $numToProcess = $input->getArgument('num-to-process');
+        if (!isset($numToProcess)) {
+            $numToProcess = -1;
+        }
+
         $logger = new ConsoleLogger($output);
         $this->initCLI();
         $this->catalogSync->setLogger($logger);
-        $this->catalogSync->process();
+        $this->catalogSync->process($numToProcess);
     }
 }

@@ -88,3 +88,13 @@ flow:flow-connector:catalog-sync-queue-all     Queue all products for sync to Fl
 flow:flow-connector:webhook-event-process      Process Flow webhook events.
 flow:flow-connector:webhook-register-webhooks  Register webhooks with Flow.
 ```
+
+### Update version
+
+To update the plugin to the latest version, run:
+
+```
+composer update
+compose install
+./bin/magento setup:upgrade
+```

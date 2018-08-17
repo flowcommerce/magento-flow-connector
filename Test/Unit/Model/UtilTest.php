@@ -36,10 +36,14 @@ class UtilTest extends \PHPUnit\Framework\TestCase {
         $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
         $this->storeManager->method('getStore')->willReturn($this->store);
 
+        $this->moduleList = $this->createMock(\Magento\Framework\Module\ModuleListInterface::class);
+        $this->moduleList->method('getOne')->willReturn(['setup_version' => '1.0.0']);
+
         $this->util = new Util(
             $this->logger,
             $this->scopeConfig,
-            $this->storeManager
+            $this->storeManager,
+            $this->moduleList
         );
     }
 

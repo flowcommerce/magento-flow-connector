@@ -22,11 +22,7 @@ class WebhookEventProcessTask {
     }
 
     public function execute() {
-        if ($this->util->isFlowEnabled()) {
-            $this->logger->info("Running WebhookEventProcessTask execute");
-            $this->webhookEventManager->process();
-        } else {
-            $this->logger->info("Skipping WebhookEventProcessTask execute - connector disabled.");
-        }
+        $this->logger->info("Running WebhookEventProcessTask execute");
+        $this->webhookEventManager->process();
     }
 }

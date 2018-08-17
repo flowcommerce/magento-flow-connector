@@ -22,11 +22,7 @@ class CatalogSyncProcessTask {
     }
 
     public function execute() {
-        if ($this->util->isFlowEnabled()) {
-            $this->logger->info("Running CatalogSyncProcessTask execute.");
-            $this->catalogSync->process();
-        } else {
-            $this->logger->info("Skipping CatalogSyncProcessTask execute - connector disabled.");
-        }
+        $this->logger->info("Running CatalogSyncProcessTask execute.");
+        $this->catalogSync->process();
     }
 }

@@ -136,7 +136,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
             ->willReturn([$this->productAttribute]);
 
         $this->catalogSync->queue($product);
-        $this->catalogSync->syncProduct($product);
+        $this->catalogSync->syncProduct($this->syncSku, $product);
     }
 
 }

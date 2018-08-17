@@ -292,7 +292,7 @@ class CatalogSync {
                 try {
                     if ($product) {
                         $this->logger->info('Syncing sku to Flow: ' . $product->getSku());
-                        $this->syncProduct($product);
+                        $this->syncProduct($syncSku, $product);
                         $syncSku->setStatus(SyncSku::STATUS_DONE);
                         $syncSku->save();
 
@@ -332,12 +332,12 @@ class CatalogSync {
     /**
     * Syncs the specified product to the Flow catalog.
     */
-    public function syncProduct($product) {
-        if (! $this->util->isFlowEnabled($product->getStoreId())) {
+    public function syncProduct($syncSku, $product) {
+        if (! $this->util->isFlowEnabled($syncSku->getStoreId())) {
             throw new CatalogSyncException('Flow module is disabled.');
         }
 
-        $data = $this->convertProductToFlowData($product);
+        $data = $this->convertProductToFlowData($syncSku, $product);
 
         foreach ($data as $item) {
             $urlStub = '/catalog/items/' . urlencode($item['number']);
@@ -345,7 +345,7 @@ class CatalogSync {
             $itemStr = $this->jsonHelper->jsonEncode($item);
             $this->logger->info('Syncing item: ' . $itemStr);
 
-            $client = $this->util->getFlowClient($urlStub, $product->getStoreId());
+            $client = $this->util->getFlowClient($urlStub, $syncSku->getStoreId());
             $client->setMethod(Request::METHOD_PUT);
             $client->setRawBody($itemStr);
 
@@ -391,14 +391,14 @@ class CatalogSync {
     *
     * @return array An array of item-form elements
     */
-    protected function convertProductToFlowData($product, $parentProduct = null) {
+    protected function convertProductToFlowData($syncSku, $product, $parentProduct = null) {
         $this->logger->info('Converting product to Flow data: ' . $product->getSku());
 
         if ($product->getTypeId() == Configurable::TYPE_CODE) {
             $children = $this->linkManagement->getChildren($product->getSku());
             $data = [];
             foreach($children as $child) {
-                $data = array_merge($data, $this->convertProductToFlowData($child, $product));
+                $data = array_merge($data, $this->convertProductToFlowData($syncSku, $child, $product));
             }
             return $data;
         }
@@ -412,7 +412,7 @@ class CatalogSync {
             'currency' => $this->storeManager->getStore()->getCurrentCurrencyCode(),
             'categories' => $this->getProductCategoryNames($product),
             'attributes' => $this->getProductAttributeMap($product, $parentProduct),
-            'images' => $this->getProductImageData($product),
+            'images' => $this->getProductImageData($syncSku, $product),
             'dimensions' => $this->getProductDimensionData($product)
         ];
 
@@ -441,14 +441,14 @@ class CatalogSync {
     * Returns an array of image data for specified product.
     * https://docs.flow.io/type/image-form
     */
-    protected function getProductImageData($product) {
+    protected function getProductImageData($syncSku, $product) {
         $images = [];
 
-        if ($thumbImgUrl = $this->getImageUrl($product, 'product_page_image_small')) {
+        if ($thumbImgUrl = $this->getImageUrl($syncSku, $product, 'product_page_image_small')) {
             array_push($images, [ 'url' => $thumbImgUrl, 'tags' => ['thumbnail'] ]);
         }
 
-        if ($checkoutImgUrl = $this->getImageUrl($product, 'product_page_image_medium')) {
+        if ($checkoutImgUrl = $this->getImageUrl($syncSku, $product, 'product_page_image_medium')) {
             array_push($images, [ 'url' => $checkoutImgUrl, 'tags' => ['checkout'] ]);
         }
 
@@ -458,8 +458,8 @@ class CatalogSync {
     /**
     * Returns the public image url for the product by image type.
     */
-    protected function getImageUrl($product, string $imageType = '') {
-        $storeId = $this->storeManager->getStore()->getId();
+    protected function getImageUrl($syncSku, $product, string $imageType = '') {
+        $storeId = $syncSku->getStoreId();
         $imageUrl = null;
 
         try {

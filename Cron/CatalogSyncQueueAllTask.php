@@ -22,11 +22,7 @@ class CatalogSyncQueueAllTask {
     }
 
     public function execute() {
-        if ($this->util->isFlowEnabled()) {
-            $this->logger->info("Running CatalogSyncQueueAllTask execute.");
-            $this->catalogSync->queueAll();
-        } else {
-            $this->logger->info("Skipping CatalogSyncQueueAllTask execute - connector disabled.");
-        }
+        $this->logger->info("Running CatalogSyncQueueAllTask execute.");
+        $this->catalogSync->queueAll();
     }
 }

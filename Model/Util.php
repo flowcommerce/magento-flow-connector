@@ -185,6 +185,7 @@ class Util {
     /**
      * Notifies Flow cross dock that order is enroute.
      *
+     * https://docs.flow.io/module/logistics/resource/shipping_notifications#put-organization-shipping-notifications-key
      * https://docs.flow.io/type/shipping-label-package
      *
      * @param order The Magento order object.
@@ -196,9 +197,6 @@ class Util {
         $flowOrder = $this->flowOrderFactory->create()->find('order_id', $order->getId());
         $storeId = $order->getStoreId();
 
-        $partner = 'TODO';
-        $key = 'TODO'
-
         $data = [
             'carrier_tracking_number' => $trackingNumber,
             'destination' => $flowOrder->getCrossDockAddress(),
@@ -207,16 +205,9 @@ class Util {
             'service' => $service
         ];
 
-        $dataStr = $this->jsonHelper->jsonEncode($data);
-
-        $url = self::FLOW_API_BASE_ENDPOINT . 'partners/' . $partner .
-            '/organizations/' . $this->getFlowOrganizationId($storeId) .
-            '/shipping-notifications/' . $key;
-
-        $client = $this->getFlowClient('/shipping-notifications', $storeId);
-        $client->setUrl($url);
+        $client = $this->getFlowClient('shipping-notifications/' . $order->getId(), $storeId);
         $client->setMethod(Request::METHOD_PUT);
-        $client->setRawBody($dataStr);
+        $client->setRawBody($this->jsonHelper->jsonEncode($data));
 
         if ($response->isSuccess()) {
             $this->logger->info('Notify Cross Dock: success');

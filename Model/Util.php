@@ -192,7 +192,7 @@ class Util {
      * @param shippingPackageLabel A Flow Shipping Label Package object.
      * @param service Carrier service level used for generation and shipment of this label.
      */
-    public function notifyCrossDock($order, $trackingNumber, $shippingLabelPackage) {
+    public function notifyCrossDock($order, $trackingNumber, $shippingLabelPackage, $service) {
         $flowOrder = $this->flowOrderFactory->create()->find('order_id', $order->getId());
         $storeId = $order->getStoreId();
 

@@ -16,15 +16,19 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $installer = $setup;
         $installer->startSetup();
 
-        if (version_compare($context->getVersion(), '1.0.1', '<')) {
+        if (version_compare($context->getVersion(), '1.0.0', '<')) {
             $this->installWebhookEventsTable($installer);
             $this->updateSalesOrderExtOrderId($installer);
             $this->installSyncSkusTable($installer);
         }
 
-        if (version_compare($context->getVersion(), '1.0.3', '<')) {
+        if (version_compare($context->getVersion(), '1.0.2', '<')) {
             $this->addStoreIdToWebhookEventsTable($installer);
             $this->addStoreIdToSyncSkusTable($installer);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.9', '<')) {
+            $this->installOrdersTable($installer);
         }
 
         $installer->endSetup();
@@ -186,4 +190,55 @@ class UpgradeSchema implements UpgradeSchemaInterface
             );
         }
     }
+
+    /**
+     * Creates a table to hold flow order data.
+     */
+    private function installOrdersTable($installer) {
+        $tableName = $installer->getTable('flow_connector_orders');
+        $connection = $installer->getConnection();
+
+        if ($connection->isTableExists($tableName)) {
+            return;
+        } // table already exists, no need to install now
+
+        $table = $connection
+            ->newTable($tableName)
+            ->addColumn('id', Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true], 'Primary key')
+            ->addColumn('order_id', Table::TYPE_INTEGER, 10, ['unsigned' => true, 'nullable' => false], 'Magento order id')
+            ->addColumn('flow_order_id', Table::TYPE_TEXT, 255, ['nullable' => false], 'Flow order id')
+            ->addColumn('data', Table::TYPE_TEXT, Table::MAX_TEXT_SIZE, ['nullable' => false], 'Order data')
+            ->addColumn('created_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT], 'Created At')
+            ->addColumn('updated_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT_UPDATE], 'Updated At')
+            ->addColumn('deleted_at', Table::TYPE_TIMESTAMP, null, ['nullable' => true], 'Deleted At')
+            ->setComment('Flow Orders')
+            ->setOption('type', 'InnoDB')
+            ->setOption('charset', 'utf8');
+
+        $connection->createTable($table);
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['deleted_at'], AdapterInterface::INDEX_TYPE_INDEX),
+            ['deleted_at'],
+            AdapterInterface::INDEX_TYPE_INDEX
+        );
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['order_id'], AdapterInterface::INDEX_TYPE_UNIQUE),
+            ['order_id'],
+            AdapterInterface::INDEX_TYPE_UNIQUE
+        );
+
+        $connection->addForeignKey(
+            $installer->getFkName('flow_connector_orders', 'order_id', 'sales_order', 'entity_id'),
+            $tableName,
+            'order_id',
+            $installer->getTable('sales_order'),
+            'entity_id',
+            Table::ACTION_CASCADE
+        );
+    }
+
 }

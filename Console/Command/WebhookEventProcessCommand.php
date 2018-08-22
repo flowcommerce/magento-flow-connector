@@ -32,7 +32,7 @@ final class WebhookEventProcessCommand extends BaseCommand {
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-        $logger = new ConsoleLogger($output);
+        $logger = new FlowConsoleLogger($output);
         $this->initCLI();
         $this->webhookEventManager->setLogger($logger);
         $this->webhookEventManager->process();

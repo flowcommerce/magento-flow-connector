@@ -32,7 +32,7 @@ final class CatalogSyncQueueAllCommand extends BaseCommand {
     }
 
     public function execute(InputInterface $input, OutputInterface $output) {
-        $logger = new ConsoleLogger($output);
+        $logger = new FlowConsoleLogger($output);
         $this->initCLI();
         $this->catalogSync->setLogger($logger);
         $this->catalogSync->queueAll();

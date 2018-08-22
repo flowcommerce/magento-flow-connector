@@ -38,9 +38,9 @@ final class CatalogSyncProcessCommand extends BaseCommand {
             $numToProcess = -1;
         }
 
-        $logger = new ConsoleLogger($output);
+        $logger = new FlowConsoleLogger($output);
         $this->initCLI();
         $this->catalogSync->setLogger($logger);
-        $this->catalogSync->process($numToProcess);
+        $this->catalogSync->process($numToProcess, 1);
     }
 }

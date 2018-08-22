@@ -27,8 +27,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addStoreIdToSyncSkusTable($installer);
         }
 
-        if (version_compare($context->getVersion(), '1.0.9', '<')) {
+        if (version_compare($context->getVersion(), '1.0.10', '<')) {
             $this->installOrdersTable($installer);
+            $this->updateSyncSkusTable($installer);
         }
 
         $installer->endSetup();

@@ -55,6 +55,7 @@ class CatalogSync {
     protected $productRepository;
     protected $imageBuilder;
     protected $eventManager;
+    protected $dateTime;
     protected $syncSkuFactory;
 
     public function __construct(
@@ -77,6 +78,7 @@ class CatalogSync {
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
         \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \FlowCommerce\FlowConnector\Model\SyncSkuFactory $syncSkuFactory
     ) {
         $this->logger = $logger;
@@ -98,6 +100,7 @@ class CatalogSync {
         $this->productRepository = $productRepository;
         $this->imageBuilder = $imageBuilder;
         $this->eventManager = $eventManager;
+        $this->dateTime = $dateTime;
         $this->syncSkuFactory = $syncSkuFactory;
     }
 
@@ -270,31 +273,44 @@ class CatalogSync {
 
         while ($keepAlive > 0) {
             while($numToProcess != 0) {
+                $ts = microtime(true);
                 $syncSku = $this->getNextUnprocessedEvent();
+                $this->logger->info('Time to get next sync sku: ' . (microtime(true) - $ts));
                 if ($syncSku == null) {
+                    $this->logger->info('No records to process.');
                     break;
                 }
 
                 $this->logger->info('Processing sync sku: id=' . $syncSku->getId() . ', sku=' . $syncSku->getSku());
 
                 $syncSku->setStatus(SyncSku::STATUS_PROCESSING);
+                $ts = microtime(true);
                 $syncSku->save();
+                $this->logger->info('Time to update sync sku for processing: ' . (microtime(true) - $ts));
 
                 // Load product to process
+                $ts = microtime(true);
                 $product = null;
                 try {
                     $product = $this->productRepository->get($syncSku->getSku());
                 } catch (NoSuchEntityException $e) {
                     // product does not exist
                 }
+                $this->logger->info('Time to load product data for sync: ' . (microtime(true) - $ts));
 
                 // Product sync or delete
                 try {
                     if ($product) {
                         $this->logger->info('Syncing sku to Flow: ' . $product->getSku());
+
+                        $ts = microtime(true);
                         $this->syncProduct($syncSku, $product);
+                        $this->logger->info('Time to sync product: ' . (microtime(true) - $ts));
+
                         $syncSku->setStatus(SyncSku::STATUS_DONE);
+                        $ts = microtime(true);
                         $syncSku->save();
+                        $this->logger->info('Time to update sync sku as done: ' . (microtime(true) - $ts));
 
                         // Fire an event for client extension code to process
                         $eventName = self::EVENT_FLOW_PRODUCT_SYNC_AFTER;
@@ -337,7 +353,9 @@ class CatalogSync {
             throw new CatalogSyncException('Flow module is disabled.');
         }
 
+        $ts = microtime(true);
         $data = $this->convertProductToFlowData($syncSku, $product);
+        $this->logger->info('Time to convert product to flow data: ' . (microtime(true) - $ts));
 
         foreach ($data as $item) {
             $urlStub = '/catalog/items/' . urlencode($item['number']);
@@ -349,7 +367,9 @@ class CatalogSync {
             $client->setMethod(Request::METHOD_PUT);
             $client->setRawBody($itemStr);
 
+            $ts = microtime(true);
             $response = $this->util->sendFlowClient($client);
+            $this->logger->info('Time to send data to Flow: ' . (microtime(true) - $ts));
 
             if ($response->isSuccess()) {
                 $this->logger->info('CatalogSync->syncProduct: success');
@@ -500,6 +520,9 @@ class CatalogSync {
             }
         }
 
+        // Add user agent
+        $data['user_agent'] = $this->util->getFlowClientUserAgent();
+
         // Add product ID
         $data['product_id'] = $product->getId();
 
@@ -571,16 +594,17 @@ class CatalogSync {
     * Returns the next unprocessed event.
     */
     private function getNextUnprocessedEvent() {
+        $syncSku = null;
         $collection = $this->syncSkuFactory->create()->getCollection();
         $collection->addFieldToFilter('status', SyncSku::STATUS_NEW);
         $collection->setOrder('priority', 'ASC');
         $collection->setOrder('updated_at', 'ASC');
         $collection->setPageSize(1);
-        if ($collection->getSize() == 0) {
-            return null;
-        } else {
-            return $collection->getFirstItem();
+
+        if ($collection->getSize() > 0) {
+            $syncSku = $collection->getFirstItem();
         }
+        return $syncSku;
     }
 
     /**

@@ -120,6 +120,13 @@ class Util {
     }
 
     /**
+     * Returns the Flow Client user agent.
+     */
+    public function getFlowClientUserAgent() {
+        return self::HTTP_USERAGENT . '-' . $this->moduleVersion;
+    }
+
+    /**
      * Returns a Zend Client preconfigured for the Flow API.
      * @param urlStub Url stub for the client
      * @param storeId ID of store, if null defaults to current store.
@@ -129,7 +136,7 @@ class Util {
             $storeId = $this->getCurrentStoreId();
         }
 
-        $useragent = self::HTTP_USERAGENT . '-' . $this->moduleVersion;
+        $useragent = $this->getFlowClientUserAgent();
         $url = $this->getFlowApiEndpoint($urlStub, $storeId);
         $this->logger->info('Flow Client [' . $useragent . '] URL: ' . $url);
 

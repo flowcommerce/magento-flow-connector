@@ -3,12 +3,13 @@
 namespace FlowCommerce\FlowConnector\Model;
 
 use Magento\Framework\UrlInterface;
-use \Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\ScopeInterface;
 use Zend\Http\{
     Client,
     Request,
     Client\Adapter\Exception\RuntimeException
 };
+use FlowCommerce\FlowConnector\Exception\FlowException;
 
 /**
  * Utility class for Flow settings and endpoints.
@@ -181,4 +182,43 @@ class Util {
         $this->storeManager->getStore()->getId();
     }
 
+    /**
+     * Notifies Flow cross dock that order is enroute.
+     *
+     * https://docs.flow.io/module/logistics/resource/shipping_notifications#put-organization-shipping-notifications-key
+     * https://docs.flow.io/type/shipping-label-package
+     *
+     * @param order The Magento order object.
+     * @param trackingNumber The tracking number for order sent to cross dock.
+     * @param shippingPackageLabel A Flow Shipping Label Package object.
+     * @param service Carrier service level used for generation and shipment of this label.
+     */
+    public function notifyCrossDock($order, $trackingNumber, $shippingLabelPackage, $service) {
+        $flowOrder = $this->flowOrderFactory->create()->find('order_id', $order->getId());
+        $storeId = $order->getStoreId();
+
+        $data = [
+            'carrier_tracking_number' => $trackingNumber,
+            'destination' => $flowOrder->getCrossDockAddress(),
+            'order_number' => $order->getId(),
+            'package' => $shippingLabelPackage,
+            'service' => $service
+        ];
+
+        $client = $this->getFlowClient('shipping-notifications/' . $order->getId(), $storeId);
+        $client->setMethod(Request::METHOD_PUT);
+        $client->setRawBody($this->jsonHelper->jsonEncode($data));
+
+        if ($response->isSuccess()) {
+            $this->logger->info('Notify Cross Dock: success');
+            $this->logger->info('Status code: ' . $response->getStatusCode());
+            $this->logger->info('Body: ' . $response->getBody());
+        } else {
+            $this->logger->error('Notify Cross Dock: failed');
+            $this->logger->error('Status code: ' . $response->getStatusCode());
+            $this->logger->error('Body: ' . $response->getBody());
+            throw new FlowException('Failed to notify cross dock with tracking number ' . $trackingNumber . ': ' . $response->getBody());
+        }
+
+    }
 }

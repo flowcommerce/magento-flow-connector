@@ -69,6 +69,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     protected $searchCriteriaBuilder;
     protected $quotePaymentFactory;
     protected $eventManager;
+    protected $flowOrderFactory;
 
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -95,6 +96,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Quote\Model\Quote\PaymentFactory $quotePaymentFactory,
         \Magento\Framework\Event\ManagerInterface $eventManager,
+        \FlowCommerce\FlowConnector\Model\OrderFactory $flowOrderFactory,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -121,6 +123,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->quotePaymentFactory = $quotePaymentFactory;
         $this->eventManager = $eventManager;
+        $this->flowOrderFactory = $flowOrderFactory;
 
         parent::__construct(
             $context,
@@ -1007,6 +1010,16 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         ////////////////////////////////////////////////////////////
 
         $order->save();
+
+        ////////////////////////////////////////////////////////////
+        // Store Flow order
+        ////////////////////////////////////////////////////////////
+
+        $flowOrder = $this->flowOrderFactory->create();
+        $flowOrder->setOrderId($order->getId());
+        $flowOrder->setFlowOrderId($data['number']);
+        $flowOrder->setData($this->getPayload());
+        $flowOrder->save();
 
         ////////////////////////////////////////////////////////////
         // Clear user's cart

@@ -56,6 +56,7 @@ class CatalogSync {
     protected $imageBuilder;
     protected $eventManager;
     protected $dateTime;
+    protected $countryFactory;
     protected $syncSkuFactory;
 
     public function __construct(
@@ -79,6 +80,7 @@ class CatalogSync {
         \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
+        \Magento\Directory\Model\CountryFactory $countryFactory,
         \FlowCommerce\FlowConnector\Model\SyncSkuFactory $syncSkuFactory
     ) {
         $this->logger = $logger;
@@ -101,6 +103,7 @@ class CatalogSync {
         $this->imageBuilder = $imageBuilder;
         $this->eventManager = $eventManager;
         $this->dateTime = $dateTime;
+        $this->countryFactory = $countryFactory;
         $this->syncSkuFactory = $syncSkuFactory;
     }
 
@@ -536,6 +539,11 @@ class CatalogSync {
                     $this->logger->info('Skipping price code: ' . $price->getPriceCode() . ', value is null');
                 }
             }
+        }
+
+        // Add country of origin
+        if ($product->getCountryOfManufacture()) {
+            $data['country_of_origin'] = $product->getCountryOfManufacture();
         }
 
         // Add parent sku

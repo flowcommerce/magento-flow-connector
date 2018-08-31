@@ -417,21 +417,12 @@ class CatalogSync {
     protected function convertProductToFlowData($syncSku, $product, $parentProduct = null) {
         $this->logger->info('Converting product to Flow data: ' . $product->getSku());
 
-        if ($product->getTypeId() == Configurable::TYPE_CODE) {
-            $children = $this->linkManagement->getChildren($product->getSku());
-            $data = [];
-            foreach($children as $child) {
-                $data = array_merge($data, $this->convertProductToFlowData($syncSku, $child, $product));
-            }
-            return $data;
-        }
-
         $itemData = [
             'number' => $product->getSku(),
             'name' => $product->getName(),
             'description' => $product->getDescription(),
             'locale' => $this->localeResolver->getLocale(),
-            'price' => $product->getPrice(),
+            'price' => $this->getProductPrice($product),
             'currency' => $this->storeManager->getStore()->getCurrentCurrencyCode(),
             'categories' => $this->getProductCategoryNames($product),
             'attributes' => $this->getProductAttributeMap($product, $parentProduct),
@@ -439,7 +430,38 @@ class CatalogSync {
             'dimensions' => $this->getProductDimensionData($product)
         ];
 
-        return [$itemData];
+        $data = [$itemData];
+
+        if ($product->getTypeId() == Configurable::TYPE_CODE) {
+            $children = $this->linkManagement->getChildren($product->getSku());
+            foreach($children as $child) {
+                $data = array_merge($data, $this->convertProductToFlowData($syncSku, $child, $product));
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+    * Returns the price for the product or the min price of children if the
+    * product is configurable.
+    */
+    protected function getProductPrice($product) {
+        if ($product->getTypeId() == Configurable::TYPE_CODE) {
+            $price = null;
+            $children = $this->linkManagement->getChildren($product->getSku());
+            foreach($children as $child) {
+                if ($price == null || $price > $child->getPrice()) {
+                    $price = $child->getPrice();
+                }
+            }
+
+            // default price to 0.0 when no children
+            return ($price == null) ? 0.0 : $price;
+
+        } else {
+            return $product->getPrice();
+        }
     }
 
     /**
@@ -505,38 +527,86 @@ class CatalogSync {
     * Returns a map of product attributes.
     */
     protected function getProductAttributeMap($product, $parentProduct = null) {
-        $attributes = $product->getAttributes();
-
         $data = [];
-        foreach($attributes as $attr) {
-            try {
-                if ($frontEnd = $attr->getFrontend()) {
-                    if ($attrValue = $frontEnd->getValue($product)) {
-                        if (!is_array($attrValue)) {
-                            $data[$attr->getAttributeCode()] = (string)$attrValue;
-                        }
+
+        if ($product->getTypeId() == Configurable::TYPE_CODE) {
+            // For configurable products, we want to add children attr options.
+            // Example:
+            //
+            // children_attribute_labels = ['Ring Size', 'Color']
+            // children_attribute_codes = ['ring_size', 'color']
+            // children_attribute_ring_size = [5.0, 5.5, 6.0]
+            // children_attribute_color = ['white', 'silver', 'gold']
+
+            $attr_labels = [];
+            $attr_codes = [];
+
+            $config_data = $product->getTypeInstance()->getConfigurableOptions($product);
+
+            foreach($config_data as $attr) {
+                $label = null;
+                $code = null;
+                $values = [];
+
+                foreach($attr as $option) {
+                    // label and code are the same for all options
+                    $label = $option['super_attribute_label'];
+                    $code = $option['attribute_code'];
+
+                    if (!in_array($option['option_title'], $values)) {
+                        array_push($values, $option['option_title']);
                     }
                 }
-            } catch (\Exception $e) {
-                // Skip attributes that throw an error retrieving the front end value.
-                // Example: quantity_and_stock_status
+
+                array_push($attr_labels, $label);
+                array_push($attr_codes, $code);
+                $data['children_attribute_' . $code] = $this->jsonHelper->jsonEncode($values);
+            }
+
+            $data['children_attribute_labels'] = $this->jsonHelper->jsonEncode($attr_labels);
+            $data['children_attribute_codes'] = $this->jsonHelper->jsonEncode($attr_codes);
+
+        } else {
+            // Add product attributes
+            $attributes = $product->getAttributes();
+            foreach($attributes as $attr) {
+                try {
+                    if ($frontEnd = $attr->getFrontend()) {
+                        if ($attrValue = $frontEnd->getValue($product)) {
+                            if (!is_array($attrValue)) {
+                                $data[$attr->getAttributeCode()] = (string)$attrValue;
+                            }
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // Skip attributes that throw an error retrieving the front end value.
+                    // Example: quantity_and_stock_status
+                }
+            }
+
+            // Add parent sku
+            if ($parentProduct) {
+                $data['parent_sku'] = $parentProduct->getSku();
+                $data['parent_entity_id'] = $parentProduct->getId();
+            } else {
+                $productIds = $this->configurable->getParentIdsByChild($product->getId());
+                if (isset($productIds[0])) {
+                    $this->logger->info('Found parent product Id: ' . $productIds[0]);
+                    $parentProduct = $this->productFactory->create()->load($productIds[0]);
+                    $data['parent_sku'] = $parentProduct->getSku();
+                    $data['parent_entity_id'] = $parentProduct->getId();
+                }
             }
         }
 
         // Add user agent
         $data['user_agent'] = $this->util->getFlowClientUserAgent();
 
-        // Add product ID
-        $data['product_id'] = $product->getId();
-
         // Add all pricing information
         if ($product->getPriceInfo()) {
             foreach ($product->getPriceInfo()->getPrices() as $price) {
                 if ($price->getValue()) {
-                    $this->logger->info('Add price code: ' . $price->getPriceCode() . ', amount: ' . $price->getAmount());
                     $data[$price->getPriceCode()] = "{$price->getAmount()}";
-                } else {
-                    $this->logger->info('Skipping price code: ' . $price->getPriceCode() . ', value is null');
                 }
             }
         }
@@ -544,20 +614,6 @@ class CatalogSync {
         // Add country of origin
         if ($product->getCountryOfManufacture()) {
             $data['country_of_origin'] = $product->getCountryOfManufacture();
-        }
-
-        // Add parent sku
-        if ($parentProduct) {
-            $data['parent_sku'] = $parentProduct->getSku();
-            $data['parent_id'] = $parentProduct->getId();
-        } else {
-            $productIds = $this->configurable->getParentIdsByChild($product->getId());
-            if (isset($productIds[0])) {
-                $this->logger->info('Found parent product Id: ' . $productIds[0]);
-                $parentProduct = $this->productFactory->create()->load($productIds[0]);
-                $data['parent_sku'] = $parentProduct->getSku();
-                $data['parent_id'] = $parentProduct->getId();
-            }
         }
 
         return $data;

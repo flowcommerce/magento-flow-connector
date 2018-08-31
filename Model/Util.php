@@ -35,10 +35,10 @@ class Util {
     const FLOW_SESSION_COOKIE = '_f60_session';
 
     // Timeout for Flow http client
-    const FLOW_CLIENT_TIMEOUT = 10;
+    const FLOW_CLIENT_TIMEOUT = 30;
 
     // Number of seconds to delay before retrying
-    const FLOW_CLIENT_RETRY_DELAY = 10;
+    const FLOW_CLIENT_RETRY_DELAY = 30;
 
     // User agent for connecting to Flow
     const HTTP_USERAGENT = 'Flow-M2';

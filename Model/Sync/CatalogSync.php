@@ -529,6 +529,23 @@ class CatalogSync {
     protected function getProductAttributeMap($product, $parentProduct = null) {
         $data = [];
 
+        // Add product attributes
+        $attributes = $product->getAttributes();
+        foreach($attributes as $attr) {
+            try {
+                if ($frontEnd = $attr->getFrontend()) {
+                    if ($attrValue = $frontEnd->getValue($product)) {
+                        if (!is_array($attrValue)) {
+                            $data[$attr->getAttributeCode()] = (string)$attrValue;
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                // Skip attributes that throw an error retrieving the front end value.
+                // Example: quantity_and_stock_status
+            }
+        }
+
         if ($product->getTypeId() == Configurable::TYPE_CODE) {
             // For configurable products, we want to add children attr options.
             // Example:
@@ -567,23 +584,6 @@ class CatalogSync {
             $data['children_attribute_codes'] = $this->jsonHelper->jsonEncode($attr_codes);
 
         } else {
-            // Add product attributes
-            $attributes = $product->getAttributes();
-            foreach($attributes as $attr) {
-                try {
-                    if ($frontEnd = $attr->getFrontend()) {
-                        if ($attrValue = $frontEnd->getValue($product)) {
-                            if (!is_array($attrValue)) {
-                                $data[$attr->getAttributeCode()] = (string)$attrValue;
-                            }
-                        }
-                    }
-                } catch (\Exception $e) {
-                    // Skip attributes that throw an error retrieving the front end value.
-                    // Example: quantity_and_stock_status
-                }
-            }
-
             // Add parent sku
             if ($parentProduct) {
                 $data['parent_sku'] = $parentProduct->getSku();

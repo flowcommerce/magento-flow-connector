@@ -23,6 +23,6 @@ class CatalogSyncProcessTask {
 
     public function execute() {
         $this->logger->info("Running CatalogSyncProcessTask execute.");
-        $this->catalogSync->process();
+        $this->catalogSync->process(100, 10);
     }
 }

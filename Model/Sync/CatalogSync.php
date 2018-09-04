@@ -340,7 +340,12 @@ class CatalogSync {
                 $numToProcess -= 1;
             }
 
-            // $this->logger->info('Sync sku keep alive remaining: ' . $keepAlive);
+            if ($numToProcess == 0) {
+                // We've hit the processing limit, break out of loop.
+                break;
+            }
+
+            // Num to process not exhausted, keep alive to wait for more.
             $keepAlive -= 1;
             sleep(1);
         }

@@ -223,9 +223,10 @@ class CatalogSync {
     public function queueAll() {
         $this->logger->info('Queueing all products for sync to Flow.');
 
-        $this->resetOldQueueProcessingItems();
-        $this->deleteQueueErrorDoneItems();
-        $this->deleteOldQueueDoneItems();
+        $this->truncateQueueItems();
+        // $this->resetOldQueueProcessingItems();
+        // $this->deleteQueueErrorDoneItems();
+        // $this->deleteOldQueueDoneItems();
 
         // Get list of stores with enabled connectors
         $storeIds = [];
@@ -719,6 +720,18 @@ class CatalogSync {
         delete from flow_connector_sync_skus
          where status=\'' . SyncSku::STATUS_DONE . '\'
            and updated_at < date_sub(now(), interval 96 hour)
+        ';
+        $connection->query($sql);
+    }
+
+    /**
+    * Truncates queue items.
+    */
+    private function truncateQueueItems() {
+        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
+        $connection = $resource->getConnection();
+        $sql = '
+        truncate table flow_connector_sync_skus
         ';
         $connection->query($sql);
     }

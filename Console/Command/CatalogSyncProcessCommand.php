@@ -2,28 +2,37 @@
 
 namespace FlowCommerce\FlowConnector\Console\Command;
 
-use Symfony\Component\Console\{
-    Command\Command,
-    Logger\ConsoleLogger,
-    Input\InputInterface,
-    Input\InputArgument,
-    Input\InputOption,
-    Output\OutputInterface
-};
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Output\OutputInterface;
+use Magento\Framework\App\State as AppState;
+use Magento\Framework\Registry;
+use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
+
 
 /**
  * Command to process the SyncSku queue.
  */
-final class CatalogSyncProcessCommand extends BaseCommand {
-
+final class CatalogSyncProcessCommand extends BaseCommand
+{
+    /**
+     * @var CatalogSync
+     */
     private $catalogSync;
 
+    /**
+     * CatalogSyncProcessCommand constructor.
+     * @param AppState $appState
+     * @param Registry $registry
+     * @param CatalogSync $catalogSync
+     */
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \FlowCommerce\FlowConnector\Model\Sync\CatalogSync $catalogSync
+        AppState $appState,
+        Registry $registry,
+        CatalogSync $catalogSync
     ) {
+        parent::__construct($appState, $registry);
         $this->catalogSync = $catalogSync;
-        parent::__construct($objectManager);
     }
 
     public function configure() {

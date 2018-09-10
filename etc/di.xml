@@ -1,5 +1,22 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Overriding Order Totals Block for magento admin -->
+    <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
+
+    <!-- Proxies for CLI commands -->
+    <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncQueueAllCommand">
+        <arguments>
+            <argument name="catalogSync" xsi:type="object">FlowCommerce\FlowConnector\Model\Sync\CatalogSync\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand">
+        <arguments>
+            <argument name="catalogSync" xsi:type="object">FlowCommerce\FlowConnector\Model\Sync\CatalogSync\Proxy</argument>
+        </arguments>
+    </type>
+
+    <!-- CLI Commands -->
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
@@ -10,5 +27,5 @@
             </argument>
         </arguments>
     </type>
-    <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
+
 </config>

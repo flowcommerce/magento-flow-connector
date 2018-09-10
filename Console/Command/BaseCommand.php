@@ -2,42 +2,52 @@
 
 namespace FlowCommerce\FlowConnector\Console\Command;
 
-use Symfony\Component\Console\{
-    Command\Command,
-    Logger\ConsoleLogger,
-    Input\InputInterface,
-    Input\InputArgument,
-    Input\InputOption,
-    Output\OutputInterface
-};
+use Symfony\Component\Console\Command\Command;
+use Magento\Framework\App\Area as AppArea;
+use Magento\Framework\App\State as AppState;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Registry;
 
 /**
  * Base Command class that provides initialization for the CLI.
  */
-abstract class BaseCommand extends Command {
+abstract class BaseCommand extends Command
+{
+    /**
+     * @var AppState
+     */
+    protected $appState;
 
-    protected $objectManager;
+    /**
+     * @var Registry
+     */
+    protected $registry;
 
+    /**
+     * BaseCommand constructor.
+     * @param AppState $appState
+     * @param Registry $registry
+     */
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        AppState $appState,
+        Registry $registry
     ) {
-        $this->objectManager = $objectManager;
         parent::__construct();
+        $this->appState = $appState;
+        $this->registry = $registry;
     }
 
     /**
      * Initialize Magento for CLI usage.
      */
-    protected function initCLI() {
-        $registry = $this->objectManager->get('Magento\Framework\Registry');
-        $registry->register('isSecureArea', true);
-
-        $appState = $this->objectManager->get('Magento\Framework\App\State');
+    protected function initCLI()
+    {
+        $this->registry->register('isSecureArea', true);
         try {
             // Function call throws an exception if area code not set.
-            $appState->getAreaCode();
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $appState->setAreaCode(\Magento\Framework\App\Area::AREA_GLOBAL);
+            $this->appState->getAreaCode();
+        } catch (LocalizedException $e) {
+            $this->appState->setAreaCode(AppArea::AREA_GLOBAL);
         }
     }
 }

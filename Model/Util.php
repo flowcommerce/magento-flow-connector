@@ -136,14 +136,8 @@ class Util {
             $storeId = $this->getCurrentStoreId();
         }
 
-        $ts = microtime(true);
         $useragent = $this->getFlowClientUserAgent();
-        $this->logger->info('Time to getFlowClientUserAgent: ' . (microtime(true) - $ts));
-
-        $ts = microtime(true);
         $url = $this->getFlowApiEndpoint($urlStub, $storeId);
-        $this->logger->info('Time to getFlowApiEndpoint: ' . (microtime(true) - $ts));
-
         $this->logger->info('Flow Client [' . $useragent . '] URL: ' . $url);
 
         $client = new Client($url, [
@@ -192,10 +186,7 @@ class Util {
      * Returns the ID of the current store
      */
     public function getCurrentStoreId() {
-        $ts = microtime(true);
-        $storeId = $this->storeManager->getStore()->getId();
-        $this->logger->info('Time to Util->getCurrentStoreId(): ' . (microtime(true) - $ts));
-        return $storeId;
+        $this->storeManager->getStore()->getId();
     }
 
     /**

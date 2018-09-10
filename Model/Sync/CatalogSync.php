@@ -2,15 +2,37 @@
 
 namespace FlowCommerce\FlowConnector\Model\Sync;
 
-use Magento\Framework\UrlInterface;
-use Zend\Http\{
-    Client,
-    Request
-};
+use Psr\Log\LoggerInterface as Logger;
+use Zend\Http\Request;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Catalog\Block\Product\ImageBuilder as ImageBuilder;
+use Magento\Catalog\Model\Product\ImageFactory as ProductImageFactory;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
+use Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface as ProductAttributeMediaGalleryManagement;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable as ConfigurableTypeResourceModel;
+use Magento\ConfigurableProduct\Api\LinkManagementInterface as LinkManagement;
+use Magento\Directory\Model\CountryFactory;
+use Magento\Framework\App\Area as AppArea;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Locale\Resolver as LocaleResolver;
+use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
+use Magento\Framework\Json\Helper\Data as JsonHelper;
+use Magento\Framework\App\ProductMetadataInterface as ProductMetaData;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\ObjectManagerInterface as ObjectManager;
+use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Framework\Stdlib\DateTime\DateTime;
+use Magento\Framework\View\Element\BlockFactory;
+use Magento\Store\Model\StoreManagerInterface as StoreManager;
+use Magento\Store\Model\App\Emulation as AppEmulation;
+use Magento\Store\Model\ScopeInterface as StoreScope;
 use FlowCommerce\FlowConnector\Exception\CatalogSyncException;
 use FlowCommerce\FlowConnector\Model\SyncSku;
+use FlowCommerce\FlowConnector\Model\SyncSkuFactory;
+use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 
 /**
 * Main class for syncing product data to Flow.
@@ -53,35 +75,39 @@ class CatalogSync {
     protected $configurable;
     protected $productFactory;
     protected $productRepository;
+    protected $searchCriteriaBuilder;
     protected $imageBuilder;
     protected $eventManager;
     protected $dateTime;
     protected $countryFactory;
     protected $syncSkuFactory;
+    protected $productMetaData;
 
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \FlowCommerce\FlowConnector\Model\Util $util,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\ConfigurableProduct\Api\LinkManagementInterface $linkManagement,
-        \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory $categoryCollectionFactory,
-        \Magento\Framework\View\Element\BlockFactory $blockFactory,
-        \Magento\Store\Model\App\Emulation $appEmulation,
-        \Magento\Catalog\Model\Product\ImageFactory $imageFactory,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface $mediaGallery,
-        \Magento\Framework\Locale\Resolver $localeResolver,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable $configurable,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
-        \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
-        \Magento\Directory\Model\CountryFactory $countryFactory,
-        \FlowCommerce\FlowConnector\Model\SyncSkuFactory $syncSkuFactory
+        Logger $logger,
+        JsonHelper $jsonHelper,
+        FlowUtil $util,
+        StoreManager $storeManager,
+        ObjectManager $objectManager,
+        LinkManagement $linkManagement,
+        CategoryCollectionFactory $categoryCollectionFactory,
+        BlockFactory $blockFactory,
+        AppEmulation $appEmulation,
+        ProductImageFactory $imageFactory,
+        ProductCollectionFactory $productCollectionFactory,
+        ProductAttributeMediaGalleryManagement $mediaGallery,
+        LocaleResolver $localeResolver,
+        ScopeConfig $scopeConfig,
+        ConfigurableTypeResourceModel $configurable,
+        ProductFactory $productFactory,
+        ProductRepository $productRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        ImageBuilder $imageBuilder,
+        EventManager $eventManager,
+        DateTime $dateTime,
+        CountryFactory $countryFactory,
+        SyncSkuFactory $syncSkuFactory,
+        ProductMetaData $productMetadata
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
@@ -100,11 +126,14 @@ class CatalogSync {
         $this->configurable = $configurable;
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->imageBuilder = $imageBuilder;
         $this->eventManager = $eventManager;
         $this->dateTime = $dateTime;
         $this->countryFactory = $countryFactory;
+        $this->countryFactory = $countryFactory;
         $this->syncSkuFactory = $syncSkuFactory;
+        $this->productMetaData = $productMetadata;
     }
 
     /**
@@ -189,7 +218,7 @@ class CatalogSync {
 
     /**
     * Queue product for syncing to Flow.
-    * @return \FlowCommerce\FlowConnector\Model\SyncSku
+    * @return SyncSku
     */
     public function queue($product) {
         $syncSku = $this->syncSkuFactory->create();
@@ -223,10 +252,9 @@ class CatalogSync {
     public function queueAll() {
         $this->logger->info('Queueing all products for sync to Flow.');
 
-        $this->truncateQueueItems();
-        // $this->resetOldQueueProcessingItems();
-        // $this->deleteQueueErrorDoneItems();
-        // $this->deleteOldQueueDoneItems();
+        $this->resetOldQueueProcessingItems();
+        $this->deleteQueueErrorDoneItems();
+        $this->deleteOldQueueDoneItems();
 
         // Get list of stores with enabled connectors
         $storeIds = [];
@@ -514,7 +542,7 @@ class CatalogSync {
         $imageUrl = null;
 
         try {
-            $this->appEmulation->startEnvironmentEmulation($storeId, \Magento\Framework\App\Area::AREA_FRONTEND, true);
+            $this->appEmulation->startEnvironmentEmulation($storeId, AppArea::AREA_FRONTEND, true);
             $imageBlock = $this->blockFactory->createBlock('Magento\Catalog\Block\Product\ListProduct');
             $productImage = $imageBlock->getImage($product, $imageType);
             $imageUrl = $productImage->getImageUrl();
@@ -533,6 +561,7 @@ class CatalogSync {
     * Returns a map of product attributes.
     */
     protected function getProductAttributeMap($product, $parentProduct = null) {
+        /** @var \Magento\Catalog\Model\Product $product */
         $data = [];
 
         // Add product attributes
@@ -561,12 +590,12 @@ class CatalogSync {
             // children_attribute_ring_size = [5.0, 5.5, 6.0]
             // children_attribute_color = ['white', 'silver', 'gold']
 
-            $attr_labels = [];
-            $attr_codes = [];
+            $attrLabels = [];
+            $attrCodes = [];
 
-            $config_data = $product->getTypeInstance()->getConfigurableOptions($product);
-
-            foreach($config_data as $attr) {
+            $configurableTypeInstance = $product->getTypeInstance();
+            $configData = $product->getTypeInstance()->getConfigurableOptions($product);
+            foreach($configData as $attr) {
                 $label = null;
                 $code = null;
                 $values = [];
@@ -581,13 +610,27 @@ class CatalogSync {
                     }
                 }
 
-                array_push($attr_labels, $label);
-                array_push($attr_codes, $code);
+                array_push($attrLabels, $label);
+                array_push($attrCodes, $code);
                 $data['children_attribute_' . $code] = $this->jsonHelper->jsonEncode($values);
             }
 
-            $data['children_attribute_labels'] = $this->jsonHelper->jsonEncode($attr_labels);
-            $data['children_attribute_codes'] = $this->jsonHelper->jsonEncode($attr_codes);
+            $data['children_attribute_labels'] = $this->jsonHelper->jsonEncode($attrLabels);
+            $data['children_attribute_codes'] = $this->jsonHelper->jsonEncode($attrCodes);
+
+            // Loading children products
+            $childrenProductIds = $configurableTypeInstance->getChildrenIds($product->getId());
+            $childrenProductIds = array_values(array_pop($childrenProductIds));
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilter('entity_id', $childrenProductIds, 'in')
+                ->create();
+            $childrenProducts = $this->productRepository->getList($searchCriteria);
+
+            $childrenSkus = [];
+            foreach ($childrenProducts->getItems() as $childProduct) {
+                array_push($childrenSkus, $childProduct->getSku());
+            }
+            $data['children_product_skus'] = $this->jsonHelper->jsonEncode($childrenSkus);
 
         } else {
             // Add parent sku
@@ -608,6 +651,9 @@ class CatalogSync {
         // Add user agent
         $data['user_agent'] = $this->util->getFlowClientUserAgent();
 
+        // Add magento version
+        $data['magento_version'] = $this->getMagentoVersion();
+
         // Add all pricing information
         if ($product->getPriceInfo()) {
             foreach ($product->getPriceInfo()->getPrices() as $price) {
@@ -626,6 +672,16 @@ class CatalogSync {
     }
 
     /**
+     * Returns Magentp version
+     *
+     * @return string
+     */
+    protected function getMagentoVersion()
+    {
+        return $this->productMetaData->getVersion();
+    }
+
+    /**
     * Returns Flow product dimension data.
     * https://docs.flow.io/type/dimension
     */
@@ -633,7 +689,7 @@ class CatalogSync {
         if ($product->getWeight()) {
             $weightUnit = $this->scopeConfig->getValue(
                 'general/locale/weight_unit',
-                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+                StoreScope::SCOPE_STORE
             );
             return [
                 'product' => [
@@ -720,18 +776,6 @@ class CatalogSync {
         delete from flow_connector_sync_skus
          where status=\'' . SyncSku::STATUS_DONE . '\'
            and updated_at < date_sub(now(), interval 96 hour)
-        ';
-        $connection->query($sql);
-    }
-
-    /**
-    * Truncates queue items.
-    */
-    private function truncateQueueItems() {
-        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        $sql = '
-        truncate table flow_connector_sync_skus
         ';
         $connection->query($sql);
     }

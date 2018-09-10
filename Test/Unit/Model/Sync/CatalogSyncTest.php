@@ -33,6 +33,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
     protected $configurable;
     protected $productFactory;
     protected $productRepository;
+    protected $searchCriteriaBuilder;
     protected $imageBuilder;
     protected $eventManager;
     protected $syncSkuFactory;
@@ -43,6 +44,9 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
     protected $image;
     protected $client;
     protected $response;
+    protected $dateTime;
+    protected $countryFactory;
+    protected $productMetaData;
 
     protected function setUp() {
         $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
@@ -87,6 +91,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
         $this->configurable = $this->createMock(\Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable::class);
         $this->productFactory = $this->createMock(\Magento\Catalog\Model\ProductFactory::class);
         $this->productRepository = $this->createMock(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $this->searchCriteriaBuilder = $this->createMock(\Magento\Framework\Api\SearchCriteriaBuilder::class);
         $this->imageBuilder = $this->createMock(\Magento\Catalog\Block\Product\ImageBuilder::class);
         $this->eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
 
@@ -100,6 +105,10 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
 
         $this->syncSkuFactory = $this->createMock(\FlowCommerce\FlowConnector\Model\SyncSkuFactory::class);
         $this->syncSkuFactory->method('create')->willReturn($this->syncSku);
+
+        $this->dateTime = $this->createMock(\Magento\Framework\Stdlib\DateTime\DateTime::class);
+        $this->countryFactory = $this->createMock(\Magento\Directory\Model\CountryFactory::class);
+        $this->productMetaData = $this->createMock(\Magento\Framework\App\ProductMetadataInterface::class);
 
         $this->catalogSync = new \FlowCommerce\FlowConnector\Model\Sync\CatalogSync(
             $this->logger,
@@ -119,9 +128,13 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
             $this->configurable,
             $this->productFactory,
             $this->productRepository,
+            $this->searchCriteriaBuilder,
             $this->imageBuilder,
             $this->eventManager,
-            $this->syncSkuFactory
+            $this->dateTime,
+            $this->countryFactory,
+            $this->syncSkuFactory,
+            $this->productMetaData
         );
 
         $this->productAttribute = $this->createMock(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute::class);

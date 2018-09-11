@@ -317,7 +317,7 @@ class CatalogSync {
 
                 $syncSku->setStatus(SyncSku::STATUS_PROCESSING);
                 $ts = microtime(true);
-                $syncSku->save();
+                $this->saveSyncSku($syncSku);
                 $this->logger->info('Time to update sync sku for processing: ' . (microtime(true) - $ts));
 
                 // Load product to process
@@ -341,7 +341,7 @@ class CatalogSync {
 
                         $syncSku->setStatus(SyncSku::STATUS_DONE);
                         $ts = microtime(true);
-                        $syncSku->save();
+                        $this->saveSyncSku($syncSku);
                         $this->logger->info('Time to update sync sku as done: ' . (microtime(true) - $ts));
 
                         // Fire an event for client extension code to process
@@ -356,14 +356,14 @@ class CatalogSync {
                         $this->logger->info('Deleting sku from Flow: ' . $syncSku->getSku());
                         $this->deleteProduct($syncSku);
                         $syncSku->setStatus(SyncSku::STATUS_DONE);
-                        $syncSku->save();
+                        $this->saveSyncSku($syncSku);
                     }
 
                 } catch (\Exception $e) {
                     $this->logger->warning('Error syncing product ' . $syncSku->getSku() . ': ' . $e->getMessage() . '\n' . $e->getTraceAsString());
                     $syncSku->setStatus(SyncSku::STATUS_ERROR);
                     $syncSku->setMessage(substr($e->getMessage(), 0, 200));
-                    $syncSku->save();
+                    $this->saveSyncSku($syncSku);
                 }
 
                 $numToProcess -= 1;
@@ -714,6 +714,21 @@ class CatalogSync {
             }
         }
         return $weightUnit;
+    }
+
+    /**
+    * Helper method to update
+    */
+    protected function saveSyncSku($syncSku) {
+        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
+        $connection = $resource->getConnection();
+        $sql = '
+        update flow_connector_sync_skus
+           set status = ?,
+               message = ?
+         where id = ?
+        ';
+        $connection->query($sql, [$syncSku->getStatus(), $syncSku->getMessage(), $syncSku->getId()]);
     }
 
     /**

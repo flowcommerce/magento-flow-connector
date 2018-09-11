@@ -502,18 +502,24 @@ class CatalogSync {
     * Returns an array of category names for the specified product.
     */
     protected function getProductCategoryNames($product) {
-        $catNames = [];
+        $return = [];
 
         if ($categoryIds = $product->getCategoryIds()) {
             $collection = $this->categoryCollectionFactory->create();
             $collection->addAttributeToSelect('*');
             $collection->addIsActiveFilter();
             $collection->addAttributeToFilter('entity_id', $categoryIds);
+            /** @var \Magento\Catalog\Model\Category $category */
             foreach($collection as $category) {
-                array_push($catNames, $category->getName());
+                $parentCategories = $category->getParentCategories();
+                $categoriesNames = [];
+                foreach ($parentCategories as $parentCategory) {
+                    array_push($categoriesNames, $parentCategory->getName());
+                }
+                array_push($return, implode(' > ', $categoriesNames));
             }
         }
-        return $catNames;
+        return $return;
     }
 
     /**

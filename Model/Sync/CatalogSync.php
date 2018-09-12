@@ -654,6 +654,9 @@ class CatalogSync {
             }
         }
 
+        // Add product_id for harmonization service (same as entity_id)
+        $data['product_id'] = $product->getId();
+
         // Add user agent
         $data['user_agent'] = $this->util->getFlowClientUserAgent();
 

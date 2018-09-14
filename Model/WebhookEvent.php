@@ -41,7 +41,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     const REQUEUE_DELAY_INTERVAL = 30;
 
     // Maximum age in seconds for a WebhookEvent to requeue
-    const REQUEUE_MAX_AGE = 86400;
+    const REQUEUE_MAX_AGE = 3600;
 
     const CACHE_TAG = 'flow_connector_webhook_events';
     protected $_cacheTag = 'flow_connector_webhook_events';

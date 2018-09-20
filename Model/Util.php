@@ -2,14 +2,15 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use Magento\Framework\UrlInterface;
-use Magento\Store\Model\ScopeInterface;
-use Zend\Http\{
-    Client,
-    Request,
-    Client\Adapter\Exception\RuntimeException
-};
-use FlowCommerce\FlowConnector\Exception\FlowException;
+use \FlowCommerce\FlowConnector\Exception\FlowException;
+use \Magento\Store\Model\ScopeInterface;
+use \Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
+use \Magento\Framework\Module\ModuleListInterface as ModuleList;
+use \Magento\Store\Model\StoreManagerInterface as StoreManager;
+use \Psr\Log\LoggerInterface as Logger;
+use \Zend\Http\ClientFactory as HttpClientFactory;
+use \Zend\Http\Request;
+use \Zend\Http\Client\Adapter\Exception\RuntimeException;
 
 /**
  * Utility class for Flow settings and endpoints.
@@ -43,23 +44,57 @@ class Util {
     // User agent for connecting to Flow
     const HTTP_USERAGENT = 'Flow-M2';
 
+    /**
+     * @var Logger
+     */
     protected $logger;
+
+    /**
+     * @var ScopeConfig
+     */
     protected $scopeConfig;
+
+    /**
+     * @var StoreManager
+     */
     protected $storeManager;
+
+    /**
+     * @var ModuleList
+     */
     protected $moduleList;
+
+    /**
+     * @var string
+     */
     protected $moduleVersion;
 
+    /**
+     * @var HttpClientFactory
+     */
+    protected $httpClientFactory;
+
+    /**
+     * Util constructor.
+     * @param Logger $logger
+     * @param ScopeConfig $scopeConfig
+     * @param StoreManager $storeManager
+     * @param ModuleList $moduleList
+     * @param HttpClientFactory $httpClientFactory
+     */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\Module\ModuleListInterface $moduleList
+        Logger $logger,
+        ScopeConfig $scopeConfig,
+        StoreManager $storeManager,
+        ModuleList $moduleList,
+        HttpClientFactory $httpClientFactory
     ) {
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
         $this->moduleList = $moduleList;
         $this->moduleVersion = $this->moduleList->getOne('FlowCommerce_FlowConnector')['setup_version'];
+        $this->httpClientFactory = $httpClientFactory;
     }
 
     /**
@@ -140,14 +175,22 @@ class Util {
         $url = $this->getFlowApiEndpoint($urlStub, $storeId);
         $this->logger->info('Flow Client [' . $useragent . '] URL: ' . $url);
 
-        $client = new Client($url, [
-            'useragent' => $useragent,
-            'timeout' => self::FLOW_CLIENT_TIMEOUT
-        ]);
+        $client = $this->getHttpClient($url, $useragent);
         $client->setMethod(Request::METHOD_GET);
         $client->setAuth($this->getFlowApiToken($storeId), '');
         $client->setEncType('application/json');
         return $client;
+    }
+
+    private function getHttpClient($url, $userAgent)
+    {
+        return $this->httpClientFactory->create([
+            'uri' => $url,
+            'options' => [
+                'useragent' => $userAgent,
+                'timeout' => self::FLOW_CLIENT_TIMEOUT
+            ]
+        ]);
     }
 
     /**

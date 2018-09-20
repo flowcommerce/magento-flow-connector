@@ -2,27 +2,45 @@
 
 namespace FlowCommerce\FlowConnector\Cron;
 
+use \Psr\Log\LoggerInterface as Logger;
+use \FlowCommerce\FlowConnector\Model\SyncSkuManager;
+
 /**
  * Cron Task wrapper class to run catalog sync queue all.
+ * @package FlowCommerce\FlowConnector\Cron
  */
-class CatalogSyncQueueAllTask {
-
+class CatalogSyncQueueAllTask
+{
+    /**
+     * @var Logger
+     */
     private $logger;
-    private $util;
-    private $catalogSync;
 
+    /**
+     * @var SyncSkuManager
+     */
+    private $syncSkuManager;
+
+    /**
+     * CatalogSyncQueueAllTask constructor.
+     * @param Logger $logger
+     * @param SyncSkuManager $syncSkuManager
+     */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
-        \FlowCommerce\FlowConnector\Model\Util $util,
-        \FlowCommerce\FlowConnector\Model\Sync\CatalogSync $catalogSync
+        Logger $logger,
+        SyncSkuManager $syncSkuManager
     ) {
         $this->logger = $logger;
-        $this->util = $util;
-        $this->catalogSync = $catalogSync;
+        $this->syncSkuManager = $syncSkuManager;
     }
 
-    public function execute() {
-        $this->logger->info("Running CatalogSyncQueueAllTask execute.");
-        $this->catalogSync->queueAll();
+    /**
+     * Defers queueing of all products to the catalog sync model
+     * @return void
+     */
+    public function execute()
+    {
+        $this->logger->info('Running CatalogSyncQueueAllTask execute.');
+        $this->syncSkuManager->enqueueAllProducts();
     }
 }

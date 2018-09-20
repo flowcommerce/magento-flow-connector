@@ -2,11 +2,11 @@
 
 namespace FlowCommerce\FlowConnector\Console\Command;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use FlowCommerce\FlowConnector\Model\SyncSkuManager;
 use Magento\Framework\App\State as AppState;
 use Magento\Framework\Registry;
-use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to sync the entire catalog to Flow.
@@ -15,36 +15,47 @@ final class CatalogSyncQueueAllCommand extends BaseCommand
 {
 
     /**
-     * @var CatalogSync
+     * @var SyncSkuManager
      */
-    private $catalogSync;
+    private $syncSkuManager;
 
     /**
      * CatalogSyncProcessCommand constructor.
      * @param AppState $appState
      * @param Registry $registry
-     * @param CatalogSync $catalogSync
+     * @param SyncSkuManager $syncSkuManager
      */
     public function __construct(
         AppState $appState,
         Registry $registry,
-        CatalogSync $catalogSync
+        SyncSkuManager $syncSkuManager
     ) {
         parent::__construct($appState, $registry);
-        $this->catalogSync = $catalogSync;
+        $this->syncSkuManager = $syncSkuManager;
     }
 
+
+    /**
+     * Configures this command
+     * @return void
+     */
     public function configure()
     {
         $this->setName('flow:flow-connector:catalog-sync-queue-all')
             ->setDescription('Queue all products for sync to Flow catalog.');
     }
 
+    /**
+     * Defers enqueueing of all products to the sync sku manager
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $logger = new FlowConsoleLogger($output);
         $this->initCLI();
-        $this->catalogSync->setLogger($logger);
-        $this->catalogSync->queueAll();
+        $this->syncSkuManager->setLogger($logger);
+        $this->syncSkuManager->enqueueAllProducts();
     }
 }

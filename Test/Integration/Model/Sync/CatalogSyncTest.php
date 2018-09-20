@@ -1,0 +1,400 @@
+<?php
+
+namespace FlowCommerce\FlowConnector\Test\Integration\Model\Sync;
+
+use Exception;
+use FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Collection as SyncSkuCollection;
+use FlowCommerce\FlowConnector\Model\Sync\CatalogSync as Subject;
+use FlowCommerce\FlowConnector\Model\Api\Item\Save as FlowSaveItemApi;
+use FlowCommerce\FlowConnector\Model\SyncSku;
+use FlowCommerce\FlowConnector\Model\SyncSkuManager;
+use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
+use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateProductsWithCategories;
+use \GuzzleHttp\Client as HttpClient;
+use \GuzzleHttp\ClientFactory as HttpClientFactory;
+use \GuzzleHttp\Promise\Promise as HttpPromise;
+use \GuzzleHttp\Psr7\Response as HttpResponse;
+use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Catalog\Model\Product\Type as ProductType;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
+use Magento\Framework\App\ProductMetadataInterface as ProductMetaData;
+use Magento\Framework\Locale\Resolver as LocaleResolver;
+use Magento\Framework\ObjectManagerInterface as ObjectManager;
+use Magento\Store\Model\StoreManagerInterface as StoreManager;
+use Magento\TestFramework\Helper\Bootstrap;
+
+/**
+ * Test class for \FlowCommerce\FlowConnector\Model\Sync\CatalogSync
+ * @magentoAppIsolation enabled
+ */
+class CatalogSyncTest extends \PHPUnit\Framework\TestCase
+{
+    /**
+     * @var CreateProductsWithCategories
+     */
+    private $createProductsFixture;
+
+    /**
+     * @var FlowSaveItemApi|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $flowSaveItemApi;
+
+    /**
+     * @var HttpClient|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $httpClient;
+
+    /**
+     * @var HttpClientFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $httpClientFactory;
+
+    /**
+     * @var HttpPromise|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $httpPromise;
+
+    /**
+     * @var HttpResponse|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $httpResponse;
+
+    /**
+     * @var LocaleResolver
+     */
+    private $localeResolver;
+
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
+     * @var ProductMetaData
+     */
+    private $productMetaData;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
+     * @var Subject|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $subject;
+
+    /**
+     * @var StoreManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $storeManager;
+
+    /**
+     * @var SyncSkuCollection
+     */
+    private $syncSkuCollection;
+
+    /**
+     * @var SyncSkuManager
+     */
+    private $syncSkuManager;
+
+    /**
+     * @var FlowUtil
+     */
+    private $util;
+
+    /**
+     * Sets up for tests
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->objectManager = Bootstrap::getObjectManager();
+        $this->httpResponse = $this->createPartialMock(HttpResponse::class, ['isSuccess']);
+        $httpPromise = $this->objectManager->create(HttpPromise::class, [
+            'waitFn' => function () use (&$httpPromise) {
+                $httpPromise->resolve('waited');
+            }
+        ]);
+        $this->httpPromise = $httpPromise;
+        $this->httpClient = $this->getMockBuilder(HttpClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods([
+                'putAsync'
+            ])
+            ->getMock();
+
+        $this->httpClientFactory = $this->createConfiguredMock(
+            HttpClientFactory::class,
+            ['create' => $this->httpClient]
+        );
+        $this->flowSaveItemApi = $this->objectManager->create(FlowSaveItemApi::class, [
+            'httpClientFactory' => $this->httpClientFactory,
+        ]);
+        $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);
+        $this->productRepository = $this->objectManager->create(ProductRepository::class);
+        $this->productMetaData = $this->objectManager->create(ProductMetaData::class);
+        $this->localeResolver = $this->objectManager->create(LocaleResolver::class);
+        $this->util = $this->objectManager->create(FlowUtil::class);
+        $this->storeManager = $this->objectManager->create(StoreManager::class);
+        $this->syncSkuCollection = $this->objectManager->create(SyncSkuCollection::class);
+        $this->syncSkuManager = $this->objectManager->create(SyncSkuManager::class);
+        $this->subject = $this->objectManager->create(Subject::class, [
+            'flowSaveItemApi' => $this->flowSaveItemApi,
+        ]);
+    }
+
+    /**
+     * @magentoDbIsolation enabled
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
+     */
+    public function testSyncsSuccessfullyWhenFlowModuleEnabled()
+    {
+        $this->createProductsFixture->execute();
+        $products = $this->createProductsFixture->getProducts();
+
+        $this->httpClient
+            ->expects($this->exactly(4))
+            ->method('putAsync')
+            ->with($this->callback([$this, 'validateUrl']), $this->callback([$this, 'validateRequest']))
+            ->willReturn($this->httpPromise);
+
+        $this->syncSkuManager->enqueueAllProducts();
+        $this->subject->process(100, 10);
+
+        $this->syncSkuCollection->load();
+        $this->assertEquals($products->getTotalCount(), $this->syncSkuCollection->count());
+
+        $productSkus = [];
+        foreach ($products->getItems() as $product) {
+            $productSkus[$product->getSku()] = $product->getSku();
+        }
+
+        /** @var SyncSku $syncSkuObject */
+        foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
+            $syncSkuSku = $syncSkuObject->getSku();
+
+            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus());
+            $this->assertEquals(1, $syncSkuObject->getStoreId());
+            $this->assertArrayHasKey($syncSkuSku, $productSkus);
+
+            if (array_key_exists($syncSkuSku, $productSkus)) {
+                unset($productSkus[$syncSkuSku]);
+            }
+        }
+        $this->assertCount(0, $productSkus);
+    }
+
+    /**
+     * Validates given raw body request against the respective product
+     * @param $method
+     * @param $url
+     * @param $options
+     * @return bool
+     */
+    public function validateRequest($options)
+    {
+        $rawBody = $options['body'];
+        $return = true;
+        try {
+            $jsonRequest = json_decode($rawBody);
+            $product = $this->productRepository->get($jsonRequest->number);
+            $this->assertEquals(
+                $product->getSku(),
+                $jsonRequest->number,
+                'Failed asserting that name matches'
+            );
+            $this->assertEquals(
+                $product->getName(),
+                $jsonRequest->name,
+                'Failed asserting that name matches'
+            );
+            $this->assertEquals(
+                $this->localeResolver->getLocale(),
+                $jsonRequest->locale,
+                'Failed asserting that locale matches'
+            );
+            $this->assertEquals(
+                $this->storeManager->getStore()->getCurrentCurrencyCode(),
+                $jsonRequest->currency,
+                'Failed asserting that currency matches'
+            );
+            $this->assertEquals(
+                $product->getDescription(),
+                $jsonRequest->description,
+                'Failed asserting that description matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('status'),
+                $jsonRequest->attributes->status,
+                'Failed asserting that status matches'
+            );
+            $this->assertEquals(
+                $product->getUrlKey(),
+                $jsonRequest->attributes->url_key,
+                'Failed asserting that url key matches'
+            );
+            $this->assertEquals(
+                $product->getEntityId(),
+                $jsonRequest->attributes->entity_id,
+                'Failed asserting that entity id matches'
+            );
+            $this->assertEquals(
+                $product->getTypeId(),
+                $jsonRequest->attributes->type_id,
+                'Failed asserting that type matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeSetId(),
+                $jsonRequest->attributes->attribute_set_id,
+                'Failed asserting that attribute set id matches'
+            );
+            $this->assertEquals(
+                $product->getName(),
+                $jsonRequest->attributes->name,
+                'Failed asserting that attribute name matches'
+            );
+            $this->assertEquals(
+                $product->getCreatedAt(),
+                $jsonRequest->attributes->created_at,
+                'Failed asserting that created at matches'
+            );
+            $this->assertEquals(
+                $product->getSku(),
+                $jsonRequest->attributes->sku,
+                'Failed asserting that sku matches'
+            );
+            $this->assertEquals(
+                $product->getUpdatedAt(),
+                $jsonRequest->attributes->updated_at,
+                'Failed asserting that updated at matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('tax_class_id'),
+                $jsonRequest->attributes->tax_class_id,
+                'Failed asserting that tax_class_id matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('visibility'),
+                $jsonRequest->attributes->visibility,
+                'Failed asserting that visibility matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('country_of_manufacture'),
+                $jsonRequest->attributes->country_of_manufacture,
+                'Failed asserting that country_of_manufacture matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('shipment_type'),
+                $jsonRequest->attributes->shipment_type,
+                'Failed asserting that shipment_type matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('price_view'),
+                $jsonRequest->attributes->price_view,
+                'Failed asserting that price_view matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('msrp_display_actual_price_type'),
+                $jsonRequest->attributes->msrp_display_actual_price_type,
+                'Failed asserting that shipment_type matches'
+            );
+            $this->assertEquals(
+                $product->getAttributeText('page_layout'),
+                $jsonRequest->attributes->page_layout,
+                'Failed asserting that shipment_type matches'
+            );
+            $this->assertEquals(
+                $this->util->getFlowClientUserAgent(),
+                $jsonRequest->attributes->user_agent,
+                'Failed asserting that user_agent matches'
+            );
+            $this->assertEquals(
+                $this->productMetaData->getVersion(),
+                $jsonRequest->attributes->magento_version,
+                'Failed asserting that magento_version matches'
+            );
+
+            if ($product->getTypeId() == ProductType::TYPE_SIMPLE) {
+                $this->assertEquals(
+                    $product->getPrice(),
+                    $jsonRequest->price,
+                    'Failed asserting that price matches'
+                );
+                $this->assertEquals(
+                    $product->getWeight(),
+                    $jsonRequest->dimensions->product->weight->value,
+                    'Failed asserting that weight matches'
+                );
+                $this->assertEquals(
+                    $product->getWeight(),
+                    $jsonRequest->attributes->weight,
+                    'Failed asserting that weight attribute matches'
+                );
+                if ($product->getPriceInfo()) {
+                    foreach ($product->getPriceInfo()->getPrices() as $price) {
+                        if ($price->getValue() &&
+                            property_exists($jsonRequest->attributes, $price->getPriceCode())
+                        ) {
+                            $this->assertEquals(
+                                (string)$price->getAmount(),
+                                $jsonRequest->attributes->{$price->getPriceCode()},
+                                'Failed asserting that ' . $price->getPriceCode() . ' matches'
+                            );
+                        }
+                    }
+                }
+            } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {
+                $optionValues = ['Option 1', 'Option 2', 'Option 3'];
+                $optionLabels = ['Test Configurable'];
+                $optionAttributeCodes = ['test_configurable'];
+                $childrenProductSkus = ['simple_1', 'simple_2', 'simple_3'];
+
+                $this->assertEquals(
+                    $optionValues,
+                    json_decode($jsonRequest->attributes->children_attribute_test_configurable)
+                );
+                $this->assertEquals(
+                    $optionLabels,
+                    json_decode($jsonRequest->attributes->children_attribute_labels)
+                );
+                $this->assertEquals(
+                    $optionAttributeCodes,
+                    json_decode($jsonRequest->attributes->children_attribute_codes)
+                );
+                $this->assertEquals(
+                    $childrenProductSkus,
+                    json_decode($jsonRequest->attributes->children_product_skus)
+                );
+            }
+
+            $this->assertCount(2, $jsonRequest->images);
+            foreach ($jsonRequest->images as $image) {
+                $this->assertRegExp('/^http.*\.jpg/', $image->url);
+                $this->assertContains($image->tags[0], ['thumbnail', 'checkout']);
+            }
+
+            $categories = ['Category 1 > Category 2', 'Category 3 > Category 4', 'Category 5'];
+            $this->assertEquals($categories, $jsonRequest->categories);
+        } catch (\Exception $e) {
+            $return = false;
+        }
+        return $return;
+    }
+    /**
+     * Validates given url
+     * @param $url
+     * @return bool
+     */
+    public function validateUrl($url)
+    {
+        $return = true;
+        try {
+            $this->assertRegExp('/^https\:\/\/api\.flow\.io/', $url);
+        } catch (Exception $e) {
+            $return = false;
+        }
+        return $return;
+    }
+}

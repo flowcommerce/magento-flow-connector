@@ -2,17 +2,16 @@
 
 namespace FlowCommerce\FlowConnector\Setup;
 
-use Magento\Framework\{
-    Setup\ModuleContextInterface,
-    Setup\SchemaSetupInterface,
-    Setup\UpgradeSchemaInterface,
-    DB\Ddl\Table,
-    DB\Adapter\AdapterInterface
-};
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Ddl\Table;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\UpgradeSchemaInterface;
 
 class UpgradeSchema implements UpgradeSchemaInterface
 {
-    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context) {
+    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
         $installer = $setup;
         $installer->startSetup();
 
@@ -31,13 +30,20 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->installOrdersTable($installer);
         }
 
+        if (version_compare($context->getVersion(), '1.0.16', '<')) {
+            $this->addShouldSyncChildrenToSyncSkuTable($installer);
+        }
+
         $installer->endSetup();
     }
 
     /**
      * Creates the webhook events table.
+     * @param SchemaSetupInterface $installer
+     * @throws \Zend_Db_Exception
      */
-    private function installWebhookEventsTable($installer) {
+    private function installWebhookEventsTable(SchemaSetupInterface $installer)
+    {
         $tableName = $installer->getTable('flow_connector_webhook_events');
         $connection = $installer->getConnection();
 
@@ -72,8 +78,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
     /**
      * Updates sales_order.ext_order_id from 32 to 64 chars.
+     * @param SchemaSetupInterface $installer
      */
-    private function updateSalesOrderExtOrderId($installer) {
+    private function updateSalesOrderExtOrderId(SchemaSetupInterface $installer)
+    {
         $installer->getConnection()->changeColumn(
             $installer->getTable('sales_order'),
             'ext_order_id',
@@ -81,15 +89,18 @@ class UpgradeSchema implements UpgradeSchemaInterface
             [
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 'length' => 64,
-                'comment' => 'Ext Order Id'
+                'comment' => 'Ext Order Id',
             ]
         );
     }
 
     /**
      * Creates a table to hold skus to sync to Flow.
+     * @param SchemaSetupInterface $installer
+     * @throws \Zend_Db_Exception
      */
-    private function installSyncSkusTable($installer) {
+    private function installSyncSkusTable(SchemaSetupInterface $installer)
+    {
         $tableName = $installer->getTable('flow_connector_sync_skus');
         $connection = $installer->getConnection();
 
@@ -123,19 +134,21 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
     /**
      * Adds a store_id columen to webhook events table.
+     * @param SchemaSetupInterface $installer
      */
-    private function addStoreIdToWebhookEventsTable($installer) {
+    private function addStoreIdToWebhookEventsTable(SchemaSetupInterface $installer)
+    {
         $tableName = $installer->getTable('flow_connector_webhook_events');
         $connection = $installer->getConnection();
         $columnName = 'store_id';
 
         if ($connection->tableColumnExists($tableName, $columnName) === false) {
             $connection->addColumn($tableName, $columnName, [
-                'type'      => Table::TYPE_SMALLINT,
-                'nullable'  => false,
-                'unsigned'  => true,
-                'after'     => 'id',
-                'comment'   => 'Store ID'
+                'type' => Table::TYPE_SMALLINT,
+                'nullable' => false,
+                'unsigned' => true,
+                'after' => 'id',
+                'comment' => 'Store ID',
             ]);
 
             $connection->addIndex(
@@ -158,19 +171,21 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
     /**
      * Adds a store_id column to sync skus table.
+     * @param SchemaSetupInterface $installer
      */
-    private function addStoreIdToSyncSkusTable($installer) {
+    private function addStoreIdToSyncSkusTable(SchemaSetupInterface $installer)
+    {
         $tableName = $installer->getTable('flow_connector_sync_skus');
         $connection = $installer->getConnection();
         $columnName = 'store_id';
 
         if ($connection->tableColumnExists($tableName, $columnName) === false) {
             $connection->addColumn($tableName, $columnName, [
-                'type'      => Table::TYPE_SMALLINT,
-                'nullable'  => false,
-                'unsigned'  => true,
-                'after'     => 'id',
-                'comment'   => 'Store ID'
+                'type' => Table::TYPE_SMALLINT,
+                'nullable' => false,
+                'unsigned' => true,
+                'after' => 'id',
+                'comment' => 'Store ID',
             ]);
 
             $connection->addIndex(
@@ -193,8 +208,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
     /**
      * Creates a table to hold flow order data.
+     * @param SchemaSetupInterface $installer
+     * @throws \Zend_Db_Exception
      */
-    private function installOrdersTable($installer) {
+    private function installOrdersTable(SchemaSetupInterface $installer)
+    {
         $tableName = $installer->getTable('flow_connector_orders');
         $connection = $installer->getConnection();
 
@@ -241,4 +259,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
     }
 
+    /**
+     * Adds should_sync_children column to sync sku table
+     * @param SchemaSetupInterface $installer
+     */
+    private function addShouldSyncChildrenToSyncSkuTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_sync_skus');
+        $connection = $installer->getConnection();
+        $columnName = 'should_sync_children';
+
+        if ($connection->tableColumnExists($tableName, $columnName) === false) {
+            $connection->addColumn($tableName, $columnName, [
+                'type' => Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default' => 0,
+                'after' => 'sku',
+                'comment' => 'Should sync children products?',
+            ]);
+        }
+    }
 }

@@ -12,6 +12,14 @@ use Magento\Framework\{
  */
 class Order extends AbstractModel implements IdentityInterface {
 
+    /**
+     * Possible values for status
+     */
+    const STATUS_NEW = 'new';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_ERROR = 'error';
+    const STATUS_DONE = 'done';
+
     const CACHE_TAG = 'flow_connector_orders';
     protected $_cacheTag = 'flow_connector_orders';
     protected $_eventPrefix = 'flow_connector_orders';

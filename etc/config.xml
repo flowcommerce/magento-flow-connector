@@ -10,5 +10,14 @@
                 <order_status>pending_payment</order_status>
             </flowpayment>
         </payment>
+        <carriers>
+            <flowshipping>
+                <active>1</active>
+                <sallowspecific>0</sallowspecific>
+                <model>FlowCommerce\FlowConnector\Model\Carrier\FlowShippingMethod</model>
+                <name>Flow Shipping</name>
+                <title>Flow Shipping</title>
+            </flowshipping>
+        </carriers>
     </default>
 </config>

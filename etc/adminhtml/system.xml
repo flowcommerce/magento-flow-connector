@@ -39,5 +39,16 @@
                 </field>
             </group>
        </section>
+        <section id="carriers">
+            <group id="flowshipping" translate="label" type="text" sortOrder="1000" showInDefault="0" showInWebsite="0" showInStore="1">
+                <label>Flow Shipping</label>
+                <field id="name" translate="label" type="text" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Method Name</label>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="30" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Title</label>
+                </field>
+            </group>
+        </section>
     </system>
 </config>

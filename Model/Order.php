@@ -60,12 +60,6 @@ class Order extends AbstractModel implements IdentityInterface {
         return [];
     }
 
-    public function beforeSave() {
-        if ($this->getStatus() == null) {
-            $this->setStatus(self::STATUS_NEW);
-        }
-    }
-
     /**
      * Returns the cross dock address for the order.
      *

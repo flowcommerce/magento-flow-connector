@@ -11,6 +11,7 @@ use Magento\Sales\Model\{
     OrderInterface
 };
 use FlowCommerce\FlowConnector\Exception\WebhookException;
+use FlowCommerce\FlowConnector\Model\Carrier\FlowShippingMethod;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -71,6 +72,11 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     protected $eventManager;
     protected $flowOrderFactory;
 
+    /**
+     * @var FlowShippingMethod
+     */
+    private $flowShippingMethod;
+
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
@@ -97,6 +103,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         \Magento\Quote\Model\Quote\PaymentFactory $quotePaymentFactory,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \FlowCommerce\FlowConnector\Model\OrderFactory $flowOrderFactory,
+        FlowShippingMethod $flowShippingMethod,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -124,6 +131,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->quotePaymentFactory = $quotePaymentFactory;
         $this->eventManager = $eventManager;
         $this->flowOrderFactory = $flowOrderFactory;
+        $this->flowShippingMethod = $flowShippingMethod;
 
         parent::__construct(
             $context,
@@ -808,7 +816,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         $shippingAddress->setCollectShippingRates(true)
             ->collectShippingRates()
-            ->setShippingMethod('flatrate_flatrate');
+            ->setShippingMethod($this->flowShippingMethod->getStandardMethodFullCode());
 
         foreach ($shippingAddress->getShippingRatesCollection() as $rate) {
             $this->logger->info('Rate: ' . $rate->getCode());
@@ -998,7 +1006,6 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         foreach ($deliveries as $delivery) {
             if (array_key_exists('options', $delivery)) {
                 foreach ($delivery['options'] as $option) {
-                    $order->setShippingMethod($option['service']['carrier']['id'] . '_' . $option['service']['name']);
                     $order->setShippingDescription($option['service']['carrier']['id'] . ': ' . $option['service']['name']);
                     break;
                 }

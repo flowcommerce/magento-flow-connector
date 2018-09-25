@@ -71,6 +71,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     protected $quotePaymentFactory;
     protected $eventManager;
     protected $flowOrderFactory;
+    protected $util;
 
     /**
      * @var FlowShippingMethod
@@ -104,6 +105,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \FlowCommerce\FlowConnector\Model\OrderFactory $flowOrderFactory,
         FlowShippingMethod $flowShippingMethod,
+        \FlowCommerce\FlowConnector\Model\Util $util,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -132,6 +134,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->eventManager = $eventManager;
         $this->flowOrderFactory = $flowOrderFactory;
         $this->flowShippingMethod = $flowShippingMethod;
+        $this->util = $util;
 
         parent::__construct(
             $context,

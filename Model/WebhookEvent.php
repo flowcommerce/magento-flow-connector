@@ -209,6 +209,9 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 case 'tracking_label_event_upserted':
                     $this->processTrackingLabelEventUpserted();
                     break;
+                case 'label_upserted':
+                    $this->processLabelUpserted();
+                    break;
                 default:
                     throw new WebhookException('Unable to process invalid webhook event type: ' . $this->getType());
             }

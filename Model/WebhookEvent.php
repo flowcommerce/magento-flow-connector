@@ -12,6 +12,7 @@ use Magento\Sales\Model\{
 };
 use FlowCommerce\FlowConnector\Exception\WebhookException;
 use FlowCommerce\FlowConnector\Model\Carrier\FlowShippingMethod;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -78,6 +79,11 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
      */
     private $flowShippingMethod;
 
+    /**
+     * @var OrderSender
+     */
+    protected $orderSender;
+
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
@@ -105,6 +111,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \FlowCommerce\FlowConnector\Model\OrderFactory $flowOrderFactory,
         FlowShippingMethod $flowShippingMethod,
+        OrderSender $orderSender,
         \FlowCommerce\FlowConnector\Model\Util $util,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
@@ -134,6 +141,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->eventManager = $eventManager;
         $this->flowOrderFactory = $flowOrderFactory;
         $this->flowShippingMethod = $flowShippingMethod;
+        $this->orderSender = $orderSender;
         $this->util = $util;
 
         parent::__construct(
@@ -688,7 +696,11 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             return;
         }
 
-        $store = $this->storeManager->getStore();
+        if ($storeId = $this->getStoreId()) {
+            $store = $this->storeManager->getStore($storeId);
+        } else {
+            $store = $this->storeManager->getStore();
+        }
         $this->logger->info('Store: ' . $store->getId());
 
         ////////////////////////////////////////////////////////////
@@ -733,7 +745,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         // No customer found, create a new customer
         if (!$customer->getEntityId()) {
             $this->logger->info('Creating a new customer');
-            $customer->setStore($store);
+            $customer->setStoreId($store->getId());
             $customer->setFirstname($data['customer']['name']['first']);
             $customer->setLastname($data['customer']['name']['last']);
             $customer->setEmail($data['customer']['email']);
@@ -747,7 +759,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         ////////////////////////////////////////////////////////////
 
         $quote = $this->quoteFactory->create();
-        $quote->setStore($store);
+        $quote->setStoreId($store->getId());
         $quote->setQuoteCurrencyCode($data['total']['currency']);
         $quote->setBaseCurrencyCode($data['total']['base']['currency']);
         $quote->assignCustomer($customer);
@@ -1023,6 +1035,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         ////////////////////////////////////////////////////////////
 
         $order->save();
+
+        $this->orderSender->send($order);
 
         ////////////////////////////////////////////////////////////
         // Store Flow order

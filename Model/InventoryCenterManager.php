@@ -106,10 +106,10 @@ class InventoryCenterManager
                 }
             }
         } catch (Exception $e) {
-            $return = false;
             $this->logger->error($e->getMessage());
+            return false;
         }
-        return $return;
+        return true;
     }
 
     /**

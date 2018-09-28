@@ -47,9 +47,19 @@ use Magento\Sales\Model\Order as OrderModel;
 class WebhookEvent extends AbstractModel implements WebhookEventInterface, IdentityInterface
 {
     /**
-     * Key for payment additional data
+     * Keys for Magento payment additional data
      */
     const FLOW_PAYMENT_REFERENCE = 'flow_payment_reference';
+    const FLOW_PAYMENT_TYPE = 'flow_payment_type';
+    const FLOW_PAYMENT_DESCRIPTION = 'flow_payment_description';
+
+    /**
+     * Keys for Flow.io order payment data
+     * https://docs.flow.io/type/order-payment
+     */
+    const ORDER_PAYMENT_REFERENCE = 'reference';
+    const ORDER_PAYMENT_TYPE = 'type';
+    const ORDER_PAYMENT_DESCRIPTION = 'description';
 
     /**
      * Key for additional attributes sent to hosted checkout
@@ -975,7 +985,15 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $payment = $quote->getPayment();
                 $payment->setQuote($quote);
                 $payment->setMethod('flowpayment');
-                $payment->setAdditionalInformation(self::FLOW_PAYMENT_REFERENCE, $flowPayment['reference']);
+                $payment->setAdditionalInformation(
+                    self::FLOW_PAYMENT_REFERENCE, $flowPayment[self::ORDER_PAYMENT_REFERENCE]
+                );
+                $payment->setAdditionalInformation(
+                    self::FLOW_PAYMENT_TYPE, $flowPayment[self::ORDER_PAYMENT_TYPE]
+                );
+                $payment->setAdditionalInformation(
+                    self::FLOW_PAYMENT_DESCRIPTION, $flowPayment[self::ORDER_PAYMENT_DESCRIPTION]
+                );
 
                 // NOTE: only supporting 1 payment for now
                 break;

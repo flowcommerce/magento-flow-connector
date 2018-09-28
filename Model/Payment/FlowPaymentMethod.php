@@ -29,6 +29,11 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_util;
 
     /**
+     * @var string
+     */
+    protected $_infoBlockType = \FlowCommerce\FlowConnector\Block\Info\Flow::class;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory

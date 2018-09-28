@@ -34,7 +34,7 @@
     </type>
     <type name="FlowCommerce\FlowConnector\Console\Command\InventorySyncProcessCommand">
         <arguments>
-            <argument name="inventorySyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\Sync\InventorySyncManager\Proxy</argument>
+            <argument name="inventorySyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\InventorySyncManager\Proxy</argument>
         </arguments>
     </type>
 

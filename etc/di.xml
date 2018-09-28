@@ -2,10 +2,16 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <!-- Implementation of modules' interfaces -->
+    <preference for="FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface" type="FlowCommerce\FlowConnector\Model\InventorySync" />
     <preference for="FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface" type="FlowCommerce\FlowConnector\Model\SyncSku" />
+    <preference for="FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface" type="FlowCommerce\FlowConnector\Model\WebhookEvent" />
     <preference for="FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterface" type="Magento\Framework\Api\Search\SearchResult" />
+    <preference for="FlowCommerce\FlowConnector\Api\Data\InventorySyncSearchResultsInterface" type="Magento\Framework\Api\Search\SearchResult" />
     <preference for="FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface" type="FlowCommerce\FlowConnector\Model\SyncSkuManager" />
     <preference for="FlowCommerce\FlowConnector\Api\LockManagerInterface" type="FlowCommerce\FlowConnector\Model\LockManager\Flag" />
+    <preference for="FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface" type="FlowCommerce\FlowConnector\Model\InventorySyncManager" />
+    <preference for="FlowCommerce\FlowConnector\Api\InventorySyncRepositoryInterface" type="FlowCommerce\FlowConnector\Model\InventorySyncRepository" />
+    <preference for="FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface" type="FlowCommerce\FlowConnector\Model\WebhookEventManager" />
 
     <!-- Overriding Order Totals Block for magento admin -->
     <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
@@ -21,6 +27,16 @@
             <argument name="catalogSync" xsi:type="object">FlowCommerce\FlowConnector\Model\Sync\CatalogSync\Proxy</argument>
         </arguments>
     </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\InventorySyncQueueAllCommand">
+        <arguments>
+            <argument name="inventorySyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\InventorySyncManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\InventorySyncProcessCommand">
+        <arguments>
+            <argument name="inventorySyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\Sync\InventorySyncManager\Proxy</argument>
+        </arguments>
+    </type>
 
     <!-- CLI Commands -->
     <type name="Magento\Framework\Console\CommandList">
@@ -28,6 +44,9 @@
             <argument name="commands" xsi:type="array">
                 <item name="flowcommerce_flowconnector_catalog_sync_queue_all" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CatalogSyncQueueAllCommand</item>
                 <item name="flowcommerce_flowconnector_catalog_sync_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand</item>
+                <item name="flowcommerce_flowconnector_default_centers_update" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\FetchInventoryCenterKeysCommand</item>
+                <item name="flowcommerce_flowconnector_inventory_sync_queue_all" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\InventorySyncQueueAllCommand</item>
+                <item name="flowcommerce_flowconnector_inventory_sync_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\InventorySyncProcessCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_event_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookEventProcessCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_register_webhooks" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand</item>
             </argument>

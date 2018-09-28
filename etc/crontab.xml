@@ -15,4 +15,14 @@
             <schedule>* * * * *</schedule>
         </job>
     </group>
+    <group id="flowcommerce_flowconnector_inventory_queue">
+        <job name="flow_flowconnector_inventory_sync_queue_all_task" instance="FlowCommerce\FlowConnector\Cron\InventorySyncQueueAllTask" method="execute">
+            <schedule>15 2 * * *</schedule>
+        </job>
+    </group>
+    <group id="flowcommerce_flowconnector_inventory_process">
+        <job name="flowcommerce_flowconnector_inventory_sync_process_task" instance="FlowCommerce\FlowConnector\Cron\InventorySyncProcessTask" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
+    </group>
 </config>

@@ -2,73 +2,132 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
+use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface;
+use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
+use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent as WebhookEventResourceModel;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\UrlInterface;
-use Zend\Http\{
-    Client,
-    Request
-};
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\StoreManagerInterface as StoreManager;
+use Psr\Log\LoggerInterface as Logger;
+use Zend\Http\Request;
 
 /**
- * Helper class to manage WebhookEvent processing.
+ * Class WebhookEventManager
+ * @package FlowCommerce\FlowConnector\Model
  */
-class WebhookEventManager {
+class WebhookEventManager implements WebhookEventManagementInterface
+{
+    /**
+     * Number of seconds to delay before reprocessing
+     */
+    const REQUEUE_DELAY_INTERVAL = 30;
 
+    /**
+     * Maximum age in seconds for a WebhookEvent to requeue
+     */
+    const REQUEUE_MAX_AGE = 3600;
+
+    /**
+     * @var JsonSerializer
+     */
+    private $jsonSerializer;
+
+    /**
+     * @var Logger
+     */
     private $logger;
-    private $jsonHelper;
-    private $util;
-    private $webhookEventFactory;
-    private $storeManager;
-    private $objectManager;
 
+    /**
+     * @var StoreManager
+     */
+    private $storeManager;
+
+    /**
+     * @var FlowUtil
+     */
+    private $util;
+
+    /**
+     * @var WebhookEventFactory
+     */
+    private $webhookEventFactory;
+
+    /**
+     * @var WebhookEventResourceModel
+     */
+    private $webhookEventResourceModel;
+
+    /**
+     * WebhookEventManager constructor.
+     * @param FlowUtil $util
+     * @param JsonSerializer $jsonSerializer
+     * @param Logger $logger
+     * @param StoreManager $storeManager
+     * @param WebhookEventFactory $webhookEventFactory
+     * @param WebhookEventResourceModel $webhookEventResourceModel
+     */
     public function __construct(
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \FlowCommerce\FlowConnector\Model\Util $util,
-        \FlowCommerce\FlowConnector\Model\WebhookEventFactory $webhookEventFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        FlowUtil $util,
+        JsonSerializer $jsonSerializer,
+        Logger $logger,
+        StoreManager $storeManager,
+        WebhookEventFactory $webhookEventFactory,
+        WebhookEventResourceModel $webhookEventResourceModel
     ) {
-        $this->logger = $logger;
-        $this->jsonHelper = $jsonHelper;
         $this->util = $util;
-        $this->webhookEventFactory = $webhookEventFactory;
+        $this->jsonSerializer = $jsonSerializer;
+        $this->logger = $logger;
         $this->storeManager = $storeManager;
-        $this->objectManager = $objectManager;
+        $this->webhookEventFactory = $webhookEventFactory;
+        $this->webhookEventResourceModel = $webhookEventResourceModel;
     }
 
     /**
-    * Set the logger (used by console command).
-    */
-    public function setLogger($logger) {
+     * Set the logger (used by console command).
+     * @param Logger $logger
+     * @return void
+     */
+    public function setLogger(Logger $logger)
+    {
         $this->logger = $logger;
         $this->util->setLogger($logger);
     }
 
     /**
-    * Queue webhook event for processing.
-    */
-    public function queue($type, $payload, $storeId) {
+     * Queue webhook event for processing.
+     * @param string $type
+     * @param string[] $payload
+     * @param int $storeId
+     * @return WebhookEvent
+     * @throws \Exception
+     */
+    public function queue($type, $payload, $storeId)
+    {
         $this->logger->info('Queue webhook event type: ' . $type);
 
-        $payloadData = $this->jsonHelper->jsonDecode($payload);
+        $payloadData = $this->jsonSerializer->unserialize($payload);
         $timestamp = $payloadData['timestamp'];
 
-        $model = $this->webhookEventFactory->create();
-        $model->setType($type);
-        $model->setPayload($payload);
-        $model->setStoreId($storeId);
-        $model->setStatus(WebhookEvent::STATUS_NEW);
-        $model->setTriggeredAt($timestamp);
-        $model->save();
-        return $model;
+        $webhookEvent = $this->webhookEventFactory->create();
+        $webhookEvent->setType($type);
+        $webhookEvent->setPayload($payload);
+        $webhookEvent->setStoreId($storeId);
+        $webhookEvent->setStatus(WebhookEvent::STATUS_NEW);
+        $webhookEvent->setTriggeredAt($timestamp);
+        $this->saveWebhookEvent($webhookEvent);
+        return $webhookEvent;
     }
 
     /**
-    * Process the webhook event queue.
-    * @param numToProcess Number of records to process.
-    * @param keepAlive Number of seconds to keep alive after/between processing.
-    */
-    public function process($numToProcess = 1000, $keepAlive = 60) {
+     * Process the webhook event queue.
+     * @param $numToProcess - Number of records to process.
+     * @param $keepAlive - Number of seconds to keep alive after/between processing.
+     * @throws LocalizedException
+     */
+    public function process($numToProcess = 1000, $keepAlive = 60)
+    {
         $this->logger->info('Starting webhook event processing');
 
         $this->deleteOldProcessedEvents();
@@ -96,11 +155,14 @@ class WebhookEventManager {
     }
 
     /**
-    * Registers webhooks with Flow.
-    * @param storeId ID of store
-    */
-    public function registerWebhooks($storeId) {
-        if (! $this->util->isFlowEnabled($storeId)) {
+     * Registers webhooks with Flow.
+     * @param $storeId - ID of store
+     * @return bool
+     * @throws \Exception
+     */
+    public function registerWebhooks($storeId)
+    {
+        if (!$this->util->isFlowEnabled($storeId)) {
             throw new \Exception('Flow module is disabled.');
         }
 
@@ -123,12 +185,14 @@ class WebhookEventManager {
     }
 
     /**
-    * Delete all Flow connector webhooks.
-    * @param storeId ID of store
-    */
-    private function deleteAllWebhooks($storeId) {
+     * Delete all Flow connector webhooks.
+     * @param $storeId - ID of store
+     * @return void
+     */
+    private function deleteAllWebhooks($storeId)
+    {
         $webhooks = $this->getRegisteredWebhooks($storeId);
-        foreach($webhooks as $webhook) {
+        foreach ($webhooks as $webhook) {
             if (strpos($webhook['url'], '/flowconnector/webhooks/') &&
                 strpos($webhook['url'], 'storeId=' . $storeId)) {
                 $this->logger->info('Deleting webhook: ' . $webhook['url']);
@@ -140,20 +204,24 @@ class WebhookEventManager {
     }
 
     /**
-    * Registers a webhook with Flow.
-    * @param storeId ID of store
-    */
-    private function registerWebhook($storeId, $endpointStub, $event) {
+     * Registers a webhook with Flow.
+     * @param $storeId - ID of store
+     * @param $endpointStub
+     * @param $event
+     * @throws NoSuchEntityException
+     */
+    private function registerWebhook($storeId, $endpointStub, $event)
+    {
         $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB);
 
         $data = [
             'url' => $baseUrl . 'flowconnector/webhooks/' . $endpointStub . '?storeId=' . $storeId,
-            'events' => $event
+            'events' => $event,
         ];
 
-        $this->logger->info('Registering webhook event '. $event . ': ' . $data['url']);
+        $this->logger->info('Registering webhook event ' . $event . ': ' . $data['url']);
 
-        $dataStr = $this->jsonHelper->jsonEncode($data);
+        $dataStr = $this->jsonSerializer->serialize($data);
 
         $client = $this->util->getFlowClient('/webhooks', $storeId);
         $client->setMethod(Request::METHOD_POST);
@@ -168,10 +236,12 @@ class WebhookEventManager {
     }
 
     /**
-    * Returns a list of webhooks registered with Flow.
-    * @param storeId ID of store
-    */
-    private function getRegisteredWebhooks($storeId) {
+     * Returns a list of webhooks registered with Flow.
+     * @param $storeId - ID of store
+     * @return string[]
+     */
+    private function getRegisteredWebhooks($storeId)
+    {
         if (!$this->util->isFlowEnabled($storeId)) {
             return [];
         }
@@ -181,54 +251,111 @@ class WebhookEventManager {
 
         if ($response->isSuccess()) {
             $content = $response->getBody();
-            return $this->jsonHelper->jsonDecode($content);
+            return $this->jsonSerializer->unserialize($content);
         } else {
             return [];
         }
     }
 
     /**
-    * Returns the next unprocessed event.
-    */
-    private function getNextUnprocessedEvent() {
+     * Returns the next unprocessed event.
+     * @return WebhookEvent|null
+     */
+    private function getNextUnprocessedEvent()
+    {
         $collection = $this->webhookEventFactory->create()->getCollection();
         $collection->addFieldToFilter('status', WebhookEvent::STATUS_NEW);
         $collection->addFieldToFilter('triggered_at', ['lteq' => (new \DateTime())->format('Y-m-d H:i:s')]);
         $collection->setOrder('updated_at', 'ASC');
         $collection->setPageSize(1);
         if ($collection->getSize() == 0) {
-            return null;
+            $return =  null;
         } else {
-            return $collection->getFirstItem();
+            /** @var WebhookEvent $return */
+            $return = $collection->getFirstItem();
+        }
+        return $return;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteOldProcessedEvents()
+    {
+        $this->webhookEventResourceModel->deleteOldProcessedEvents();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function markWebhookEventAsDone(WebhookEvent $webHookEvent, $message = null)
+    {
+        if ($message !== null) {
+            $message = substr((string) $message, 0, 200);
+            $webHookEvent->setMessage($message);
+        }
+        $webHookEvent->setStatus(WebhookEvent::STATUS_DONE);
+        $this->saveWebhookEvent($webHookEvent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function markWebhookEventAsError(WebhookEvent $webHookEvent, $errorMessage = null)
+    {
+        $errorMessage = substr((string) $errorMessage, 0, 200);
+        $webHookEvent->setStatus(WebhookEvent::STATUS_ERROR);
+        $webHookEvent->setMessage($errorMessage);
+        $this->saveWebhookEvent($webHookEvent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function markWebhookEventAsProcessing(WebhookEvent $webHookEvent)
+    {
+        $webHookEvent->setStatus(WebhookEvent::STATUS_PROCESSING);
+        $this->saveWebhookEvent($webHookEvent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetOldErrorEvents()
+    {
+        $this->webhookEventResourceModel->resetOldErrorEvents();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function requeue(WebhookEvent $webHookEvent, $message)
+    {
+        $interval = \DateInterval::createFromDateString(self::REQUEUE_MAX_AGE . ' seconds');
+        $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $webHookEvent->getCreatedAt());
+        $triggeredAt = \DateTime::createFromFormat('Y-m-d H:i:s', $webHookEvent->getTriggeredAt());
+        if ($createdAt->add($interval) < $triggeredAt) {
+            $this->markWebhookEventAsError(
+                $webHookEvent,
+                'REQUEUE_MAX_AGE of ' . self::REQUEUE_MAX_AGE . ' seconds reached'
+            );
+        } else {
+            $date = new \DateTime();
+            $date->add(\DateInterval::createFromDateString(self::REQUEUE_DELAY_INTERVAL . ' seconds'));
+            $webHookEvent->setTriggeredAt($date->format('Y-m-d H:i:s'));
+            $webHookEvent->setMessage($message);
+            $webHookEvent->setStatus(WebhookEvent::STATUS_NEW);
+            $this->saveWebhookEvent($webHookEvent);
         }
     }
 
     /**
-    * Deletes old processed webhook events.
-    */
-    private function deleteOldProcessedEvents() {
-        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        $sql = '
-        delete from flow_connector_webhook_events
-         where status=\'' . WebhookEvent::STATUS_DONE . '\'
-           and updated_at < date_sub(now(), interval 96 hour)
-        ';
-        $connection->query($sql);
-    }
-
-    /**
-    * Reset any webhook events that have been stuck processing for too long.
-    */
-    private function resetOldErrorEvents() {
-        $resource = $this->objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection = $resource->getConnection();
-        $sql = '
-        update flow_connector_webhook_events
-           set status=\'' . WebhookEvent::STATUS_NEW . '\'
-         where status=\'' . WebhookEvent::STATUS_PROCESSING . '\'
-           and updated_at < date_sub(now(), interval 4 hour)
-        ';
-        $connection->query($sql);
+     * Persists given webhook event to the database through the resource model
+     * @param WebhookEvent $webhookEvent
+     * @return void
+     */
+    private function saveWebhookEvent(WebhookEvent $webhookEvent)
+    {
+        $this->webhookEventResourceModel->directQuerySave($webhookEvent);
     }
 }

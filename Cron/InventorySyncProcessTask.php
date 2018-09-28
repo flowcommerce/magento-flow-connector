@@ -3,15 +3,15 @@
 namespace FlowCommerce\FlowConnector\Cron;
 
 use \FlowCommerce\FlowConnector\Model\LockManager\CantAcquireLockException;
-use \Psr\Log\LoggerInterface as Logger;
 use \FlowCommerce\FlowConnector\Api\LockManagerInterface as LockManager;
-use \FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
+use \FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface as InventorySyncManager;
+use \Psr\Log\LoggerInterface as Logger;
 
 /**
- * Cron Task wrapper class to run catalog sync process.
+ * Cron Task wrapper class to run inventory sync process.
  * @package FlowCommerce\FlowConnector\Cron
  */
-class CatalogSyncProcessTask
+class InventorySyncProcessTask
 {
     /**
      * Number of jobs to be processed at every run
@@ -26,12 +26,7 @@ class CatalogSyncProcessTask
     /**
      * Lock manager - lock code
      */
-    const LOCK_CODE = 'flowconnector_catalog_sync_lock';
-
-    /**
-     * Lock manager - lock ttl
-     */
-    const LOCK_TTL = 600;
+    const LOCK_CODE = 'flowconnector_inventory_sync_lock';
 
     /**
      * @var LockManager
@@ -44,29 +39,29 @@ class CatalogSyncProcessTask
     private $logger;
 
     /**
-     * @var CatalogSync
+     * @var InventorySyncManager
      */
-    private $catalogSync;
+    private $inventorySyncManager;
 
     /**
-     * CatalogSyncProcessTask constructor.
+     * InventorySyncProcessTask constructor.
      * @param LockManager $lockManager
      * @param Logger $logger
-     * @param CatalogSync $catalogSync
+     * @param InventorySyncManager $inventorySyncManager
      */
     public function __construct(
         Logger $logger,
-        CatalogSync $catalogSync,
+        InventorySyncManager $inventorySyncManager,
         LockManager $lockManager
     ) {
         $this->logger = $logger;
-        $this->catalogSync = $catalogSync;
+        $this->inventorySyncManager = $inventorySyncManager;
         $this->lockManager = $lockManager;
     }
 
     /**
      * Returns the number of seconds to wait after a queue is processed.
-     * The CatalogSync model will attempt to find new jobs be processed.
+     * The InventorySync model will attempt to find new jobs be processed.
      * @return int
      */
     private function getKeepAliveAfterQueueIsProcessed()
@@ -100,10 +95,10 @@ class CatalogSyncProcessTask
     public function execute()
     {
         try {
-            $this->lockManager->setCustomLockTtl(self::LOCK_TTL);
             $this->acquireLock();
-            $this->logger->info('Running CatalogSyncProcessTask execute.');
-            $this->catalogSync->process($this->getNumberOfJobsToProcess(), $this->getKeepAliveAfterQueueIsProcessed());
+            $this->logger->info('Running InventorySyncProcessTask execute.');
+            $this->inventorySyncManager
+                ->process($this->getNumberOfJobsToProcess(), $this->getKeepAliveAfterQueueIsProcessed());
             $this->releaseLock();
         } catch (CantAcquireLockException $e) {
             $this->logger->info($e->getMessage());

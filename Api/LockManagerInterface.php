@@ -27,4 +27,11 @@ interface LockManagerInterface
      * @return void
      */
     public function releaseLock($lockCode);
+
+    /**
+     * Defines custom lock TTL. If not set, will fallback to default (2 minutes)
+     * @param int $seconds
+     * @return mixed
+     */
+    public function setCustomLockTtl($seconds);
 }

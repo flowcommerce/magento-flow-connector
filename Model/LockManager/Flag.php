@@ -24,7 +24,13 @@ class Flag implements LockManagerInterface
     /**
      * Maximum time in seconds a lock can be acquired for
      */
-    const LOCK_TTL = 600;
+    const LOCK_TTL = 120;
+
+    /**
+     * Custom TTL defined by lock
+     * @var int|null
+     */
+    private $customTtl;
 
     /**
      * @var FlagManager
@@ -60,6 +66,20 @@ class Flag implements LockManagerInterface
     }
 
     /**
+     * Returns TTL for current lock
+     * @return int
+     */
+    private function getLockTtl()
+    {
+        if ($this->customTtl === null) {
+            $return = self::LOCK_TTL;
+        } else {
+            $return = $this->customTtl;
+        }
+        return $return;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isLocked($lockCode)
@@ -84,9 +104,21 @@ class Flag implements LockManagerInterface
         if (array_key_exists(self::DATA_KEY_TIMESTAMP, $flagData)) {
             $lockTimestamp = $flagData[self::DATA_KEY_TIMESTAMP];
             $currentTimestamp = time();
-            $return = (bool) (($currentTimestamp - $lockTimestamp) > self::LOCK_TTL);
+            $return = (bool) (($currentTimestamp - $lockTimestamp) > $this->getLockTtl());
         }
         return $return;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCustomLockTtl($seconds)
+    {
+        $seconds = (int) $seconds;
+
+        if ($seconds > 0) {
+            $this->customTtl = (int) $seconds;
+        }
     }
 
     /**

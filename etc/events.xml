@@ -3,6 +3,9 @@
     <event name="catalog_product_save_before">
         <observer name="FlowProductUpdateObserver" instance="FlowCommerce\FlowConnector\Observer\FlowProductUpdateObserver" />
     </event>
+    <event name="cataloginventory_stock_item_save_after">
+        <observer name="FlowInventoryUpdateObserver" instance="FlowCommerce\FlowConnector\Observer\FlowInventoryUpdateObserver" />
+    </event>
     <event name="catalog_product_delete_after">
         <observer name="FlowProductDeleteObserver" instance="FlowCommerce\FlowConnector\Observer\FlowProductDeleteObserver" />
     </event>

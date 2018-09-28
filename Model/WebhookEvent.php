@@ -2,77 +2,201 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use Magento\Framework\{
-    Model\AbstractModel,
-    DataObject\IdentityInterface
-};
-use Magento\Sales\Model\{
-    Order,
-    OrderInterface
-};
+use FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface;
 use FlowCommerce\FlowConnector\Exception\WebhookException;
+use FlowCommerce\FlowConnector\Model\OrderFactory as FlowOrderFactory;
+use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
+use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEventManager;
+use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Sales\Api\Data\OrderInterface as Order;
+use Magento\Sales\Api\Data\OrderItemInterface as OrderItem;
+use Magento\Framework\Model\Context;
+use Magento\Framework\Registry;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Store\Model\StoreManagerInterface as StoreManager;
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Model\QuoteManagement;
+use Magento\Customer\Model\CustomerFactory;
+use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
+use Magento\Sales\Model\Service\OrderService;
+use Magento\Quote\Api\CartRepositoryInterface as CartRepository;
+use Magento\Quote\Api\CartManagementInterface as CartManager;
+use Magento\Quote\Model\Quote\Address\Rate as ShippingRate;
+use Magento\Quote\Api\Data\CurrencyInterface as Currency;
+use Magento\Directory\Model\CountryFactory;
+use Magento\Directory\Model\RegionFactory;
+use Magento\Sales\Model\OrderFactory;
+use Magento\Payment\Model\MethodList as PaymentMethodList;
+use Magento\Sales\Api\OrderRepositoryInterface as OrderRepository;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Quote\Model\Quote\PaymentFactory;
+use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Framework\Data\Collection\AbstractDb as ResourceCollection;
+use Psr\Log\LoggerInterface as Logger;
 use FlowCommerce\FlowConnector\Model\Carrier\FlowShippingMethod;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Magento\Sales\Model\Order as OrderModel;
 
 /**
  * Model class for storing a Flow webhook event.
  */
-class WebhookEvent extends AbstractModel implements IdentityInterface {
-
-    // Webhook event status values
-    const STATUS_NEW = 'new';
-    const STATUS_PROCESSING = 'processing';
-    const STATUS_ERROR = 'error';
-    const STATUS_DONE = 'done';
-
-    // Key for payment additional data
+class WebhookEvent extends AbstractModel implements WebhookEventInterface, IdentityInterface
+{
+    /**
+     * Key for payment additional data
+     */
     const FLOW_PAYMENT_REFERENCE = 'flow_payment_reference';
 
-    // Key for additional attributes sent to hosted checkout
+    /**
+     * Key for additional attributes sent to hosted checkout
+     */
     const CHECKOUT_SESSION_ID = 'checkout_session_id';
     const CUSTOMER_ID = 'customer_id';
     const CUSTOMER_SESSION_ID = 'customer_session_id';
     const QUOTE_ID = 'quote_id';
 
-    // Constants for event dispatching
+    /**
+     * Constants for event dispatching
+     */
     const EVENT_FLOW_PREFIX = 'flow_';
     const EVENT_FLOW_SUFFIX_AFTER = '_after';
     const EVENT_FLOW_CHECKOUT_EMAIL_CHANGED = 'flow_checkout_email_changed';
 
-    // Number of seconds to delay before reprocessing
-    const REQUEUE_DELAY_INTERVAL = 30;
-
-    // Maximum age in seconds for a WebhookEvent to requeue
-    const REQUEUE_MAX_AGE = 3600;
-
+    /**
+     * Cache Tag
+     */
     const CACHE_TAG = 'flow_connector_webhook_events';
-    protected $_cacheTag = 'flow_connector_webhook_events';
+
+    /**
+     * Cache Tag
+     * @var string
+     */
+    protected $_cacheTag = self::CACHE_TAG;
+
+    /**
+     * Event prefix
+     * @var string
+     */
     protected $_eventPrefix = 'flow_connector_webhook_events';
 
+    /**
+     * @var Logger
+     */
     protected $logger;
-    protected $jsonHelper;
+
+    /**
+     * @var JsonSerializer
+     */
+    protected $jsonSerializer;
+
+    /**
+     * @var StoreManager
+     */
     protected $storeManager;
+
+    /**
+     * @var ProductFactory
+     */
     protected $productFactory;
+
+    /**
+     * @var ProductRepository
+     */
     protected $productRepository;
+
+    /**
+     * @var QuoteFactory
+     */
     protected $quoteFactory;
+
+    /**
+     * @var QuoteManagement
+     */
     protected $quoteManagement;
+
+    /**
+     * @var CustomerFactory
+     */
     protected $customerFactory;
+
+    /**
+     * @var CustomerRepository
+     */
     protected $customerRepository;
+
+    /**
+     * @var OrderService
+     */
     protected $orderService;
+
+    /**
+     * @var CartRepository
+     */
     protected $cartRepository;
+
+    /**
+     * @var CartManager
+     */
     protected $cartManagement;
+
+    /**
+     * @var ShippingRate
+     */
     protected $shippingRate;
+
+    /**
+     * @var Currency
+     */
     protected $currency;
+
+    /**
+     * @var CountryFactory
+     */
     protected $countryFactory;
+
+    /**
+     * @var RegionFactory
+     */
     protected $regionFactory;
+
+    /**
+     * @var OrderFactory
+     */
     protected $orderFactory;
+
+    /**
+     * @var PaymentMethodList
+     */
     protected $methodList;
+
+    /**
+     * @var OrderRepository
+     */
     protected $orderRepository;
+
+    /**
+     * @var SearchCriteriaBuilder
+     */
     protected $searchCriteriaBuilder;
+
+    /**
+     * @var PaymentFactory
+     */
     protected $quotePaymentFactory;
+
+    /**
+     * @var EventManager
+     */
     protected $eventManager;
+
+    /**
+     * @var FlowOrderFactory
+     */
     protected $flowOrderFactory;
-    protected $util;
 
     /**
      * @var FlowShippingMethod
@@ -84,41 +208,59 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
      */
     protected $orderSender;
 
+    /**
+     * @var WebhookEventManager
+     */
+    protected $webhookEventManager;
+
+    /**
+     * @var FlowUtil
+     */
+    protected $flowUtil;
+
     public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
-        \Magento\Quote\Model\QuoteFactory $quoteFactory,
-        \Magento\Quote\Model\QuoteManagement $quoteManagement,
-        \Magento\Customer\Model\CustomerFactory $customerFactory,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        \Magento\Sales\Model\Service\OrderService $orderService,
-        \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
-        \Magento\Quote\Api\CartManagementInterface $cartManagement,
-        \Magento\Quote\Model\Quote\Address\Rate $shippingRate,
-        \Magento\Quote\Api\Data\CurrencyInterface $currency,
-        \Magento\Directory\Model\CountryFactory $countryFactory,
-        \Magento\Directory\Model\RegionFactory $regionFactory,
-        \Magento\Sales\Model\OrderFactory $orderFactory,
-        \Magento\Payment\Model\MethodList $methodList,
-        \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
-        \Magento\Quote\Model\Quote\PaymentFactory $quotePaymentFactory,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
-        \FlowCommerce\FlowConnector\Model\OrderFactory $flowOrderFactory,
+        Context $context,
+        Registry $registry,
+        Logger $logger,
+        JsonSerializer $jsonSerializer,
+        StoreManager $storeManager,
+        ProductFactory $productFactory,
+        ProductRepository $productRepository,
+        QuoteFactory $quoteFactory,
+        QuoteManagement $quoteManagement,
+        CustomerFactory $customerFactory,
+        CustomerRepository $customerRepository,
+        OrderService $orderService,
+        CartRepository $cartRepository,
+        CartManager $cartManagement,
+        Shippingrate $shippingRate,
+        Currency $currency,
+        CountryFactory $countryFactory,
+        RegionFactory $regionFactory,
+        OrderFactory $orderFactory,
+        PaymentMethodList $methodList,
+        OrderRepository $orderRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        PaymentFactory $quotePaymentFactory,
+        EventManager $eventManager,
+        FlowOrderFactory $flowOrderFactory,
+        WebhookEventManager $webhookEventManager,
         FlowShippingMethod $flowShippingMethod,
         OrderSender $orderSender,
-        \FlowCommerce\FlowConnector\Model\Util $util,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        FlowUtil $flowUtil,
+        AbstractResource $resource = null,
+        ResourceCollection $resourceCollection = null,
         array $data = []
     ) {
+        parent::__construct(
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
         $this->logger = $logger;
-        $this->jsonHelper = $jsonHelper;
+        $this->jsonSerializer = $jsonSerializer;
         $this->storeManager = $storeManager;
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
@@ -142,18 +284,11 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $this->flowOrderFactory = $flowOrderFactory;
         $this->flowShippingMethod = $flowShippingMethod;
         $this->orderSender = $orderSender;
-        $this->util = $util;
-
-        parent::__construct(
-            $context,
-            $registry,
-            $resource,
-            $resourceCollection,
-            $data
-        );
+        $this->webhookEventManager = $webhookEventManager;
+        $this->flowUtil = $flowUtil;
     }
 
-    protected function _construct() {
+    protected function _construct(){
         $this->_init(ResourceModel\WebhookEvent::class);
     }
 
@@ -169,15 +304,14 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     * Returns the json payload as an array.
     */
     public function getPayloadData() {
-        return $this->jsonHelper->jsonDecode($this->getPayload());
+        return $this->jsonSerializer->unserialize($this->getPayload());
     }
 
     /**
     * Process webhook event data.
     */
     public function process() {
-        $this->setStatus(self::STATUS_PROCESSING);
-        $this->save();
+        $this->webhookEventManager->markWebhookEventAsProcessing($this);
 
         try {
             switch ($this->getType()) {
@@ -236,9 +370,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         } catch (\Exception $e) {
             $this->logger->warn('Error processing webhook: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
-            $this->setStatus(self::STATUS_ERROR);
-            $this->setMessage(substr($e->getMessage(), 0, 200));
-            $this->save();
+            $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
         }
     }
 
@@ -248,25 +380,27 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     * https://docs.flow.io/type/allocation-deleted-v-2
     */
     private function processAllocationDeletedV2() {
+        # Temporarily disabling allocation_deleted_v2, as it was breaking the cron
+        $this->webhookEventManager->markWebhookEventAsDone($this, '');
+        return;
+
         $this->logger->info('Processing allocation_deleted_v2 data');
         $data = $this->getPayloadData();
 
         $urlStub = '/orders/allocations/' . $data['id'];
-        $client = $this->util->getFlowClient($urlStub, $this->getStoreId());
+        $client = $this->flowUtil->getFlowClient($urlStub, $this->getStoreId());
         $response = $client->send();
 
         if ($response->isSuccess()) {
-            $allocation = $this->jsonHelper->jsonDecode($response->getBody());
+            $allocation = $this->jsonSerializer->unserialize($response->getBody());
 
             if ($order = $this->getOrderByFlowOrderNumber($allocation['order']['number'])) {
                 $order->setTotalCanceled($allocation['total']['amount']);
                 $order->setBaseTotalCanceled($allocation['total']['base']['amount']);
-                $order->setState(Order::STATE_HOLDED);
+                $order->setState(OrderModel::STATE_HOLDED);
                 $order->save();
 
-                $this->setMessage(null);
-                $this->setStatus(self::STATUS_DONE);
-                $this->save();
+                $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
@@ -403,9 +537,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             $order->setBaseGrandTotal($data['allocation']['total']['base']['amount']);
             $order->save();
 
-            $this->setMessage(null);
-            $this->setStatus(self::STATUS_DONE);
-            $this->save();
+            $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
         } else {
             $this->requeue('Unable to find order right now, reprocess.');
@@ -422,11 +554,11 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $data = $this->getPayloadData();
 
         $urlStub = '/authorizations?id=' . $data['id'];
-        $client = $this->util->getFlowClient($urlStub, $this->getStoreId());
+        $client = $this->flowUtil->getFlowClient($urlStub, $this->getStoreId());
         $response = $client->send();
 
         if ($response->isSuccess()) {
-            $authorization = $this->jsonHelper->jsonDecode($response->getBody());
+            $authorization = $this->jsonSerializer->unserialize($response->getBody());
             if (array_key_exists('order', $authorization)) {
                 $orderPayment = null;
 
@@ -448,9 +580,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     $orderPayment->cancel();
                     $orderPayment->save();
 
-                    $this->setMessage(null);
-                    $this->setStatus(self::STATUS_DONE);
-                    $this->save();
+                    $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
                 } else {
                     throw new WebhookException('Unable to find corresponding payment.');
@@ -499,9 +629,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                         // Ignore, capture was initiated by Magento.
                     }
 
-                    $this->setMessage(null);
-                    $this->setStatus(self::STATUS_DONE);
-                    $this->save();
+                    $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
                 } else {
                     throw new WebhookException('Unable to find corresponding payment.');
@@ -553,38 +681,38 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     switch ($status) {
                         case 'pending':
                             // If an immediate response is not available, the state will be 'pending'. For example, online payment methods like AliPay or PayPal will have a status of 'pending' until the user completes the payment. Pending authorizations expire if the user does not complete the payment in a timely fashion.
-                            $order->setState(Order::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PENDING_PAYMENT));
+                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
                             $order->save();
                             break;
                         case 'expired':
                             // Authorization has expired.
                             $orderPayment->setAmountAuthorized(0.0);
                             $orderPayment->save();
-                            $order->setState(Order::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PENDING_PAYMENT));
+                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
                             $order->save();
                             break;
                         case 'authorized':
                             // Authorization was successful
                             $orderPayment->setAmountAuthorized($data['authorization']['amount']);
                             $orderPayment->save();
-                            $order->setState(Order::STATE_PROCESSING);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PROCESSING));
+                            $order->setState(OrderModel::STATE_PROCESSING);
+                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PROCESSING));
                             $order->save();
                             break;
                         case 'review':
                             // If an immediate response is not available, the state will be 'review' - this usually indicates fraud review requires additional time / verification (or a potential network issue with the issuing bank)
-                            $order->setState(Order::STATE_PAYMENT_REVIEW);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PAYMENT_REVIEW));
+                            $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
+                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PAYMENT_REVIEW));
                             $order->save();
                             break;
                         case 'declined':
                             // Indicates the authorization has been declined by the issuing bank. See the authorization decline code for more details as to the reason for decline.
                             $orderPayment->setIsFraudDetected(true);
                             $orderPayment->save();
-                            $order->setState(Order::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PENDING_PAYMENT));
+                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
                             $order->setIsFraudDetected(true);
                             $order->save();
                             break;
@@ -592,8 +720,8 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                             // Indicates the authorization has been fully reversed. You can fully reverse an authorization up until the moment you capture funds; once you have captured funds you must create refunds.
                             $orderPayment->setAmountAuthorized(0.0);
                             $orderPayment->save();
-                            $order->setState(Order::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(Order::STATE_PENDING_PAYMENT));
+                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
                             $order->save();
                             break;
                         default:
@@ -604,9 +732,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     throw new WebhookException('Unable to find corresponding payment.');
                 }
 
-                $this->setMessage(null);
-                $this->setStatus(self::STATUS_DONE);
-                $this->save();
+                $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
@@ -647,20 +773,22 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     * https://docs.flow.io/type/order-deleted
     */
     private function processOrderDeleted() {
+        # Temporarily disabling order_deleted, as it was breaking the cron
+        $this->webhookEventManager->markWebhookEventAsDone($this, '');
+        return;
+
         $this->logger->info('Processing order_deleted data');
         $data = $this->getPayloadData();
 
         if ($order = $this->getOrderByFlowOrderNumber($data['number'])) {
 
-            if ($order->getState() == Order::STATE_NEW) {
+            if ($order->getState() == OrderModel::STATE_NEW) {
                 foreach($order->getPaymentsCollection() as $payment) {
                     $payment->cancel();
                 }
 
                 $order->delete();
-                $this->setMessage(null);
-                $this->setStatus(self::STATUS_DONE);
-                $this->save();
+                $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
             } else {
                 throw new WebhookException('Unable to delete order.');
@@ -682,17 +810,13 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
         // Do not process orders until they have a submitted_at date
         if (!array_key_exists('submitted_at', $data)) {
-            $this->setMessage('Order data incomplete, skipping.');
-            $this->setStatus(self::STATUS_DONE);
-            $this->save();
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order data incomplete, skipping');
             return;
         }
 
         // Check if this order has already been processed
         if ($this->getOrderByFlowOrderNumber($data['number'])) {
-            $this->setMessage('Order previously processed, skipping');
-            $this->setStatus(self::STATUS_DONE);
-            $this->save();
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order previously processed, skipping');
             return;
         }
 
@@ -950,7 +1074,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         // Order level settings
         ////////////////////////////////////////////////////////////
 
-        $order->setState(Order::STATE_NEW);
+        $order->setState(OrderModel::STATE_NEW);
         $order->setEmailSent(0);
 
         // Store Flow order number
@@ -1060,8 +1184,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             }
         }
 
-        $this->setStatus(self::STATUS_DONE);
-        $this->save();
+        $this->webhookEventManager->markWebhookEventAsDone($this);
     }
 
     /**
@@ -1101,8 +1224,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     // Ignore, refund was initiated by Magento.
                 }
 
-                $this->setStatus(self::STATUS_DONE);
-                $this->save();
+                $this->webhookEventManager->markWebhookEventAsDone($this);
 
             } else {
                 throw new WebhookException('Unable to find payment corresponding payment.');
@@ -1150,8 +1272,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                     // Ignore, refund was initiated by Magento.
                 }
 
-                $this->setStatus(self::STATUS_DONE);
-                $this->save();
+                $this->webhookEventManager->markWebhookEventAsDone($this);
 
             } else {
                 throw new WebhookException('Unable to find corresponding payment.');
@@ -1172,23 +1293,21 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
         $data = $this->getPayloadData();
 
         if ($order = $this->getOrderByFlowOrderNumber($data['order']['number'])) {
-            if ($order->getState() != Order::STATE_COMPLETE &&
-                $order->getState() != Order::STATE_CLOSED &&
-                $order->getState() != Order::STATE_CANCELED)
+            if ($order->getState() != OrderModel::STATE_COMPLETE &&
+                $order->getState() != OrderModel::STATE_CLOSED &&
+                $order->getState() != OrderModel::STATE_CANCELED)
             {
                 if ($data['status'] == 'pending') {
-                    $order->setState(Order::STATE_PAYMENT_REVIEW);
+                    $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
                 } else if ($data['status'] == 'approved') {
-                    $order->setState(Order::STATE_PROCESSING);
+                    $order->setState(OrderModel::STATE_PROCESSING);
                 } else if ($data['status'] == 'declined') {
-                    $order->setStatus(Order::STATUS_FRAUD);
+                    $order->setStatus(OrderModel::STATUS_FRAUD);
                 }
                 $order->save();
             }
 
-            $this->setMessage(null);
-            $this->setStatus(self::STATUS_DONE);
-            $this->save();
+            $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
         } else {
             $this->requeue('Unable to find order right now, reprocess.');
@@ -1210,9 +1329,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             $order->setData('flow_tracking_number', $data['flow_tracking_number']);
             $order->save();
 
-            $this->setMessage(null);
-            $this->setStatus(self::STATUS_DONE);
-            $this->save();
+            $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
         } else {
             $this->requeue('Unable to find order right now, reprocess.');
@@ -1235,9 +1352,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
                 $order->setData('flow_tracking_number', $data['flow_tracking_number']);
                 $order->save();
 
-                $this->setMessage(null);
-                $this->setStatus(self::STATUS_DONE);
-                $this->save();
+                $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
@@ -1245,16 +1360,14 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
             }
 
         } else {
-            $this->setMessage('Order identifier not present');
-            $this->setStatus(self::STATUS_ERROR);
-            $this->save();
+            $this->webhookEventManager->markWebhookEventAsError($this, 'Order identifier not present');
         }
     }
 
     /**
     * Returns the order for Flow order number.
     *
-    * @return Magento\Sales\Api\Data\OrderInterface
+    * @return Order
     */
     private function getOrderByFlowOrderNumber($number) {
         $order = $this->orderFactory->create();
@@ -1264,8 +1377,7 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
 
     /**
     * Returns the order item with the matching sku.
-    *
-    * @return Magento\Sales\Model\Order\Item
+    * @return OrderItem
     */
     private function getOrderItem($order, $sku) {
         $item = null;
@@ -1279,26 +1391,164 @@ class WebhookEvent extends AbstractModel implements IdentityInterface {
     }
 
     /**
-    * Helper method to requeue this WebhookEvent. Sets event as error if more
-    * than REQUEUE_MAX_AGE has passed.
-    *
-    * @param msg Messsage for requeue
-    */
-    private function requeue($msg) {
-        $interval = \DateInterval::createFromDateString(self::REQUEUE_MAX_AGE . ' seconds');
-        $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $this->getCreatedAt());
-        $triggeredAt = \DateTime::createFromFormat('Y-m-d H:i:s', $this->getTriggeredAt());
-        if ($createdAt->add($interval) < $triggeredAt) {
-            $this->setMessage('REQUEUE_MAX_AGE of ' . self::REQUEUE_MAX_AGE . ' seconds reached');
-            $this->setStatus(self::STATUS_ERROR);
-            $this->save();
-        } else {
-            $date = new \DateTime();
-            $date->add(\DateInterval::createFromDateString(self::REQUEUE_DELAY_INTERVAL . ' seconds'));
-            $this->setTriggeredAt($date);
-            $this->setMessage($msg);
-            $this->setStatus(self::STATUS_NEW);
-            $this->save();
-        }
+     * Helper method to requeue this WebhookEvent. Sets event as error if more
+     * than REQUEUE_MAX_AGE has passed.
+     * @param $message - Message for requeue
+     */
+    private function requeue($message) {
+        $this->webhookEventManager->requeue($this, $message);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStoreId()
+    {
+        return (int) $this->getData(self::DATA_KEY_STORE_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getType()
+    {
+        return (string) $this->getData(self::DATA_KEY_TYPE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPayload()
+    {
+        return (string) $this->getData(self::DATA_KEY_PAYLOAD);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStatus()
+    {
+        return (string) $this->getData(self::DATA_KEY_STATUS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMessage()
+    {
+        return (string) $this->getData(self::DATA_KEY_MESSAGE);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTriggeredAt()
+    {
+        return $this->getData(self::DATA_KEY_TRIGGERED_AT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCreatedAt()
+    {
+        return $this->getData(self::DATA_KEY_CREATED_AT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUpdatedAt()
+    {
+        return $this->getData(self::DATA_KEY_UPDATED_AT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDeletedAt()
+    {
+        return $this->getData(self::DATA_KEY_DELETED_AT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStoreId($value)
+    {
+        $this->setData(self::DATA_KEY_STORE_ID, (int) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setType($value)
+    {
+        $this->setData(self::DATA_KEY_TYPE, (string) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPayload($value)
+    {
+        $this->setData(self::DATA_KEY_PAYLOAD, (string) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStatus($value)
+    {
+        $this->setData(self::DATA_KEY_STATUS, (string) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMessage($value)
+    {
+        $this->setData(self::DATA_KEY_MESSAGE, (string) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTriggeredAt($value)
+    {
+        $this->setData(self::DATA_KEY_TRIGGERED_AT, $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCreatedAt($value)
+    {
+        $this->setData(self::DATA_KEY_CREATED_AT, $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setUpdatedAt($value)
+    {
+        $this->setData(self::DATA_KEY_UPDATED_AT, $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeletedAt($value)
+    {
+        $this->setData(self::DATA_KEY_DELETED_AT, $value);
+        return $this;
     }
 }

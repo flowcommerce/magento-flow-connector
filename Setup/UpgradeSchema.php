@@ -34,6 +34,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addShouldSyncChildrenToSyncSkuTable($installer);
         }
 
+        if (version_compare($context->getVersion(), '1.0.20', '<')) {
+            $this->installInventorySyncTable($installer);
+        }
+
         $installer->endSetup();
     }
 
@@ -278,5 +282,87 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment' => 'Should sync children products?',
             ]);
         }
+    }
+
+    /**
+     * Creates a table to hold skus to sync to Flow.
+     * @param SchemaSetupInterface $installer
+     * @throws \Zend_Db_Exception
+     */
+    private function installInventorySyncTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_sync_inventory');
+        $connection = $installer->getConnection();
+
+        if ($connection->isTableExists($tableName)) {
+            return;
+        } // table already exists, no need to install now
+
+        $table = $connection
+            ->newTable($tableName)
+            ->addColumn('id', Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true], 'Primary key')
+            ->addColumn('product_id', Table::TYPE_INTEGER, null, ['unsigned' => true, 'nullable' => false], 'Product id')
+            ->addColumn('store_id', Table::TYPE_SMALLINT, null, ['unsigned' => true, 'nullable' => false], 'Store ID')
+            ->addColumn('priority', Table::TYPE_INTEGER, null, ['nullable' => false, 'unsigned' => true, 'default' => 0], 'Processing priority')
+            ->addColumn('status', Table::TYPE_TEXT, 255, ['nullable' => false], 'Processing status')
+            ->addColumn('message', Table::TYPE_TEXT, 255, ['nullable' => true], 'Processing message')
+            ->addColumn('created_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT], 'Created At')
+            ->addColumn('updated_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT_UPDATE], 'Updated At')
+            ->addColumn('deleted_at', Table::TYPE_TIMESTAMP, null, ['nullable' => true], 'Deleted At')
+            ->setComment('Flow Inventory Sync Queue table')
+            ->setOption('type', 'InnoDB')
+            ->setOption('charset', 'utf8');
+
+        $connection->createTable($table);
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['deleted_at'], AdapterInterface::INDEX_TYPE_INDEX),
+            ['deleted_at'],
+            AdapterInterface::INDEX_TYPE_INDEX
+        );
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['status']),
+            ['status']
+        );
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['product_id']),
+            ['product_id']
+        );
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['priority']),
+            ['priority']
+        );
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['store_id'], AdapterInterface::INDEX_TYPE_INDEX),
+            ['store_id'],
+            AdapterInterface::INDEX_TYPE_INDEX
+        );
+
+        $connection->addForeignKey(
+            $installer->getFkName($tableName, 'store_id', 'store', 'store_id'),
+            $tableName,
+            'store_id',
+            $installer->getTable('store'),
+            'store_id',
+            Table::ACTION_CASCADE
+        );
+
+        $connection->addForeignKey(
+            $installer->getFkName($tableName, 'product_id', 'catalog_product_entity', 'entity_id'),
+            $tableName,
+            'product_id',
+            $installer->getTable('catalog_product_entity'),
+            'entity_id',
+            Table::ACTION_CASCADE
+        );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
+use Exception;
 use FlowCommerce\FlowConnector\Model\Api\Center\GetAllCenterKeys as FlowCentersApiClient;
 use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use Magento\Framework\App\Config\Storage\WriterInterface as ConfigWriter;
@@ -77,29 +78,38 @@ class InventoryCenterManager
 
     /**
      * Fetches inventory center keys from Flow's api and stores them in magento's config
-     * @return void
+     * @param int[]|null $storeIds
+     * @return bool
      */
-    public function fetchInventoryCenterKeys()
+    public function fetchInventoryCenterKeys($storeIds = [])
     {
-        $storeIds = [];
-        foreach ($this->storeManager->getStores() as $store) {
-            if ($this->flowUtil->isFlowEnabled($store->getStoreId())) {
-                array_push($storeIds, $store->getStoreId());
-                $this->logger->info('Including products from store: ' . $store->getName() .
-                    ' [id=' . $store->getStoreId() . ']');
-            } else {
-                $this->logger->info('Not including products from store: ' . $store->getName() .
-                    ' [id=' . $store->getStoreId() . '] - Flow disabled');
+        try {
+            if (!count((array) $storeIds)) {
+                $storeIds = [];
+                foreach ($this->storeManager->getStores() as $store) {
+                    if ($this->flowUtil->isFlowEnabled($store->getStoreId())) {
+                        array_push($storeIds, $store->getStoreId());
+                        $this->logger->info('Including products from store: ' . $store->getName() .
+                            ' [id=' . $store->getStoreId() . ']');
+                    } else {
+                        $this->logger->info('Not including products from store: ' . $store->getName() .
+                            ' [id=' . $store->getStoreId() . '] - Flow disabled');
+                    }
+                }
             }
-        }
 
-        foreach ($storeIds as $storeId) {
-            $centers = $this->flowCentersApiClient->execute($storeId);
-            if (count($centers)) {
-                $defaultCenterKey = array_shift($centers);
-                $this->saveDefaultCenterKeyForStore($storeId, $defaultCenterKey);
+            foreach ($storeIds as $storeId) {
+                $centers = $this->flowCentersApiClient->execute($storeId);
+                if (count($centers)) {
+                    $defaultCenterKey = array_shift($centers);
+                    $this->saveDefaultCenterKeyForStore($storeId, $defaultCenterKey);
+                }
             }
+        } catch (Exception $e) {
+            $return = false;
+            $this->logger->error($e->getMessage());
         }
+        return $return;
     }
 
     /**

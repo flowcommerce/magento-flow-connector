@@ -13,6 +13,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
 
     protected $logger;
     protected $jsonHelper;
+    protected $flowHelper;
     protected $util;
     protected $cart;
     protected $storeManager;
@@ -29,6 +30,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
         \Magento\Framework\App\Action\Context $context,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
+        \FlowCommerce\FlowConnector\Helper\Data $flowHelper,
         \FlowCommerce\FlowConnector\Model\Util $util,
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -39,6 +41,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
+        $this->flowHelper = $flowHelper;
         $this->util = $util;
         $this->cart = $cart;
         $this->storeManager = $storeManager;

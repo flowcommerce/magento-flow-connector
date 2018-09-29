@@ -15,7 +15,7 @@
             <schedule>* * * * *</schedule>
         </job>
     </group>
-    <group id="flowcommerce_flowconnector_default_centers_update">
+    <group id="flowcommerce_flowconnector_centers_update">
         <job name="flow_flowconnector_inventory_centers_update" instance="FlowCommerce\FlowConnector\Cron\FetchInventoryCenterKeysCommand" method="execute">
             <schedule>0 15 * * *</schedule>
         </job>
@@ -28,6 +28,11 @@
     <group id="flowcommerce_flowconnector_inventory_process">
         <job name="flowcommerce_flowconnector_inventory_sync_process_task" instance="FlowCommerce\FlowConnector\Cron\InventorySyncProcessTask" method="execute">
             <schedule>* * * * *</schedule>
+        </job>
+    </group>
+    <group id="flowcommerce_flowconnector_cron_cleanup">
+        <job name="flowcommerce_flowconnector_cron_cleanup_task" instance="FlowCommerce\FlowConnector\Cron\CronCleanupTask" method="execute">
+            <schedule>*/5 * * * *</schedule>
         </job>
     </group>
 </config>

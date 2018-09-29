@@ -200,27 +200,27 @@ class CatalogSync
      */
     public function process($numToProcess = 1000, $keepAlive = 60)
     {
-        $this->logger->info('Starting sync sku processing');
+        try {
+            $this->logger->info('Starting sync sku processing');
 
-        while ($keepAlive > 0) {
-            while ($numToProcess != 0) {
-                $ts = microtime(true);
-                $syncSkus = $this->getNextUnprocessedEvents(100);
-                $this->logger->info('Time to load products to sync: ' . (microtime(true) - $ts));
+            while ($keepAlive > 0) {
+                while ($numToProcess != 0) {
+                    $ts = microtime(true);
+                    $syncSkus = $this->getNextUnprocessedEvents(100);
+                    $this->logger->info('Time to load products to sync: ' . (microtime(true) - $ts));
 
-                if ((int)$syncSkus->getTotalCount() === 0) {
-                    $this->logger->info('No records to process.');
-                    break;
-                }
-
-                try {
+                    if ((int)$syncSkus->getTotalCount() === 0) {
+                        $this->logger->info('No records to process.');
+                        break;
+                    }
                     $this->syncSkusToUpdate = [];
                     $this->syncSkusToDelete = [];
 
                     foreach ($syncSkus->getItems() as $syncSku) {
                         $product = $syncSku->getProduct();
                         if (!$this->util->isFlowEnabled($syncSku->getStoreId())) {
-                            throw new CatalogSyncException('Flow module is disabled.');
+                            $this->syncSkuManager->markSyncSkuAsError($syncSku, 'Flow module is disabled.');
+                            continue;
                         }
                         if ($product) {
                             $this->syncSkuManager->markSyncSkuAsProcessing($syncSku);
@@ -253,24 +253,25 @@ class CatalogSync
                         $this->logger->info('Time to asynchronously delete products on flow.io: '
                             . (microtime(true) - $ts));
                     }
-                } catch (\Exception $e) {
-                    $this->logger->warning('Error syncing product ' . $syncSku->getSku() . ': '
-                        . $e->getMessage() . '\n' . $e->getTraceAsString());
-                    $this->syncSkuManager->markSyncSkuAsError($syncSku, $e->getMessage());
                 }
+
+                if ($numToProcess == 0) {
+                    // We've hit the processing limit, break out of loop.
+                    break;
+                }
+
+                // Num to process not exhausted, keep alive to wait for more.
+                $keepAlive -= 1;
+                sleep(1);
             }
 
-            if ($numToProcess == 0) {
-                // We've hit the processing limit, break out of loop.
-                break;
-            }
+            $this->logger->info('Done processing sync skus.');
 
-            // Num to process not exhausted, keep alive to wait for more.
-            $keepAlive -= 1;
-            sleep(1);
+        } catch (\Exception $e) {
+            $this->logger->warning('Error syncing products: '
+                . $e->getMessage() . '\n' . $e->getTraceAsString());
         }
 
-        $this->logger->info('Done processing sync skus.');
     }
 
     /**

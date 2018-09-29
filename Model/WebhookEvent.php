@@ -321,9 +321,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     * Process webhook event data.
     */
     public function process() {
-        $this->webhookEventManager->markWebhookEventAsProcessing($this);
-
         try {
+            $this->webhookEventManager->markWebhookEventAsProcessing($this);
+
             switch ($this->getType()) {
                 case 'allocation_deleted_v2':
                     $this->processAllocationDeletedV2();
@@ -380,7 +380,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         } catch (\Exception $e) {
             $this->logger->warn('Error processing webhook: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
-            $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+            try {
+                $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+            } catch (\Exception $e) {
+                $this->logger->warn('Error saving webhook error: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+            }
         }
     }
 

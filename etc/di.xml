@@ -49,6 +49,7 @@
                 <item name="flowcommerce_flowconnector_inventory_sync_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\InventorySyncProcessCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_event_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookEventProcessCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_register_webhooks" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand</item>
+                <item name="flowcommerce_flowconnector_cron_cleanup" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CronCleanupCommand</item>
             </argument>
         </arguments>
     </type>

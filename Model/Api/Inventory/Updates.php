@@ -110,19 +110,25 @@ class Updates
         $requests = function ($inventorySyncs) use ($client) {
             /** @var InventorySync $inventorySync */
             foreach ($inventorySyncs as $inventorySync) {
-                $stockItem = $inventorySync->getStockItem();
-                $ts = microtime(true);
-                $inventoryApiRequest = $this->inventoryDataMapper->map($inventorySync, $stockItem);
-                $this->logger->info('Time to convert stock item to flow data: ' . (microtime(true) - $ts));
-                $serializedInventoryApiRequest = $this->jsonSerializer->serialize($inventoryApiRequest);
-                $apiToken = $this->util->getFlowApiToken($inventorySync->getStoreId());
-                $url = $this->util->getFlowApiEndpoint(self::URL_STUB_PREFIX, $inventorySync->getStoreId());
-                yield function () use ($client, $url, $apiToken, $serializedInventoryApiRequest) {
-                    return $client->postAsync($url, ['body' => $serializedInventoryApiRequest, 'auth' => [
-                        $apiToken,
-                        ''
-                    ]]);
-                };
+                try {
+                    $stockItem = $inventorySync->getStockItem();
+                    $ts = microtime(true);
+                    $inventoryApiRequest = $this->inventoryDataMapper->map($inventorySync, $stockItem);
+                    $this->logger->info('Time to convert stock item to flow data: ' . (microtime(true) - $ts));
+                    $serializedInventoryApiRequest = $this->jsonSerializer->serialize($inventoryApiRequest);
+                    $apiToken = $this->util->getFlowApiToken($inventorySync->getStoreId());
+                    $url = $this->util->getFlowApiEndpoint(self::URL_STUB_PREFIX, $inventorySync->getStoreId());
+                    yield function () use ($client, $url, $apiToken, $serializedInventoryApiRequest) {
+                        return $client->postAsync($url, ['body' => $serializedInventoryApiRequest, 'auth' => [
+                            $apiToken,
+                            ''
+                        ]]);
+                    };
+                } catch (\Exception $e) {
+                    $this->logger->warning('Error syncing inventory: '
+                        . $e->getMessage() . '\n' . $e->getTraceAsString());
+                    $this->markInventorySyncAsError($inventorySync, $e->getMessage());
+                }
             }
         };
 

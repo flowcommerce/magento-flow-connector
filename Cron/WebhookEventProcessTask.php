@@ -13,6 +13,15 @@ use \FlowCommerce\FlowConnector\Model\WebhookEventManager;
  */
 class WebhookEventProcessTask
 {
+    /**
+     * Number of jobs to be processed at every run
+     */
+    const NUMBER_OF_JOBS_TO_PROCESS = 1000;
+
+    /**
+     * Number of seconds to wait after existing queue is processed
+     */
+    const KEEP_ALIVE_AFTER_QUEUE_IS_PROCESSED = 10;
 
     /**
      * Lock manager - lock code
@@ -51,6 +60,25 @@ class WebhookEventProcessTask
     }
 
     /**
+     * Returns the number of seconds to wait after a queue is processed.
+     * The WebhookEvent model will attempt to find new jobs be processed.
+     * @return int
+     */
+    private function getKeepAliveAfterQueueIsProcessed()
+    {
+        return self::KEEP_ALIVE_AFTER_QUEUE_IS_PROCESSED;
+    }
+
+    /**
+     * Returns the number of jobs to be processed at every cron job run
+     * @return int
+     */
+    private function getNumberOfJobsToProcess()
+    {
+        return self::NUMBER_OF_JOBS_TO_PROCESS;
+    }
+
+    /**
      * Acquires lock for this job
      * @return void
      * @throws CantAcquireLockException
@@ -69,7 +97,7 @@ class WebhookEventProcessTask
         try {
             $this->acquireLock();
             $this->logger->info('Running WebhookEventProcessTask execute');
-            $this->webhookEventManager->process();
+            $this->webhookEventManager->process($this->getNumberOfJobsToProcess(), $this->getKeepAliveAfterQueueIsProcessed());
             $this->releaseLock();
         } catch (CantAcquireLockException $e) {
             $this->logger->info($e->getMessage());

@@ -104,21 +104,27 @@ class Save
         $requests = function ($syncSkus) use ($client) {
             /** @var SyncSku $syncSku */
             foreach ($syncSkus as $syncSku) {
-                $product = $syncSku->getProduct();
-                $ts = microtime(true);
-                $data = $this->productDataMapper->map($syncSku, $product);
-                $this->logger->info('Time to convert product to flow data: ' . (microtime(true) - $ts));
-                $apiToken = $this->util->getFlowApiToken($syncSku->getStoreId());
-                foreach ($data as $item) {
-                    $urlStub = self::URL_STUB_PREFIX . urlencode($item['number']);
-                    $url = $this->util->getFlowApiEndpoint($urlStub, $syncSku->getStoreId());
-                    $serializedItem = $this->jsonSerializer->serialize($item);
-                    yield function () use ($client, $url, $apiToken, $serializedItem) {
-                        return $client->putAsync($url, ['body' => $serializedItem, 'auth' => [
-                            $apiToken,
-                            ''
-                        ]]);
-                    };
+                try {
+                    $product = $syncSku->getProduct();
+                    $ts = microtime(true);
+                    $data = $this->productDataMapper->map($syncSku, $product);
+                    $this->logger->info('Time to convert product to flow data: ' . (microtime(true) - $ts));
+                    $apiToken = $this->util->getFlowApiToken($syncSku->getStoreId());
+                    foreach ($data as $item) {
+                        $urlStub = self::URL_STUB_PREFIX . urlencode($item['number']);
+                        $url = $this->util->getFlowApiEndpoint($urlStub, $syncSku->getStoreId());
+                        $serializedItem = $this->jsonSerializer->serialize($item);
+                        yield function () use ($client, $url, $apiToken, $serializedItem) {
+                            return $client->putAsync($url, ['body' => $serializedItem, 'auth' => [
+                                $apiToken,
+                                ''
+                            ]]);
+                        };
+                    }
+                }  catch (\Exception $e) {
+                    $this->logger->warning('Error syncing product ' . $syncSku->getSku() . ': '
+                        . $e->getMessage() . '\n' . $e->getTraceAsString());
+                    $this->syncSkuManager->markSyncSkuAsError($syncSku, $e->getMessage());
                 }
             }
         };

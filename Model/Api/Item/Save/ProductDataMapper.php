@@ -354,20 +354,12 @@ class ProductDataMapper
      */
     private function getProductPrice(ProductInterface $product)
     {
+        $product->setPriceCalculation(false);
+
         if ($product->getTypeId() == ConfigurableType::TYPE_CODE) {
-            $price = null;
-            $children = $this->linkManagement->getChildren($product->getSku());
-            foreach ($children as $child) {
-                if ($price == null || $price > $child->getPrice()) {
-                    $price = $child->getPrice();
-                }
-            }
-
-            // default price to 0.0 when no children
-            return ($price == null) ? 0.0 : $price;
-
+            return $product->getMinimalPrice();
         } else {
-            return $product->getPrice();
+            return $product->getFinalPrice();
         }
     }
 

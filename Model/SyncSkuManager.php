@@ -9,6 +9,7 @@ use \FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\CollectionFactory as
 use \FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Collection as SyncSkuCollection;
 use \Magento\Catalog\Api\Data\ProductInterface;
 use \Magento\Catalog\Model\ProductRepository;
+use \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use \Magento\Framework\Api\SearchCriteriaBuilder;
 use \Magento\Store\Model\Store;
 use \Magento\Store\Model\StoreManager;
@@ -24,6 +25,11 @@ class SyncSkuManager implements SyncSkuManagementInterface
      * @var Logger
      */
     private $logger;
+
+    /**
+     * @var ProductCollectionFactory
+     */
+    private $productCollectionFactory;
 
     /**
      * @var ProductRepository
@@ -64,6 +70,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
      * SyncSkuManagement constructor.
      * @param SearchResultFactory $searchResultFactory
      * @param SyncSkuResourceModel $syncSkuResourceModel
+     * @param ProductCollectionFactory $productCollectionFactory
      * @param ProductRepository $productRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param SyncSkuCollectionFactory $syncSkuCollectionFactory
@@ -74,6 +81,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     public function __construct(
         SearchResultFactory $searchResultFactory,
         SyncSkuResourceModel $syncSkuResourceModel,
+        ProductCollectionFactory $productCollectionFactory,
         ProductRepository $productRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         SyncSkuCollectionFactory $syncSkuCollectionFactory,
@@ -83,6 +91,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     ) {
         $this->storeManager = $storeManager;
         $this->searchResultFactory = $searchResultFactory;
+        $this->productCollectionFactory = $productCollectionFactory;
         $this->productRepository = $productRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->syncSkuCollectionFactory = $syncSkuCollectionFactory;
@@ -97,25 +106,39 @@ class SyncSkuManager implements SyncSkuManagementInterface
      */
     private function assignProductsToSyncSkus($syncSkus)
     {
-        $skus = [];
+        $productSkusByStore = [];
         foreach ($syncSkus as $syncSku) {
-            array_push($skus, trim($syncSku->getSku()));
+            if (!array_key_exists($syncSku->getStoreId(), $productSkusByStore)) {
+                $productSkusByStore[$syncSku->getStoreId()] = [];
+            }
+            array_push($productSkusByStore[$syncSku->getStoreId()], $syncSku->getSku());
         }
 
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(ProductInterface::SKU, $skus, 'in')
-            ->create();
-
-        $products = $this->productRepository->getList($searchCriteria);
         $productsIndexedBySku = [];
-        foreach ($products->getItems() as $product) {
-            $productsIndexedBySku[$product->getSku()] = $product;
+        foreach ($productSkusByStore as $storeId => $productSkus) {
+            $this->storeManager->setCurrentStore($storeId);
+
+            // It's not possible to get a product list using the repository taking
+            // the store id into consideration. Need to fallback to using the collection directly
+            $productCollection = $this->productCollectionFactory->create();
+            $productCollection
+                ->setStoreId($storeId)
+                ->addAttributeToSelect('*')
+                ->addMinimalPrice()
+                ->addFinalPrice()
+                ->addAttributeToFilter(ProductInterface::SKU, ['in' => $productSkus]);
+
+            /** @var ProductInterface $product */
+            foreach ($productCollection->getItems() as $product) {
+                $productsIndexedBySku[$storeId][$product->getSku()] = $product;
+            }
         }
 
         foreach ($syncSkus as $syncSku) {
-            $sku = trim($syncSku->getSku());
-            if (array_key_exists($sku, $productsIndexedBySku)) {
-                $syncSku->setProduct($productsIndexedBySku[$sku]);
+            $productSku = $syncSku->getSku();
+            $storeId = $syncSku->getStoreId();
+            if (array_key_exists($productSku, $productsIndexedBySku[$storeId])) {
+                $syncSku->setProduct($productsIndexedBySku[$storeId][$productSku]);
             }
         }
 

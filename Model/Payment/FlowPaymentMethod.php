@@ -1,10 +1,7 @@
 <?php
 namespace FlowCommerce\FlowConnector\Model\Payment;
 
-use Zend\Http\{
-    Client,
-    Request
-};
+use Zend\Http\Request;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use Magento\Framework\Exception\LocalizedException;
 
@@ -13,6 +10,16 @@ use Magento\Framework\Exception\LocalizedException;
  */
 class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 {
+    /**
+     * Paypal payment type code
+     */
+    const PAYMENT_CODE_TYPE_PAYPAL = 'online';
+
+    /**
+     * Paypal payment type code
+     */
+    const PAYMENT_CODE_TYPE_CREDIT_CARD = 'card';
+
     /**
      * @var string
      */

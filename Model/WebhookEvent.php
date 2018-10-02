@@ -1013,10 +1013,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // later since Magento quotes only supports 1 billing address.
             foreach($data['payments'] as $flowPayment) {
 
-                if (array_key_exists('address', $flowPayment)) {
+                if (
+                    array_key_exists('address', $flowPayment) ||
+                    (array_key_exists('address', $data['customer']) && $flowPayment['type'] == 'online')
+                ) {
                     $this->logger->info('Adding billing address');
 
-                    $paymentAddress = $flowPayment['address'];
+                    // Paypal orders have no billing address on the payments entity
+                    if ($flowPayment['type'] == 'online') {
+                        $paymentAddress = $data['customer']['address'];
+                    } else {
+                        $paymentAddress = $flowPayment['address'];
+                    }
                     $billingAddress = $quote->getBillingAddress();
 
                     if (array_key_exists('streets', $paymentAddress)) {

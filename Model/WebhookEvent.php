@@ -40,6 +40,11 @@ use Psr\Log\LoggerInterface as Logger;
 use FlowCommerce\FlowConnector\Model\Carrier\FlowShippingMethod;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Sales\Model\Order as OrderModel;
+use Magento\Sales\Api\OrderPaymentRepositoryInterface;
+use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Sales\Api\Data\OrderPaymentSearchResultInterface;
+use Magento\Sales\Model\Order\Payment;
+use Magento\Framework\Api\FilterBuilder;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -228,6 +233,55 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      */
     protected $flowUtil;
 
+    /**
+     * @var OrderPaymentRepositoryInterface
+     */
+    private $orderPaymentRepository;
+
+    /**
+     * Filter builder
+     *
+     * @var \Magento\Framework\Api\FilterBuilder
+     */
+    private $filterBuilder;
+
+    /**
+     * WebhookEvent constructor.
+     * @param Context $context
+     * @param Registry $registry
+     * @param Logger $logger
+     * @param JsonSerializer $jsonSerializer
+     * @param StoreManager $storeManager
+     * @param ProductFactory $productFactory
+     * @param ProductRepository $productRepository
+     * @param QuoteFactory $quoteFactory
+     * @param QuoteManagement $quoteManagement
+     * @param CustomerFactory $customerFactory
+     * @param CustomerRepository $customerRepository
+     * @param OrderService $orderService
+     * @param CartRepository $cartRepository
+     * @param CartManager $cartManagement
+     * @param ShippingRate $shippingRate
+     * @param Currency $currency
+     * @param CountryFactory $countryFactory
+     * @param RegionFactory $regionFactory
+     * @param OrderFactory $orderFactory
+     * @param PaymentMethodList $methodList
+     * @param OrderRepository $orderRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param PaymentFactory $quotePaymentFactory
+     * @param EventManager $eventManager
+     * @param \FlowCommerce\FlowConnector\Model\OrderFactory $flowOrderFactory
+     * @param WebhookEventManager $webhookEventManager
+     * @param FlowShippingMethod $flowShippingMethod
+     * @param OrderSender $orderSender
+     * @param Util $flowUtil
+     * @param OrderPaymentRepositoryInterface $orderPaymentRepository
+     * @param FilterBuilder $filterBuilder
+     * @param AbstractResource|null $resource
+     * @param ResourceCollection|null $resourceCollection
+     * @param array $data
+     */
     public function __construct(
         Context $context,
         Registry $registry,
@@ -258,6 +312,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         FlowShippingMethod $flowShippingMethod,
         OrderSender $orderSender,
         FlowUtil $flowUtil,
+        OrderPaymentRepositoryInterface $orderPaymentRepository,
+        FilterBuilder $filterBuilder,
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
         array $data = []
@@ -296,6 +352,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->orderSender = $orderSender;
         $this->webhookEventManager = $webhookEventManager;
         $this->flowUtil = $flowUtil;
+        $this->orderPaymentRepository = $orderPaymentRepository;
+        $this->filterBuilder = $filterBuilder;
     }
 
     protected function _construct(){
@@ -375,7 +433,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 'type' => $this->getType(),
                 'payload' => $this->getPayload(),
                 'storeId' => $this->getStoreId(),
-                'logger' => $this->logger
+                'logger' => $this->logger,
             ]);
 
         } catch (\Exception $e) {
@@ -610,22 +668,25 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process capture_upserted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/capture-upserted-v-2
-    */
-    private function processCaptureUpsertedV2() {
+     * Process capture_upserted_v2 webhook event data.
+     * https://docs.flow.io/type/capture-upserted-v-2
+     * @return void
+     * @throws WebhookException
+     */
+    private function processCaptureUpsertedV2()
+    {
         $this->logger->info('Processing capture_upserted_v2 data');
         $data = $this->getPayloadData();
 
-        if (array_key_exists('order', $data['authorization'])) {
+        if (array_key_exists('authorization', $data) && array_key_exists('order', $data['authorization'])) {
             $flowOrderNumber = $data['authorization']['order']['number'];
 
+            /** @var Order $order */
             if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
                 $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
 
                 $orderPayment = null;
-                foreach($order->getPaymentsCollection() as $payment) {
+                foreach ($order->getPaymentsCollection() as $payment) {
                     $this->logger->info('Payment: ' . $payment->getId());
 
                     $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
@@ -638,7 +699,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 if ($orderPayment) {
                     if ($orderPayment->canCapture()) {
                         // Payment initiated through Flow, mark payment as closed.
-                        $payment->setIsTransactionClosed(true);
+                        $orderPayment->setIsTransactionClosed(true);
                     } else {
                         // Ignore, capture was initiated by Magento.
                     }
@@ -649,12 +710,31 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     throw new WebhookException('Unable to find corresponding payment.');
                 }
 
+            }
+
+        } elseif (array_key_exists('capture', $data) &&
+            array_key_exists('authorization', $data['capture']) &&
+            array_key_exists('key', $data['capture']['authorization'])
+        ) {
+            $authorizationId = $data['capture']['authorization']['key'];
+
+            /** @var Payment|null $orderPayment */
+            $orderPayment = $this->getOrderPaymentByFlowAuthorizationId($authorizationId);
+            if ($orderPayment) {
+                if ($orderPayment->canCapture()) {
+                    // Payment initiated through Flow, mark payment as closed.
+                    $orderPayment->setIsTransactionClosed(true);
+                } else {
+                    // Ignore, capture was initiated by Magento.
+                }
+
+                $this->webhookEventManager->markWebhookEventAsDone($this, '');
+
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
             }
-
         } else {
-            throw new WebhookException('Order data not found on capture event: ' , $data['id']);
+            throw new WebhookException('Order data not found on capture event: ' . $data['id']);
         }
     }
 
@@ -672,80 +752,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
                 $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
-
-                $orderPayment = null;
-                foreach($order->getPaymentsCollection() as $payment) {
-                    $this->logger->info('Payment: ' . $payment->getId());
-
-                    $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
-                    if ($flowPaymentRef == $data['authorization']['id']) {
-                        $orderPayment = $payment;
-                        break;
-                    }
-                }
-
-                if ($orderPayment) {
-
-                    $orderPayment->setTransactionId($data['authorization']['id']);
-                    $orderPayment->save();
-
-                    // Process authorization status
-                    // https://docs.flow.io/type/authorization-status
-                    $status = $data['authorization']['result']['status'];
-                    switch ($status) {
-                        case 'pending':
-                            // If an immediate response is not available, the state will be 'pending'. For example, online payment methods like AliPay or PayPal will have a status of 'pending' until the user completes the payment. Pending authorizations expire if the user does not complete the payment in a timely fashion.
-                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
-                            $order->save();
-                            break;
-                        case 'expired':
-                            // Authorization has expired.
-                            $orderPayment->setAmountAuthorized(0.0);
-                            $orderPayment->save();
-                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
-                            $order->save();
-                            break;
-                        case 'authorized':
-                            // Authorization was successful
-                            $orderPayment->setAmountAuthorized($data['authorization']['amount']);
-                            $orderPayment->save();
-                            $order->setState(OrderModel::STATE_PROCESSING);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PROCESSING));
-                            $order->save();
-                            break;
-                        case 'review':
-                            // If an immediate response is not available, the state will be 'review' - this usually indicates fraud review requires additional time / verification (or a potential network issue with the issuing bank)
-                            $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PAYMENT_REVIEW));
-                            $order->save();
-                            break;
-                        case 'declined':
-                            // Indicates the authorization has been declined by the issuing bank. See the authorization decline code for more details as to the reason for decline.
-                            $orderPayment->setIsFraudDetected(true);
-                            $orderPayment->save();
-                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
-                            $order->setIsFraudDetected(true);
-                            $order->save();
-                            break;
-                        case 'reversed':
-                            // Indicates the authorization has been fully reversed. You can fully reverse an authorization up until the moment you capture funds; once you have captured funds you must create refunds.
-                            $orderPayment->setAmountAuthorized(0.0);
-                            $orderPayment->save();
-                            $order->setState(OrderModel::STATE_PENDING_PAYMENT);
-                            $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
-                            $order->save();
-                            break;
-                        default:
-                            throw new WebhookException('Unknown authorization status: ' . $status);
-                    }
-
-                } else {
-                    throw new WebhookException('Unable to find corresponding payment.');
-                }
-
+                $this->processPaymentAuthorization($order, $data['authorization']);
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
             } else {
@@ -770,14 +777,95 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $flowOrderNumber = $data['authorization']['order']['number'];
 
             if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
-                throw new WebhookException('Online payments are currently not supported.');
-
+                $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
+                $this->processPaymentAuthorization($order, $data['authorization']);
+                $this->webhookEventManager->markWebhookEventAsDone($this, '');
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
             }
 
         } else {
             throw new WebhookException('Event data does not have order number.');
+        }
+    }
+
+    /**
+     * Processes authorization payload received by CardAuthorizationV2 and OnlineAuthorizationV2 webhooks
+     * @param Order $order
+     * @param string[][] $authorization
+     * @throws WebhookException
+     */
+    private function processPaymentAuthorization(Order $order, $authorization)
+    {
+        $orderPayment = null;
+        foreach($order->getPaymentsCollection() as $payment) {
+            $this->logger->info('Payment: ' . $payment->getId());
+
+            $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
+            if ($flowPaymentRef == $authorization['id']) {
+                $orderPayment = $payment;
+                break;
+            }
+        }
+
+        if ($orderPayment) {
+
+            $orderPayment->setTransactionId($authorization['id']);
+            $orderPayment->save();
+            // Process authorization status
+            // https://docs.flow.io/type/authorization-status
+            $status = $authorization['result']['status'];
+            switch ($status) {
+                case 'pending':
+                    // If an immediate response is not available, the state will be 'pending'. For example, online payment methods like AliPay or PayPal will have a status of 'pending' until the user completes the payment. Pending authorizations expire if the user does not complete the payment in a timely fashion.
+                    $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
+                    $order->save();
+                    break;
+                case 'expired':
+                    // Authorization has expired.
+                    $orderPayment->setAmountAuthorized(0.0);
+                    $orderPayment->save();
+                    $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
+                    $order->save();
+                    break;
+                case 'authorized':
+                    // Authorization was successful
+                    $orderPayment->setAmountAuthorized($authorization['amount']);
+                    $orderPayment->save();
+                    $order->setState(OrderModel::STATE_PROCESSING);
+                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PROCESSING));
+                    $order->save();
+                    break;
+                case 'review':
+                    // If an immediate response is not available, the state will be 'review' - this usually indicates fraud review requires additional time / verification (or a potential network issue with the issuing bank)
+                    $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
+                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PAYMENT_REVIEW));
+                    $order->save();
+                    break;
+                case 'declined':
+                    // Indicates the authorization has been declined by the issuing bank. See the authorization decline code for more details as to the reason for decline.
+                    $orderPayment->setIsFraudDetected(true);
+                    $orderPayment->save();
+                    $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
+                    $order->setIsFraudDetected(true);
+                    $order->save();
+                    break;
+                case 'reversed':
+                    // Indicates the authorization has been fully reversed. You can fully reverse an authorization up until the moment you capture funds; once you have captured funds you must create refunds.
+                    $orderPayment->setAmountAuthorized(0.0);
+                    $orderPayment->save();
+                    $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
+                    $order->save();
+                    break;
+                default:
+                    throw new WebhookException('Unknown authorization status: ' . $status);
+            }
+        } else {
+            throw new WebhookException('Unable to find corresponding payment.');
         }
     }
 
@@ -865,7 +953,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $this->eventManager->dispatch(self::EVENT_FLOW_CHECKOUT_EMAIL_CHANGED, [
                             'customer' => $customer,
                             'data' => $data,
-                            'logger' => $this->logger
+                            'logger' => $this->logger,
                         ]);
 
                     }
@@ -1013,10 +1101,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // later since Magento quotes only supports 1 billing address.
             foreach($data['payments'] as $flowPayment) {
 
-                if (array_key_exists('address', $flowPayment)) {
+                if (
+                    array_key_exists('address', $flowPayment) ||
+                    (array_key_exists('address', $data['customer']) && $flowPayment['type'] == 'online')
+                ) {
                     $this->logger->info('Adding billing address');
 
-                    $paymentAddress = $flowPayment['address'];
+                    // Paypal orders have no billing address on the payments entity
+                    if ($flowPayment['type'] == 'online') {
+                        $paymentAddress = $data['customer']['address'];
+                    } else {
+                        $paymentAddress = $flowPayment['address'];
+                    }
                     $billingAddress = $quote->getBillingAddress();
 
                     if (array_key_exists('streets', $paymentAddress)) {
@@ -1084,7 +1180,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $order = $this->quoteManagement->submit($quote);
 
-        $increment_id = $order->getRealOrderId();
         if ($order->getEntityId()){
             $this->logger->info('Created order id: ' . $order->getEntityId());
         } else {
@@ -1210,10 +1305,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process refund_capture_upserted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/refund-capture-upserted-v-2
-    */
+     * Process refund_capture_upserted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/refund-capture-upserted-v-2
+     * @throws WebhookException
+     */
     private function processRefundCaptureUpsertedV2() {
         $this->logger->info('Processing refund_capture_upserted_v2 data');
         $data = $this->getPayloadData();
@@ -1236,12 +1332,13 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
 
             } else {
-                throw new WebhookException('Order for refund capture not found.');
+                throw new WebhookException('Unable to find order by Flow order number.');
             }
 
+            /** @var Payment|null $orderPayment */
             if ($orderPayment) {
                 if ($orderPayment->canRefund()) {
-                    $payment->registerRefundNotification($refund['amount']);
+                    $orderPayment->registerRefundNotification($refund['amount']);
                 } else {
                     // Ignore, refund was initiated by Magento.
                 }
@@ -1249,19 +1346,36 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $this->webhookEventManager->markWebhookEventAsDone($this);
 
             } else {
-                throw new WebhookException('Unable to find payment corresponding payment.');
+                throw new WebhookException('Unable to find payment by Flow order number.');
             }
 
+        } elseif (array_key_exists('key', $refund['authorization'])) {
+            $authorizationId = $refund['authorization']['key'];
+
+            /** @var Payment|null $orderPayment */
+            $orderPayment = $this->getOrderPaymentByFlowAuthorizationId($authorizationId);
+            if ($orderPayment) {
+                if ($orderPayment->canRefund()) {
+                    $orderPayment->registerRefundNotification($refund['amount']);
+                } else {
+                    // Ignore, refund was initiated by Magento.
+                }
+
+                $this->webhookEventManager->markWebhookEventAsDone($this);
+            } else {
+                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+            }
         } else {
-            throw new WebhookException('Event data does not have order number.');
+            throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
         }
     }
 
     /**
-    * Process refund_upserted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/refund-upserted-v-2
-    */
+     * Process refund_upserted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/refund-upserted-v-2
+     * @throws WebhookException
+     */
     private function processRefundUpsertedV2() {
         $this->logger->info('Processing refund_upserted_v2 data');
         $data = $this->getPayloadData();
@@ -1284,12 +1398,13 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
 
             } else {
-                throw new WebhookException('Order for refund capture not found.');
+                throw new WebhookException('Unable to find order by Flow order number.');
             }
 
+            /** @var Payment $orderPayment */
             if ($orderPayment) {
                 if ($orderPayment->canRefund()) {
-                    $payment->registerRefundNotification($refund['amount']);
+                    $orderPayment->registerRefundNotification($refund['amount']);
                 } else {
                     // Ignore, refund was initiated by Magento.
                 }
@@ -1297,11 +1412,27 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $this->webhookEventManager->markWebhookEventAsDone($this);
 
             } else {
-                throw new WebhookException('Unable to find corresponding payment.');
+                throw new WebhookException('Unable to find payment by Flow order number.');
             }
 
+        } elseif (array_key_exists('key', $refund['authorization'])) {
+            $authorizationId = $refund['authorization']['key'];
+
+            /** @var Payment|null $orderPayment */
+            $orderPayment = $this->getOrderPaymentByFlowAuthorizationId($authorizationId);
+            if ($orderPayment) {
+                if ($orderPayment->canRefund()) {
+                    $orderPayment->registerRefundNotification($refund['amount']);
+                } else {
+                    // Ignore, refund was initiated by Magento.
+                }
+
+                $this->webhookEventManager->markWebhookEventAsDone($this);
+            } else {
+                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+            }
         } else {
-            throw new WebhookException('Event data does not have order number.');
+            throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
         }
     }
 
@@ -1368,8 +1499,15 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->logger->info('Processing label_upserted data');
         $data = $this->getPayloadData();
 
+        $orderIdentifier = null;
         if (array_key_exists('order_identifier', $data)) {
-            if ($order = $this->getOrderByFlowOrderNumber($data['order_identifier'])) {
+            $orderIdentifier = $data['order_identifier'];
+        } elseif (array_key_exists('order', $data)) {
+            $orderIdentifier = $data['order'];
+        }
+
+        if ($orderIdentifier !== null) {
+            if ($order = $this->getOrderByFlowOrderNumber($orderIdentifier)) {
                 $order->setData('tracking_numbers', [$data['carrier_tracking_number']]);
                 $order->setData('flow_tracking_number', $data['flow_tracking_number']);
                 $order->save();
@@ -1395,6 +1533,34 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $order = $this->orderFactory->create();
         $order->load($number, 'ext_order_id');
         return ($order->getExtOrderId()) ? $order : null;
+    }
+
+    /**
+     * Returns the order payment by Flow authorization ID
+     *
+     * @param $authorizationId
+     * @return OrderPaymentInterface|null
+     */
+    private function getOrderPaymentByFlowAuthorizationId($authorizationId) {
+        $filter = $this->filterBuilder
+            ->setField(OrderPaymentInterface::ADDITIONAL_INFORMATION)
+            ->setConditionType('like')
+            ->setValue('%'.$authorizationId.'%')
+            ->create();
+
+        $this->searchCriteriaBuilder->addFilters([$filter]);
+        $searchCriteria = $this->searchCriteriaBuilder->create();
+
+        /** @var OrderPaymentSearchResultInterface $result */
+        $result = $this->orderPaymentRepository->getList($searchCriteria);
+        $orderPaymentItems = $result->getItems();
+
+        foreach ($orderPaymentItems as $orderPaymentItem) {
+            // Returns first order payment found if any
+            return $orderPaymentItem;
+        }
+
+        return null;
     }
 
     /**

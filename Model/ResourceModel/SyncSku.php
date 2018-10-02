@@ -78,6 +78,10 @@ class SyncSku extends AbstractDb
             $tableProduct = $this->getTable('catalog_product_entity');
             $tableProductWebsite = $this->getTable('catalog_product_website');
             $tableStore = $this->getTable('store');
+
+            // Truncate flow_connector_sync_skus before enqueuing all product for performance reasons
+            $connection->truncateTable($tableName);
+
             $sql = '
             insert into ' . $tableName . '(store_id, sku, status)
             select ' . $tableStore . '.store_id, ' . $tableProduct . '.sku, \'' . self::STATUS_NEW . '\'

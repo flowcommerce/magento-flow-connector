@@ -57,6 +57,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const FLOW_PAYMENT_REFERENCE = 'flow_payment_reference';
     const FLOW_PAYMENT_TYPE = 'flow_payment_type';
     const FLOW_PAYMENT_DESCRIPTION = 'flow_payment_description';
+    const FLOW_PAYMENT_ORDER_NUMBER = 'flow_payment_order_number';
 
     /**
      * Keys for Flow.io order payment data
@@ -1092,6 +1093,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 );
                 $payment->setAdditionalInformation(
                     self::FLOW_PAYMENT_DESCRIPTION, $flowPayment[self::ORDER_PAYMENT_DESCRIPTION]
+                );
+                $payment->setAdditionalInformation(
+                    self::FLOW_PAYMENT_ORDER_NUMBER, $data['number']
                 );
 
                 // NOTE: only supporting 1 payment for now

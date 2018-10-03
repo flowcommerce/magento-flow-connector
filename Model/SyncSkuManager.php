@@ -210,15 +210,10 @@ class SyncSkuManager implements SyncSkuManagementInterface
         // Get list of stores with enabled connectors
         $storeIds = [];
         /** @var Store $store */
-        foreach ($this->storeManager->getStores() as $store) {
-            if ($this->util->isFlowEnabled($store->getStoreId())) {
-                array_push($storeIds, $store->getStoreId());
-                $this->logger->info('Including products from store: ' . $store->getName() .
-                    ' [id=' . $store->getStoreId() . ']');
-            } else {
-                $this->logger->info('Not including products from store: ' . $store->getName() .
-                    ' [id=' . $store->getStoreId() . '] - Flow disabled');
-            }
+        foreach ($this->util->getEnabledStores() as $store) {
+            array_push($storeIds, $store->getStoreId());
+            $this->logger->info('Including products from store: ' . $store->getName() .
+                ' [id=' . $store->getStoreId() . ']');
         }
 
         if (count($storeIds) > 0) {

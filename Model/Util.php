@@ -269,6 +269,18 @@ class Util {
             $this->logger->error('Body: ' . $response->getBody());
             throw new FlowException('Failed to notify cross dock with tracking number ' . $trackingNumber . ': ' . $response->getBody());
         }
+    }
 
+    /**
+     * Returns an array of Stores that are enabled for Flow.
+     */
+    public function getEnabledStores() {
+        $stores = [];
+        foreach ($this->storeManager->getStores() as $store) {
+            if ($this->isFlowEnabled($store->getStoreId())) {
+                array_push($stores, $store);
+            }
+        }
+        return $stores;
     }
 }

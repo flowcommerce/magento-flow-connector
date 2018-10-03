@@ -12,6 +12,7 @@ use FlowCommerce\FlowConnector\Model\SyncSkuFactory;
 use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
@@ -54,6 +55,11 @@ class CatalogSync
     private $logger;
 
     /**
+     * @var ProductFactory
+     */
+    private $productFactory;
+
+    /**
      * @var SyncSkuFactory
      */
     private $syncSkuFactory;
@@ -84,6 +90,7 @@ class CatalogSync
      * @param JsonSerializer $jsonSerializer
      * @param FlowUtil $util
      * @param EventManager $eventManager
+     * @param ProductFactory $productFactory
      * @param SyncSkuFactory $syncSkuFactory
      * @param SyncSkuManager $syncSkuManager
      * @param FlowSaveItemApi $flowSaveItemApi
@@ -94,6 +101,7 @@ class CatalogSync
         JsonSerializer $jsonSerializer,
         FlowUtil $util,
         EventManager $eventManager,
+        ProductFactory $productFactory,
         SyncSkuFactory $syncSkuFactory,
         SyncSkuManager $syncSkuManager,
         FlowSaveItemApi $flowSaveItemApi,
@@ -103,6 +111,7 @@ class CatalogSync
         $this->jsonSerializer = $jsonSerializer;
         $this->util = $util;
         $this->eventManager = $eventManager;
+        $this->productFactory = $productFactory;
         $this->syncSkuFactory = $syncSkuFactory;
         $this->syncSkuManager = $syncSkuManager;
         $this->flowSaveItemApi = $flowSaveItemApi;
@@ -282,19 +291,29 @@ class CatalogSync
      */
     public function queue(ProductInterface $product)
     {
-        /** @var SyncSku $syncSku */
-        $syncSku = $this->syncSkuFactory->create();
+        if ($product->getStoreId() == 0) {
+            // Global store, queue product for all valid stores
+            foreach($this->util->getEnabledStores() as $store) {
+                $product2 = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
+                if ($product2->getId() != null) {
+                    $this->logger->info('queuing product2');
+                    $this->queue($product2);
+                }
+            }
 
-        // Check if connector is enabled for store
-        if (!$this->util->isFlowEnabled($product->getStoreId())) {
+        } else if (!$this->util->isFlowEnabled($product->getStoreId())) {
             $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
 
         } else {
+            /** @var SyncSku $syncSku */
+            $syncSku = $this->syncSkuFactory->create();
+
             // Check if product is queued and unprocessed.
             $collection = $syncSku->getCollection()
                 ->addFieldToSelect('*')
                 ->addFieldToFilter('sku', $product->getSku())
                 ->addFieldToFilter('status', SyncSku::STATUS_NEW)
+                ->addFieldToFilter('store_id', $product->getStoreid())
                 ->setPageSize(1);
 
             // Only queue if product is not already queued.
@@ -304,7 +323,7 @@ class CatalogSync
                 $syncSku->setStoreId($product->getStoreId());
                 $syncSku->setShouldSyncChildren($shouldSyncChildren);
                 $syncSku->save();
-                $this->logger->info('Queued product for sync: ' . $product->getSku());
+                $this->logger->info('Queued product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
             } else {
                 /** @var SyncSku $existingSyncSku */
                 $existingSyncSku = $collection->getFirstItem();
@@ -312,7 +331,7 @@ class CatalogSync
                     $existingSyncSku->setShouldSyncChildren($shouldSyncChildren);
                     $existingSyncSku->save();
                 } else {
-                    $this->logger->info('Product already queued, skipping: ' . $product->getSku());
+                    $this->logger->info('Product already queued, skipping: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
                 }
             }
         }

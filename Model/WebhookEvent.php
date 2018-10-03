@@ -522,18 +522,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $vatPct = 0.0;
                             $vatPrice = 0.0;
                             $baseVatPrice = 0.0;
-                            foreach($detail['included'] as $included) {
+                            $itemPrice = 0.0;
+                            $baseItemPrice = 0.0;
+                            foreach ($detail['included'] as $included) {
                                 if ($included['key'] == "item_price") {
-                                    $item->setBaseOriginalPrice($included['total']['base']['amount']);
-                                    $item->setOriginalPrice($included['total']['amount']);
-                                    $item->setPrice($included['total']['amount']);
-                                    $item->setBasePrice($included['total']['base']['amount']);
-                                    $item->setRowTotal($included['total']['amount'] * $detail['quantity']);
-                                    $item->setBaseRowTotal($included['total']['base']['amount'] * $detail['quantity']);
+                                    $itemPrice += $included['total']['amount'];
+                                    $baseItemPrice += $included['total']['base']['amount'];
                                 } elseif ($included['key'] == 'rounding') {
-                                    // add rounding to vat
-                                    $vatPrice += $included['total']['amount'];
-                                    $baseVatPrice += $included['total']['base']['amount'];
+                                    // add rounding to line total
+                                    $itemPrice += $included['total']['amount'];
+                                    $baseItemPrice += $included['total']['base']['amount'];
                                 } elseif ($included['key'] == 'vat_item_price') {
                                     $vatPct += $included['rate'];
                                     $vatPrice += $included['total']['amount'];
@@ -547,6 +545,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                                     $item->setBaseDiscountAmount($included['total']['base']['amount']);
                                 }
                             }
+                            $item->setBaseOriginalPrice($baseItemPrice);
+                            $item->setOriginalPrice($itemPrice);
+                            $item->setPrice($itemPrice);
+                            $item->setBasePrice($itemPrice);
+                            $item->setRowTotal($itemPrice * $detail['quantity']);
+                            $item->setBaseRowTotal($baseItemPrice * $detail['quantity']);
                             $item->setTaxPercent($vatPct * 100);
                             $item->setTaxAmount($vatPrice);
                             $item->setBaseTaxAmount($baseVatPrice);
@@ -1023,6 +1027,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         if (array_key_exists('province', $destination)) {
             $shippingAddress->setRegion($destination['province']);
+        } else {
+            $shippingAddress->unsRegion();
+            $shippingAddress->unsRegionId();
         }
 
         if (array_key_exists('postal', $destination)) {
@@ -1125,6 +1132,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                     if (array_key_exists('province', $paymentAddress)) {
                         $billingAddress->setRegion($paymentAddress['province']);
+                    } else {
+                        $billingAddress->unsRegion();
+                        $billingAddress->unsRegionId();
                     }
 
                     if (array_key_exists('postal', $paymentAddress)) {

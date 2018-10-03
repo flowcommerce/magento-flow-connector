@@ -3,8 +3,9 @@
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface;
-use Magento\Framework\DataObject;
+use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Model\ResourceModel\Db\Context;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
@@ -13,6 +14,31 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
  */
 class InventorySync extends AbstractDb
 {
+    /**
+     * Update multiple statuses batch size
+     */
+    const UPDATE_MULTIPLE_STATUSES_BATCH_SIZE = 50;
+
+    /**
+     * @var DataObjectFactory
+     */
+    private $dataObjectFactory;
+
+    /**
+     * InventorySync constructor.
+     * @param DataObjectFactory $dataObjectFactory
+     * @param Context $context
+     * @param null $connectionName
+     */
+    public function __construct(
+        DataObjectFactory $dataObjectFactory,
+        Context $context,
+        $connectionName = null
+    ) {
+        parent::__construct($context, $connectionName);
+        $this->dataObjectFactory = $dataObjectFactory;
+    }
+
     /**
      * Initialize resource model
      * @return void
@@ -111,18 +137,20 @@ class InventorySync extends AbstractDb
         if (count($inventorySyncs)) {
             $tableName = $this->getMainTable();
 
-            // TODO: inject data object factory if this works
-            $object = new DataObject();
+            $object = $this->dataObjectFactory->create();
             $object->setData(InventorySyncInterface::DATA_KEY_STATUS, $newStatus);
             $preparedData = $this->_prepareDataForTable($object, $tableName);
 
-            $this
-                ->getConnection()
-                ->update(
-                    $tableName,
-                    $preparedData,
-                    $this->getConnection()->quoteInto($this->getIdFieldName() . 'IN ?', $ids)
-                );
+            $batches = array_chunk($ids, self::UPDATE_MULTIPLE_STATUSES_BATCH_SIZE);
+            foreach ($batches as $batch) {
+                $this
+                    ->getConnection()
+                    ->update(
+                        $tableName,
+                        $preparedData,
+                        $this->getConnection()->quoteInto($this->getIdFieldName() . ' IN (?)', $batch)
+                    );
+            }
         }
     }
 }

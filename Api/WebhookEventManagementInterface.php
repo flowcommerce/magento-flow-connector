@@ -19,6 +19,14 @@ interface WebhookEventManagementInterface
     public function deleteOldProcessedEvents();
 
     /**
+     * Given a Flow Order ID and a webhook type, marks all events related to that order and type as done
+     * @param string $flowOrderId
+     * @param string $type
+     * @return void
+     */
+    public function markPendingWebhookEventsAsDoneForOrderAndType($flowOrderId, $type);
+
+    /**
      * Marks Web Hook as done
      * @param WebhookEvent $webHookEvent
      * @param string|null $message

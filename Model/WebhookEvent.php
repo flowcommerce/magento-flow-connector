@@ -744,22 +744,30 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process card_authorization_upserted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/card-authorization-upserted-v-2
-    */
-    private function processCardAuthorizationUpsertedV2() {
+     * Process card_authorization_upserted_v2 webhook event data.
+     * https://docs.flow.io/type/card-authorization-upserted-v-2
+     * @return void
+     * @throws WebhookException
+     */
+    private function processCardAuthorizationUpsertedV2()
+    {
         $this->logger->info('Processing card_authorization_upserted_v2 data');
         $data = $this->getPayloadData();
 
         if (array_key_exists('order', $data['authorization'])) {
             $flowOrderNumber = $data['authorization']['order']['number'];
-
+            $status = $data['authorization']['result']['status'];
             if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
                 $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
                 $this->processPaymentAuthorization($order, $data['authorization']);
-                $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
+                if (in_array($status, ['authorized', 'declined'])) {
+                    $this->webhookEventManager->markPendingWebhookEventsAsDoneForOrderAndType(
+                        $flowOrderNumber,
+                        'card_authorization_upserted_v2'
+                    );
+                } else {
+                    $this->webhookEventManager->markWebhookEventAsDone($this, '');
+                }
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
             }
@@ -770,21 +778,31 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process online_authorization_upserted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/online-authorization-upserted-v-2
-    */
-    private function processOnlineAuthorizationUpsertedV2() {
+     * Process online_authorization_upserted_v2 webhook event data.
+     * https://docs.flow.io/type/online-authorization-upserted-v-2
+     * @return void
+     * @throws WebhookException
+     */
+    private function processOnlineAuthorizationUpsertedV2()
+    {
         $this->logger->info('Processing online_authorization_upserted_v2 data');
         $data = $this->getPayloadData();
 
         if (array_key_exists('order', $data['authorization'])) {
             $flowOrderNumber = $data['authorization']['order']['number'];
-
+            $status = $data['authorization']['result']['status'];
             if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
                 $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
                 $this->processPaymentAuthorization($order, $data['authorization']);
-                $this->webhookEventManager->markWebhookEventAsDone($this, '');
+
+                if (in_array($status, ['authorized', 'declined'])) {
+                    $this->webhookEventManager->markPendingWebhookEventsAsDoneForOrderAndType(
+                        $flowOrderNumber,
+                        'online_authorization_upserted_v2'
+                    );
+                } else {
+                    $this->webhookEventManager->markWebhookEventAsDone($this, '');
+                }
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
             }
@@ -977,6 +995,13 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         if (!$customer->getEntityId()) {
             $this->logger->info('Creating a new customer');
             $customer->setStoreId($store->getId());
+
+            /*
+             * For some Flow clients $customer->setStoreId($store->getId()); sets website_id to 0 for unknown reason,
+             * most likely custom functionality like a plugin or a preference. We workaround by setting website_id again.
+             */
+            $customer->setWebsiteId($store->getWebsiteId());
+
             $customer->setFirstname($data['customer']['name']['first']);
             $customer->setLastname($data['customer']['name']['last']);
             $customer->setEmail($data['customer']['email']);

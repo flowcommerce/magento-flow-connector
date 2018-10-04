@@ -5,6 +5,7 @@ namespace FlowCommerce\FlowConnector\Model;
 use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface;
 use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent as WebhookEventResourceModel;
+use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\CollectionFactory as WebhookEventCollectionFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\UrlInterface;
@@ -50,6 +51,11 @@ class WebhookEventManager implements WebhookEventManagementInterface
     private $util;
 
     /**
+     * @var WebhookEventCollectionFactory
+     */
+    private $webhookEventCollectionFactory;
+
+    /**
      * @var WebhookEventFactory
      */
     private $webhookEventFactory;
@@ -65,6 +71,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
      * @param JsonSerializer $jsonSerializer
      * @param Logger $logger
      * @param StoreManager $storeManager
+     * @param WebhookEventCollectionFactory $webhookEventCollectionFactory
      * @param WebhookEventFactory $webhookEventFactory
      * @param WebhookEventResourceModel $webhookEventResourceModel
      */
@@ -73,6 +80,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
         JsonSerializer $jsonSerializer,
         Logger $logger,
         StoreManager $storeManager,
+        WebhookEventCollectionFactory $webhookEventCollectionFactory,
         WebhookEventFactory $webhookEventFactory,
         WebhookEventResourceModel $webhookEventResourceModel
     ) {
@@ -80,6 +88,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
         $this->jsonSerializer = $jsonSerializer;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
+        $this->webhookEventCollectionFactory = $webhookEventCollectionFactory;
         $this->webhookEventFactory = $webhookEventFactory;
         $this->webhookEventResourceModel = $webhookEventResourceModel;
     }
@@ -263,10 +272,11 @@ class WebhookEventManager implements WebhookEventManagementInterface
      */
     private function getNextUnprocessedEvent()
     {
-        $collection = $this->webhookEventFactory->create()->getCollection();
+        $collection = $this->webhookEventCollectionFactory->create();
         $collection->addFieldToFilter('status', WebhookEvent::STATUS_NEW);
         $collection->addFieldToFilter('triggered_at', ['lteq' => (new \DateTime())->format('Y-m-d H:i:s')]);
         $collection->setOrder('updated_at', 'ASC');
+        $collection->setOrder('id', 'ASC');
         $collection->setPageSize(1);
         if ($collection->getSize() == 0) {
             $return =  null;
@@ -283,6 +293,27 @@ class WebhookEventManager implements WebhookEventManagementInterface
     public function deleteOldProcessedEvents()
     {
         $this->webhookEventResourceModel->deleteOldProcessedEvents();
+    }
+
+    /**
+     * {@inheritdoc}
+     * @throws LocalizedException
+     */
+    public function markPendingWebhookEventsAsDoneForOrderAndType($flowOrderId, $type)
+    {
+        $collection = $this->webhookEventCollectionFactory->create();
+        $collection->addFieldToFilter('status', ['in' => [
+            WebhookEvent::STATUS_NEW,
+            WebhookEvent::STATUS_PROCESSING,
+        ]]);
+        $collection->addFieldToFilter('payload', ['like' => '%' . $flowOrderId . '%']);
+        $collection->addFieldToFilter('type', ['eq' => $type]);
+        if ($collection->getSize() > 0) {
+            /** @var WebhookEvent[] $events */
+            $webhookEvents = $collection->getItems();
+            $this->webhookEventResourceModel
+                ->updateMultipleStatuses($webhookEvents, WebhookEvent::STATUS_DONE);
+        }
     }
 
     /**

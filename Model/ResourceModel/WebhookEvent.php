@@ -3,8 +3,10 @@
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
 use FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface;
-use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\Model\ResourceModel\Db\Context;
 
 /**
  * Class WebhookEvent
@@ -31,6 +33,31 @@ class WebhookEvent extends AbstractDb
      * Status - Done
      */
     const STATUS_DONE = 'done';
+
+    /**
+     * Update multiple statuses batch size
+     */
+    const UPDATE_MULTIPLE_STATUSES_BATCH_SIZE = 50;
+
+    /**
+     * @var DataObjectFactory
+     */
+    private $dataObjectFactory;
+
+    /**
+     * InventorySync constructor.
+     * @param DataObjectFactory $dataObjectFactory
+     * @param Context $context
+     * @param null $connectionName
+     */
+    public function __construct(
+        DataObjectFactory $dataObjectFactory,
+        Context $context,
+        $connectionName = null
+    ) {
+        parent::__construct($context, $connectionName);
+        $this->dataObjectFactory = $dataObjectFactory;
+    }
 
     /**
      * Initializes the resource model
@@ -138,5 +165,37 @@ class WebhookEvent extends AbstractDb
            and updated_at < date_sub(now(), interval 4 hour)
         ';
         $this->getConnection()->query($sql);
+    }
+
+    /**
+     * Updates status for multiple webhook events using direct queries in batches
+     * @param WebhookEventInterface[] $webhookEvents
+     * @param string $newStatus
+     * @throws LocalizedException
+     */
+    public function updateMultipleStatuses(array $webhookEvents, $newStatus)
+    {
+        $ids = [];
+        if (count($webhookEvents)) {
+            foreach ($webhookEvents as $webhookEvent) {
+                array_push($ids, $webhookEvent->getId());
+            }
+            $tableName = $this->getMainTable();
+
+            $object = $this->dataObjectFactory->create();
+            $object->setData(WebhookEventInterface::DATA_KEY_STATUS, $newStatus);
+            $preparedData = $this->_prepareDataForTable($object, $tableName);
+
+            $batches = array_chunk($ids, self::UPDATE_MULTIPLE_STATUSES_BATCH_SIZE);
+            foreach ($batches as $batch) {
+                $this
+                    ->getConnection()
+                    ->update(
+                        $tableName,
+                        $preparedData,
+                        $this->getConnection()->quoteInto($this->getIdFieldName() . ' IN (?)', $batch)
+                    );
+            }
+        }
     }
 }

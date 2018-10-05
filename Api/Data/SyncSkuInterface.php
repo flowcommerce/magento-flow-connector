@@ -81,6 +81,26 @@ interface SyncSkuInterface
     const DATA_KEY_DELETED_AT = 'deleted_at';
 
     /**
+     * Data Key - Request Url
+     */
+    const DATA_KEY_REQUEST_URL = 'request_url';
+
+    /**
+     * Data Key - Request Body
+     */
+    const DATA_KEY_REQUEST_BODY = 'request_body';
+
+    /**
+     * Data Key - Response Headers
+     */
+    const DATA_KEY_RESPONSE_HEADERS = 'response_headers';
+
+    /**
+     * Data Key - Response Body
+     */
+    const DATA_KEY_RESPONSE_BODY = 'response_body';
+
+    /**
      * Getter - ID
      * @return int|null
      */
@@ -139,6 +159,30 @@ interface SyncSkuInterface
      * @return string|null
      */
     public function getDeletedAt();
+
+    /**
+     * Getter - Request URL
+     * @return string|null
+     */
+    public function getRequestUrl();
+
+    /**
+     * Getter - Request Body
+     * @return string|null
+     */
+    public function getRequestBody();
+
+    /**
+     * Getter - Response Headers
+     * @return string|null
+     */
+    public function getResponseHeaders();
+
+    /**
+     * Getter - Response Body
+     * @return string|null
+     */
+    public function getResponseBody();
 
     /**
      * Setter - ID
@@ -209,4 +253,32 @@ interface SyncSkuInterface
      * @return SyncSkuInterface
      */
     public function setDeletedAt($value);
+
+    /**
+     * Setter - Request URL
+     * @param string $value
+     * @return SyncSkuInterface
+     */
+    public function setRequestURL($value);
+
+    /**
+     * Setter - Request Body
+     * @param string $value
+     * @return SyncSkuInterface
+     */
+    public function setRequestBody($value);
+
+    /**
+     * Setter - Response Headers
+     * @param string $value
+     * @return SyncSkuInterface
+     */
+    public function setResponseHeaders($value);
+
+    /**
+     * Setter - Response Body
+     * @param string $value
+     * @return SyncSkuInterface
+     */
+    public function setResponseBody($value);
 }

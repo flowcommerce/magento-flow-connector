@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
+use \FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface;
 use \FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterfaceFactory as SearchResultFactory;
 use \FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface;
 use \FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku as SyncSkuResourceModel;
@@ -137,7 +138,9 @@ class SyncSkuManager implements SyncSkuManagementInterface
         foreach ($syncSkus as $syncSku) {
             $productSku = $syncSku->getSku();
             $storeId = $syncSku->getStoreId();
-            if (array_key_exists($productSku, $productsIndexedBySku[$storeId])) {
+            if (array_key_exists($storeId, $productsIndexedBySku) &&
+                array_key_exists($productSku, $productsIndexedBySku[$storeId])
+            ) {
                 $syncSku->setProduct($productsIndexedBySku[$storeId][$productSku]);
             }
         }
@@ -169,7 +172,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     {
         $ts = microtime(true);
         $syncSku->setStatus(SyncSku::STATUS_DONE);
-        $this->saveSyncSku($syncSku);
+        $this->updateSyncSkuStatus($syncSku);
         $this->logger->info('Time to delete sync sku: ' . (microtime(true) - $ts));
     }
 
@@ -226,25 +229,44 @@ class SyncSkuManager implements SyncSkuManagementInterface
     /**
      * {@inheritdoc}
      */
-    public function markSyncSkuAsDone(SyncSku $syncSku)
-    {
+    public function markSyncSkuAsDone(
+        SyncSku $syncSku,
+        $requestUrl = null,
+        $requestBody = null,
+        $responseHeaders = null,
+        $responseBody = null
+    ) {
         $syncSku->setStatus(SyncSku::STATUS_DONE);
+        $syncSku->setRequestUrl($requestUrl);
+        $syncSku->setRequestBody($requestBody);
+        $syncSku->setResponseHeaders($responseHeaders);
+        $syncSku->setResponseBody($responseBody);
         $ts = microtime(true);
-        $this->saveSyncSku($syncSku);
+        $this->updateSyncSkuStatus($syncSku);
         $this->logger->info('Time to update sync sku as done: ' . (microtime(true) - $ts));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function markSyncSkuAsError(SyncSku $syncSku, $errorMessage = null)
-    {
+    public function markSyncSkuAsError(
+        SyncSku $syncSku,
+        $errorMessage = null,
+        $requestUrl = null,
+        $requestBody = null,
+        $responseHeaders = null,
+        $responseBody = null
+    ) {
         $ts = microtime(true);
         $syncSku->setStatus(SyncSku::STATUS_ERROR);
         if ($errorMessage !== null) {
             $syncSku->setMessage(substr($errorMessage, 0, 200));
         }
-        $this->saveSyncSku($syncSku);
+        $syncSku->setRequestUrl($requestUrl);
+        $syncSku->setRequestBody($requestBody);
+        $syncSku->setResponseHeaders($responseHeaders);
+        $syncSku->setResponseBody($responseBody);
+        $this->updateSyncSkuStatus($syncSku);
         $this->logger->info('Time to update sync sku as error: ' . (microtime(true) - $ts));
     }
 
@@ -255,7 +277,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     {
         $syncSku->setStatus(SyncSku::STATUS_PROCESSING);
         $ts = microtime(true);
-        $this->saveSyncSku($syncSku);
+        $this->updateSyncSkuStatus($syncSku);
         $this->logger->info('Time to update sync sku for processing: ' . (microtime(true) - $ts));
     }
 
@@ -269,10 +291,11 @@ class SyncSkuManager implements SyncSkuManagementInterface
 
     /**
      * Helper method to update
+     * @param SyncSkuInterface $syncSku
      */
-    private function saveSyncSku($syncSku)
+    private function updateSyncSkuStatus($syncSku)
     {
-        $this->syncSkuResourceModel->update($syncSku);
+        $this->syncSkuResourceModel->updateStatus($syncSku);
     }
 
     /**

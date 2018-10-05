@@ -54,4 +54,13 @@
         </arguments>
     </type>
 
+    <!-- Plugin to enqueue all products after a full price reindex (promotions being applied) -->
+    <type name="Magento\Catalog\Model\Indexer\Product\Price">
+        <plugin name="enqueue_products_after_price_full_index" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Model\Indexer\Product\Price"/>
+    </type>
+
+    <!-- Plugin to observe catalog rule changes -->
+    <type name="Magento\CatalogRule\Model\ResourceModel\Rule">
+        <plugin name="after_rule_save_schedule_flow_full_sync" type="FlowCommerce\FlowConnector\Plugin\Magento\CatalogRule\Model\ResourceModel\Rule"/>
+    </type>
 </config>

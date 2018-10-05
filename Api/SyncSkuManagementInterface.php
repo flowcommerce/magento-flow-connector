@@ -47,17 +47,38 @@ interface SyncSkuManagementInterface
     /**
      * Marks Sync Sku as done
      * @param SyncSku $syncSku
+     * @param string|null $requestUrl
+     * @param string|null $requestBody
+     * @param string|null $responseHeaders
+     * @param string|null $responseBody
      * @return SyncSku
      */
-    public function markSyncSkuAsDone(SyncSku $syncSku);
+    public function markSyncSkuAsDone(
+        SyncSku $syncSku,
+        $requestUrl = null,
+        $requestBody = null,
+        $responseHeaders = null,
+        $responseBody = null
+    );
 
     /**
      * Marks Sync Sku as error
      * @param SyncSku $syncSku
      * @param string|null $errorMessage
+     * @param string|null $requestUrl
+     * @param string|null $requestBody
+     * @param string|null $responseHeaders
+     * @param string|null $responseBody
      * @return SyncSku
      */
-    public function markSyncSkuAsError(SyncSku $syncSku, $errorMessage = null);
+    public function markSyncSkuAsError(
+        SyncSku $syncSku,
+        $errorMessage = null,
+        $requestUrl = null,
+        $requestBody = null,
+        $responseHeaders = null,
+        $responseBody = null
+    );
 
     /**
      * Marks Sync Sku as processing

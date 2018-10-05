@@ -3,6 +3,7 @@
 namespace FlowCommerce\FlowConnector\Model;
 
 use \FlowCommerce\FlowConnector\Exception\FlowException;
+use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as GuzzleClient;
 use \Magento\Store\Model\ScopeInterface;
 use \Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use \Magento\Framework\Module\ModuleListInterface as ModuleList;
@@ -158,7 +159,7 @@ class Util {
      * Returns the Flow Client user agent.
      */
     public function getFlowClientUserAgent() {
-        return self::HTTP_USERAGENT . '-' . $this->moduleVersion;
+        return GuzzleClient::HTTP_USERAGENT . '-' . $this->moduleVersion;
     }
 
     /**

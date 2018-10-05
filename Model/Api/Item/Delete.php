@@ -4,8 +4,8 @@ namespace FlowCommerce\FlowConnector\Model\Api\Item;
 
 use \FlowCommerce\FlowConnector\Model\SyncSku;
 use \FlowCommerce\FlowConnector\Model\Util;
-use \GuzzleHttp\Client as HttpClient;
-use \GuzzleHttp\ClientFactory as HttpClientFactory;
+use \FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use \FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use \GuzzleHttp\PoolFactory as HttpPoolFactory;
 use \GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
 use \Psr\Log\LoggerInterface as Logger;
@@ -90,6 +90,7 @@ class Delete
                         ''
                     ]]);
                 };
+                $syncSku->setData('flow_request_url', $url);
             }
         };
 

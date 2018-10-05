@@ -135,21 +135,31 @@ class SyncSku extends AbstractDb
     }
 
     /**
-     * Updates given SyncSku model data in the database
+     * Updates given SyncSku model status and related columns in the database
      * This is a temporary workaround, as some clients were experiencing issues when
      * SyncSkus were beings saved using the model's save method
-     * @param $syncSku
+     * @param \FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface $syncSku
      * @throws
      */
-    public function update($syncSku)
+    public function updateStatus($syncSku)
     {
         $tableName = $this->getMainTable();
-        $sql = '
-        update ' . $tableName . '
+        $sql = 'update ' . $tableName . '
            set status = ?,
-               message = ?
-         where id = ?
-        ';
-        $this->getConnection()->query($sql, [$syncSku->getStatus(), $syncSku->getMessage(), $syncSku->getId()]);
+               message = ?,
+               request_url = ?,
+               request_body = ?,
+               response_headers = ?,
+               response_body = ?
+         where id = ?';
+        $this->getConnection()->query($sql, [
+            $syncSku->getStatus(),
+            $syncSku->getMessage(),
+            $syncSku->getRequestUrl(),
+            $syncSku->getRequestBody(),
+            $syncSku->getResponseHeaders(),
+            $syncSku->getResponseBody(),
+            $syncSku->getId()
+        ]);
     }
 }

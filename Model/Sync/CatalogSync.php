@@ -4,14 +4,13 @@ namespace FlowCommerce\FlowConnector\Model\Sync;
 
 use FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterface as SearchResultInterface;
 use FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface as SyncSkuManager;
-use FlowCommerce\FlowConnector\Exception\CatalogSyncException;
 use FlowCommerce\FlowConnector\Model\Api\Item\Delete as FlowDeleteItemApi;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save as FlowSaveItemApi;
 use FlowCommerce\FlowConnector\Model\SyncSku;
 use FlowCommerce\FlowConnector\Model\SyncSkuFactory;
 use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
+use GuzzleHttp\Psr7\Response as HttpResponse;
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
 use Magento\Framework\Event\ManagerInterface as EventManager;
@@ -126,7 +125,12 @@ class CatalogSync
     public function failureProductDelete($reason, $index)
     {
         if (array_key_exists($index, $this->syncSkusToDelete)) {
-            $this->syncSkuManager->markSyncSkuAsError($this->syncSkusToDelete[$index], $reason);
+            $syncSku = $this->syncSkusToDelete[$index];
+            $this->syncSkuManager->markSyncSkuAsError(
+                $syncSku,
+                $reason,
+                $syncSku->getData('flow_request_url')
+            );
             unset($this->syncSkusToDelete[$index]);
         }
     }
@@ -139,7 +143,13 @@ class CatalogSync
     public function failureProductSave($reason, $index)
     {
         if (array_key_exists($index, $this->syncSkusToUpdate)) {
-            $this->syncSkuManager->markSyncSkuAsError($this->syncSkusToUpdate[$index], $reason);
+            $syncSku = $this->syncSkusToUpdate[$index];
+            $this->syncSkuManager->markSyncSkuAsError(
+                $syncSku,
+                $reason,
+                $syncSku->getData('flow_request_url'),
+                $syncSku->getData('flow_request_body')
+            );
             unset($this->syncSkusToUpdate[$index]);
         }
     }
@@ -363,21 +373,28 @@ class CatalogSync
 
     /**
      * Marks SyncSku as processed
-     * @param $response
+     * @param HttpResponse $response
      * @param $index
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function successfulProductDelete($response, $index)
     {
         if (array_key_exists($index, $this->syncSkusToDelete)) {
-            $this->syncSkuManager->deleteSyncSku($this->syncSkusToDelete[$index]);
+            $syncSku = $this->syncSkusToDelete[$index];
+            $this->syncSkuManager->markSyncSkuAsDone(
+                $syncSku,
+                $syncSku->getData('flow_request_url'),
+                $syncSku->getData('flow_request_body'),
+                $this->jsonSerializer->serialize($response->getHeaders()),
+                $response->getBody()
+            );
             unset($this->syncSkusToDelete[$index]);
         }
     }
 
     /**
      * Marks SyncSku as processed
-     * @param $response
+     * @param HttpResponse $response
      * @param $index
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -385,7 +402,13 @@ class CatalogSync
     {
         if (array_key_exists($index, $this->syncSkusToUpdate)) {
             $syncSku = $this->syncSkusToUpdate[$index];
-            $this->syncSkuManager->markSyncSkuAsDone($syncSku);
+            $this->syncSkuManager->markSyncSkuAsDone(
+                $syncSku,
+                $syncSku->getData('flow_request_url'),
+                $syncSku->getData('flow_request_body'),
+                $this->jsonSerializer->serialize($response->getHeaders()),
+                $response->getBody()
+            );
             // Fire an event for client extension code to process
             $this->logger->info('Firing event: ' . self::EVENT_FLOW_PRODUCT_SYNC_AFTER);
             $this->eventManager->dispatch(self::EVENT_FLOW_PRODUCT_SYNC_AFTER, [

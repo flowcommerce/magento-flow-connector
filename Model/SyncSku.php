@@ -148,6 +148,38 @@ class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterfa
     /**
      * {@inheritdoc}
      */
+    public function getRequestUrl()
+    {
+        return $this->getData(self::DATA_KEY_REQUEST_URL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequestBody()
+    {
+        return $this->getData(self::DATA_KEY_REQUEST_BODY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResponseHeaders()
+    {
+        return $this->getData(self::DATA_KEY_RESPONSE_HEADERS);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResponseBody()
+    {
+        return $this->getData(self::DATA_KEY_RESPONSE_BODY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setStoreId($value)
     {
         $this->setData(self::DATA_KEY_STORE_ID, $value);
@@ -223,6 +255,42 @@ class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterfa
     public function setDeletedAt($value)
     {
         $this->setData(self::DATA_KEY_DELETED_AT, $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRequestUrl($value)
+    {
+        $this->setData(self::DATA_KEY_REQUEST_URL, (string) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRequestBody($value)
+    {
+        $this->setData(self::DATA_KEY_REQUEST_BODY, (string) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setResponseHeaders($value)
+    {
+        $this->setData(self::DATA_KEY_RESPONSE_HEADERS, (string) $value);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setResponseBody($value)
+    {
+        $this->setData(self::DATA_KEY_RESPONSE_BODY, (string) $value);
         return $this;
     }
 

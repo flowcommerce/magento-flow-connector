@@ -38,6 +38,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->installInventorySyncTable($installer);
         }
 
+        if (version_compare($context->getVersion(), '1.0.30', '<')) {
+            $this->addResponseAndRequestFieldsToSyncSkusTable($installer);
+        }
+
         $installer->endSetup();
     }
 
@@ -364,5 +368,58 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'entity_id',
             Table::ACTION_CASCADE
         );
+    }
+
+
+
+    /**
+     * Adds request_body, response_body, response_headers and response_status columns to sync sku table
+     * @param SchemaSetupInterface $installer
+     */
+    private function addResponseAndRequestFieldsToSyncSkusTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_sync_skus');
+        $connection = $installer->getConnection();
+
+        $columnName = 'request_url';
+        if ($connection->tableColumnExists($tableName, $columnName) === false) {
+            $connection->addColumn($tableName, $columnName, [
+                'type' => Table::TYPE_TEXT,
+                'size' => 255,
+                'nullable' => true,
+                'after' => 'deleted_at',
+                'comment' => 'Request URL',
+            ]);
+        }
+
+        $columnName = 'request_body';
+        if ($connection->tableColumnExists($tableName, $columnName) === false) {
+            $connection->addColumn($tableName, $columnName, [
+                'type' => Table::TYPE_TEXT,
+                'nullable' => true,
+                'after' => 'request_url',
+                'comment' => 'Request body',
+            ]);
+        }
+
+        $columnName = 'response_headers';
+        if ($connection->tableColumnExists($tableName, $columnName) === false) {
+            $connection->addColumn($tableName, $columnName, [
+                'type' => Table::TYPE_TEXT,
+                'nullable' => true,
+                'after' => 'request_body',
+                'comment' => 'Response Headers',
+            ]);
+        }
+
+        $columnName = 'response_body';
+        if ($connection->tableColumnExists($tableName, $columnName) === false) {
+            $connection->addColumn($tableName, $columnName, [
+                'type' => Table::TYPE_TEXT,
+                'nullable' => true,
+                'after' => 'response_headers',
+                'comment' => 'Response Body',
+            ]);
+        }
     }
 }

@@ -2,11 +2,11 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
+use Exception;
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface as InventorySync;
 use FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface;
 use FlowCommerce\FlowConnector\Api\InventorySyncRepositoryInterface as InventorySyncRepository;
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterfaceFactory as InventorySyncFactory;
-use FlowCommerce\FlowConnector\Exception\InventorySyncException;
 use FlowCommerce\FlowConnector\Model\Api\Inventory\Updates as InventoryUpdatesApiClient;
 use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use GuzzleHttp\Exception\ClientException;
@@ -73,6 +73,11 @@ class InventorySyncManager implements InventorySyncManagementInterface
      * @var SortOrderBuilder
      */
     private $sortOrderBuilder = null;
+
+    /**
+     * @var StockItemInterface[]
+     */
+    private $stockItemsByProductId = [];
 
     /**
      * @var StockItemRepositoryInterface
@@ -243,6 +248,20 @@ class InventorySyncManager implements InventorySyncManagementInterface
     }
 
     /**
+     * Given a product id, returns it's associated stock item if available
+     * @param int $productId
+     * @return StockItemInterface|null
+     */
+    private function getStockItemFromProductId($productId)
+    {
+        $return = null;
+        if (array_key_exists($productId, $this->stockItemsByProductId)) {
+            $return = $this->stockItemsByProductId[$productId];
+        }
+        return $return;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function enqueueAllStockItems()
@@ -296,6 +315,29 @@ class InventorySyncManager implements InventorySyncManagementInterface
         }
 
         $this->inventorySyncRepository->saveMultiple($inventorySyncs);
+    }
+
+    /**
+     * Enqueues multiple stock items by product ids
+     * @param $productIds
+     */
+    public function enqueueMultipleStockItemByProductIds($productIds)
+    {
+        $this->preloadStockItems($productIds);
+        foreach ($productIds as $productId) {
+            try {
+                $stockItem = $this->getStockItemFromProductId($productId);
+                if ($stockItem) {
+                    $this->enqueueStockItem($stockItem);
+                }
+            } catch (Exception $e) {
+                $this->logger->error(
+                    'Error while enqueueing stock item for Flow.io inventory sync after mass attribute update.' .
+                    'Product ID: ' . $productId,
+                    ['exception' => $e]
+                );
+            }
+        }
     }
 
     /**
@@ -355,6 +397,23 @@ class InventorySyncManager implements InventorySyncManagementInterface
     {
         $inventorySync->setStatus(InventorySync::STATUS_PROCESSING);
         $this->inventorySyncRepository->save($inventorySync);
+    }
+
+    /**
+     * Given a list of product ids, loads all stock items and store them in memory for
+     * posterior use
+     * @param int[] $productIds
+     * @return void
+     */
+    private function preloadStockItems(array $productIds)
+    {
+        $stockItemCriteria = $this->stockItemCriteriaFactory->create();
+        $stockItemCriteria->setProductsFilter($productIds);
+        $stockItems = $this->stockItemRepository->getList($stockItemCriteria);
+        foreach ($stockItems->getItems() as $stockItem) {
+            $productId = $stockItem->getProductId();
+            $this->stockItemsByProductId[$productId] = $stockItem;
+        }
     }
 
     /**

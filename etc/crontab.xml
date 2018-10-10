@@ -16,7 +16,7 @@
         </job>
     </group>
     <group id="flowcommerce_flowconnector_centers_update">
-        <job name="flow_flowconnector_inventory_centers_update" instance="FlowCommerce\FlowConnector\Cron\FetchInventoryCenterKeysCommand" method="execute">
+        <job name="flow_flowconnector_inventory_centers_update" instance="FlowCommerce\FlowConnector\Cron\FetchInventoryCenterKeys" method="execute">
             <schedule>0 15 * * *</schedule>
         </job>
     </group>

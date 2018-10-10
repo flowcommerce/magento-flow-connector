@@ -63,4 +63,9 @@
     <type name="Magento\CatalogRule\Model\ResourceModel\Rule">
         <plugin name="after_rule_save_schedule_flow_full_sync" type="FlowCommerce\FlowConnector\Plugin\Magento\CatalogRule\Model\ResourceModel\Rule"/>
     </type>
+
+    <!-- Plugin to enqueue all products after a mass attribute update is made from the admin -->
+    <type name="Magento\Catalog\Model\Product\Action">
+        <plugin name="enqueue_products_after_mass_attribute_update" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Model\Product\Action"/>
+    </type>
 </config>

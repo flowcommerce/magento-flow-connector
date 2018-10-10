@@ -402,11 +402,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 case 'online_authorization_upserted_v2':
                     $this->processOnlineAuthorizationUpsertedV2();
                     break;
-                case 'order_deleted':
-                    $this->processOrderDeleted();
+                case 'order_deleted_v2':
+                    $this->processOrderDeletedV2();
                     break;
-                case 'order_upserted':
-                    $this->processOrderUpserted();
+                case 'order_upserted_v2':
+                    $this->processOrderUpsertedV2();
                     break;
                 case 'refund_capture_upserted_v2':
                     $this->processRefundCaptureUpsertedV2();
@@ -549,12 +549,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setBaseOriginalPrice($baseItemPrice);
                             $item->setOriginalPrice($itemPrice);
                             $item->setPrice($itemPrice);
-                            $item->setBasePrice($itemPrice);
+                            $item->setBasePrice($baseItemPrice);
                             $item->setRowTotal($itemPrice * $detail['quantity']);
                             $item->setBaseRowTotal($baseItemPrice * $detail['quantity']);
                             $item->setTaxPercent($vatPct * 100);
                             $item->setTaxAmount($vatPrice);
                             $item->setBaseTaxAmount($baseVatPrice);
+                            $item->setPriceInclTax(($itemPrice + $vatPrice));
+                            $item->setBasePriceInclTax(($baseItemPrice + $baseVatPrice));
+                            $item->setRowTotalInclTax(($itemPrice + $vatPrice) * $detail['quantity']);
+                            $item->setBaseRowTotalInclTax(($baseItemPrice + $baseVatPrice) * $detail['quantity']);
                             $item->save();
 
                         } else {
@@ -893,54 +897,67 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process order_deleted webhook event data.
+    * Process order_deleted_v2 webhook event data.
     *
-    * https://docs.flow.io/type/order-deleted
+    * https://docs.flow.io/type/order-deleted-v-2
     */
-    private function processOrderDeleted() {
+    private function processOrderDeletedV2() {
         # Temporarily disabling order_deleted, as it was breaking the cron
         $this->webhookEventManager->markWebhookEventAsDone($this, '');
         return;
 
-        $this->logger->info('Processing order_deleted data');
+        $this->logger->info('Processing order_deleted_v2 data');
         $data = $this->getPayloadData();
 
-        if ($order = $this->getOrderByFlowOrderNumber($data['number'])) {
-
-            if ($order->getState() == OrderModel::STATE_NEW) {
-                foreach($order->getPaymentsCollection() as $payment) {
-                    $payment->cancel();
+        if (array_key_exists('order', $data)) {
+            /** @var Order $order */
+            if ($order = $this->getOrderByFlowOrderNumber($data['order']['number'])) {
+                if ($order->canCancel()) {
+                    $order->cancel();
+                    $order->addStatusHistoryComment('This order has been deleted on flow.io');
+                    $order->save();
+                } else {
+                    $order->hold();
+                    $order->addStatusHistoryComment('This order has been deleted on flow.io');
+                    $order->save();
                 }
 
-                $order->delete();
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
             } else {
-                throw new WebhookException('Unable to delete order.');
+                throw new WebhookException('Order to be deleted does not exist.');
             }
-
         } else {
-            throw new WebhookException('Order to be deleted does not exist.');
+            throw new WebhookException('No order information found in payload data.');
         }
     }
 
     /**
-    * Process order_upserted webhook event data.
+    * Process order_upserted_v2 webhook event data.
     *
-    * https://docs.flow.io/type/order-upserted
+    * https://docs.flow.io/type/order-upserted-v-2
     */
-    private function processOrderUpserted() {
-        $this->logger->info('Processing order_upserted data');
+    private function processOrderUpsertedV2() {
+        $this->logger->info('Processing order_upserted_v2 data');
         $data = $this->getPayloadData();
 
+        // Check if order is present in payload
+        if (!array_key_exists('order', $data)) {
+            $this->setMessage('Order data not present in payload, skipping.');
+            $this->setStatus(self::STATUS_DONE);
+            $this->save();
+            return;
+        }
+
+        $receivedOrder = $data['order'];
+
         // Do not process orders until they have a submitted_at date
-        if (!array_key_exists('submitted_at', $data)) {
+        if (!array_key_exists('submitted_at', $receivedOrder)) {
             $this->webhookEventManager->markWebhookEventAsDone($this, 'Order data incomplete, skipping');
             return;
         }
 
         // Check if this order has already been processed
-        if ($this->getOrderByFlowOrderNumber($data['number'])) {
+        if ($this->getOrderByFlowOrderNumber($receivedOrder['number'])) {
             $this->webhookEventManager->markWebhookEventAsDone($this, 'Order previously processed, skipping');
             return;
         }
@@ -960,18 +977,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $customer->setWebsiteId($store->getWebsiteId());
 
         // Check for existing customer
-        if (array_key_exists('attributes', $data) &&
-            array_key_exists(self::CUSTOMER_ID, $data['attributes'])) {
+        if (array_key_exists('attributes', $receivedOrder) &&
+            array_key_exists(self::CUSTOMER_ID, $receivedOrder['attributes'])) {
 
-            $customerId = $data['attributes'][self::CUSTOMER_ID];
+            $customerId = $receivedOrder['attributes'][self::CUSTOMER_ID];
             $this->logger->info('Retrieving existing user by id: ' . $customerId);
             $customer->loadById($customerId);
             if ($customer->getEntityId()) {
                 $this->logger->info('Found customer by id: ' . $customerId);
 
                 // Fire event to alert if customer email changed
-                if (array_key_exists('email', $data['customer'])) {
-                    if (! $customer->getEmail() == $data['customer']['email']) {
+                if (array_key_exists('email', $receivedOrder['customer'])) {
+                    if (! $customer->getEmail() == $receivedOrder['customer']['email']) {
                         $this->logger->info('Firing event: ' . self::EVENT_FLOW_CHECKOUT_EMAIL_CHANGED);
                         $this->eventManager->dispatch(self::EVENT_FLOW_CHECKOUT_EMAIL_CHANGED, [
                             'customer' => $customer,
@@ -983,11 +1000,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
 
             }
-        } else if (array_key_exists('email', $data['customer'])) {
-            $this->logger->info('Retrieving existing user by email: ' . $data['customer']['email']);
-            $customer->loadByEmail($data['customer']['email']);
+        } else if (array_key_exists('email', $receivedOrder['customer'])) {
+            $this->logger->info('Retrieving existing user by email: ' . $receivedOrder['customer']['email']);
+            $customer->loadByEmail($receivedOrder['customer']['email']);
             if ($customer->getEntityId()) {
-                $this->logger->info('Found customer by email: ' . $data['customer']['email']);
+                $this->logger->info('Found customer by email: ' . $receivedOrder['customer']['email']);
             }
         }
 
@@ -1002,9 +1019,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
              */
             $customer->setWebsiteId($store->getWebsiteId());
 
-            $customer->setFirstname($data['customer']['name']['first']);
-            $customer->setLastname($data['customer']['name']['last']);
-            $customer->setEmail($data['customer']['email']);
+            $customer->setFirstname($receivedOrder['customer']['name']['first']);
+            $customer->setLastname($receivedOrder['customer']['name']['last']);
+            $customer->setEmail($receivedOrder['customer']['email']);
             $customer->save();
         }
 
@@ -1016,8 +1033,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $quote = $this->quoteFactory->create();
         $quote->setStoreId($store->getId());
-        $quote->setQuoteCurrencyCode($data['total']['currency']);
-        $quote->setBaseCurrencyCode($data['total']['base']['currency']);
+        $quote->setQuoteCurrencyCode($receivedOrder['total']['currency']);
+        $quote->setBaseCurrencyCode($receivedOrder['total']['base']['currency']);
         $quote->assignCustomer($customer);
 
         ////////////////////////////////////////////////////////////
@@ -1025,7 +1042,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // https://docs.flow.io/type/localized-line-item
         ////////////////////////////////////////////////////////////
 
-        foreach($data['lines'] as $line) {
+        foreach($receivedOrder['lines'] as $line) {
             $this->logger->info('Looking up product: ' . $line['item_number']);
             $product = $this->productRepository->get($line['item_number']);
             $product->setPrice($line['price']['amount']);
@@ -1040,7 +1057,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // https://docs.flow.io/type/order-address
         ////////////////////////////////////////////////////////////
 
-        $destination = $data['destination'];
+        $destination = $receivedOrder['destination'];
         $shippingAddress = $quote->getShippingAddress();
 
         if (array_key_exists('streets', $destination)) {
@@ -1104,9 +1121,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // https://docs.flow.io/type/order-payment
         ////////////////////////////////////////////////////////////
 
-        if (array_key_exists('payments', $data)) {
+        if (array_key_exists('payments', $receivedOrder)) {
             $this->logger->info('Adding payment data');
-            foreach($data['payments'] as $flowPayment) {
+            foreach($receivedOrder['payments'] as $flowPayment) {
                 $payment = $quote->getPayment();
                 $payment->setQuote($quote);
                 $payment->setMethod('flowpayment');
@@ -1120,7 +1137,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     self::FLOW_PAYMENT_DESCRIPTION, $flowPayment[self::ORDER_PAYMENT_DESCRIPTION]
                 );
                 $payment->setAdditionalInformation(
-                    self::FLOW_PAYMENT_ORDER_NUMBER, $data['number']
+                    self::FLOW_PAYMENT_ORDER_NUMBER, $receivedOrder['number']
                 );
 
                 // NOTE: only supporting 1 payment for now
@@ -1135,7 +1152,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // NOTE: Only 1 billing address is supported at this time. If there
             // are additional billing addresses, they must be added to the order
             // later since Magento quotes only supports 1 billing address.
-            foreach($data['payments'] as $flowPayment) {
+            foreach($receivedOrder['payments'] as $flowPayment) {
 
                 if (
                     array_key_exists('address', $flowPayment) ||
@@ -1187,9 +1204,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         }
                     }
 
-                    $billingAddress->setFirstname($data['customer']['name']['first']);
-                    $billingAddress->setLastname($data['customer']['name']['last']);
-                    $billingAddress->setTelephone($data['customer']['phone']);
+                    $billingAddress->setFirstname($receivedOrder['customer']['name']['first']);
+                    $billingAddress->setLastname($receivedOrder['customer']['name']['last']);
+                    $billingAddress->setTelephone($receivedOrder['customer']['phone']);
 
                     break;
                 }
@@ -1201,9 +1218,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // https://docs.flow.io/type/money
         ////////////////////////////////////////////////////////////
 
-        if (array_key_exists('discount', $data)) {
-            $discountAmount = $data['discount']['amount'];
-            $baseDiscountAmount = $data['discount']['base']['amount'];
+        if (array_key_exists('discount', $receivedOrder)) {
+            $discountAmount = $receivedOrder['discount']['amount'];
+            $baseDiscountAmount = $receivedOrder['discount']['base']['amount'];
             $quote->setCustomDiscount(-$discountAmount);
             $quote->setBaseCustomDiscount(-$baseDiscountAmount);
         }
@@ -1217,13 +1234,14 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $quote->collectTotals()->save();
 
+        /** @var Order $order */
         $order = $this->quoteManagement->submit($quote);
 
         if ($order->getEntityId()){
             $this->logger->info('Created order id: ' . $order->getEntityId());
         } else {
-            $this->logger->info('Error processing Flow order: ' . $order['number']);
-            throw new WebhookException('Error processing Flow order: ' . $order['number']);
+            $this->logger->info('Error processing Flow order: ' . $receivedOrder['number']);
+            throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number']);
         }
 
         ////////////////////////////////////////////////////////////
@@ -1234,22 +1252,22 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $order->setEmailSent(0);
 
         // Store Flow order number
-        $order->setExtOrderId($data['number']);
+        $order->setExtOrderId($receivedOrder['number']);
 
         // Set order total
         // https://docs.flow.io/type/localized-total
-        $order->setBaseTotalPaid($data['total']['base']['amount']);
-        $order->setTotalPaid($data['total']['amount']);
-        $order->setBaseCurrencyCode($data['total']['base']['currency']);
-        $order->setOrderCurrencyCode($data['total']['currency']);
-        $order->setBaseToOrderRate($data['total']['base']['amount'] / $data['total']['amount']);
+        $order->setBaseTotalPaid($receivedOrder['total']['base']['amount']);
+        $order->setTotalPaid($receivedOrder['total']['amount']);
+        $order->setBaseCurrencyCode($receivedOrder['total']['base']['currency']);
+        $order->setOrderCurrencyCode($receivedOrder['total']['currency']);
+        $order->setBaseToOrderRate($receivedOrder['total']['base']['amount'] / $receivedOrder['total']['amount']);
 
         $shippingAmount = 0.0;
         $baseShippingAmount = 0.0;
 
         // Set order prices
         // https://docs.flow.io/type/order-price-detail
-        $prices = $data['prices'];
+        $prices = $receivedOrder['prices'];
         foreach ($prices as $price) {
             switch($price['key']) {
                 case 'adjustment':
@@ -1300,7 +1318,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ////////////////////////////////////////////////////////////
 
         // NOTE: Only 1 delivery is supported at this time.
-        $deliveries = $data['deliveries'];
+        $deliveries = $receivedOrder['deliveries'];
         foreach ($deliveries as $delivery) {
             if (array_key_exists('options', $delivery)) {
                 foreach ($delivery['options'] as $option) {
@@ -1324,16 +1342,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $flowOrder = $this->flowOrderFactory->create();
         $flowOrder->setOrderId($order->getId());
-        $flowOrder->setFlowOrderId($data['number']);
+        $flowOrder->setFlowOrderId($receivedOrder['number']);
         $flowOrder->setData($this->getPayload());
         $flowOrder->save();
 
         ////////////////////////////////////////////////////////////
         // Clear user's cart
         ////////////////////////////////////////////////////////////
-        if (array_key_exists('attributes', $data)) {
-            if (array_key_exists(self::QUOTE_ID, $data['attributes'])) {
-                $quoteId = $data['attributes'][self::QUOTE_ID];
+        if (array_key_exists('attributes', $receivedOrder)) {
+            if (array_key_exists(self::QUOTE_ID, $receivedOrder['attributes'])) {
+                $quoteId = $receivedOrder['attributes'][self::QUOTE_ID];
                 if ($userQuote = $this->quoteFactory->create()->load($quoteId)) {
                     $userQuote->removeAllItems()->save();
                 }

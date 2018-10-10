@@ -2,19 +2,22 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use \FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface;
-use \FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterfaceFactory as SearchResultFactory;
-use \FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface;
-use \FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku as SyncSkuResourceModel;
-use \FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\CollectionFactory as SyncSkuCollectionFactory;
-use \FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Collection as SyncSkuCollection;
-use \Magento\Catalog\Api\Data\ProductInterface;
-use \Magento\Catalog\Model\ProductRepository;
-use \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
-use \Magento\Framework\Api\SearchCriteriaBuilder;
-use \Magento\Store\Model\Store;
-use \Magento\Store\Model\StoreManager;
-use \Psr\Log\LoggerInterface as Logger;
+use Exception;
+use FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface;
+use FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterfaceFactory as SearchResultFactory;
+use FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface;
+use FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku as SyncSkuResourceModel;
+use FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Collection as SyncSkuCollection;
+use FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\CollectionFactory as SyncSkuCollectionFactory;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Api\Data\ProductInterfaceFactory as ProductFactory;
+use Magento\Catalog\Model\ProductRepository;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Store\Model\Store;
+use Magento\Store\Model\StoreManager;
+use Psr\Log\LoggerInterface as Logger;
 
 /**
  * Class SyncSkuManagement
@@ -33,9 +36,19 @@ class SyncSkuManager implements SyncSkuManagementInterface
     private $productCollectionFactory;
 
     /**
+     * @var ProductFactory
+     */
+    private $productFactory;
+
+    /**
      * @var ProductRepository
      */
     private $productRepository;
+
+    /**
+     * @var ProductInterface[]
+     */
+    private $productsByProductId = [];
 
     /**
      * @var SearchCriteriaBuilder
@@ -63,42 +76,53 @@ class SyncSkuManager implements SyncSkuManagementInterface
     private $syncSkuResourceModel;
 
     /**
+     * @var SyncSkuFactory
+     */
+    private $syncSkuFactory;
+
+    /**
      * @var Util
      */
     private $util;
 
     /**
      * SyncSkuManagement constructor.
-     * @param SearchResultFactory $searchResultFactory
-     * @param SyncSkuResourceModel $syncSkuResourceModel
+     * @param Logger $logger
      * @param ProductCollectionFactory $productCollectionFactory
+     * @param ProductFactory $productFactory
      * @param ProductRepository $productRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param SyncSkuCollectionFactory $syncSkuCollectionFactory
+     * @param SearchResultFactory $searchResultFactory
      * @param StoreManager $storeManager
+     * @param SyncSkuCollectionFactory $syncSkuCollectionFactory
+     * @param SyncSkuFactory $syncSkuFactory
+     * @param SyncSkuResourceModel $syncSkuResourceModel
      * @param Util $util
-     * @param Logger $logger
      */
     public function __construct(
-        SearchResultFactory $searchResultFactory,
-        SyncSkuResourceModel $syncSkuResourceModel,
+        Logger $logger,
         ProductCollectionFactory $productCollectionFactory,
+        ProductFactory $productFactory,
         ProductRepository $productRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        SyncSkuCollectionFactory $syncSkuCollectionFactory,
+        SearchResultFactory $searchResultFactory,
         StoreManager $storeManager,
-        Util $util,
-        Logger $logger
+        SyncSkuCollectionFactory $syncSkuCollectionFactory,
+        SyncSkuFactory $syncSkuFactory,
+        SyncSkuResourceModel $syncSkuResourceModel,
+        Util $util
     ) {
-        $this->storeManager = $storeManager;
-        $this->searchResultFactory = $searchResultFactory;
+        $this->logger = $logger;
         $this->productCollectionFactory = $productCollectionFactory;
+        $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->searchResultFactory = $searchResultFactory;
+        $this->storeManager = $storeManager;
         $this->syncSkuCollectionFactory = $syncSkuCollectionFactory;
+        $this->syncSkuFactory = $syncSkuFactory;
         $this->syncSkuResourceModel = $syncSkuResourceModel;
         $this->util = $util;
-        $this->logger = $logger;
     }
 
     /**
@@ -201,6 +225,65 @@ class SyncSkuManager implements SyncSkuManagementInterface
     }
 
     /**
+     * Enqueues product for syncing to Flow.
+     * @param ProductInterface $product
+     * @return void
+     * @throws Exception
+     */
+    public function enqueue(ProductInterface $product)
+    {
+        if ($product->getStoreId() == 0) {
+            // Global store, queue product for all valid stores
+            foreach ($this->util->getEnabledStores() as $store) {
+                $product2 = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
+                if ($product2->getId() != null) {
+                    $this->logger->info('queuing product2');
+                    $this->enqueue($product2);
+                }
+            }
+
+        } elseif (!$this->util->isFlowEnabled($product->getStoreId())) {
+            $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
+
+        } else {
+            /** @var SyncSku $syncSku */
+            $syncSku = $this->syncSkuFactory->create();
+
+            // Check if product is queued and unprocessed.
+            $collection = $syncSku->getCollection()
+                ->addFieldToSelect('*')
+                ->addFieldToFilter(SyncSkuInterface::DATA_KEY_SKU, $product->getSku())
+                ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STATUS, SyncSku::STATUS_NEW)
+                ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STORE_ID, $product->getStoreid())
+                ->setPageSize(1);
+
+            // Only queue if product is not already queued.
+            $shouldSyncChildren = $this->shouldSyncChildren($product);
+            if ($collection->getSize() == 0) {
+                $syncSku->setSku($product->getSku());
+                $syncSku->setStoreId($product->getStoreId());
+                $syncSku->setShouldSyncChildren($shouldSyncChildren);
+                $syncSku->save();
+                $this->logger
+                    ->info('Queued product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
+            } else {
+                /** @var SyncSku $existingSyncSku */
+                $existingSyncSku = $collection->getFirstItem();
+                if ($existingSyncSku->isShouldSyncChildren() !== $shouldSyncChildren) {
+                    $existingSyncSku->setShouldSyncChildren($shouldSyncChildren);
+                    $existingSyncSku->save();
+                } else {
+                    $this->logger
+                        ->info(
+                            'Product already queued, skipping: ' . $product->getSku() . ', storeId: ' .
+                            $product->getStoreId()
+                        );
+                }
+            }
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function enqueueAllProducts()
@@ -224,6 +307,88 @@ class SyncSkuManager implements SyncSkuManagementInterface
         } else {
             $this->logger->info('Flow connector disabled on all stores, zero items queued.');
         }
+    }
+
+    /**
+     * Enqueues multiple products by product ids
+     * @param int[] $productIds
+     * @return void
+     * @throws
+     */
+    public function enqueueMultipleProductsByProductIds($productIds)
+    {
+        $this->preloadProductsByProductIds($productIds);
+        foreach ($productIds as $productId) {
+            try {
+                $product = $this->getProductFromProductId($productId);
+                if ($product !== null) {
+                    $this->enqueue($product);
+                }
+            } catch (Exception $e) {
+                $this->logger->error(
+                    'Error while enqueueing product for Flow.io sync. Product ID: ' .
+                    $productId,
+                    ['exception' => $e]
+                );
+            }
+        }
+    }
+
+    /**
+     * Enqueues multiple products by product skus
+     * @param string[] $productSkus
+     * @param int|null $storeId
+     * @return void
+     * @throws
+     */
+    public function enqueueMultipleProductsByProductSku($productSkus, $storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = 0;
+        }
+
+        foreach ($productSkus as $productSku) {
+            try {
+                $syncSku = $this->syncSkuFactory->create();
+                // Check if product is queued and unprocessed.
+                $collection = $syncSku->getCollection()
+                    ->addFieldToSelect('*')
+                    ->addFieldToFilter(SyncSkuInterface::DATA_KEY_SKU, $productSku)
+                    ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STATUS, SyncSku::STATUS_NEW)
+                    ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STORE_ID, $storeId)
+                    ->setPageSize(1);
+
+                // Only queue if product is not already queued.
+                if ($collection->getSize() == 0) {
+                    $syncSku->setSku($productSku);
+                    $syncSku->setShouldSyncChildren(false);
+                    $syncSku->setStoreId($storeId);
+                    $this->syncSkuResourceModel->save($syncSku);
+                    $this->logger
+                        ->info('Queued product for sync: ' . $productSku . ', storeId: ' . $storeId);
+                }
+            } catch (Exception $e) {
+                $this->logger->error(
+                    'Error while enqueueing product for Flow.io sync. Product SKU: ' .
+                    $productSku,
+                    ['exception' => $e]
+                );
+            }
+        }
+    }
+
+    /**
+     * Given a product id, returns it's associated product model if available
+     * @param int $productId
+     * @return ProductInterface|null
+     */
+    private function getProductFromProductId($productId)
+    {
+        $return = null;
+        if (array_key_exists($productId, $this->productsByProductId)) {
+            $return = $this->productsByProductId[$productId];
+        }
+        return $return;
     }
 
     /**
@@ -282,20 +447,29 @@ class SyncSkuManager implements SyncSkuManagementInterface
     }
 
     /**
+     * Given a list of product ids, loads all product models and store them in memory for
+     * posterior use
+     * @param int[] $productIds
+     * @return void
+     */
+    private function preloadProductsByProductIds(array $productIds)
+    {
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('entity_id', $productIds, 'in')
+            ->create();
+        $products = $this->productRepository->getList($searchCriteria);
+        foreach ($products->getItems() as $product) {
+            $productId = $product->getId();
+            $this->productsByProductId[$productId] = $product;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function resetOldQueueProcessingItems()
     {
         $this->syncSkuResourceModel->resetOldQueueProcessingItems();
-    }
-
-    /**
-     * Helper method to update
-     * @param SyncSkuInterface $syncSku
-     */
-    private function updateSyncSkuStatus($syncSku)
-    {
-        $this->syncSkuResourceModel->updateStatus($syncSku);
     }
 
     /**
@@ -305,5 +479,43 @@ class SyncSkuManager implements SyncSkuManagementInterface
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * Decides for a given product if children products should be synced. Currently handles only configurable products
+     * @param ProductInterface $product
+     * @return bool
+     */
+    private function shouldSyncChildren(ProductInterface $product)
+    {
+        $return = false;
+        if ($product->getTypeId() === ConfigurableType::TYPE_CODE) {
+            if ($product->isObjectNew()) {
+                $return = true;
+            } else {
+                // We're dealing with an update of a configurable product
+                // We only want to sync it's children when the links to it's children have changed
+                $originalChildProductIds = [];
+                /** @var ProductInterface $childProduct */
+                foreach ($product->getTypeInstance()->getUsedProducts($product) as $childProduct) {
+                    array_push($originalChildProductIds, $childProduct->getId());
+                }
+                $currentChildProductIds = (array)$product->getExtensionAttributes()->getConfigurableProductLinks();
+                sort($originalChildProductIds);
+                sort($currentChildProductIds);
+                $return = ($originalChildProductIds !== $currentChildProductIds);
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Helper method to update
+     * @param SyncSkuInterface $syncSku
+     */
+    private function updateSyncSkuStatus($syncSku)
+    {
+        $this->syncSkuResourceModel->updateStatus($syncSku);
     }
 }

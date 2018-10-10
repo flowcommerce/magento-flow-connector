@@ -7,12 +7,8 @@ use FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface as SyncSkuManager;
 use FlowCommerce\FlowConnector\Model\Api\Item\Delete as FlowDeleteItemApi;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save as FlowSaveItemApi;
 use FlowCommerce\FlowConnector\Model\SyncSku;
-use FlowCommerce\FlowConnector\Model\SyncSkuFactory;
 use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use GuzzleHttp\Psr7\Response as HttpResponse;
-use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\ProductFactory;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
@@ -54,16 +50,6 @@ class CatalogSync
     private $logger;
 
     /**
-     * @var ProductFactory
-     */
-    private $productFactory;
-
-    /**
-     * @var SyncSkuFactory
-     */
-    private $syncSkuFactory;
-
-    /**
      * @var SyncSkuManager
      */
     private $syncSkuManager;
@@ -89,8 +75,6 @@ class CatalogSync
      * @param JsonSerializer $jsonSerializer
      * @param FlowUtil $util
      * @param EventManager $eventManager
-     * @param ProductFactory $productFactory
-     * @param SyncSkuFactory $syncSkuFactory
      * @param SyncSkuManager $syncSkuManager
      * @param FlowSaveItemApi $flowSaveItemApi
      * @param FlowDeleteItemApi $flowDeleteItemApi
@@ -100,21 +84,17 @@ class CatalogSync
         JsonSerializer $jsonSerializer,
         FlowUtil $util,
         EventManager $eventManager,
-        ProductFactory $productFactory,
-        SyncSkuFactory $syncSkuFactory,
         SyncSkuManager $syncSkuManager,
         FlowSaveItemApi $flowSaveItemApi,
         FlowDeleteItemApi $flowDeleteItemApi
     ) {
-        $this->logger = $logger;
-        $this->jsonSerializer = $jsonSerializer;
-        $this->util = $util;
         $this->eventManager = $eventManager;
-        $this->productFactory = $productFactory;
-        $this->syncSkuFactory = $syncSkuFactory;
-        $this->syncSkuManager = $syncSkuManager;
-        $this->flowSaveItemApi = $flowSaveItemApi;
         $this->flowDeleteItemApi = $flowDeleteItemApi;
+        $this->flowSaveItemApi = $flowSaveItemApi;
+        $this->jsonSerializer = $jsonSerializer;
+        $this->logger = $logger;
+        $this->syncSkuManager = $syncSkuManager;
+        $this->util = $util;
     }
 
     /**
@@ -290,85 +270,6 @@ class CatalogSync
             $this->logger->warning('Error syncing products: '
                 . $e->getMessage() . '\n' . $e->getTraceAsString());
         }
-
-    }
-
-    /**
-     * Queue product for syncing to Flow.
-     * @param ProductInterface $product
-     * @return void
-     * @throws \Exception
-     */
-    public function queue(ProductInterface $product)
-    {
-        if ($product->getStoreId() == 0) {
-            // Global store, queue product for all valid stores
-            foreach($this->util->getEnabledStores() as $store) {
-                $product2 = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
-                if ($product2->getId() != null) {
-                    $this->logger->info('queuing product2');
-                    $this->queue($product2);
-                }
-            }
-
-        } else if (!$this->util->isFlowEnabled($product->getStoreId())) {
-            $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
-
-        } else {
-            /** @var SyncSku $syncSku */
-            $syncSku = $this->syncSkuFactory->create();
-
-            // Check if product is queued and unprocessed.
-            $collection = $syncSku->getCollection()
-                ->addFieldToSelect('*')
-                ->addFieldToFilter('sku', $product->getSku())
-                ->addFieldToFilter('status', SyncSku::STATUS_NEW)
-                ->addFieldToFilter('store_id', $product->getStoreid())
-                ->setPageSize(1);
-
-            // Only queue if product is not already queued.
-            $shouldSyncChildren = $this->shouldSyncChildren($product);
-            if ($collection->getSize() == 0) {
-                $syncSku->setSku($product->getSku());
-                $syncSku->setStoreId($product->getStoreId());
-                $syncSku->setShouldSyncChildren($shouldSyncChildren);
-                $syncSku->save();
-                $this->logger->info('Queued product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
-            } else {
-                /** @var SyncSku $existingSyncSku */
-                $existingSyncSku = $collection->getFirstItem();
-                if ($existingSyncSku->isShouldSyncChildren() !== $shouldSyncChildren) {
-                    $existingSyncSku->setShouldSyncChildren($shouldSyncChildren);
-                    $existingSyncSku->save();
-                } else {
-                    $this->logger->info('Product already queued, skipping: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
-                }
-            }
-        }
-    }
-
-    private function shouldSyncChildren(ProductInterface $product)
-    {
-        $return = false;
-        if ($product->getTypeId() === ConfigurableType::TYPE_CODE) {
-            if ($product->isObjectNew()) {
-                $return = true;
-            } else {
-                // We're dealing with an update of a configurable product
-                // We only want to sync it's children when the links to it's children have changed
-                $originalChildProductIds = [];
-                /** @var ProductInterface $childProduct */
-                foreach ($product->getTypeInstance()->getUsedProducts($product) as $childProduct) {
-                    array_push($originalChildProductIds, $childProduct->getId());
-                }
-                $currentChildProductIds = (array) $product->getExtensionAttributes()->getConfigurableProductLinks();
-                sort($originalChildProductIds);
-                sort($currentChildProductIds);
-                $return = ($originalChildProductIds !== $currentChildProductIds);
-            }
-        }
-
-        return $return;
     }
 
     /**

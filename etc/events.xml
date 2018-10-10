@@ -12,4 +12,10 @@
     <event name="admin_system_config_changed_section_flowcommerce">
         <observer name="FlowConnectorSettingsObserver" instance="FlowCommerce\FlowConnector\Observer\FlowConnectorSettingsObserver" />
     </event>
+    <event name="catalog_product_import_bunch_save_after">
+        <observer name="FlowConnectorSyncAfterImportSave" instance="FlowCommerce\FlowConnector\Observer\SyncProductsAfterImportSave" />
+    </event>
+    <event name="catalog_product_import_bunch_delete_after">
+        <observer name="FlowConnectorSyncAfterImportDelete" instance="FlowCommerce\FlowConnector\Observer\SyncProductsAfterImportDelete" />
+    </event>
 </config>

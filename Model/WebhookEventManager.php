@@ -13,6 +13,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Psr\Log\LoggerInterface as Logger;
 use Zend\Http\Request;
+use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
 
 /**
  * Class WebhookEventManager
@@ -66,14 +67,26 @@ class WebhookEventManager implements WebhookEventManagementInterface
     private $webhookEventResourceModel;
 
     /**
+     * @var CatalogSync
+     */
+    private $catalogSync;
+
+    /**
+     * @var InventoryCenterManager
+     */
+    private $inventoryCenterManager;
+
+    /**
      * WebhookEventManager constructor.
-     * @param FlowUtil $util
+     * @param Util $util
      * @param JsonSerializer $jsonSerializer
      * @param Logger $logger
      * @param StoreManager $storeManager
      * @param WebhookEventCollectionFactory $webhookEventCollectionFactory
      * @param WebhookEventFactory $webhookEventFactory
      * @param WebhookEventResourceModel $webhookEventResourceModel
+     * @param CatalogSync $catalogSync
+     * @param InventoryCenterManager $inventoryCenterManager
      */
     public function __construct(
         FlowUtil $util,
@@ -82,7 +95,9 @@ class WebhookEventManager implements WebhookEventManagementInterface
         StoreManager $storeManager,
         WebhookEventCollectionFactory $webhookEventCollectionFactory,
         WebhookEventFactory $webhookEventFactory,
-        WebhookEventResourceModel $webhookEventResourceModel
+        WebhookEventResourceModel $webhookEventResourceModel,
+        CatalogSync $catalogSync,
+        InventoryCenterManager $inventoryCenterManager
     ) {
         $this->util = $util;
         $this->jsonSerializer = $jsonSerializer;
@@ -91,6 +106,8 @@ class WebhookEventManager implements WebhookEventManagementInterface
         $this->webhookEventCollectionFactory = $webhookEventCollectionFactory;
         $this->webhookEventFactory = $webhookEventFactory;
         $this->webhookEventResourceModel = $webhookEventResourceModel;
+        $this->catalogSync = $catalogSync;
+        $this->inventoryCenterManager = $inventoryCenterManager;
     }
 
     /**
@@ -171,26 +188,61 @@ class WebhookEventManager implements WebhookEventManagementInterface
      */
     public function registerWebhooks($storeId)
     {
-        if (!$this->util->isFlowEnabled($storeId)) {
-            throw new \Exception('Flow module is disabled.');
-        }
+        $this->logger->info('Updating Flow webhooks for store: ' . $storeId);
 
-        $this->deleteAllWebhooks($storeId);
-        $this->registerWebhook($storeId, 'allocationdeletedv2', 'allocation_deleted_v2');
-        $this->registerWebhook($storeId, 'allocationupsertedv2', 'allocation_upserted_v2');
-        $this->registerWebhook($storeId, 'authorizationdeletedv2', 'authorization_deleted_v2');
-        $this->registerWebhook($storeId, 'authorizationupserted', 'authorization_upserted');
-        $this->registerWebhook($storeId, 'captureupsertedv2', 'capture_upserted_v2');
-        $this->registerWebhook($storeId, 'cardauthorizationupsertedv2', 'card_authorization_upserted_v2');
-        $this->registerWebhook($storeId, 'onlineauthorizationupsertedv2', 'online_authorization_upserted_v2');
-        $this->registerWebhook($storeId, 'orderdeleted', 'order_deleted');
-        $this->registerWebhook($storeId, 'orderupserted', 'order_upserted');
-        $this->registerWebhook($storeId, 'refundcaptureupsertedv2', 'refund_capture_upserted_v2');
-        $this->registerWebhook($storeId, 'refundupsertedv2', 'refund_upserted_v2');
-        $this->registerWebhook($storeId, 'fraudstatuschanged', 'fraud_status_changed');
-        $this->registerWebhook($storeId, 'trackinglabeleventupserted', 'tracking_label_event_upserted');
-        $this->registerWebhook($storeId, 'labelupserted', 'label_upserted');
-        return true;
+        $organizationId = $this->util->getFlowOrganizationId($storeId);
+        $apiToken = $this->util->getFlowApiToken($storeId);
+        $enabled = $this->util->isFlowEnabled($storeId);
+
+        if ($enabled) {
+            if ($organizationId != null && $apiToken != null) {
+                if ($this->catalogSync->initFlowConnector($storeId)) {
+                    $this->logger->info(sprintf('Successfully initialized connector with Flow for store %d', $storeId));
+                } else {
+                    $message = sprintf('Error occurred initializing connector with Flow for store %d.', $storeId);
+                    $this->logger->critical($message);
+                    throw new \Exception($message);
+                }
+
+                try {
+                    $this->deleteAllWebhooks($storeId);
+                    $this->registerWebhook($storeId, 'allocationdeletedv2', 'allocation_deleted_v2');
+                    $this->registerWebhook($storeId, 'allocationupsertedv2', 'allocation_upserted_v2');
+                    $this->registerWebhook($storeId, 'authorizationdeletedv2', 'authorization_deleted_v2');
+                    $this->registerWebhook($storeId, 'authorizationupserted', 'authorization_upserted');
+                    $this->registerWebhook($storeId, 'captureupsertedv2', 'capture_upserted_v2');
+                    $this->registerWebhook($storeId, 'cardauthorizationupsertedv2', 'card_authorization_upserted_v2');
+                    $this->registerWebhook($storeId, 'onlineauthorizationupsertedv2', 'online_authorization_upserted_v2');
+                    $this->registerWebhook($storeId, 'orderdeletedv2', 'order_deleted_v2');
+                    $this->registerWebhook($storeId, 'orderupsertedv2', 'order_upserted_v2');
+                    $this->registerWebhook($storeId, 'refundcaptureupsertedv2', 'refund_capture_upserted_v2');
+                    $this->registerWebhook($storeId, 'refundupsertedv2', 'refund_upserted_v2');
+                    $this->registerWebhook($storeId, 'fraudstatuschanged', 'fraud_status_changed');
+                    $this->registerWebhook($storeId, 'trackinglabeleventupserted', 'tracking_label_event_upserted');
+                    $this->registerWebhook($storeId, 'labelupserted', 'label_upserted');
+                    $this->logger->info(sprintf('Successfully registered webhooks for store %d.', $storeId));
+                } catch (\Exception $e) {
+                    $message = sprintf('Error occurred registering webhooks for store %d: %s.', $storeId, $e->getMessage());
+                    $this->logger->critical($message);
+                    throw new \Exception($message);
+                }
+                if ($this->inventoryCenterManager->fetchInventoryCenterKeys([$storeId])) {
+                    $this->logger->info(sprintf('Successfully fetched inventory center keys for store %d.', $storeId));
+                } else {
+                    $message = sprintf('Error occurred fetching inventory center keys for store %d.', $storeId);
+                    $this->logger->critical($message);
+                    throw new \Exception($message);
+                }
+            } else {
+                $message = sprintf('Credentials are incomplete for store %d', $storeId);
+                $this->logger->notice($message);
+                throw new \Exception($message);
+            }
+        } else {
+            $message = sprintf('Flow connector disabled for store %d', $storeId);
+            $this->logger->notice($message);
+            throw new \Exception($message);
+        }
     }
 
     /**

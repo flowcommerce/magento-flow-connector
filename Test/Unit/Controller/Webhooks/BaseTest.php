@@ -42,13 +42,13 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
         $controller->execute();
     }
 
-    public function testOrderDeleted() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeleted');
+    public function testOrderDeletedV2() {
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeletedV2');
         $controller->execute();
     }
 
-    public function testOrderUpserted() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderUpserted');
+    public function testOrderUpsertedV2() {
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderUpsertedV2');
         $controller->execute();
     }
 

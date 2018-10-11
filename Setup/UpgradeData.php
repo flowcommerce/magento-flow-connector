@@ -120,6 +120,9 @@ class UpgradeData implements UpgradeDataInterface
 
             $stores = $this->storeManager->getStores();
             foreach ($stores as $store) {
+                $filterGroupOne = [];
+                $filterGroupTwo = [];
+
                 // Get customers whose website_id does not match store_id and adjust website_id
                 $filterGroupOne[] = $this->filterBuilder
                     ->setField('store_id')

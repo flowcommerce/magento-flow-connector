@@ -525,6 +525,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $baseVatPrice = 0.0;
                             $itemPrice = 0.0;
                             $baseItemPrice = 0.0;
+                            $orderSubtotalInclTaxes = 0.0;
+                            $baseOrderSubtotalInclTaxes = 0.0;
+                            $orderTaxAmount = 0.0;
+                            $baseOrderTaxAmount = 0.0;
                             foreach ($detail['included'] as $included) {
                                 if ($included['key'] == "item_price") {
                                     $itemPrice += $included['total']['amount'];
@@ -561,9 +565,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setBaseRowTotalInclTax(($baseItemPrice + $baseVatPrice) * $detail['quantity']);
                             $item->save();
 
+                            $orderSubtotalInclTaxes += (($itemPrice + $vatPrice) * $detail['quantity']);
+                            $baseOrderSubtotalInclTaxes += (($baseItemPrice + $baseVatPrice) * $detail['quantity']);
+                            $orderTaxAmount += $vatPrice * $detail['quantity'];
+                            $baseOrderTaxAmount += $baseVatPrice * $detail['quantity'];
+
                         } else {
                             $order->setSubtotal($detail['total']['amount']);
                             $order->setBaseSubtotal($detail['total']['base']['amount']);
+                            $orderSubtotalInclTaxes = $detail['total']['amount'];
+                            $baseOrderSubtotalInclTaxes = $detail['total']['base']['amount'];
                         }
                         break;
 
@@ -613,6 +624,22 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             $order->setShippingAmount($shippingAmount);
             $order->setBaseShippingAmount($baseShippingAmount);
+
+            if (isset($orderSubtotalInclTaxes)) {
+                $order->setSubtotalInclTax($orderSubtotalInclTaxes);
+            }
+
+            if (isset($baseOrderSubtotalInclTaxes)) {
+                $order->setBaseSubtotalInclTax($baseOrderSubtotalInclTaxes);
+            }
+
+            if (isset($orderTaxAmount)) {
+                $order->setTaxAmount($orderTaxAmount);
+            }
+
+            if (isset($baseOrderTaxAmount)) {
+                $order->setBaseTaxAmount($baseOrderTaxAmount);
+            }
 
             $order->setGrandTotal($data['allocation']['total']['amount']);
             $order->setBaseGrandTotal($data['allocation']['total']['base']['amount']);

@@ -490,21 +490,28 @@ class SyncSkuManager implements SyncSkuManagementInterface
     {
         $return = false;
         if ($product->getTypeId() === ConfigurableType::TYPE_CODE) {
-            if ($product->isObjectNew()) {
-                $return = true;
-            } else {
-                // We're dealing with an update of a configurable product
-                // We only want to sync it's children when the links to it's children have changed
-                $originalChildProductIds = [];
-                /** @var ProductInterface $childProduct */
-                foreach ($product->getTypeInstance()->getUsedProducts($product) as $childProduct) {
-                    array_push($originalChildProductIds, $childProduct->getId());
-                }
-                $currentChildProductIds = (array)$product->getExtensionAttributes()->getConfigurableProductLinks();
-                sort($originalChildProductIds);
-                sort($currentChildProductIds);
-                $return = ($originalChildProductIds !== $currentChildProductIds);
-            }
+
+            // Temporary hack to ensure that all child products are synced every time since shouldSyncChildren logic
+            // we have below might not be working correctly at this moment with catalog_product_save_before or
+            // catalog_product_save_after.
+            // TODO: Double check shouldSyncChildren logic below
+            $return = true;
+
+//            if ($product->isObjectNew()) {
+//                $return = true;
+//            } else {
+//                // We're dealing with an update of a configurable product
+//                // We only want to sync it's children when the links to it's children have changed
+//                $originalChildProductIds = [];
+//                /** @var ProductInterface $childProduct */
+//                foreach ($product->getTypeInstance()->getUsedProducts($product) as $childProduct) {
+//                    array_push($originalChildProductIds, $childProduct->getId());
+//                }
+//                $currentChildProductIds = (array)$product->getExtensionAttributes()->getConfigurableProductLinks();
+//                sort($originalChildProductIds);
+//                sort($currentChildProductIds);
+//                $return = ($originalChildProductIds !== $currentChildProductIds);
+//            }
         }
 
         return $return;

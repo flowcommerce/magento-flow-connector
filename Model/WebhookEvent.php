@@ -9,6 +9,7 @@ use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEventManager;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface as Order;
 use Magento\Sales\Api\Data\OrderItemInterface as OrderItem;
 use Magento\Framework\Model\Context;
@@ -1256,10 +1257,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // Convert quote to order
         ////////////////////////////////////////////////////////////
 
-        $quote->setInventoryProcessed(false);
         $quote->save();
 
         $quote->collectTotals()->save();
+
+        /** @var Quote $quote */
+        $quote = $this->cartRepository->get($quote->getId());
 
         /** @var Order $order */
         $order = $this->quoteManagement->submit($quote);

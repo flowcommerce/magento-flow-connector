@@ -17,6 +17,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Psr\Log\LoggerInterface as Logger;
 use Magento\Framework\App\State as AppState;
 use Magento\Framework\App\Area as AppArea;
+use FlowCommerce\FlowConnector\Model\SyncSkuManager;
 
 class UpgradeData implements UpgradeDataInterface
 {
@@ -68,9 +69,22 @@ class UpgradeData implements UpgradeDataInterface
     protected $appState;
 
     /**
+     * @var SyncSkuManager
+     */
+    private $syncSkuManager;
+
+    /**
      * UpgradeData constructor.
      * @param SalesSetupFactory $salesSetupFactory
      * @param StoreManager $storeManager
+     * @param CustomerRepository $customerRepository
+     * @param FilterBuilder $filterBuilder
+     * @param FilterGroupBuilder $filterGroupBuilder
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param DataObjectHelper $dataObjectHelper
+     * @param IndexerRegistry $indexerRegistry
+     * @param Logger $logger
+     * @param AppState $appState
      */
     public function __construct(
         SalesSetupFactory $salesSetupFactory,
@@ -82,7 +96,8 @@ class UpgradeData implements UpgradeDataInterface
         DataObjectHelper $dataObjectHelper,
         IndexerRegistry $indexerRegistry,
         Logger $logger,
-        AppState $appState
+        AppState $appState,
+        SyncSkuManager $syncSkuManager
     ) {
         $this->salesSetupFactory = $salesSetupFactory;
         $this->storeManager = $storeManager;
@@ -94,6 +109,7 @@ class UpgradeData implements UpgradeDataInterface
         $this->indexerRegistry = $indexerRegistry;
         $this->logger = $logger;
         $this->appState = $appState;
+        $this->syncSkuManager = $syncSkuManager;
     }
 
     /**
@@ -102,98 +118,126 @@ class UpgradeData implements UpgradeDataInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context) {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
         if ($context->getVersion() && version_compare($context->getVersion(), '1.0.2', '<')) {
-            $attributes = [
-                'base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-                'duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            ];
-
-            foreach ($attributes as $attributeCode => $attributeParams) {
-                $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
-            }
+            $this->addBaseDutyAndDuty($setup);
         }
 
         if ($context->getVersion() && version_compare($context->getVersion(), '1.0.29', '<')) {
-            $this->appState->setAreaCode(AppArea::AREA_ADMINHTML);
+            $this->fixCustomerWebsiteIdToMatchStoreId($setup);
+        }
 
-            $stores = $this->storeManager->getStores();
-            foreach ($stores as $store) {
-                $filterGroupOne = [];
-                $filterGroupTwo = [];
+        if ($context->getVersion() && version_compare($context->getVersion(), '1.0.35', '<')) {
+            $this->enqueueAllProducts($setup);
+        }
+    }
 
-                // Get customers whose website_id does not match store_id and adjust website_id
-                $filterGroupOne[] = $this->filterBuilder
-                    ->setField('store_id')
-                    ->setValue($store->getId())
-                    ->setConditionType('eq')
-                    ->create();
+    /**
+     * @param ModuleDataSetupInterface $setup
+     */
+    private function addBaseDutyAndDuty(ModuleDataSetupInterface $setup)
+    {
+        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
-                $filterGroupTwo[] = $this->filterBuilder
-                    ->setField('website_id')
-                    ->setValue($store->getWebsiteId())
-                    ->setConditionType('neq')
-                    ->create();
+        $attributes = [
+            'base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+        ];
 
-                $filterGroupOneGroup = $this->filterGroupBuilder
-                    ->setFilters($filterGroupOne)
-                    ->create();
+        foreach ($attributes as $attributeCode => $attributeParams) {
+            $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
+        }
+    }
 
-                $filterGroupTwoGroup = $this->filterGroupBuilder
-                    ->setFilters($filterGroupTwo)
-                    ->create();
+    /**
+     * @param ModuleDataSetupInterface $setup
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function fixCustomerWebsiteIdToMatchStoreId(ModuleDataSetupInterface $setup)
+    {
+        $this->appState->setAreaCode(AppArea::AREA_ADMINHTML);
 
-                $customerSearchCriteria = $this->searchCriteriaBuilder
-                    ->setFilterGroups([
-                        $filterGroupOneGroup,
-                        $filterGroupTwoGroup
-                    ])
-                    ->create();
+        $stores = $this->storeManager->getStores();
+        foreach ($stores as $store) {
+            $filterGroupOne = [];
+            $filterGroupTwo = [];
 
-                $customerSearchResults = $this->customerRepository->getList($customerSearchCriteria);
+            // Get customers whose website_id does not match store_id and adjust website_id
+            $filterGroupOne[] = $this->filterBuilder
+                ->setField('store_id')
+                ->setValue($store->getId())
+                ->setConditionType('eq')
+                ->create();
 
-                foreach ($customerSearchResults->getItems() as $customerDataObject) {
-                    // Mark applicants as approved and set them into appropriate customer group
-                    $newCustomerData = [
-                        'website_id' => $store->getWebsiteId()
-                    ];
+            $filterGroupTwo[] = $this->filterBuilder
+                ->setField('website_id')
+                ->setValue($store->getWebsiteId())
+                ->setConditionType('neq')
+                ->create();
 
-                    $this->dataObjectHelper->populateWithArray(
-                        $customerDataObject,
-                        $newCustomerData,
-                        '\Magento\Customer\Api\Data\CustomerInterface'
+            $filterGroupOneGroup = $this->filterGroupBuilder
+                ->setFilters($filterGroupOne)
+                ->create();
+
+            $filterGroupTwoGroup = $this->filterGroupBuilder
+                ->setFilters($filterGroupTwo)
+                ->create();
+
+            $customerSearchCriteria = $this->searchCriteriaBuilder
+                ->setFilterGroups([
+                    $filterGroupOneGroup,
+                    $filterGroupTwoGroup
+                ])
+                ->create();
+
+            $customerSearchResults = $this->customerRepository->getList($customerSearchCriteria);
+
+            foreach ($customerSearchResults->getItems() as $customerDataObject) {
+                // Mark applicants as approved and set them into appropriate customer group
+                $newCustomerData = [
+                    'website_id' => $store->getWebsiteId()
+                ];
+
+                $this->dataObjectHelper->populateWithArray(
+                    $customerDataObject,
+                    $newCustomerData,
+                    '\Magento\Customer\Api\Data\CustomerInterface'
+                );
+
+                try {
+                    $this->customerRepository->save($customerDataObject);
+
+                    /** @var IndexerInterface $indexer */
+                    $indexer = $this->indexerRegistry->get(Customer::CUSTOMER_GRID_INDEXER_ID);
+                    $indexer->reindexRow($customerDataObject->getId());
+                } catch (\Exception $e) {
+                    $this->logger->critical(
+                        sprintf(
+                            'Error while saving customer after adjusting website_id for customer %s: %s \n %s',
+                            $customerDataObject->getId(),
+                            $e->getMessage(),
+                            $e->getTraceAsString()
+                        )
                     );
-
-                    try {
-                        $this->customerRepository->save($customerDataObject);
-                    } catch (\Exception $e) {
-                        $this->logger->warn(
-                            sprintf(
-                                'Error while saving customer after adjusting website_id for customer %s: %s \n %s',
-                                $customerDataObject->getId(),
-                                $e->getMessage(),
-                                $e->getTraceAsString()
-                            )
-                        );
-                    }
-
-                    try {
-                        /** @var IndexerInterface $indexer */
-                        $indexer = $this->indexerRegistry->get(Customer::CUSTOMER_GRID_INDEXER_ID);
-                        $indexer->reindexRow($customerDataObject->getId());
-                    } catch (\Exception $e) {
-                        $this->logger->warn(
-                            sprintf(
-                                'Error while reindexing after adjusting website_id for customer %s: %s \n %s',
-                                $customerDataObject->getId(),
-                                $e->getMessage(),
-                                $e->getTraceAsString()
-                            )
-                        );
-                    }
                 }
             }
+        }
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     */
+    private function enqueueAllProducts(ModuleDataSetupInterface $setup)
+    {
+        try {
+            $this->syncSkuManager->enqueueAllProducts();
+        } catch (\Exception $e) {
+            $this->logger->critical(
+                sprintf(
+                    'Error while enqueuing all products as part of data upgrade script: %s \n %s',
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                )
+            );
         }
     }
 }

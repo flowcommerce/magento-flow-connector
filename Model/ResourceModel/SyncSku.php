@@ -19,49 +19,17 @@ class SyncSku extends AbstractDb
     const STATUS_DONE = 'done';
 
     /**
+     * Possible values for state
+     */
+    const STATE_NEW = 'new';
+    const STATE_DONE = 'done';
+
+    /**
      * Initializes resource model
      */
     protected function _construct()
     {
         $this->_init('flow_connector_sync_skus', 'id');
-    }
-
-    /**
-     * Deletes old processed items.
-     * @return void
-     * @throws
-     */
-    public function deleteOldQueueDoneItems()
-    {
-        $connection = $this->getConnection();
-        $tableName = $this->getMainTable();
-        $sql = '
-        delete from ' . $tableName . '
-         where status=\'' . self::STATUS_DONE . '\'
-           and updated_at < date_sub(now(), interval 96 hour)
-        ';
-        $connection->query($sql);
-    }
-
-    /**
-     * Deletes items with errors where there is a new record that is done.
-     * @return void
-     * @throws
-     */
-    public function deleteQueueErrorDoneItems()
-    {
-        $connection = $this->getConnection();
-        $tableName = $this->getMainTable();
-        $sql = '
-        delete s1
-          from ' . $tableName . ' s1
-          join ' . $tableName . ' s2
-            on s1.sku = s2.sku
-           and s1.status = \'' . self::STATUS_ERROR . '\'
-           and s2.status = \'' . self::STATUS_DONE . '\'
-           and s1.updated_at < s2.updated_at
-        ';
-        $connection->query($sql);
     }
 
     /**
@@ -79,12 +47,10 @@ class SyncSku extends AbstractDb
             $tableProductWebsite = $this->getTable('catalog_product_website');
             $tableStore = $this->getTable('store');
 
-            // Truncate flow_connector_sync_skus before enqueuing all product for performance reasons
-            $connection->truncateTable($tableName);
-
+            // Add any new SKUs from catalog_product_entity to flow_connector_sync_skus with state and status new.
             $sql = '
-            insert into ' . $tableName . '(store_id, sku, status)
-            select ' . $tableStore . '.store_id, ' . $tableProduct . '.sku, \'' . self::STATUS_NEW . '\'
+            insert into ' . $tableName . '(store_id, sku, status, state)
+            select ' . $tableStore . '.store_id, ' . $tableProduct . '.sku, \'' . self::STATUS_NEW . '\', \'' . self::STATE_NEW . '\'
               from ' . $tableProduct . ',
                    ' . $tableProductWebsite . ',
                    ' . $tableStore . '
@@ -92,13 +58,8 @@ class SyncSku extends AbstractDb
                and ' . $tableProductWebsite . '.website_id = ' . $tableStore . '.website_id
                and ' . $tableStore . '.store_id in (\'' . implode('\',\'', $storeIds) . '\')
                and ' . $tableStore . '.is_active = 1
-               and not exists (
-                     select 1
-                       from ' . $tableName . '
-                      where ' . $tableName . '.sku = ' . $tableProduct . '.sku
-                        and ' . $tableName . '.status = \'' . self::STATUS_NEW . '\'
-                   )
              group by ' . $tableStore . '.store_id, sku
+             on duplicate key update status=\''.self::STATUS_NEW.'\';
             ';
             $connection->query($sql);
         }
@@ -146,6 +107,7 @@ class SyncSku extends AbstractDb
         $tableName = $this->getMainTable();
         $sql = 'update ' . $tableName . '
            set status = ?,
+               state = ?,
                message = ?,
                request_url = ?,
                request_body = ?,
@@ -154,6 +116,7 @@ class SyncSku extends AbstractDb
          where id = ?';
         $this->getConnection()->query($sql, [
             $syncSku->getStatus(),
+            $syncSku->getState(),
             $syncSku->getMessage(),
             $syncSku->getRequestUrl(),
             $syncSku->getRequestBody(),

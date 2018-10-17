@@ -173,30 +173,14 @@ class SyncSkuManager implements SyncSkuManagementInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function deleteOldQueueDoneItems()
-    {
-        $this->syncSkuResourceModel->deleteOldQueueDoneItems();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteQueueErrorDoneItems()
-    {
-        $this->syncSkuResourceModel->deleteQueueErrorDoneItems();
-    }
-
-    /**
      * Deletes given SyncSku
      * @param SyncSku $syncSku
+     * @throws \Exception
      */
     public function deleteSyncSku(SyncSku $syncSku)
     {
         $ts = microtime(true);
-        $syncSku->setStatus(SyncSku::STATUS_DONE);
-        $this->updateSyncSkuStatus($syncSku);
+        $syncSku->delete();
         $this->logger->info('Time to delete sync sku: ' . (microtime(true) - $ts));
     }
 
@@ -234,7 +218,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     {
         if ($product->getStoreId() == 0) {
             // Global store, queue product for all valid stores
-            foreach ($this->util->getEnabledStores() as $store) {
+            foreach($this->util->getEnabledStores() as $store) {
                 $product2 = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
                 if ($product2->getId() != null) {
                     $this->logger->info('queuing product2');
@@ -242,36 +226,44 @@ class SyncSkuManager implements SyncSkuManagementInterface
                 }
             }
 
-        } elseif (!$this->util->isFlowEnabled($product->getStoreId())) {
+        } else if (!$this->util->isFlowEnabled($product->getStoreId())) {
             $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
 
         } else {
             /** @var SyncSku $syncSku */
             $syncSku = $this->syncSkuFactory->create();
 
-            // Check if product is queued and unprocessed.
+            // Check if product is queued
             $collection = $syncSku->getCollection()
                 ->addFieldToSelect('*')
-                ->addFieldToFilter(SyncSkuInterface::DATA_KEY_SKU, $product->getSku())
-                ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STATUS, SyncSku::STATUS_NEW)
-                ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STORE_ID, $product->getStoreid())
+                ->addFieldToFilter('sku', $product->getSku())
+                ->addFieldToFilter('store_id', $product->getStoreid())
                 ->setPageSize(1);
 
             // Only queue if product is not already queued.
             $shouldSyncChildren = $this->shouldSyncChildren($product);
             if ($collection->getSize() == 0) {
+                $syncSku->setStatus(SyncSku::STATUS_NEW);
+                $syncSku->setState(SyncSku::STATE_NEW);
                 $syncSku->setSku($product->getSku());
                 $syncSku->setStoreId($product->getStoreId());
                 $syncSku->setShouldSyncChildren($shouldSyncChildren);
                 $syncSku->save();
                 $this->logger
-                    ->info('Queued product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
+                    ->info('Queued new product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
             } else {
                 /** @var SyncSku $existingSyncSku */
                 $existingSyncSku = $collection->getFirstItem();
-                if ($existingSyncSku->isShouldSyncChildren() !== $shouldSyncChildren) {
-                    $existingSyncSku->setShouldSyncChildren($shouldSyncChildren);
+                if($existingSyncSku->getStatus() != SyncSku::STATUS_NEW)  {
+                    $existingSyncSku->setStatus(SyncSku::STATUS_NEW);
+                    if($existingSyncSku->isShouldSyncChildren() !== $shouldSyncChildren) {
+                        $existingSyncSku->setShouldSyncChildren($shouldSyncChildren);
+                    }
+
                     $existingSyncSku->save();
+
+                    $this->logger
+                        ->info('Queued existing product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
                 } else {
                     $this->logger
                         ->info(
@@ -290,8 +282,6 @@ class SyncSkuManager implements SyncSkuManagementInterface
     {
         $this->logger->info('Queueing all products for sync to Flow.');
         $this->syncSkuResourceModel->resetOldQueueProcessingItems();
-        $this->syncSkuResourceModel->deleteQueueErrorDoneItems();
-        $this->syncSkuResourceModel->deleteOldQueueDoneItems();
 
         // Get list of stores with enabled connectors
         $storeIds = [];
@@ -354,18 +344,31 @@ class SyncSkuManager implements SyncSkuManagementInterface
                 $collection = $syncSku->getCollection()
                     ->addFieldToSelect('*')
                     ->addFieldToFilter(SyncSkuInterface::DATA_KEY_SKU, $productSku)
-                    ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STATUS, SyncSku::STATUS_NEW)
                     ->addFieldToFilter(SyncSkuInterface::DATA_KEY_STORE_ID, $storeId)
                     ->setPageSize(1);
 
-                // Only queue if product is not already queued.
                 if ($collection->getSize() == 0) {
+                    $syncSku->setStatus(SyncSku::STATUS_NEW);
+                    $syncSku->setState(SyncSku::STATE_NEW);
                     $syncSku->setSku($productSku);
-                    $syncSku->setShouldSyncChildren(false);
                     $syncSku->setStoreId($storeId);
-                    $this->syncSkuResourceModel->save($syncSku);
+                    $syncSku->save();
                     $this->logger
-                        ->info('Queued product for sync: ' . $productSku . ', storeId: ' . $storeId);
+                        ->info('Queued new product for sync: ' . $productSku . ', storeId: ' . $storeId);
+                } else {
+                    /** @var SyncSku $existingSyncSku */
+                    $existingSyncSku = $collection->getFirstItem();
+                    if($existingSyncSku->getStatus() != SyncSku::STATUS_NEW)  {
+                        $existingSyncSku->setStatus(SyncSku::STATUS_NEW);
+
+                        $existingSyncSku->save();
+
+                        $this->logger
+                            ->info('Queued existing product for sync: ' . $productSku . ', storeId: ' . $storeId);
+                    } else {
+                        $this->logger
+                            ->info('Product already queued, skipping: ' . $productSku . ', storeId: ' . $storeId);
+                    }
                 }
             } catch (Exception $e) {
                 $this->logger->error(
@@ -402,6 +405,8 @@ class SyncSkuManager implements SyncSkuManagementInterface
         $responseBody = null
     ) {
         $syncSku->setStatus(SyncSku::STATUS_DONE);
+        $syncSku->setState(SyncSku::STATE_DONE);
+        $syncSku->setMessage(null);
         $syncSku->setRequestUrl($requestUrl);
         $syncSku->setRequestBody($requestBody);
         $syncSku->setResponseHeaders($responseHeaders);

@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Setup;
 
+use FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -40,6 +41,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.0.30', '<')) {
             $this->addResponseAndRequestFieldsToSyncSkusTable($installer);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.35', '<')) {
+            $this->addUniqueIndexSyncSkusTable($installer);
+            $this->addStateToSyncSkusTable($installer);
         }
 
         $installer->endSetup();
@@ -419,6 +425,46 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'nullable' => true,
                 'after' => 'response_headers',
                 'comment' => 'Response Body',
+            ]);
+        }
+    }
+
+    /**
+     * @param SchemaSetupInterface $installer
+     */
+    private function addUniqueIndexSyncSkusTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_sync_skus');
+        $connection = $installer->getConnection();
+
+        // Truncating goes into data upgrade script, but adding unique index will fail on table that contains duplicates
+        $connection->truncateTable($tableName);
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['store_id', 'sku'], AdapterInterface::INDEX_TYPE_INDEX),
+            ['store_id', 'sku'],
+            AdapterInterface::INDEX_TYPE_UNIQUE
+        );
+    }
+
+    /**
+     * @param SchemaSetupInterface $installer
+     */
+    private function addStateToSyncSkusTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_sync_skus');
+        $connection = $installer->getConnection();
+
+        $columnName = 'state';
+        if ($connection->tableColumnExists($tableName, $columnName) === false) {
+            $connection->addColumn($tableName, $columnName, [
+                'type' => Table::TYPE_TEXT,
+                'size' => 255,
+                'nullable' => true,
+                'after' => 'status',
+                'comment' => 'Sync state',
+                'default' => SyncSkuInterface::STATUS_NEW
             ]);
         }
     }

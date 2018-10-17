@@ -31,6 +31,16 @@ interface SyncSkuInterface
     const STATUS_DONE = SyncSkuResourceModel::STATUS_DONE;
 
     /**
+     * State - New
+     */
+    const STATE_NEW = SyncSkuResourceModel::STATE_NEW;
+
+    /**
+     * State - Done
+     */
+    const STATE_DONE = SyncSkuResourceModel::STATE_DONE;
+
+    /**
      * Data Key - ID
      */
     const DATA_KEY_ID = 'id';
@@ -59,6 +69,11 @@ interface SyncSkuInterface
      * Data Key - Status
      */
     const DATA_KEY_STATUS = 'status';
+
+    /**
+     * Data Key - State
+     */
+    const DATA_KEY_STATE = 'state';
 
     /**
      * Data Key - Message
@@ -135,6 +150,12 @@ interface SyncSkuInterface
      * @return string|null
      */
     public function getStatus();
+
+    /**
+     * Getter - State
+     * @return string|null
+     */
+    public function getState();
 
     /**
      * Getter - Message
@@ -225,6 +246,13 @@ interface SyncSkuInterface
      * @return SyncSkuInterface
      */
     public function setStatus($value);
+
+    /**
+     * Setter - State
+     * @param string $value
+     * @return SyncSkuInterface
+     */
+    public function setState($value);
 
     /**
      * Setter - Message

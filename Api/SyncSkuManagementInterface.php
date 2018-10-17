@@ -12,18 +12,6 @@ use \FlowCommerce\FlowConnector\Model\SyncSku;
 interface SyncSkuManagementInterface
 {
     /**
-     * Deletes old processed items.
-     * @return void
-     */
-    public function deleteOldQueueDoneItems();
-
-    /**
-     * Deletes items with errors where there is a new record that is done.
-     * @return void
-     */
-    public function deleteQueueErrorDoneItems();
-
-    /**
      * Delete Sync Sku
      * @param SyncSku $syncSku
      * @return void

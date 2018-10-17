@@ -304,4 +304,24 @@ class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterfa
         $this->product = $product;
         return $this;
     }
+
+    /**
+     * Getter - State
+     * @return string|null
+     */
+    public function getState()
+    {
+        return $this->getData(self::DATA_KEY_STATE);
+    }
+
+    /**
+     * Setter - State
+     * @param string $value
+     * @return SyncSkuInterface
+     */
+    public function setState($value)
+    {
+        $this->setData(self::DATA_KEY_STATE, $value);
+        return $this;
+    }
 }

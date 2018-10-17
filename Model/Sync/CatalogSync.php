@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Model\Sync;
 
+use FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface;
 use FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterface as SearchResultInterface;
 use FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface as SyncSkuManager;
 use FlowCommerce\FlowConnector\Model\Api\Item\Delete as FlowDeleteItemApi;
@@ -222,10 +223,17 @@ class CatalogSync
                             continue;
                         }
                         if ($product) {
+                            // Product exists in enabled state and was updated - propagate update to Flow.
                             $this->syncSkuManager->markSyncSkuAsProcessing($syncSku);
                             array_push($this->syncSkusToUpdate, $syncSku);
-                        } else {
+                        } elseif($syncSku->getState() === SyncSkuInterface::STATE_DONE) {
+                            // Product was either deleted or disabled in Magento and we have record of it being
+                            // previously synced to Flow - delete from Flow as well, then delete SKU from our table.
                             array_push($this->syncSkusToDelete, $syncSku);
+                        } else {
+                            // Product was either deleted or disabled in Magento and there is no record of it ever
+                            // being synced to Flow - Delete SKU from our table.
+                            $this->syncSkuManager->deleteSyncSku($syncSku);
                         }
 
                         $numToProcess -= 1;
@@ -282,12 +290,8 @@ class CatalogSync
     {
         if (array_key_exists($index, $this->syncSkusToDelete)) {
             $syncSku = $this->syncSkusToDelete[$index];
-            $this->syncSkuManager->markSyncSkuAsDone(
-                $syncSku,
-                $syncSku->getData('flow_request_url'),
-                $syncSku->getData('flow_request_body'),
-                $this->jsonSerializer->serialize($response->getHeaders()),
-                $response->getBody()
+            $this->syncSkuManager->deleteSyncSku(
+                $syncSku
             );
             unset($this->syncSkusToDelete[$index]);
         }

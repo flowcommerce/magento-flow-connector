@@ -126,7 +126,7 @@ class UpgradeData implements UpgradeDataInterface
             $this->fixCustomerWebsiteIdToMatchStoreId($setup);
         }
 
-        if ($context->getVersion() && version_compare($context->getVersion(), '1.0.35', '<')) {
+        if ($context->getVersion() && version_compare($context->getVersion(), '1.0.36', '<')) {
             $this->enqueueAllProducts($setup);
         }
     }

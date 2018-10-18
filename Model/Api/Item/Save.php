@@ -112,7 +112,7 @@ class Save
                     $apiToken = $this->util->getFlowApiToken($syncSku->getStoreId());
                     $urls = [];
                     foreach ($data as $item) {
-                        $urlStub = self::URL_STUB_PREFIX . urlencode($item['number']);
+                        $urlStub = self::URL_STUB_PREFIX . rawurlencode($item['number']);
                         $url = $this->util->getFlowApiEndpoint($urlStub, $syncSku->getStoreId());
                         array_push($urls, $url);
                         $serializedItem = $this->jsonSerializer->serialize($item);

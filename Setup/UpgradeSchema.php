@@ -45,6 +45,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.0.35', '<')) {
             $this->addUniqueIndexSyncSkusTable($installer);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.36', '<')) {
             $this->addStateToSyncSkusTable($installer);
         }
 
@@ -391,7 +394,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if ($connection->tableColumnExists($tableName, $columnName) === false) {
             $connection->addColumn($tableName, $columnName, [
                 'type' => Table::TYPE_TEXT,
-                'size' => 255,
                 'nullable' => true,
                 'after' => 'deleted_at',
                 'comment' => 'Request URL',
@@ -460,7 +462,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if ($connection->tableColumnExists($tableName, $columnName) === false) {
             $connection->addColumn($tableName, $columnName, [
                 'type' => Table::TYPE_TEXT,
-                'size' => 255,
+                'length' => 255,
                 'nullable' => true,
                 'after' => 'status',
                 'comment' => 'Sync state',

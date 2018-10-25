@@ -1184,13 +1184,13 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 if (
                     array_key_exists('address', $flowPayment) ||
-                    (array_key_exists('address', $data['customer']) && $flowPayment['type'] == 'online')
+                    (array_key_exists('address', $receivedOrder['customer']) && $flowPayment['type'] == 'online')
                 ) {
                     $this->logger->info('Adding billing address');
 
                     // Paypal orders have no billing address on the payments entity
                     if ($flowPayment['type'] == 'online') {
-                        $paymentAddress = $data['customer']['address'];
+                        $paymentAddress = $receivedOrder['customer']['address'];
                     } else {
                         $paymentAddress = $flowPayment['address'];
                     }

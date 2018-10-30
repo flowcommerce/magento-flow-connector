@@ -8,7 +8,8 @@ interface CheckoutSupportRepositoryInterface
 {
     /**
      * @param mixed $order
+     * @param string $code
      * @return mixed
      */
-    public function discountRequest($order);
+    public function discountRequest($order,$code);
 }

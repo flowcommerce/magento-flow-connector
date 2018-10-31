@@ -1229,8 +1229,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $billingAddress->setCountryId($country->getId());
 
                         // set region
-                        if (array_key_exists('province', $destination)) {
-                            $region = $this->regionFactory->create()->loadByName($destination['province'], $country->getId());
+                        if (array_key_exists('province', $paymentAddress)) {
+                            $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
                             $billingAddress->setRegionId($region->getId());
                         }
                     }

@@ -1113,6 +1113,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // set country id
             $country = $this->countryFactory->create()->loadByCode($destination['country']);
             $shippingAddress->setCountryId($country->getId());
+
+            // set region
+            if (array_key_exists('province', $destination)) {
+                $region = $this->regionFactory->create()->loadByName($destination['province'], $country->getId());
+                $shippingAddress->setRegionId($region->getId());
+            }
         }
 
         if (array_key_exists('contact', $destination)) {
@@ -1223,11 +1229,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $billingAddress->setCountryId($country->getId());
 
                         // set region
-                        if (array_key_exists('city', $paymentAddress)) {
-                            $region = $this->regionFactory->create()->loadByCode($paymentAddress['city'], $country->getId());
-                            $billingAddress->setRegionId($region->getId());
-                        } elseif (array_key_exists('province', $paymentAddress)) {
-                            $region = $this->regionFactory->create()->loadByCode($paymentAddress['province'], $country->getId());
+                        if (array_key_exists('province', $destination)) {
+                            $region = $this->regionFactory->create()->loadByName($destination['province'], $country->getId());
                             $billingAddress->setRegionId($region->getId());
                         }
                     }

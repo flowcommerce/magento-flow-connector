@@ -51,6 +51,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addStateToSyncSkusTable($installer);
         }
 
+        if (version_compare($context->getVersion(), '1.0.38', '<')) {
+            $this->updateWebhookEventsTableMessageColumn($installer);
+        }
+
         $installer->endSetup();
     }
 
@@ -469,5 +473,22 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'default' => SyncSkuInterface::STATUS_NEW
             ]);
         }
+    }
+
+    /**
+     * Updates flow_connector_webhook_events.message from 255 to MAX_TEXT_SIZE
+     * @param SchemaSetupInterface $installer
+     */
+    private function updateWebhookEventsTableMessageColumn(SchemaSetupInterface $installer)
+    {
+        $installer->getConnection()->changeColumn(
+            $installer->getTable('flow_connector_webhook_events'),
+            'message',
+            'message',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => Table::MAX_TEXT_SIZE,
+            ]
+        );
     }
 }

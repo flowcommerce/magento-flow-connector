@@ -481,7 +481,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
 
         } else {
-            throw new WebhookException('Failed to retrieve Flow allocation: ' , $data['id']);
+            throw new WebhookException('Failed to retrieve Flow allocation: ' . $data['id']);
         }
     }
 
@@ -700,7 +700,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
 
         } else {
-            throw new WebhookException('Failed to retrieve Flow authorization: ' , $data['id']);
+            throw new WebhookException('Failed to retrieve Flow authorization: ' . $data['id']);
         }
     }
 
@@ -1519,7 +1519,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+                throw new WebhookException('Unable to find payment by Flow authorization ID: ' . $authorizationId);
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');

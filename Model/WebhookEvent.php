@@ -481,7 +481,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
 
         } else {
-            throw new WebhookException('Failed to retrieve Flow allocation: ' , $data['id']);
+            throw new WebhookException('Failed to retrieve Flow allocation: ' . $data['id']);
         }
     }
 
@@ -700,7 +700,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
 
         } else {
-            throw new WebhookException('Failed to retrieve Flow authorization: ' , $data['id']);
+            throw new WebhookException('Failed to retrieve Flow authorization: ' . $data['id']);
         }
     }
 
@@ -1113,6 +1113,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // set country id
             $country = $this->countryFactory->create()->loadByCode($destination['country']);
             $shippingAddress->setCountryId($country->getId());
+
+            // set region
+            if (array_key_exists('province', $destination)) {
+                $region = $this->regionFactory->create()->loadByName($destination['province'], $country->getId());
+                $shippingAddress->setRegionId($region->getId());
+            }
         }
 
         if (array_key_exists('contact', $destination)) {
@@ -1223,11 +1229,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $billingAddress->setCountryId($country->getId());
 
                         // set region
-                        if (array_key_exists('city', $paymentAddress)) {
-                            $region = $this->regionFactory->create()->loadByCode($paymentAddress['city'], $country->getId());
-                            $billingAddress->setRegionId($region->getId());
-                        } elseif (array_key_exists('province', $paymentAddress)) {
-                            $region = $this->regionFactory->create()->loadByCode($paymentAddress['province'], $country->getId());
+                        if (array_key_exists('province', $paymentAddress)) {
+                            $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
                             $billingAddress->setRegionId($region->getId());
                         }
                     }
@@ -1516,7 +1519,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+                throw new WebhookException('Unable to find payment by Flow authorization ID: ' . $authorizationId);
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');

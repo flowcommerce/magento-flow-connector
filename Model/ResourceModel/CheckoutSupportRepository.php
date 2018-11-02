@@ -4,14 +4,19 @@ namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
 use FlowCommerce\FlowConnector\Api\CheckoutSupportRepositoryInterface;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Framework\Data\Form\FormKey;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Checkout\Model\Cart;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\SalesRule\Model\Coupon;
 use Magento\SalesRule\Model\Rule;
+use Magento\Customer\Model\CustomerFactory;
+use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
@@ -46,14 +51,29 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     protected $quoteRepository;
 
     /**
+     * @var Cart
+     */
+    protected $cart;
+
+    /**
      * @var ProductRepository
      */
     protected $productRepository;
 
     /**
+     * @var Product
+     */
+    protected $product;
+
+    /**
      * @var ProductFactory
      */
     protected $productFactory;
+
+    /**
+     * @var FormKey
+     */
+    protected $formKey;
 
     /**
      * @var Coupon
@@ -66,12 +86,24 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     protected $saleRule;     
 
     /**
+     * @var CustomerFactory
+     */
+    protected $customerFactory;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
      * @param JsonSerializer $jsonSerializer
      * @param StoreManager $storeManager
      * @param QuoteFactory $quoteFactory
      * @param QuoteManagement $quoteManagement
      * @param ProductRepository $productRepository
      * @param ProductFactory $productFactory
+     * @param CustomerFactory $customerFactory
+     * @param CustomerRepository $customerRepository
      * @param Logger $logger
      */
     public function __construct(
@@ -80,10 +112,15 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         QuoteFactory $quoteFactory,
         QuoteManagement $quoteManagement,
         CartRepositoryInterface $quoteRepository,
+        Cart $cart,
         ProductRepository $productRepository,
+        Product $product,
         ProductFactory $productFactory,
+        FormKey $formKey,
         Coupon $coupon,
         Rule $saleRule,
+        CustomerFactory $customerFactory,
+        CustomerRepository $customerRepository,
         Logger $logger
     ) {
         $this->jsonSerializer = $jsonSerializer;
@@ -91,10 +128,15 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $this->quoteFactory = $quoteFactory;
         $this->quoteManagement = $quoteManagement;
         $this->quoteRepository = $quoteRepository;
+        $this->cart  = $cart;
         $this->productRepository = $productRepository;
+        $this->product = $product;
         $this->productFactory = $productFactory;
+        $this->formKey = $formKey;
         $this->coupon = $coupon;
         $this->saleRule = $saleRule;
+        $this->customerFactory = $customerFactory;
+        $this->customerRepository = $customerRepository;
         $this->logger = $logger;
     }
 
@@ -129,14 +171,61 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
         $this->logger->info('Store: ' . $storeId);
         
+        /* $this->cart->setStoreId($store->getId()); */
+        /* $this->cart->setCurrencyCode($receivedOrder['total']['currency']); */
+        /* $this->cart->setBaseCurrencyCode($receivedOrder['total']['base']['currency']); */
+
+        /* //////////////////////////////////////////////////////////// */
+        /* // Add order items */
+        /* // https://docs.flow.io/type/localized-line-item */
+        /* //////////////////////////////////////////////////////////// */
+
+        /* foreach($receivedOrder['lines'] as $line) { */
+        /*     $this->logger->info('Looking up product: ' . $line['item_number']); */
+        /*     $catalogProduct = $this->productRepository->get($line['item_number']); */
+        /*     $product = $this->product->load($catalogProduct->getId()); */
+        /*     $product->setPrice($line['price']['amount']); */
+        /*     $product->setBasePrice($line['price']['base']['amount']); */
+
+        /*     $this->logger->info('Adding product to cart: ' . $product->getSku()); */
+        /*     $this->logger->info(json_encode($product->getOptions())); */
+        /*     $this->logger->info(json_encode($product->getData())); */
+        /*     $params = [ */
+        /*         "form_key" => $this->formKey->getFormKey(), */
+        /*         "product" => $product->getId(), */
+        /*         "qty" => $line['quantity'], */
+        /*     ]; */
+        /*     $this->logger->info(json_encode($params)); */
+        /*     /1* $request = new \Magento\Framework\DataObject(); *1/ */
+        /*     /1* $request->setData($params); *1/ */
+        /*     // TODO this add product to cart method is not working as intended */
+        /*     $this->cart->addProduct($product, $params); */
+        /*     $this->cart->save(); */
+        /*     $this->logger->info(json_encode($this->cart->getData())); */
+        /*     $this->logger->info(json_encode($this->cart->getQuote()->getAllItems())); */
+        /* } */
+
         ////////////////////////////////////////////////////////////
         // Create quote
         ////////////////////////////////////////////////////////////
 
         $quote = $this->quoteFactory->create();
-        $quote->setStoreId($store->getId());
-        $quote->setCurrencyCode($receivedOrder['total']['currency']);
+        $quote->setStore($store);
         $quote->setBaseCurrencyCode($receivedOrder['total']['base']['currency']);
+        $quote->setCurrencyCode($receivedOrder['total']['currency']);
+        $quote->setCurrency();
+
+        $customer = $this->customerFactory->create();
+        $customer->setStoreId($store->getId());
+        $customer->setWebsiteId($store->getWebsiteId());
+        if ($customer = $customer->loadByEmail('test@flow.io')) {
+            $customer->setFirstname('Test');
+            $customer->setLastname('Test');
+            $customer->setEmail('test@flow.io');
+            $customer->save();
+        }
+        $customer = $this->customerRepository->getById($customer->getEntityId());
+        $quote->assignCustomer($customer);
 
         ////////////////////////////////////////////////////////////
         // Add order items
@@ -147,31 +236,25 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             $this->logger->info('Looking up product: ' . $line['item_number']);
             $catalogProduct = $this->productRepository->get($line['item_number']);
             $product = $this->productFactory->create()->load($catalogProduct->getId());
-            $product->setPrice($line['price']['amount']);
-            $product->setBasePrice($line['price']['base']['amount']);
-
+            $product->setBasePrice(intval($line['price']['base']['amount']));
+            $product->setPrice(intval($line['price']['amount']));
+            $this->logger->info(json_encode($product->getData())); 
             $this->logger->info('Adding product to quote: ' . $product->getSku());
-            $this->logger->info(json_encode($product->getData()));
-            $params = [
-                "product" => (string)$product->getId(),
-                "qty" => (string)$line['quantity']
-            ];
-            $request = new \Magento\Framework\DataObject();
-            $request->setData($params);
-            // TODO this add product to quote method is not working as intended
-            $quote->addProduct($product, $request);
-            $this->logger->info(json_encode($quote->getData()));
-            $this->logger->info(json_encode($quote->getItemsCollection()));
+            $quote->addProduct($product, intval($line['quantity']));
         }
-        $quote->setCouponCode($code);
+        $quote->setCouponCode($code); 
+        $quote->collectTotals()->save();
+        $items = $quote->getAllItems();
+        $this->logger->info(json_encode($quote->getData()));
+        $this->logger->info(json_encode($items));
 
         /* $rule = $this->saleRule->load($ruleId); */
         /* $orderDiscountAmount = $rule->getDiscountAmount(); */
-        /* $orderDiscountAmount = $quote->getBaseDiscountAmount(); */
+        /* $orderDiscountAmount = $this->cart->getBaseDiscountAmount(); */
 
         $orderDiscountAmount = 0.0;
         $orderTotal = 0.0;
-        foreach($quote->getAllVisibleItems() as $item) {
+        foreach($items as $item) {
             $orderTotal += $item->getRowTotal();
             $orderDiscountAmount += $item->getDiscountAmount();
         }

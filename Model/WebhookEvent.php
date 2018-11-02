@@ -1274,6 +1274,15 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $order->setOrderCurrencyCode($receivedOrder['total']['currency']);
         $order->setBaseToOrderRate($receivedOrder['total']['base']['amount'] / $receivedOrder['total']['amount']);
 
+        $dutyAmount = 0.0;
+        $baseDutyAmount = 0.0;
+
+        $vatAmount = 0.0;
+        $baseVatAmount = 0.0;
+
+        $roundingAmount = 0.0;
+        $baseRoundingAmount = 0.0;
+
         $shippingAmount = 0.0;
         $baseShippingAmount = 0.0;
 
@@ -1297,13 +1306,35 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                     if (array_key_exists('components', $price)) {
                         $components = $price['components'];
-                        $roundingComponentKey = array_search('rounding', array_column($components, 'key'));
 
+                        $roundingComponentKey = array_search('rounding', array_column($components, 'key'));
                         if ($roundingComponentKey &&
                             is_array($roundingComponent = $components[$roundingComponentKey])
                         ) {
-                            $order->setFlowConnectorRounding($roundingComponent['amount']);
-                            $order->setFlowConnectorBaseRounding($roundingComponent['base']['amount']);
+                            $roundingAmount += $roundingComponent['amount'];
+                            $baseRoundingAmount += $roundingComponent['base']['amount'];
+                        }
+
+                        $vatPriceComponentKeys = ['vat_item_price', 'vat_deminimis', 'vat_duties_item_price', 'vat_subsidy'];
+                        foreach($vatPriceComponentKeys as $vatPriceComponentKey) {
+                            $vatPriceComponentIndex = array_search($vatPriceComponentKey, array_column($components, 'key'));
+                            if (($vatPriceComponentIndex !== false) &&
+                                is_array($vatPriceComponent = $components[$vatPriceComponentIndex])
+                            ) {
+                                $vatAmount += (float) $vatPriceComponent['amount'];
+                                $baseVatAmount += (float) $vatPriceComponent['base']['amount'];
+                            }
+                        }
+
+                        $dutyComponentKeys = ['duties_item_price', 'duty_deminimis'];
+                        foreach($dutyComponentKeys as $dutyComponentKey) {
+                            $dutyPriceComponentIndex = array_search($dutyComponentKey, array_column($components, 'key'));
+                            if (($dutyPriceComponentIndex !== false) &&
+                                is_array($dutyPriceComponent = $components[$dutyPriceComponentIndex])
+                            ) {
+                                $dutyAmount += (float) $dutyPriceComponent['amount'];
+                                $baseDutyAmount += (float) $dutyPriceComponent['base']['amount'];
+                            }
                         }
                     }
                     break;
@@ -1311,22 +1342,40 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     // The details of any VAT owed on the order.
                     $taxAmount += $price['amount'];
                     $baseTaxAmount += $price['base']['amount'];
-
-                    $order->setFlowConnectorVat($price['amount']);
-                    $order->setFlowConnectorBaseVat($price['base']['amount']);
                     break;
                 case 'duty':
                     $taxAmount += $price['amount'];
                     $baseTaxAmount += $price['base']['amount'];
-
-                    // The details of any duties owed on the order.
-                    $order->setFlowConnectorDuty($price['amount']);
-                    $order->setFlowConnectorBaseDuty($price['base']['amount']);
                     break;
                 case 'shipping':
                     // The details of shipping costs for the order.
                     $shippingAmount += $price['amount'];
                     $baseShippingAmount += $price['base']['amount'];
+
+                    if (array_key_exists('components', $price)) {
+                        $components = $price['components'];
+                        $vatPriceComponentKeys = ['vat_deminimis', 'vat_freight', 'vat_duties_freight', 'vat_subsidy'];
+                        foreach ($vatPriceComponentKeys as $vatPriceComponentKey) {
+                            $vatPriceComponentIndex = array_search($vatPriceComponentKey, array_column($components, 'key'));
+                            if (($vatPriceComponentIndex !== false) &&
+                                is_array($vatPriceComponent = $components[$vatPriceComponentIndex])
+                            ) {
+                                $vatAmount += (float) $vatPriceComponent['amount'];
+                                $baseVatAmount += (float) $vatPriceComponent['base']['amount'];
+                            }
+                        }
+
+                        $dutyComponentKeys = ['duties_freight', 'duty_deminimis'];
+                        foreach ($dutyComponentKeys as $dutyComponentKey) {
+                            $dutyPriceComponentIndex = array_search($dutyComponentKey, array_column($components, 'key'));
+                            if (($dutyPriceComponentIndex !== false) &&
+                                is_array($dutyPriceComponent = $components[$dutyPriceComponentIndex])
+                            ) {
+                                $dutyAmount += (float) $dutyPriceComponent['amount'];
+                                $baseDutyAmount += (float) $dutyPriceComponent['base']['amount'];
+                            }
+                        }
+                    }
                     break;
                 case 'insurance':
                     // The details of insurance costs for the order.
@@ -1341,6 +1390,15 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     throw new WebhookException('Invalid order price type');
             }
         }
+
+        $order->setFlowConnectorVat($vatAmount);
+        $order->setFlowConnectorBaseVat($baseVatAmount);
+
+        $order->setFlowConnectorDuty($dutyAmount);
+        $order->setFlowConnectorBaseDuty($baseDutyAmount);
+
+        $order->setFlowConnectorRounding($roundingAmount);
+        $order->setFlowConnectorBaseRounding($baseRoundingAmount);
 
         $order->setTaxAmount($taxAmount);
         $order->setBaseTaxAmount($baseTaxAmount);

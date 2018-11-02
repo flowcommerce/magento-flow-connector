@@ -547,8 +547,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                                     $itemPriceInclTax += $included['price']['amount'];
                                     $baseItemPriceInclTax += $included['price']['base']['amount'];
 
-                                    $roundingPrice = $included['price']['amount'];
-                                    $baseRoundingPrice = $included['price']['base']['amount'];
+                                    $roundingPrice += $included['price']['amount'];
+                                    $baseRoundingPrice += $included['price']['base']['amount'];
                                 } elseif ($included['key'] == 'vat_item_price') {
                                     $itemPriceInclTax += $included['price']['amount'];
                                     $baseItemPriceInclTax += $included['price']['base']['amount'];
@@ -581,12 +581,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setBasePriceInclTax($baseItemPriceInclTax);
                             $item->setRowTotalInclTax($itemPriceInclTax * $detail['quantity']);
                             $item->setBaseRowTotalInclTax($baseItemPriceInclTax * $detail['quantity']);
-                            $item->setFlowConnectorVat($vatPrice);
-                            $item->setFlowConnectorBaseVat($baseVatPrice);
-                            $item->setFlowConnectorDuty($dutyPrice);
-                            $item->setFlowConnectorBaseDuty($baseDutyPrice);
-                            $item->setFlowConnectorRounding($roundingPrice);
-                            $item->setFlowConnectorBaseRounding($baseRoundingPrice);
+                            $item->setFlowConnectorVat($vatPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseVat($baseVatPrice * $detail['quantity']);
+                            $item->setFlowConnectorDuty($dutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
                             $item->save();
                         }
                         break;

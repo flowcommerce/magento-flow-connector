@@ -239,6 +239,8 @@ class UpgradeData implements UpgradeDataInterface
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
         $attributes = [
+            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
@@ -262,6 +264,8 @@ class UpgradeData implements UpgradeDataInterface
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
         $attributes = [
+            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
@@ -285,6 +289,8 @@ class UpgradeData implements UpgradeDataInterface
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
         $attributes = [
+            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
@@ -308,6 +314,8 @@ class UpgradeData implements UpgradeDataInterface
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
         $attributes = [
+            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
@@ -331,6 +339,8 @@ class UpgradeData implements UpgradeDataInterface
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
         $attributes = [
+            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
@@ -354,6 +364,8 @@ class UpgradeData implements UpgradeDataInterface
         $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
 
         $attributes = [
+            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
             'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],

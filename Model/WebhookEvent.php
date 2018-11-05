@@ -514,6 +514,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                     case 'subtotal':
                         if ($item) {
+                            $rawItemPrice = 0.0;
+                            $baseRowItemPrice = 0.0;
+
                             $vatPct = 0.0;
 
                             $vatPrice = 0.0;
@@ -534,6 +537,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $baseItemPrice = 0.0;
                             foreach ($detail['included'] as $included) {
                                 if ($included['key'] == "item_price") {
+                                    $rawItemPrice += $included['price']['amount'];
+                                    $baseRowItemPrice += $included['price']['base']['amount'];
+
                                     $itemPrice += $included['price']['amount'];
                                     $baseItemPrice += $included['price']['base']['amount'];
 
@@ -581,6 +587,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setBasePriceInclTax($baseItemPriceInclTax);
                             $item->setRowTotalInclTax($itemPriceInclTax * $detail['quantity']);
                             $item->setBaseRowTotalInclTax($baseItemPriceInclTax * $detail['quantity']);
+                            $item->setFlowConnectorItemPrice($rawItemPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseItemPrice($baseRowItemPrice * $detail['quantity']);
                             $item->setFlowConnectorVat($vatPrice * $detail['quantity']);
                             $item->setFlowConnectorBaseVat($baseVatPrice * $detail['quantity']);
                             $item->setFlowConnectorDuty($dutyPrice * $detail['quantity']);
@@ -1274,6 +1282,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $order->setOrderCurrencyCode($receivedOrder['total']['currency']);
         $order->setBaseToOrderRate($receivedOrder['total']['base']['amount'] / $receivedOrder['total']['amount']);
 
+        $rawItemPriceAmount = 0.0;
+        $baseRawItemPriceAmount = 0.0;
+
         $dutyAmount = 0.0;
         $baseDutyAmount = 0.0;
 
@@ -1307,8 +1318,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     if (array_key_exists('components', $price)) {
                         $components = $price['components'];
 
+                        $itemPriceComponentKey = array_search('item_price', array_column($components, 'key'));
+                        if ($itemPriceComponentKey !== false &&
+                            is_array($itemPriceComponent = $components[$itemPriceComponentKey])
+                        ) {
+                            $rawItemPriceAmount += $itemPriceComponent['amount'];
+                            $baseRawItemPriceAmount += $itemPriceComponent['base']['amount'];
+                        }
+
                         $roundingComponentKey = array_search('rounding', array_column($components, 'key'));
-                        if ($roundingComponentKey &&
+                        if ($roundingComponentKey !== false &&
                             is_array($roundingComponent = $components[$roundingComponentKey])
                         ) {
                             $roundingAmount += $roundingComponent['amount'];
@@ -1390,6 +1409,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     throw new WebhookException('Invalid order price type');
             }
         }
+
+        $order->setFlowConnectorItemPrice($rawItemPriceAmount);
+        $order->setFlowConnectorBaseItemPrice($baseRawItemPriceAmount);
 
         $order->setFlowConnectorVat($vatAmount);
         $order->setFlowConnectorBaseVat($baseVatAmount);

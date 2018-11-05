@@ -148,11 +148,45 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
      */
     public function discountRequest($order = false, $code = false)
     {
-        $this->logger->info('-----Fired discountRequest-----');
+        $this->logger->info('Fired discountRequest');
 
         // Check if order is present in payload
         if (!$ruleId = $this->coupon->loadByCode($code)->getRuleId()) {
             $this->logger->info('Coupon code provided is not valid: ' . (string)$code);
+            return;
+        }
+
+        $rule = $this->saleRule->load($ruleId);
+
+        // Check if coupon code is a cart rule
+        if ($rule->getData('coupon_type') != '2') {
+            $this->logger->info('Non-cart rule coupon codes are not supported at this time: ' . (string)$code);
+            return;
+        }
+
+        $hasValidConditions = true;
+        $conditionData = json_decode($rule->getData('conditions_serialized'));
+        if (isset($conditionData->condtions)) {
+            foreach ($conditionData->conditions as $condition) {
+                $attribute = $condition->attribute; 
+                if ($attribute == 'sku') {
+                    $hasValidConditions = false;
+                }
+                $this->logger->info($condition->attribute); 
+            }
+        }
+        $actionData = json_decode($rule->getData('actions_serialized'));
+        if (isset($actionData->conditions)) {
+            foreach ($actionData->conditions as $actions) {
+                $attribute = $actions->attribute; 
+                if ($attribute == 'sku') {
+                    $hasValidConditions = false;
+                }
+                $this->logger->info($actions->attribute); 
+            } 
+        }
+        if (!$hasValidConditions) {
+            $this->logger->info('Coupon code provided contains conditions or actions not supported by Flow: ' . (string)$code);
             return;
         }
 
@@ -171,47 +205,12 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
         $this->logger->info('Store: ' . $storeId);
         
-        /* $this->cart->setStoreId($store->getId()); */
-        /* $this->cart->setCurrencyCode($receivedOrder['total']['currency']); */
-        /* $this->cart->setBaseCurrencyCode($receivedOrder['total']['base']['currency']); */
-
-        /* //////////////////////////////////////////////////////////// */
-        /* // Add order items */
-        /* // https://docs.flow.io/type/localized-line-item */
-        /* //////////////////////////////////////////////////////////// */
-
-        /* foreach($receivedOrder['lines'] as $line) { */
-        /*     $this->logger->info('Looking up product: ' . $line['item_number']); */
-        /*     $catalogProduct = $this->productRepository->get($line['item_number']); */
-        /*     $product = $this->product->load($catalogProduct->getId()); */
-        /*     $product->setPrice($line['price']['amount']); */
-        /*     $product->setBasePrice($line['price']['base']['amount']); */
-
-        /*     $this->logger->info('Adding product to cart: ' . $product->getSku()); */
-        /*     $this->logger->info(json_encode($product->getOptions())); */
-        /*     $this->logger->info(json_encode($product->getData())); */
-        /*     $params = [ */
-        /*         "form_key" => $this->formKey->getFormKey(), */
-        /*         "product" => $product->getId(), */
-        /*         "qty" => $line['quantity'], */
-        /*     ]; */
-        /*     $this->logger->info(json_encode($params)); */
-        /*     /1* $request = new \Magento\Framework\DataObject(); *1/ */
-        /*     /1* $request->setData($params); *1/ */
-        /*     // TODO this add product to cart method is not working as intended */
-        /*     $this->cart->addProduct($product, $params); */
-        /*     $this->cart->save(); */
-        /*     $this->logger->info(json_encode($this->cart->getData())); */
-        /*     $this->logger->info(json_encode($this->cart->getQuote()->getAllItems())); */
-        /* } */
-
         ////////////////////////////////////////////////////////////
         // Create quote
         ////////////////////////////////////////////////////////////
 
         $quote = $this->quoteFactory->create();
         $quote->setStore($store);
-        $quote->setBaseCurrencyCode($receivedOrder['total']['base']['currency']);
         $quote->setCurrencyCode($receivedOrder['total']['currency']);
         $quote->setCurrency();
 
@@ -233,24 +232,14 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         ////////////////////////////////////////////////////////////
 
         foreach($receivedOrder['lines'] as $line) {
-            $this->logger->info('Looking up product: ' . $line['item_number']);
             $catalogProduct = $this->productRepository->get($line['item_number']);
             $product = $this->productFactory->create()->load($catalogProduct->getId());
-            $product->setBasePrice(intval($line['price']['base']['amount']));
-            $product->setPrice(intval($line['price']['amount']));
-            $this->logger->info(json_encode($product->getData())); 
-            $this->logger->info('Adding product to quote: ' . $product->getSku());
-            $quote->addProduct($product, intval($line['quantity']));
+            $product->setPrice($line['price']['amount']);
+            $quote->addProduct($product, $line['quantity']);
         }
         $quote->setCouponCode($code); 
         $quote->collectTotals()->save();
         $items = $quote->getAllItems();
-        $this->logger->info(json_encode($quote->getData()));
-        $this->logger->info(json_encode($items));
-
-        /* $rule = $this->saleRule->load($ruleId); */
-        /* $orderDiscountAmount = $rule->getDiscountAmount(); */
-        /* $orderDiscountAmount = $this->cart->getBaseDiscountAmount(); */
 
         $orderDiscountAmount = 0.0;
         $orderTotal = 0.0;
@@ -259,9 +248,12 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             $orderDiscountAmount += $item->getDiscountAmount();
         }
         $orderCurrency = $receivedOrder['total']['currency'];
-        $orderBaseCurrency = $receivedOrder['total']['base']['currency'];
-        $this->logger->info('Discount Amount: ' . $orderDiscountAmount);
         $this->logger->info('Order Total: ' . $orderTotal);
+        $this->logger->info('Discount Amount: ' . $orderDiscountAmount);
+
+        if ($orderDiscountAmount <= 0) {
+            return;
+        }
 
         // TODO THIS ISNT THE RIGHT STRUCTURE, REFERENCE https://app.apibuilder.io/flow/experience-internal/0.6.27#model-discount_request_order_form
         $result = [
@@ -274,7 +266,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
                         "offer_form" => [
                             "discriminator" => "discount_request_offer_fixed_amount_form",
                             "amount" => $orderDiscountAmount,
-                            "currency" => $orderBaseCurrency
+                            "currency" => $orderCurrency
                         ]
                     ]
                 ]

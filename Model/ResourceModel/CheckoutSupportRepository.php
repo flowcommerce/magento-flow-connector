@@ -148,10 +148,24 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     public function discountRequest($order = false, $code = false)
     {
         $this->logger->info('Fired discountRequest');
+        $this->logger->info('Coupon code provided: ' . (string)$code);
 
         if (!$this->isValidRule($code)) {
             return;
         }
+
+        if (!array_key_exists('total', $order)) {
+            $this->logger->info('Missing order totals');
+            return;
+        }
+
+        if (!array_key_exists('currency', $order['total'])) {
+            $this->logger->info('Missing order currency');
+            return;
+        }
+
+        $orderCurrency = $order['total']['currency'];
+        $this->logger->info('Currency used: ' . $orderCurrency);
 
         $quote = $this->generateQuote($order);
         $quote->setCouponCode($code); 
@@ -164,11 +178,12 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             $orderTotal += $item->getRowTotal();
             $orderDiscountAmount += $item->getDiscountAmount();
         }
-        $orderCurrency = $order['total']['currency'];
 
         if ($orderDiscountAmount <= 0) {
+            $this->logger->info('No discount applicable');
             return;
         }
+        $this->logger->info('Discount amount found: ' . $orderDiscountAmount);
 
         // TODO THIS ISNT THE RIGHT STRUCTURE, REFERENCE https://app.apibuilder.io/flow/experience-internal/0.6.27#model-discount_request_order_form
         $result = [
@@ -187,24 +202,24 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     {
         // Check if order is present in payload
         if (!$ruleId = $this->coupon->loadByCode($code)->getRuleId()) {
-            $this->logger->info('Coupon code provided is not valid: ' . (string)$code);
+            $this->logger->info('Code does not exist');
             return false;
         }
 
         $rule = $this->saleRule->load($ruleId);
-// Check if coupon code is a cart rule
+
         if ($rule->getData('coupon_type') != '2') {
-            $this->logger->info('Non-cart rule coupon codes are not supported at this time: ' . (string)$code);
+            $this->logger->info('Non-cart rule coupon codes are not supported at this time');
             return false;
         }
 
         if ($rule->getData('simple_action') == 'buy_x_get_y') {
-            $this->logger->info('"Buy X Get Y" discounts are not supported at this time: ' . (string)$code);
+            $this->logger->info('"Buy X Get Y" discounts are not supported at this time');
             return false;
         }
 
         if ($rule->getData('apply_to_shipping') > 0) {
-            $this->logger->info('Shipping discounts are not supported at this time: ' . (string)$code);
+            $this->logger->info('Shipping discounts are not supported at this time');
             return false;
         }
 
@@ -213,13 +228,13 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             foreach ($actionData->conditions as $actions) {
                 $attribute = $actions->attribute; 
                 if ($attribute != null || isset($actions->conditions)) {
-                    $this->logger->info('Coupon code provided contains actions not supported by Flow: ' . (string)$code);
+                    $this->logger->info('Action conditions are not supported at this time');
                     return false;
                 }
             } 
         }
 
-        $this->logger->info('Found valid code: ' . $code);
+        $this->logger->info('Code validated');
         return $rule;
     }
 
@@ -306,7 +321,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             $store = $this->storeManager->getStore();
         }
 
-        $this->logger->info('Store: ' . $storeId);
+        $this->logger->info('Store ID: ' . $storeId);
 
         return $store;
     }

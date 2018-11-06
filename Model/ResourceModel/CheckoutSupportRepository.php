@@ -154,19 +154,12 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
 
         $receivedOrder = $order;
-        $store = false;
-        $this->logger->info('Found valid code: ' . $code);
 
-        if (isset($receivedOrder['attributes']['quote_id'])) {
-            $oldQuote = $this->quoteRepository->get($receivedOrder['attributes']['quote_id']);
-            if ($storeId = $oldQuote->getStoreId()) {
-                $store = $this->storeManager->getStore($storeId);
+        if (array_key_exists('attributes', $receivedOrder)) {
+            if (array_key_exists('quote_id', $receivedOrder['attributes'])) {
+                $store = $this->getStoreByQuoteId($receivedOrder['attributes']['quote_id']);
             }
-        } 
-        if (!$store) {
-            $store = $this->storeManager->getStore();
         }
-        $this->logger->info('Store: ' . $storeId);
         
         ////////////////////////////////////////////////////////////
         // Create quote
@@ -278,8 +271,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
 
         $rule = $this->saleRule->load($ruleId);
-
-        // Check if coupon code is a cart rule
+// Check if coupon code is a cart rule
         if ($rule->getData('coupon_type') != '2') {
             $this->logger->info('Non-cart rule coupon codes are not supported at this time: ' . (string)$code);
             return false;
@@ -302,11 +294,34 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
                 $attribute = $actions->attribute; 
                 if ($attribute != null || isset($actions->conditions)) {
                     $this->logger->info('Coupon code provided contains actions not supported by Flow: ' . (string)$code);
-                    return;
+                    return false;
                 }
             } 
         }
 
+        $this->logger->info('Found valid code: ' . $code);
         return $rule;
+    }
+
+    /**
+     * @param $quoteId
+     * @return mixed
+     */
+    protected function getStoreByQuoteId($quoteId)
+    {
+        $store = false;
+        $quote = $this->quoteRepository->get($quoteId);
+
+        if ($storeId = $quote->getStoreId()) {
+            $store = $this->storeManager->getStore($storeId);
+        }
+
+        if (!$store) {
+            $store = $this->storeManager->getStore();
+        }
+
+        $this->logger->info('Store: ' . $storeId);
+
+        return $store;
     }
 }

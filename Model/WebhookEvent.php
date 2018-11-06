@@ -46,6 +46,15 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\OrderPaymentSearchResultInterface;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\DB\TransactionFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Model\Convert\Order as ConvertOrder;
+use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Shipping\Model\ShipmentNotifier;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
+use Magento\Sales\Model\Order\Shipment\TrackFactory;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -248,6 +257,31 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private $filterBuilder;
 
     /**
+     * @var InvoiceService
+     */
+    private $invoiceService;
+    /**
+     * @var TransactionFactory
+     */
+    private $transactionFactory;
+    /**
+     * @var InvoiceSender
+     */
+    private $invoiceSender;
+    /**
+     * @var ConvertOrder
+     */
+    private $convertOrder;
+    /**
+     * @var ShipmentNotifier
+     */
+    private $shipmentNotifier;
+    /**
+     * @var TrackFactory
+     */
+    private $trackFactory;
+
+    /**
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
@@ -280,6 +314,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param Util $flowUtil
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
      * @param FilterBuilder $filterBuilder
+     * @param InvoiceService $invoiceService
+     * @param TransactionFactory $transactionFactory
+     * @param ConvertOrder $convertOrder
+     * @param ShipmentNotifier $shipmentNotifier
+     * @param InvoiceSender $invoiceSender
+     * @param TrackFactory $trackFactory
      * @param AbstractResource|null $resource
      * @param ResourceCollection|null $resourceCollection
      * @param array $data
@@ -316,6 +356,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         FlowUtil $flowUtil,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
         FilterBuilder $filterBuilder,
+        InvoiceService $invoiceService,
+        TransactionFactory $transactionFactory,
+        ConvertOrder $convertOrder,
+        ShipmentNotifier $shipmentNotifier,
+        InvoiceSender $invoiceSender,
+        TrackFactory $trackFactory,
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
         array $data = []
@@ -356,6 +402,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->flowUtil = $flowUtil;
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->filterBuilder = $filterBuilder;
+        $this->invoiceService = $invoiceService;
+        $this->transactionFactory = $transactionFactory;
+        $this->invoiceSender = $invoiceSender;
+        $this->convertOrder = $convertOrder;
+        $this->shipmentNotifier = $shipmentNotifier;
+        $this->trackFactory = $trackFactory;
     }
 
     protected function _construct(){
@@ -698,46 +750,42 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * https://docs.flow.io/type/capture-upserted-v-2
      * @return void
      * @throws WebhookException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function processCaptureUpsertedV2()
     {
         $this->logger->info('Processing capture_upserted_v2 data');
         $data = $this->getPayloadData();
-
         if (array_key_exists('authorization', $data) && array_key_exists('order', $data['authorization'])) {
             $flowOrderNumber = $data['authorization']['order']['number'];
-
             /** @var Order $order */
             if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
                 $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
-
                 $orderPayment = null;
                 foreach ($order->getPaymentsCollection() as $payment) {
                     $this->logger->info('Payment: ' . $payment->getId());
-
                     $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
                     if ($flowPaymentRef == $data['authorization']['id']) {
                         $orderPayment = $payment;
                         break;
                     }
                 }
-
                 if ($orderPayment) {
                     if ($orderPayment->canCapture()) {
                         // Payment initiated through Flow, mark payment as closed.
                         $orderPayment->setIsTransactionClosed(true);
+                        // Create invoice when payment initiated through Flow
+                        if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED) {
+                            $this->invoiceOrder($order);
+                        }
                     } else {
                         // Ignore, capture was initiated by Magento.
                     }
-
                     $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
                 } else {
                     throw new WebhookException('Unable to find corresponding payment.');
                 }
-
             }
-
         } elseif (array_key_exists('capture', $data) &&
             array_key_exists('authorization', $data['capture']) &&
             array_key_exists('key', $data['capture']['authorization'])
@@ -750,12 +798,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 if ($orderPayment->canCapture()) {
                     // Payment initiated through Flow, mark payment as closed.
                     $orderPayment->setIsTransactionClosed(true);
+                    if($order = $orderPayment->getOrder()) {
+                        // Create invoice when payment initiated through Flow
+                        if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED) {
+                            $this->invoiceOrder($order);
+                        }
+                    } else {
+                        $this->logger->info(
+                            sprintf('Unable to find order for payment ID #%s in order to invoice', $orderPayment->getId())
+                        );
+                    }
                 } else {
                     // Ignore, capture was initiated by Magento.
                 }
-
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
             }
@@ -1672,27 +1728,42 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private function processLabelUpserted() {
         $this->logger->info('Processing label_upserted data');
         $data = $this->getPayloadData();
-
         $orderIdentifier = null;
         if (array_key_exists('order_identifier', $data)) {
             $orderIdentifier = $data['order_identifier'];
         } elseif (array_key_exists('order', $data)) {
             $orderIdentifier = $data['order'];
         }
-
         if ($orderIdentifier !== null) {
             if ($order = $this->getOrderByFlowOrderNumber($orderIdentifier)) {
-                $order->setData('tracking_numbers', [$data['carrier_tracking_number']]);
-                $order->setData('flow_tracking_number', $data['flow_tracking_number']);
-                $order->save();
-
+                // Create shipment
+                $tracks = [];
+                if(isset($data['carrier']) && isset($data['carrier_tracking_number'])) {
+                    $carrierTrack = [
+                        'carrier_code' => 'custom',
+                        'title' => $data['carrier'],
+                        'number' => $data['carrier_tracking_number']
+                    ];
+                    $tracks[] = $carrierTrack;
+                }
+                if(isset($data['flow_tracking_number'])) {
+                    $flowTrack = [
+                        'carrier_code' => 'custom',
+                        'title' => 'Flow',
+                        'number' => $data['flow_tracking_number']
+                    ];
+                    $tracks[] = $flowTrack;
+                }
+                $this->shipOrder($order, $tracks);
+                // Create invoice
+                if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED) {
+                    $this->invoiceOrder($order);
+                }
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
                 return;
             }
-
         } else {
             $this->webhookEventManager->markWebhookEventAsError($this, 'Order identifier not present');
         }
@@ -1912,5 +1983,86 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         $this->setData(self::DATA_KEY_DELETED_AT, $value);
         return $this;
+    }
+
+    /**
+     * Create invoice for order
+     *
+     * @param OrderModel $order
+     * @return null
+     * @throws \Exception
+     */
+    private function invoiceOrder(OrderModel $order)
+    {
+        $this->logger->info(sprintf('Creating invoice for order #%s', $order->getIncrementId()));
+        if(!$order->canInvoice()) {
+            throw new LocalizedException(__(sprintf('Order #%s is not ready for invoice', $order->getIncrementId())));
+        }
+        $invoice = $this->invoiceService->prepareInvoice($order);
+        $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
+        $invoice->register();
+        $transaction = $this->transactionFactory->create()
+            ->addObject($invoice)
+            ->addObject($invoice->getOrder());
+        $transaction->save();
+        $this->invoiceSender->send($invoice);
+        $order->addStatusHistoryComment(sprintf('Invoice #%s created', $invoice->getIncrementId()))
+            ->save();
+    }
+
+    /**
+     *
+     * Create shipment for order
+     *
+     * $tracks = [
+     *  [
+     *      'carrier_code' => 'custom',
+     *      'title' => 'Carrier Title',
+     *      'number' => '1234567',
+     *  ],
+     *  [
+     *      'carrier_code' => 'custom',
+     *      'title' => 'Carrier Title',
+     *      'number' => '1234567',
+     *  ]
+     * ];
+     *
+     * @param OrderModel $order
+     * @param $tracks
+     * @throws LocalizedException
+     */
+    private function shipOrder(OrderModel $order, $tracks)
+    {
+        $this->logger->info(sprintf('Creating shipment for order #%s', $order->getIncrementId()));
+        if(!$order->canShip()) {
+            throw new LocalizedException(__(sprintf('Order #%s is not ready for shipping', $order->getIncrementId())));
+        }
+        // Create shipment
+        $shipment = $this->convertOrder->toShipment($order);
+        foreach ($order->getAllItems() AS $orderItem) {
+            // Check virtual item and item Quantity
+            if (!$orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
+                continue;
+            }
+            $qty = $orderItem->getQtyToShip();
+            $shipmentItem = $this->convertOrder->itemToShipmentItem($orderItem)->setQty($qty);
+            $shipment->addItem($shipmentItem);
+        }
+        $shipment->register();
+        $shipment->getOrder()->setIsInProcess(true);
+        // Add tracks
+        foreach ($tracks as $track) {
+            $shipment->addTrack(
+                $this->trackFactory->create()->addData($track)
+            );
+        }
+        // Save shipment
+        $shipment->save();
+        $shipment->getOrder()->save();
+        // Send shipment email
+        $this->shipmentNotifier->notify($shipment);
+        $shipment->save();
+        $order->addStatusHistoryComment(sprintf('Shipment #%s created', $shipment->getIncrementId()))
+            ->save();
     }
 }

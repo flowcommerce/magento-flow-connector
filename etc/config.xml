@@ -19,5 +19,11 @@
                 <title>Flow Shipping</title>
             </flowshipping>
         </carriers>
+        <flowcommerce>
+            <flowconnector>
+                <enabled>1</enabled>
+                <invoicing_event>1</invoicing_event>
+            </flowconnector>
+        </flowcommerce>
     </default>
 </config>

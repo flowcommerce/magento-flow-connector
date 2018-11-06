@@ -179,6 +179,8 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             $orderDiscountAmount += $item->getDiscountAmount();
         }
 
+        $quote->delete();
+
         if ($orderDiscountAmount <= 0) {
             $this->logger->info('No discount applicable');
             return;
@@ -200,7 +202,6 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
      */
     protected function isValidRule($code)
     {
-        // Check if order is present in payload
         if (!$ruleId = $this->coupon->loadByCode($code)->getRuleId()) {
             $this->logger->info('Code does not exist');
             return false;
@@ -263,7 +264,6 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $customer->setStoreId($store->getId());
         $customer->setWebsiteId($store->getWebsiteId());
         
-        // Check for existing customer
         if (array_key_exists('customer', $order)) {
             $receivedCustomer = $order['customer'];
 
@@ -283,7 +283,6 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             }
         }
 
-        // No customer found, use a mock customer because a customer entity is required for M2 discount calculation
         if (!$customer->getEntityId() &&
             !$customer->loadByEmail('example@email.com')) {
             $customer->setFirstname('John');
@@ -293,6 +292,11 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
         $customer = $this->customerRepository->getById($customer->getEntityId());
         $quote->assignCustomer($customer);
+
+        if (!array_key_exists('lines', $order)) {
+            $this->logger->info('Missing order lines');
+            return false;
+        }
 
         foreach($order['lines'] as $line) {
             $catalogProduct = $this->productRepository->get($line['item_number']);

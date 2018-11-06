@@ -164,30 +164,26 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             return;
         }
 
-        $hasValidConditions = true;
-        $conditionData = json_decode($rule->getData('conditions_serialized'));
-        if (isset($conditionData->condtions)) {
-            foreach ($conditionData->conditions as $condition) {
-                $attribute = $condition->attribute; 
-                if ($attribute == 'sku') {
-                    $hasValidConditions = false;
-                }
-                $this->logger->info($condition->attribute); 
-            }
+        if ($rule->getData('simple_action') == 'buy_x_get_y') {
+            $this->logger->info('"Buy X Get Y" discounts are not supported at this time: ' . (string)$code);
+            return;
         }
+
+        if ($rule->getData('apply_to_shipping') > 0) {
+            $this->logger->info('Shipping discounts are not supported at this time: ' . (string)$code);
+            return;
+        }
+
+        $this->logger->info(json_encode($rule->getData()));
         $actionData = json_decode($rule->getData('actions_serialized'));
         if (isset($actionData->conditions)) {
             foreach ($actionData->conditions as $actions) {
                 $attribute = $actions->attribute; 
-                if ($attribute == 'sku') {
-                    $hasValidConditions = false;
+                if ($attribute != null || isset($actions->conditions)) {
+                    $this->logger->info('Coupon code provided contains actions not supported by Flow: ' . (string)$code);
+                    return;
                 }
-                $this->logger->info($actions->attribute); 
             } 
-        }
-        if (!$hasValidConditions) {
-            $this->logger->info('Coupon code provided contains conditions or actions not supported by Flow: ' . (string)$code);
-            return;
         }
 
         $receivedOrder = $order;

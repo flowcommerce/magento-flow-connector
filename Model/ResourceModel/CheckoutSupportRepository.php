@@ -213,12 +213,38 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $customer = $this->customerFactory->create();
         $customer->setStoreId($store->getId());
         $customer->setWebsiteId($store->getWebsiteId());
-        if ($customer = $customer->loadByEmail('test@flow.io')) {
-            $customer->setFirstname('Test');
-            $customer->setLastname('Test');
-            $customer->setEmail('test@flow.io');
-            $customer->save();
+        
+        // Check for existing customer
+        if (array_key_exists('customer', $receivedOrder)) {
+            $receivedCustomer = $receivedOrder['customer'];
+
+            if (array_key_exists('email', $receivedCustomer)) {
+                $customer = $customer->loadByEmail($receivedCustomer['email']);
+
+                if ($customer->getEntityId()) {
+                    $this->logger->info('Found customer by email: ' . $receivedCustomer['email']);
+                } else {
+                    if (array_key_exists('name', $receivedCustomer)) {
+                        if (array_key_exists('first', $receivedCustomer['name']) &&
+                            array_key_exists('last', $receivedCustomer['name'])) {
+                            $customer->setFirstname($receivedCustomer['name']['first']);
+                            $customer->setLastname($receivedCustomer['name']['last']);
+                            $customer->setEmail($receivedCustomer['email']);
+                            $customer = $customer->save();
+                        }
+                    }
+                }
+            }
         }
+
+        // No customer found, create a new customer
+        if (!$customer->getEntityId()) {
+            $customer->setFirstname('John');
+            $customer->setLastname('Doe');
+            $customer->setEmail('example@email.com');
+            $customer = $customer->save();
+        }
+
         $customer = $this->customerRepository->getById($customer->getEntityId());
         $quote->assignCustomer($customer);
 

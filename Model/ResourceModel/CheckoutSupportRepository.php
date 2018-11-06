@@ -139,7 +139,6 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $this->customerRepository = $customerRepository;
         $this->logger = $logger;
     }
-
      
     /**
      * @param $order
@@ -150,40 +149,8 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     {
         $this->logger->info('Fired discountRequest');
 
-        // Check if order is present in payload
-        if (!$ruleId = $this->coupon->loadByCode($code)->getRuleId()) {
-            $this->logger->info('Coupon code provided is not valid: ' . (string)$code);
+        if (!$this->isValidRule($code)) {
             return;
-        }
-
-        $rule = $this->saleRule->load($ruleId);
-
-        // Check if coupon code is a cart rule
-        if ($rule->getData('coupon_type') != '2') {
-            $this->logger->info('Non-cart rule coupon codes are not supported at this time: ' . (string)$code);
-            return;
-        }
-
-        if ($rule->getData('simple_action') == 'buy_x_get_y') {
-            $this->logger->info('"Buy X Get Y" discounts are not supported at this time: ' . (string)$code);
-            return;
-        }
-
-        if ($rule->getData('apply_to_shipping') > 0) {
-            $this->logger->info('Shipping discounts are not supported at this time: ' . (string)$code);
-            return;
-        }
-
-        $this->logger->info(json_encode($rule->getData()));
-        $actionData = json_decode($rule->getData('actions_serialized'));
-        if (isset($actionData->conditions)) {
-            foreach ($actionData->conditions as $actions) {
-                $attribute = $actions->attribute; 
-                if ($attribute != null || isset($actions->conditions)) {
-                    $this->logger->info('Coupon code provided contains actions not supported by Flow: ' . (string)$code);
-                    return;
-                }
-            } 
         }
 
         $receivedOrder = $order;
@@ -296,5 +263,50 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         ];
 
         return json_encode($result);
+    }
+
+    /**
+     * @param $code
+     * @return mixed
+     */
+    protected function isValidRule($code)
+    {
+        // Check if order is present in payload
+        if (!$ruleId = $this->coupon->loadByCode($code)->getRuleId()) {
+            $this->logger->info('Coupon code provided is not valid: ' . (string)$code);
+            return false;
+        }
+
+        $rule = $this->saleRule->load($ruleId);
+
+        // Check if coupon code is a cart rule
+        if ($rule->getData('coupon_type') != '2') {
+            $this->logger->info('Non-cart rule coupon codes are not supported at this time: ' . (string)$code);
+            return false;
+        }
+
+        if ($rule->getData('simple_action') == 'buy_x_get_y') {
+            $this->logger->info('"Buy X Get Y" discounts are not supported at this time: ' . (string)$code);
+            return false;
+        }
+
+        if ($rule->getData('apply_to_shipping') > 0) {
+            $this->logger->info('Shipping discounts are not supported at this time: ' . (string)$code);
+            return false;
+        }
+
+        $this->logger->info(json_encode($rule->getData()));
+        $actionData = json_decode($rule->getData('actions_serialized'));
+        if (isset($actionData->conditions)) {
+            foreach ($actionData->conditions as $actions) {
+                $attribute = $actions->attribute; 
+                if ($attribute != null || isset($actions->conditions)) {
+                    $this->logger->info('Coupon code provided contains actions not supported by Flow: ' . (string)$code);
+                    return;
+                }
+            } 
+        }
+
+        return $rule;
     }
 }

@@ -172,20 +172,8 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
 
         // TODO THIS ISNT THE RIGHT STRUCTURE, REFERENCE https://app.apibuilder.io/flow/experience-internal/0.6.27#model-discount_request_order_form
         $result = [
-            "order_form" => [
-                "order_entitlement_forms" => [
-                    [
-                        "entitlement_key" => [
-                            "subtotal" => "subtotal"
-                        ],
-                        "offer_form" => [
-                            "discriminator" => "discount_request_offer_fixed_amount_form",
-                            "amount" => $orderDiscountAmount,
-                            "currency" => $orderCurrency
-                        ]
-                    ]
-                ]
-            ]
+            "amount" => $orderDiscountAmount,
+            "currency" => $orderCurrency
         ];
 
         return json_encode($result);
@@ -220,7 +208,6 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             return false;
         }
 
-        $this->logger->info(json_encode($rule->getData()));
         $actionData = json_decode($rule->getData('actions_serialized'));
         if (isset($actionData->conditions)) {
             foreach ($actionData->conditions as $actions) {
@@ -281,16 +268,15 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             }
         }
 
-        // No customer found, create a new customer
-        if (!$customer->getEntityId()) {
+        // No customer found, use a mock customer because a customer entity is required for M2 discount calculation
+        if (!$customer->getEntityId() &&
+            !$customer->loadByEmail('example@email.com')) {
             $customer->setFirstname('John');
             $customer->setLastname('Doe');
             $customer->setEmail('example@email.com');
             $customer = $customer->save();
         }
-
         $customer = $this->customerRepository->getById($customer->getEntityId());
-
         $quote->assignCustomer($customer);
 
         foreach($order['lines'] as $line) {
@@ -323,14 +309,5 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $this->logger->info('Store: ' . $storeId);
 
         return $store;
-    }
-
-    /**
-     * @param $order
-     * @param $quote
-     * @return mixed
-     */
-    protected function addOrderItems($order = false, $quote = false)
-    {
     }
 }

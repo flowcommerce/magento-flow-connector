@@ -153,85 +153,18 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             return;
         }
 
-        $receivedOrder = $order;
-
-        if (array_key_exists('attributes', $receivedOrder)) {
-            if (array_key_exists('quote_id', $receivedOrder['attributes'])) {
-                $store = $this->getStoreByQuoteId($receivedOrder['attributes']['quote_id']);
-            }
-        }
-        
-        ////////////////////////////////////////////////////////////
-        // Create quote
-        ////////////////////////////////////////////////////////////
-
-        $quote = $this->quoteFactory->create();
-        $quote->setStore($store);
-        $quote->setCurrencyCode($receivedOrder['total']['currency']);
-        $quote->setCurrency();
-
-        $customer = $this->customerFactory->create();
-        $customer->setStoreId($store->getId());
-        $customer->setWebsiteId($store->getWebsiteId());
-        
-        // Check for existing customer
-        if (array_key_exists('customer', $receivedOrder)) {
-            $receivedCustomer = $receivedOrder['customer'];
-
-            if (array_key_exists('email', $receivedCustomer)) {
-                $customer = $customer->loadByEmail($receivedCustomer['email']);
-
-                if ($customer->getEntityId()) {
-                    $this->logger->info('Found customer by email: ' . $receivedCustomer['email']);
-                } else {
-                    if (array_key_exists('name', $receivedCustomer)) {
-                        if (array_key_exists('first', $receivedCustomer['name']) &&
-                            array_key_exists('last', $receivedCustomer['name'])) {
-                            $customer->setFirstname($receivedCustomer['name']['first']);
-                            $customer->setLastname($receivedCustomer['name']['last']);
-                            $customer->setEmail($receivedCustomer['email']);
-                            $customer = $customer->save();
-                        }
-                    }
-                }
-            }
-        }
-
-        // No customer found, create a new customer
-        if (!$customer->getEntityId()) {
-            $customer->setFirstname('John');
-            $customer->setLastname('Doe');
-            $customer->setEmail('example@email.com');
-            $customer = $customer->save();
-        }
-
-        $customer = $this->customerRepository->getById($customer->getEntityId());
-        $quote->assignCustomer($customer);
-
-        ////////////////////////////////////////////////////////////
-        // Add order items
-        // https://docs.flow.io/type/localized-line-item
-        ////////////////////////////////////////////////////////////
-
-        foreach($receivedOrder['lines'] as $line) {
-            $catalogProduct = $this->productRepository->get($line['item_number']);
-            $product = $this->productFactory->create()->load($catalogProduct->getId());
-            $product->setPrice($line['price']['amount']);
-            $quote->addProduct($product, $line['quantity']);
-        }
+        $quote = $this->generateQuote($order);
         $quote->setCouponCode($code); 
         $quote->collectTotals()->save();
-        $items = $quote->getAllItems();
 
+        $items = $quote->getAllItems();
         $orderDiscountAmount = 0.0;
         $orderTotal = 0.0;
         foreach($items as $item) {
             $orderTotal += $item->getRowTotal();
             $orderDiscountAmount += $item->getDiscountAmount();
         }
-        $orderCurrency = $receivedOrder['total']['currency'];
-        $this->logger->info('Order Total: ' . $orderTotal);
-        $this->logger->info('Discount Amount: ' . $orderDiscountAmount);
+        $orderCurrency = $order['total']['currency'];
 
         if ($orderDiscountAmount <= 0) {
             return;
@@ -304,10 +237,77 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     }
 
     /**
+     * @param $order
+     * @return mixed
+     */
+    protected function generateQuote($order = false)
+    {
+        if (array_key_exists('attributes', $order)) {
+            if (array_key_exists('quote_id', $order['attributes'])) {
+                $store = $this->getStoreByQuoteId($order['attributes']['quote_id']);
+            }
+        }
+
+        if (!$order || !$store) {
+            return false;
+        }
+
+        $quote = $this->quoteFactory->create();
+        $quote->setStore($store);
+        $quote->setCurrencyCode($order['total']['currency']);
+        $quote->setCurrency();
+
+        $customer = $this->customerFactory->create();
+        $customer->setStoreId($store->getId());
+        $customer->setWebsiteId($store->getWebsiteId());
+        
+        // Check for existing customer
+        if (array_key_exists('customer', $order)) {
+            $receivedCustomer = $order['customer'];
+
+            if (array_key_exists('email', $receivedCustomer)) {
+                $customer = $customer->loadByEmail($receivedCustomer['email']);
+
+                if (!$customer->getEntityId() &&
+                    array_key_exists('name', $receivedCustomer)) {
+                    if (array_key_exists('first', $receivedCustomer['name']) &&
+                        array_key_exists('last', $receivedCustomer['name'])) {
+                        $customer->setFirstname($receivedCustomer['name']['first']);
+                        $customer->setLastname($receivedCustomer['name']['last']);
+                        $customer->setEmail($receivedCustomer['email']);
+                        $customer = $customer->save();
+                    }
+                }
+            }
+        }
+
+        // No customer found, create a new customer
+        if (!$customer->getEntityId()) {
+            $customer->setFirstname('John');
+            $customer->setLastname('Doe');
+            $customer->setEmail('example@email.com');
+            $customer = $customer->save();
+        }
+
+        $customer = $this->customerRepository->getById($customer->getEntityId());
+
+        $quote->assignCustomer($customer);
+
+        foreach($order['lines'] as $line) {
+            $catalogProduct = $this->productRepository->get($line['item_number']);
+            $product = $this->productFactory->create()->load($catalogProduct->getId());
+            $product->setPrice($line['price']['amount']);
+            $quote->addProduct($product, $line['quantity']);
+        }
+
+        return $quote;
+    }
+
+    /**
      * @param $quoteId
      * @return mixed
      */
-    protected function getStoreByQuoteId($quoteId)
+    protected function getStoreByQuoteId($quoteId = false)
     {
         $store = false;
         $quote = $this->quoteRepository->get($quoteId);
@@ -323,5 +323,14 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $this->logger->info('Store: ' . $storeId);
 
         return $store;
+    }
+
+    /**
+     * @param $order
+     * @param $quote
+     * @return mixed
+     */
+    protected function addOrderItems($order = false, $quote = false)
+    {
     }
 }

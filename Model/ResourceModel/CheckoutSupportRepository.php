@@ -7,16 +7,11 @@ use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Quote\Model\QuoteFactory;
-use Magento\Quote\Model\QuoteManagement;
 use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Checkout\Model\Cart;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
-use Magento\Catalog\Model\Product;
-use Magento\Catalog\Model\ProductFactory;
 use Magento\SalesRule\Model\Coupon;
 use Magento\SalesRule\Model\Rule;
 use Magento\Customer\Model\CustomerFactory;
-use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
@@ -41,34 +36,14 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     protected $quoteFactory;
 
     /**
-     * @var QuoteManagement
-     */
-    protected $quoteManagement;
-
-    /**
      * @var CartRepositoryInterface
      */
     protected $quoteRepository;
 
     /**
-     * @var Cart
-     */
-    protected $cart;
-
-    /**
      * @var ProductRepository
      */
     protected $productRepository;
-
-    /**
-     * @var Product
-     */
-    protected $product;
-
-    /**
-     * @var ProductFactory
-     */
-    protected $productFactory;
 
     /**
      * @var FormKey
@@ -91,52 +66,35 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     protected $customerFactory;
 
     /**
-     * @var CustomerRepository
-     */
-    protected $customerRepository;
-
-    /**
      * @param JsonSerializer $jsonSerializer
      * @param StoreManager $storeManager
      * @param QuoteFactory $quoteFactory
-     * @param QuoteManagement $quoteManagement
      * @param ProductRepository $productRepository
-     * @param ProductFactory $productFactory
      * @param CustomerFactory $customerFactory
-     * @param CustomerRepository $customerRepository
      * @param Logger $logger
      */
     public function __construct(
         JsonSerializer $jsonSerializer,
         StoreManager $storeManager,
         QuoteFactory $quoteFactory,
-        QuoteManagement $quoteManagement,
         CartRepositoryInterface $quoteRepository,
-        Cart $cart,
         ProductRepository $productRepository,
-        Product $product,
-        ProductFactory $productFactory,
         FormKey $formKey,
         Coupon $coupon,
         Rule $saleRule,
         CustomerFactory $customerFactory,
-        CustomerRepository $customerRepository,
         Logger $logger
     ) {
         $this->jsonSerializer = $jsonSerializer;
         $this->storeManager = $storeManager;
         $this->quoteFactory = $quoteFactory;
-        $this->quoteManagement = $quoteManagement;
         $this->quoteRepository = $quoteRepository;
-        $this->cart  = $cart;
         $this->productRepository = $productRepository;
-        $this->product = $product;
         $this->productFactory = $productFactory;
         $this->formKey = $formKey;
         $this->coupon = $coupon;
         $this->saleRule = $saleRule;
         $this->customerFactory = $customerFactory;
-        $this->customerRepository = $customerRepository;
         $this->logger = $logger;
     }
      

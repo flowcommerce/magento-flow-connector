@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:DataObject/etc/fieldset.xsd">
+    <scope id="global">
+        <fieldset id="sales_convert_order">
+            <field name="flow_connector_base_vat">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+            <field name="flow_connector_vat">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+            <field name="flow_connector_base_duty">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+            <field name="flow_connector_duty">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+            <field name="flow_connector_base_rounding">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+            <field name="flow_connector_rounding">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+            <field name="flow_connector_base_item_price">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+            <field name="flow_connector_item_price">
+                <aspect name="to_invoice" />
+                <aspect name="to_cm" />
+            </field>
+        </fieldset>
+        <fieldset id="sales_convert_order_item">
+            <field name="flow_connector_base_vat">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+            <field name="flow_connector_vat">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+            <field name="flow_connector_base_duty">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+            <field name="flow_connector_duty">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+            <field name="flow_connector_base_rounding">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+            <field name="flow_connector_rounding">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+            <field name="flow_connector_base_item_price">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+            <field name="flow_connector_item_price">
+                <aspect name="to_invoice_item" />
+                <aspect name="to_cm_item" />
+            </field>
+        </fieldset>
+    </scope>
+</config>

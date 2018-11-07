@@ -9,9 +9,11 @@ use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Catalog\Model\ProductFactory;
 use Magento\SalesRule\Model\Coupon;
 use Magento\SalesRule\Model\Rule;
 use Magento\Customer\Model\CustomerFactory;
+use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
@@ -36,14 +38,14 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     protected $quoteFactory;
 
     /**
-     * @var CartRepositoryInterface
-     */
-    protected $quoteRepository;
-
-    /**
      * @var ProductRepository
      */
     protected $productRepository;
+
+    /**
+     * @var ProductFactory
+     */
+    protected $productFactory;
 
     /**
      * @var FormKey
@@ -66,11 +68,18 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     protected $customerFactory;
 
     /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
      * @param JsonSerializer $jsonSerializer
      * @param StoreManager $storeManager
      * @param QuoteFactory $quoteFactory
      * @param ProductRepository $productRepository
+     * @param ProductFactory $productFactory
      * @param CustomerFactory $customerFactory
+     * @param CustomerRepository $customerRepository
      * @param Logger $logger
      */
     public function __construct(
@@ -79,10 +88,12 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         QuoteFactory $quoteFactory,
         CartRepositoryInterface $quoteRepository,
         ProductRepository $productRepository,
+        ProductFactory $productFactory,
         FormKey $formKey,
         Coupon $coupon,
         Rule $saleRule,
         CustomerFactory $customerFactory,
+        CustomerRepository $customerRepository,
         Logger $logger
     ) {
         $this->jsonSerializer = $jsonSerializer;
@@ -95,6 +106,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $this->coupon = $coupon;
         $this->saleRule = $saleRule;
         $this->customerFactory = $customerFactory;
+        $this->customerRepository = $customerRepository;
         $this->logger = $logger;
     }
      

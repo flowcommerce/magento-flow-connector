@@ -1603,7 +1603,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+                throw new WebhookException('Unable to find payment by Flow authorization ID: ' . $authorizationId);
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');

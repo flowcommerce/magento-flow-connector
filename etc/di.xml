@@ -17,14 +17,19 @@
     <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
 
     <!-- Proxies for CLI commands -->
+    <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand">
+        <arguments>
+            <argument name="catalogSync" xsi:type="object">FlowCommerce\FlowConnector\Model\Sync\CatalogSync\Proxy</argument>
+        </arguments>
+    </type>
     <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncQueueAllCommand">
         <arguments>
             <argument name="syncSkuManager" xsi:type="object">FlowCommerce\FlowConnector\Model\SyncSkuManager\Proxy</argument>
         </arguments>
     </type>
-    <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand">
+    <type name="FlowCommerce\FlowConnector\Console\Command\InventorySyncProcessCommand">
         <arguments>
-            <argument name="catalogSync" xsi:type="object">FlowCommerce\FlowConnector\Model\Sync\CatalogSync\Proxy</argument>
+            <argument name="inventoryManager" xsi:type="object">FlowCommerce\FlowConnector\Model\InventorySyncManager\Proxy</argument>
         </arguments>
     </type>
     <type name="FlowCommerce\FlowConnector\Console\Command\InventorySyncQueueAllCommand">
@@ -32,9 +37,14 @@
             <argument name="inventorySyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\InventorySyncManager\Proxy</argument>
         </arguments>
     </type>
-    <type name="FlowCommerce\FlowConnector\Console\Command\InventorySyncProcessCommand">
+    <type name="FlowCommerce\FlowConnector\Console\Command\WebhookEventProcessCommand">
         <arguments>
-            <argument name="inventorySyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\InventorySyncManager\Proxy</argument>
+            <argument name="webhookEventManager" xsi:type="object">FlowCommerce\FlowConnector\Model\WebhookEventManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand">
+        <arguments>
+            <argument name="webhookEventManager" xsi:type="object">FlowCommerce\FlowConnector\Model\WebhookEventManager\Proxy</argument>
         </arguments>
     </type>
 

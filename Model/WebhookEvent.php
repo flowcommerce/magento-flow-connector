@@ -999,7 +999,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             $customerId = $receivedOrder['attributes'][self::CUSTOMER_ID];
             $this->logger->info('Retrieving existing user by id: ' . $customerId);
-            $customer->loadById($customerId);
+            $customer->load($customerId);
             if ($customer->getEntityId()) {
                 $this->logger->info('Found customer by id: ' . $customerId);
 

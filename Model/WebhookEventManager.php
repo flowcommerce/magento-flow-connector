@@ -374,8 +374,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
     public function markWebhookEventAsDone(WebhookEvent $webHookEvent, $message = null)
     {
         if ($message !== null) {
-            $message = substr((string) $message, 0, 200);
-            $webHookEvent->setMessage($message);
+            $webHookEvent->setMessage((string)$message);
         }
         $webHookEvent->setStatus(WebhookEvent::STATUS_DONE);
         $this->saveWebhookEvent($webHookEvent);
@@ -386,9 +385,8 @@ class WebhookEventManager implements WebhookEventManagementInterface
      */
     public function markWebhookEventAsError(WebhookEvent $webHookEvent, $errorMessage = null)
     {
-        $errorMessage = substr((string) $errorMessage, 0, 200);
         $webHookEvent->setStatus(WebhookEvent::STATUS_ERROR);
-        $webHookEvent->setMessage($errorMessage);
+        $webHookEvent->setMessage((string)$errorMessage);
         $this->saveWebhookEvent($webHookEvent);
     }
 

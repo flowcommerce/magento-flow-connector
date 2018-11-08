@@ -371,15 +371,15 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Returns the json payload as an array.
-    */
+     * Returns the json payload as an array.
+     */
     public function getPayloadData() {
         return $this->jsonSerializer->unserialize($this->getPayload());
     }
 
     /**
-    * Process webhook event data.
-    */
+     * Process webhook event data.
+     */
     public function process() {
         try {
             $this->webhookEventManager->markWebhookEventAsProcessing($this);
@@ -449,10 +449,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process allocation_deleted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/allocation-deleted-v-2
-    */
+     * Process allocation_deleted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/allocation-deleted-v-2
+     */
     private function processAllocationDeletedV2() {
         # Temporarily disabling allocation_deleted_v2, as it was breaking the cron
         $this->webhookEventManager->markWebhookEventAsDone($this, '');
@@ -481,24 +481,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
 
         } else {
-            throw new WebhookException('Failed to retrieve Flow allocation: ' , $data['id']);
+            throw new WebhookException('Failed to retrieve Flow allocation: ' . $data['id']);
         }
     }
 
     /**
-    * Process allocation_upserted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/allocation-upserted-v-2
-    */
+     * Process allocation_upserted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/allocation-upserted-v-2
+     */
     private function processAllocationUpsertedV2() {
         $this->logger->info('Processing allocation_upserted_v2 data');
         $data = $this->getPayloadData();
 
         if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
-
-            $shippingAmount = 0.0;
-            $baseShippingAmount = 0.0;
-
             foreach ($data['allocation']['details'] as $detail) {
 
                 // allocation_detail is a union model. If there is a "number",
@@ -513,95 +509,111 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     case 'adjustment':
                         if ($item) {
                             // noop, adjustment only applies to order
-                        } else {
-                            $shippingAmount += $detail['total']['amount'];
-                            $baseShippingAmount += $detail['total']['base']['amount'];
                         }
                         break;
 
                     case 'subtotal':
                         if ($item) {
+                            $rawItemPrice = 0.0;
+                            $baseRowItemPrice = 0.0;
+
                             $vatPct = 0.0;
+
                             $vatPrice = 0.0;
                             $baseVatPrice = 0.0;
+
+                            $dutyPct = 0.0;
+
+                            $dutyPrice = 0.0;
+                            $baseDutyPrice = 0.0;
+
+                            $roundingPrice = 0.0;
+                            $baseRoundingPrice = 0.0;
+
+                            $itemPriceInclTax = 0.0;
+                            $baseItemPriceInclTax = 0.0;
+
                             $itemPrice = 0.0;
                             $baseItemPrice = 0.0;
-                            $orderSubtotalInclTaxes = 0.0;
-                            $baseOrderSubtotalInclTaxes = 0.0;
-                            $orderTaxAmount = 0.0;
-                            $baseOrderTaxAmount = 0.0;
                             foreach ($detail['included'] as $included) {
                                 if ($included['key'] == "item_price") {
-                                    $itemPrice += $included['total']['amount'];
-                                    $baseItemPrice += $included['total']['base']['amount'];
+                                    $rawItemPrice += $included['price']['amount'];
+                                    $baseRowItemPrice += $included['price']['base']['amount'];
+
+                                    $itemPrice += $included['price']['amount'];
+                                    $baseItemPrice += $included['price']['base']['amount'];
+
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
                                 } elseif ($included['key'] == 'rounding') {
+                                    $itemPrice += $included['price']['amount'];
+                                    $baseItemPrice += $included['price']['base']['amount'];
+
                                     // add rounding to line total
-                                    $itemPrice += $included['total']['amount'];
-                                    $baseItemPrice += $included['total']['base']['amount'];
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $roundingPrice += $included['price']['amount'];
+                                    $baseRoundingPrice += $included['price']['base']['amount'];
                                 } elseif ($included['key'] == 'vat_item_price') {
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
                                     $vatPct += $included['rate'];
-                                    $vatPrice += $included['total']['amount'];
-                                    $baseVatPrice += $included['total']['base']['amount'];
+                                    $vatPrice += $included['price']['amount'];
+                                    $baseVatPrice += $included['price']['base']['amount'];
                                 } elseif ($included['key'] == 'duties_item_price') {
-                                    $vatPct += $included['rate'];
-                                    $vatPrice += $included['total']['amount'];
-                                    $baseVatPrice += $included['total']['base']['amount'];
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $dutyPct += $included['rate'];
+                                    $dutyPrice += $included['price']['amount'];
+                                    $baseDutyPrice += $included['price']['base']['amount'];
                                 } elseif ($included['key'] == 'item_discount') {
-                                    $item->setDiscountAmount($included['total']['amount']);
-                                    $item->setBaseDiscountAmount($included['total']['base']['amount']);
+                                    $item->setDiscountAmount($included['price']['amount']);
+                                    $item->setBaseDiscountAmount($included['price']['base']['amount']);
                                 }
                             }
-                            $item->setBaseOriginalPrice($baseItemPrice);
                             $item->setOriginalPrice($itemPrice);
+                            $item->setBaseOriginalPrice($baseItemPrice);
                             $item->setPrice($itemPrice);
                             $item->setBasePrice($baseItemPrice);
                             $item->setRowTotal($itemPrice * $detail['quantity']);
                             $item->setBaseRowTotal($baseItemPrice * $detail['quantity']);
-                            $item->setTaxPercent($vatPct * 100);
-                            $item->setTaxAmount($vatPrice);
-                            $item->setBaseTaxAmount($baseVatPrice);
-                            $item->setPriceInclTax(($itemPrice + $vatPrice));
-                            $item->setBasePriceInclTax(($baseItemPrice + $baseVatPrice));
-                            $item->setRowTotalInclTax(($itemPrice + $vatPrice) * $detail['quantity']);
-                            $item->setBaseRowTotalInclTax(($baseItemPrice + $baseVatPrice) * $detail['quantity']);
+                            $item->setTaxPercent(($vatPct * 100)+($dutyPct*100));
+                            $item->setTaxAmount(($vatPrice+$dutyPrice) * $detail['quantity']);
+                            $item->setBaseTaxAmount(($baseVatPrice+$baseDutyPrice) * $detail['quantity']);
+                            $item->setPriceInclTax($itemPriceInclTax);
+                            $item->setBasePriceInclTax($baseItemPriceInclTax);
+                            $item->setRowTotalInclTax($itemPriceInclTax * $detail['quantity']);
+                            $item->setBaseRowTotalInclTax($baseItemPriceInclTax * $detail['quantity']);
+                            $item->setFlowConnectorItemPrice($rawItemPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseItemPrice($baseRowItemPrice * $detail['quantity']);
+                            $item->setFlowConnectorVat($vatPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseVat($baseVatPrice * $detail['quantity']);
+                            $item->setFlowConnectorDuty($dutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
                             $item->save();
-
-                            $orderSubtotalInclTaxes += (($itemPrice + $vatPrice) * $detail['quantity']);
-                            $baseOrderSubtotalInclTaxes += (($baseItemPrice + $baseVatPrice) * $detail['quantity']);
-                            $orderTaxAmount += $vatPrice * $detail['quantity'];
-                            $baseOrderTaxAmount += $baseVatPrice * $detail['quantity'];
-
-                        } else {
-                            $order->setSubtotal($detail['total']['amount']);
-                            $order->setBaseSubtotal($detail['total']['base']['amount']);
-                            $orderSubtotalInclTaxes = $detail['total']['amount'];
-                            $baseOrderSubtotalInclTaxes = $detail['total']['base']['amount'];
                         }
                         break;
 
                     case 'vat':
                         if ($item) {
                             // noop, this is included in the subtotal for line items
-                        } else {
-                            // noop, vat is not set on the order level
                         }
                         break;
 
                     case 'duty':
                         if ($item) {
                             // noop, duty only applies to order
-                        } else {
-                            $order->setDuty($detail['total']['amount']);
-                            $order->setBaseDuty($detail['total']['base']['amount']);
                         }
                         break;
 
                     case 'shipping':
                         if ($item) {
                             // noop, shipping only applies to order
-                        } else {
-                            $shippingAmount += $detail['total']['amount'];
-                            $baseShippingAmount += $detail['total']['base']['amount'];
                         }
                         break;
 
@@ -612,9 +624,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     case 'discount':
                         if ($item) {
                             // noop, this is included in the subtotal for line items
-                        } else {
-                            $order->setDiscountAmount($detail['total']['amount']);
-                            $order->setBaseDiscountAmount($detail['total']['base']['amount']);
                         }
                         break;
 
@@ -623,28 +632,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
             }
 
-            $order->setShippingAmount($shippingAmount);
-            $order->setBaseShippingAmount($baseShippingAmount);
 
-            if (isset($orderSubtotalInclTaxes)) {
-                $order->setSubtotalInclTax($orderSubtotalInclTaxes);
-            }
-
-            if (isset($baseOrderSubtotalInclTaxes)) {
-                $order->setBaseSubtotalInclTax($baseOrderSubtotalInclTaxes);
-            }
-
-            if (isset($orderTaxAmount)) {
-                $order->setTaxAmount($orderTaxAmount);
-            }
-
-            if (isset($baseOrderTaxAmount)) {
-                $order->setBaseTaxAmount($baseOrderTaxAmount);
-            }
-
-            $order->setGrandTotal($data['allocation']['total']['amount']);
-            $order->setBaseGrandTotal($data['allocation']['total']['base']['amount']);
-            $order->save();
+            $this->orderSender->send($order);
 
             $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
@@ -654,10 +643,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process authorization_deleted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/authorization-deleted-v-2
-    */
+     * Process authorization_deleted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/authorization-deleted-v-2
+     */
     private function processAuthorizationDeletedV2() {
         $this->logger->info('Processing authorization_deleted_v2 data');
         $data = $this->getPayloadData();
@@ -700,7 +689,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
 
         } else {
-            throw new WebhookException('Failed to retrieve Flow authorization: ' , $data['id']);
+            throw new WebhookException('Failed to retrieve Flow authorization: ' . $data['id']);
         }
     }
 
@@ -728,8 +717,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                     $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
                     if ($flowPaymentRef == $data['authorization']['id']) {
-                            $orderPayment = $payment;
-                            break;
+                        $orderPayment = $payment;
+                        break;
                     }
                 }
 
@@ -925,10 +914,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process order_deleted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/order-deleted-v-2
-    */
+     * Process order_deleted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/order-deleted-v-2
+     */
     private function processOrderDeletedV2() {
         # Temporarily disabling order_deleted, as it was breaking the cron
         $this->webhookEventManager->markWebhookEventAsDone($this, '');
@@ -960,10 +949,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process order_upserted_v2 webhook event data.
-    *
-    * https://docs.flow.io/type/order-upserted-v-2
-    */
+     * Process order_upserted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/order-upserted-v-2
+     */
     private function processOrderUpsertedV2() {
         $this->logger->info('Processing order_upserted_v2 data');
         $data = $this->getPayloadData();
@@ -1113,6 +1102,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // set country id
             $country = $this->countryFactory->create()->loadByCode($destination['country']);
             $shippingAddress->setCountryId($country->getId());
+
+            // set region
+            if (array_key_exists('province', $destination)) {
+                $region = $this->regionFactory->create()->loadByName($destination['province'], $country->getId());
+                $shippingAddress->setRegionId($region->getId());
+            }
         }
 
         if (array_key_exists('contact', $destination)) {
@@ -1184,13 +1179,13 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 if (
                     array_key_exists('address', $flowPayment) ||
-                    (array_key_exists('address', $data['customer']) && $flowPayment['type'] == 'online')
+                    (array_key_exists('address', $receivedOrder['customer']) && $flowPayment['type'] == 'online')
                 ) {
                     $this->logger->info('Adding billing address');
 
                     // Paypal orders have no billing address on the payments entity
                     if ($flowPayment['type'] == 'online') {
-                        $paymentAddress = $data['customer']['address'];
+                        $paymentAddress = $receivedOrder['customer']['address'];
                     } else {
                         $paymentAddress = $flowPayment['address'];
                     }
@@ -1223,11 +1218,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $billingAddress->setCountryId($country->getId());
 
                         // set region
-                        if (array_key_exists('city', $paymentAddress)) {
-                            $region = $this->regionFactory->create()->loadByCode($paymentAddress['city'], $country->getId());
-                            $billingAddress->setRegionId($region->getId());
-                        } elseif (array_key_exists('province', $paymentAddress)) {
-                            $region = $this->regionFactory->create()->loadByCode($paymentAddress['province'], $country->getId());
+                        if (array_key_exists('province', $paymentAddress)) {
+                            $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
                             $billingAddress->setRegionId($region->getId());
                         }
                     }
@@ -1286,17 +1278,30 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         // Set order total
         // https://docs.flow.io/type/localized-total
-        $order->setBaseTotalPaid($receivedOrder['total']['base']['amount']);
-        $order->setTotalPaid($receivedOrder['total']['amount']);
         $order->setBaseCurrencyCode($receivedOrder['total']['base']['currency']);
         $order->setOrderCurrencyCode($receivedOrder['total']['currency']);
         $order->setBaseToOrderRate($receivedOrder['total']['base']['amount'] / $receivedOrder['total']['amount']);
+
+        $rawItemPriceAmount = 0.0;
+        $baseRawItemPriceAmount = 0.0;
+
+        $dutyAmount = 0.0;
+        $baseDutyAmount = 0.0;
+
+        $vatAmount = 0.0;
+        $baseVatAmount = 0.0;
+
+        $roundingAmount = 0.0;
+        $baseRoundingAmount = 0.0;
 
         $shippingAmount = 0.0;
         $baseShippingAmount = 0.0;
 
         // Set order prices
         // https://docs.flow.io/type/order-price-detail
+
+        $taxAmount = 0.0;
+        $baseTaxAmount = 0.0;
         $prices = $receivedOrder['prices'];
         foreach ($prices as $price) {
             switch($price['key']) {
@@ -1309,21 +1314,87 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     // The details of the subtotal for the order, including item prices, margins, and rounding.
                     $order->setSubtotal($price['amount']);
                     $order->setBaseSubtotal($price['base']['amount']);
+
+                    if (array_key_exists('components', $price)) {
+                        $components = $price['components'];
+
+                        $itemPriceComponentKey = array_search('item_price', array_column($components, 'key'));
+                        if ($itemPriceComponentKey !== false &&
+                            is_array($itemPriceComponent = $components[$itemPriceComponentKey])
+                        ) {
+                            $rawItemPriceAmount += $itemPriceComponent['amount'];
+                            $baseRawItemPriceAmount += $itemPriceComponent['base']['amount'];
+                        }
+
+                        $roundingComponentKey = array_search('rounding', array_column($components, 'key'));
+                        if ($roundingComponentKey !== false &&
+                            is_array($roundingComponent = $components[$roundingComponentKey])
+                        ) {
+                            $roundingAmount += $roundingComponent['amount'];
+                            $baseRoundingAmount += $roundingComponent['base']['amount'];
+                        }
+
+                        $vatPriceComponentKeys = ['vat_item_price', 'vat_deminimis', 'vat_duties_item_price', 'vat_subsidy'];
+                        foreach($vatPriceComponentKeys as $vatPriceComponentKey) {
+                            $vatPriceComponentIndex = array_search($vatPriceComponentKey, array_column($components, 'key'));
+                            if (($vatPriceComponentIndex !== false) &&
+                                is_array($vatPriceComponent = $components[$vatPriceComponentIndex])
+                            ) {
+                                $vatAmount += (float) $vatPriceComponent['amount'];
+                                $baseVatAmount += (float) $vatPriceComponent['base']['amount'];
+                            }
+                        }
+
+                        $dutyComponentKeys = ['duties_item_price', 'duty_deminimis'];
+                        foreach($dutyComponentKeys as $dutyComponentKey) {
+                            $dutyPriceComponentIndex = array_search($dutyComponentKey, array_column($components, 'key'));
+                            if (($dutyPriceComponentIndex !== false) &&
+                                is_array($dutyPriceComponent = $components[$dutyPriceComponentIndex])
+                            ) {
+                                $dutyAmount += (float) $dutyPriceComponent['amount'];
+                                $baseDutyAmount += (float) $dutyPriceComponent['base']['amount'];
+                            }
+                        }
+                    }
                     break;
                 case 'vat':
                     // The details of any VAT owed on the order.
-                    $order->setCustomerTaxvat($price['amount']);
-                    $order->setBaseCustomerTaxvat($price['base']['amount']);
+                    $taxAmount += $price['amount'];
+                    $baseTaxAmount += $price['base']['amount'];
                     break;
                 case 'duty':
-                    // The details of any duties owed on the order.
-                    $order->setDuty($price['amount']);
-                    $order->setBaseDuty($price['base']['amount']);
+                    $taxAmount += $price['amount'];
+                    $baseTaxAmount += $price['base']['amount'];
                     break;
                 case 'shipping':
                     // The details of shipping costs for the order.
                     $shippingAmount += $price['amount'];
                     $baseShippingAmount += $price['base']['amount'];
+
+                    if (array_key_exists('components', $price)) {
+                        $components = $price['components'];
+                        $vatPriceComponentKeys = ['vat_deminimis', 'vat_freight', 'vat_duties_freight', 'vat_subsidy'];
+                        foreach ($vatPriceComponentKeys as $vatPriceComponentKey) {
+                            $vatPriceComponentIndex = array_search($vatPriceComponentKey, array_column($components, 'key'));
+                            if (($vatPriceComponentIndex !== false) &&
+                                is_array($vatPriceComponent = $components[$vatPriceComponentIndex])
+                            ) {
+                                $vatAmount += (float) $vatPriceComponent['amount'];
+                                $baseVatAmount += (float) $vatPriceComponent['base']['amount'];
+                            }
+                        }
+
+                        $dutyComponentKeys = ['duties_freight', 'duty_deminimis'];
+                        foreach ($dutyComponentKeys as $dutyComponentKey) {
+                            $dutyPriceComponentIndex = array_search($dutyComponentKey, array_column($components, 'key'));
+                            if (($dutyPriceComponentIndex !== false) &&
+                                is_array($dutyPriceComponent = $components[$dutyPriceComponentIndex])
+                            ) {
+                                $dutyAmount += (float) $dutyPriceComponent['amount'];
+                                $baseDutyAmount += (float) $dutyPriceComponent['base']['amount'];
+                            }
+                        }
+                    }
                     break;
                 case 'insurance':
                     // The details of insurance costs for the order.
@@ -1338,6 +1409,24 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     throw new WebhookException('Invalid order price type');
             }
         }
+
+        $order->setFlowConnectorItemPrice($rawItemPriceAmount);
+        $order->setFlowConnectorBaseItemPrice($baseRawItemPriceAmount);
+
+        $order->setFlowConnectorVat($vatAmount);
+        $order->setFlowConnectorBaseVat($baseVatAmount);
+
+        $order->setFlowConnectorDuty($dutyAmount);
+        $order->setFlowConnectorBaseDuty($baseDutyAmount);
+
+        $order->setFlowConnectorRounding($roundingAmount);
+        $order->setFlowConnectorBaseRounding($baseRoundingAmount);
+
+        $order->setTaxAmount($taxAmount);
+        $order->setBaseTaxAmount($baseTaxAmount);
+
+        $order->setGrandTotal($receivedOrder['total']['amount']);
+        $order->setBaseGrandTotal($receivedOrder['total']['base']['amount']);
 
         $order->setShippingAmount($shippingAmount);
         $order->setBaseShippingAmount($baseShippingAmount);
@@ -1363,8 +1452,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ////////////////////////////////////////////////////////////
 
         $order->save();
-
-        $this->orderSender->send($order);
 
         ////////////////////////////////////////////////////////////
         // Store Flow order
@@ -1524,10 +1611,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process fraud_status_changed webhook event data.
-    *
-    * https://docs.flow.io/type/fraud-status-changed
-    */
+     * Process fraud_status_changed webhook event data.
+     *
+     * https://docs.flow.io/type/fraud-status-changed
+     */
     private function processFraudStatusChanged() {
         $this->logger->info('Processing fraud_status_changed data');
         $data = $this->getPayloadData();
@@ -1556,10 +1643,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process tracking_label_event_upserted webhook event data.
-    *
-    * https://docs.flow.io/type/tracking-label-event-upserted
-    */
+     * Process tracking_label_event_upserted webhook event data.
+     *
+     * https://docs.flow.io/type/tracking-label-event-upserted
+     */
     private function processTrackingLabelEventUpserted() {
         $this->logger->info('Processing tracking_label_event_upserted data');
         $data = $this->getPayloadData();
@@ -1578,10 +1665,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Process label_upserted webhook event data.
-    *
-    * https://docs.flow.io/type/label-upserted
-    */
+     * Process label_upserted webhook event data.
+     *
+     * https://docs.flow.io/type/label-upserted
+     */
     private function processLabelUpserted() {
         $this->logger->info('Processing label_upserted data');
         $data = $this->getPayloadData();
@@ -1612,10 +1699,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Returns the order for Flow order number.
-    *
-    * @return Order
-    */
+     * Returns the order for Flow order number.
+     *
+     * @return Order
+     */
     private function getOrderByFlowOrderNumber($number) {
         $order = $this->orderFactory->create();
         $order->load($number, 'ext_order_id');
@@ -1651,9 +1738,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-    * Returns the order item with the matching sku.
-    * @return OrderItem
-    */
+     * Returns the order item with the matching sku.
+     * @return OrderItem
+     */
     private function getOrderItem($order, $sku) {
         $item = null;
         foreach($order->getAllItems() as $orderItem) {

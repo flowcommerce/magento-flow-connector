@@ -430,7 +430,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
         $ts = microtime(true);
         $syncSku->setStatus(SyncSku::STATUS_ERROR);
         if ($errorMessage !== null) {
-            $syncSku->setMessage(substr($errorMessage, 0, 200));
+            $syncSku->setMessage((string)$errorMessage);
         }
         $syncSku->setRequestUrl($requestUrl);
         $syncSku->setRequestBody($requestBody);

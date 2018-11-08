@@ -4,6 +4,7 @@ namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
 use FlowCommerce\FlowConnector\Api\CheckoutSupportRepositoryInterface;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Data\Form\FormKey;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Quote\Model\QuoteFactory;
@@ -26,6 +27,11 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
      * @var JsonSerializer
      */
     protected $jsonSerializer;
+
+    /**
+     * @var JsonFactory
+     */
+    protected $jsonFactory;
 
     /**
      * @var StoreManager
@@ -74,6 +80,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
 
     /**
      * @param JsonSerializer $jsonSerializer
+     * @param JsonFactory $jsonFactory
      * @param StoreManager $storeManager
      * @param QuoteFactory $quoteFactory
      * @param ProductRepository $productRepository
@@ -84,6 +91,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
      */
     public function __construct(
         JsonSerializer $jsonSerializer,
+        JsonFactory $jsonFactory,
         StoreManager $storeManager,
         QuoteFactory $quoteFactory,
         CartRepositoryInterface $quoteRepository,
@@ -97,6 +105,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         Logger $logger
     ) {
         $this->jsonSerializer = $jsonSerializer;
+        $this->jsonFactory = $jsonFactory;
         $this->storeManager = $storeManager;
         $this->quoteFactory = $quoteFactory;
         $this->quoteRepository = $quoteRepository;
@@ -157,13 +166,13 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
         $this->logger->info('Discount amount found: ' . $orderDiscountAmount);
 
-        // TODO THIS ISNT THE RIGHT STRUCTURE, REFERENCE https://app.apibuilder.io/flow/experience-internal/0.6.27#model-discount_request_order_form
-        $result = [
-            "amount" => $orderDiscountAmount,
-            "currency" => $orderCurrency
-        ];
+        $result = [[
+            'amount' => $orderDiscountAmount,
+            'currency' => $orderCurrency 
+        ]];
+        $this->logger->info(json_encode($result));
 
-        return json_encode($result);
+        return $result;
     }
 
     /**

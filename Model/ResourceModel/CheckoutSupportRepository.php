@@ -122,7 +122,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     /**
      * @param $order
      * @param $code
-     * @return mixed
+     * @return \stdClass
      */
     public function discountRequest($order = false, $code = false)
     {
@@ -166,12 +166,20 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
         $this->logger->info('Discount amount found: ' . $orderDiscountAmount);
 
-        $result = [[
-            'amount' => $orderDiscountAmount,
-            'currency' => $orderCurrency 
-        ]];
-        $this->logger->info(json_encode($result));
+        $result = (object)[
+            'order_form' => [
+                'order_entitlement_forms' => [[
+                    'entitlement_key' => 'subtotal',
+                    'offer_form' => [
+                        'discriminator' => 'discount_request_offer_fixed_amount_form',
+                        'amount' => $orderDiscountAmount,
+                        'currency' => $orderCurrency 
+                    ]
+                ]]
+            ]
+        ];
 
+        $this->logger->info(json_encode($result));
         return $result;
     }
 

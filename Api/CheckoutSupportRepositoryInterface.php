@@ -9,7 +9,7 @@ interface CheckoutSupportRepositoryInterface
     /**
      * @param mixed $order
      * @param string $code
-     * @return mixed
+     * @return \stdClass
      */
     public function discountRequest($order,$code);
 }

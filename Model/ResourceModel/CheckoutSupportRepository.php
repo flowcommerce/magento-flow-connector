@@ -3,6 +3,7 @@
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
 use FlowCommerce\FlowConnector\Api\CheckoutSupportRepositoryInterface;
+use \FlowCommerce\FlowConnector\Model\Discount;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Data\Form\FormKey;
@@ -69,6 +70,11 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     protected $saleRule;     
 
     /**
+     * @var Discount
+     */
+    protected $discount;     
+
+    /**
      * @var CustomerFactory
      */
     protected $customerFactory;
@@ -100,6 +106,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         FormKey $formKey,
         Coupon $coupon,
         Rule $saleRule,
+        Discount $discount,
         CustomerFactory $customerFactory,
         CustomerRepository $customerRepository,
         Logger $logger
@@ -114,6 +121,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         $this->formKey = $formKey;
         $this->coupon = $coupon;
         $this->saleRule = $saleRule;
+        $this->discount = $discount;
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
         $this->logger = $logger;
@@ -122,7 +130,7 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     /**
      * @param $order
      * @param $code
-     * @return \stdClass
+     * @return Discount
      */
     public function discountRequest($order = false, $code = false)
     {
@@ -166,21 +174,23 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
         }
         $this->logger->info('Discount amount found: ' . $orderDiscountAmount);
 
-        $result = (object)[
-            'order_form' => [
-                'order_entitlement_forms' => [[
-                    'entitlement_key' => 'subtotal',
-                    'offer_form' => [
-                        'discriminator' => 'discount_request_offer_fixed_amount_form',
-                        'amount' => $orderDiscountAmount,
-                        'currency' => $orderCurrency 
-                    ]
-                ]]
-            ]
-        ];
+        /* $result = (object)[ */
+        /*     'order_form' => [ */
+        /*         'order_entitlement_forms' => [[ */
+        /*             'entitlement_key' => 'subtotal', */
+        /*             'offer_form' => [ */
+        /*                 'discriminator' => 'discount_request_offer_fixed_amount_form', */
+        /*                 'amount' => $orderDiscountAmount, */
+        /*                 'currency' => $orderCurrency */ 
+        /*             ] */
+        /*         ]] */
+        /*     ] */
+        /* ]; */
 
-        $this->logger->info(json_encode($result));
-        return $result;
+        $this->discount->addSubtotalDiscount($orderDiscountAmount, $orderCurrency);
+
+        $this->logger->info(json_encode($this->discount));
+        return $this->discount;
     }
 
     /**

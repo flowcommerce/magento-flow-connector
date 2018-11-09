@@ -9,7 +9,7 @@ interface CheckoutSupportRepositoryInterface
     /**
      * @param mixed $order
      * @param string $code
-     * @return \stdClass
+     * @return \FlowCommerce\FlowConnector\Model\Discount
      */
     public function discountRequest($order,$code);
 }

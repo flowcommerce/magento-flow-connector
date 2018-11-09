@@ -21,6 +21,9 @@ use FlowCommerce\FlowConnector\Model\SyncSkuManager;
 
 class UpgradeData implements UpgradeDataInterface
 {
+    /**
+     * @var SalesSetupFactory
+     */
     private $salesSetupFactory;
 
     /**
@@ -133,6 +136,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->addDutyVatAndRoundingToInvoiceItem($setup);
             $this->addDutyVatAndRoundingToCreditMemo($setup);
             $this->addDutyVatAndRoundingToCreditMemoItem($setup);
+        }
+
+        if ($context->getVersion() && version_compare($context->getVersion(), '1.1.0', '<')) {
+            $this->addOrderReadyToOrder($setup);
         }
     }
 
@@ -376,6 +383,24 @@ class UpgradeData implements UpgradeDataInterface
 
         foreach ($attributes as $attributeCode => $attributeParams) {
             $salesSetup->addAttribute('creditmemo_item', $attributeCode, $attributeParams);
+        }
+    }
+
+    /**
+     * Add Duty, VAT and Rounding attributes to order.
+     *
+     * @param ModuleDataSetupInterface $setup
+     */
+    private function addOrderReadyToOrder(ModuleDataSetupInterface $setup)
+    {
+        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
+
+        $attributes = [
+            'flow_connector_order_ready' => ['type' => 'int', 'visible' => false, 'required' => false, 'default' => 0]
+        ];
+
+        foreach ($attributes as $attributeCode => $attributeParams) {
+            $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
         }
     }
 }

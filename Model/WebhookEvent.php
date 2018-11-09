@@ -548,6 +548,14 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->logger->info('Processing allocation_upserted_v2 data');
         $data = $this->getPayloadData();
 
+        $receivedOrder = $data['allocation']['order'];
+
+        // Do not process allocations until their order has submitted_at date
+        if (!array_key_exists('submitted_at', $receivedOrder)) {
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order data incomplete, skipping');
+            return;
+        }
+
         if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
             foreach ($data['allocation']['details'] as $detail) {
 
@@ -686,8 +694,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
             }
 
+            $order->setFlowConnectorOrderReady(1);
 
             $this->orderSender->send($order);
+
+            // Save order after sending order confirmation email
+            $order->save();
 
             $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
@@ -759,81 +771,41 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         $this->logger->info('Processing capture_upserted_v2 data');
         $data = $this->getPayloadData();
-        if (array_key_exists('authorization', $data) && array_key_exists('order', $data['authorization'])) {
-            $flowOrderNumber = $data['authorization']['order']['number'];
-            /** @var OrderModel $order */
-            if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
-                $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
-                /** @var Payment|null $orderPayment */
-                $orderPayment = null;
-                foreach ($order->getPaymentsCollection() as $payment) {
-                    $this->logger->info('Payment: ' . $payment->getId());
-                    $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
-                    if ($flowPaymentRef == $data['authorization']['id']) {
-                        $orderPayment = $payment;
-                        break;
-                    }
-                }
-                if ($orderPayment) {
+
+        if((!empty($data['authorization']['order']['number'])
+            && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
+            ) ||
+            (!empty($data['capture']['authorization']['key'])
+                && ($order = $this->getOrderByFlowAuthorizationId($data['capture']['authorization']['key']))
+            )
+        ) {
+            $this->logger->info('Found order id: ' . $order->getEntityId());
+
+            if(($orderPayment = $order->getPayment())) {
+                if(!$order->isPaymentReview()
+                    && $order->getFlowConnectorOrderReady()
+                ) {
+                    // Close transaction
+                    /** @var Payment|null $orderPayment */
                     if ($orderPayment->canCapture()) {
-                        // Payment initiated through Flow, mark payment as closed.
+                        // Mark payment as closed.
                         $orderPayment->setIsTransactionClosed(true);
-                    } else {
-                        // Ignore, capture was initiated by Magento.
                     }
 
                     // Create invoice
                     if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED) {
-                        if(!$order->isPaymentReview()) {
-                            $this->invoiceOrder($order);
-                        } else {
-                            $this->requeue('Order is in payment review so unable to invoice, reprocess.');
-
-                            return;
-                        }
+                        $this->invoiceOrder($order);
                     }
 
                     $this->webhookEventManager->markWebhookEventAsDone($this, '');
                 } else {
-                    throw new WebhookException('Unable to find corresponding payment.');
+                    $this->requeue('Unable to find order right now, reprocess.');
                 }
-            }
-        } elseif (array_key_exists('capture', $data) &&
-            array_key_exists('authorization', $data['capture']) &&
-            array_key_exists('key', $data['capture']['authorization'])
-        ) {
-            $authorizationId = $data['capture']['authorization']['key'];
-
-            /** @var Payment|null $orderPayment */
-            $orderPayment = $this->getOrderPaymentByFlowAuthorizationId($authorizationId);
-            if ($orderPayment) {
-                if ($orderPayment->canCapture()) {
-                    // Payment initiated through Flow, mark payment as closed.
-                    $orderPayment->setIsTransactionClosed(true);
-                } else {
-                    // Ignore, capture was initiated by Magento.
-                }
-
-                if($order = $orderPayment->getOrder()) {
-                    // Create invoice when payment initiated through Flow
-                    $test = $this->flowUtil->getFlowInvoicingEvent($order->getStoreId());
-                    if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED) {
-
-                        if(!$order->isPaymentReview()) {
-                            $this->invoiceOrder($order);
-                        } else {
-                            $this->requeue('Order is in payment review so unable to invoice, reprocess.');
-                        }
-                    }
-                } else {
-                    $this->logger->info(
-                        sprintf('Unable to find order for payment ID #%s in order to invoice', $orderPayment->getId())
-                    );
-                }
-
-                $this->webhookEventManager->markWebhookEventAsDone($this, '');
             } else {
-                $this->requeue('Unable to find order payment right now, reprocess.');
+                $this->logger->info(
+                    sprintf('Unable to find payment for order ID #%s', $orderPayment->getId())
+                );
+                throw new WebhookException('Unable to find payment for order ID #%s', $orderPayment->getId());
             }
         } else {
             throw new WebhookException('Order data not found on capture event: ' . $data['id']);
@@ -1805,17 +1777,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $orderIdentifier = $data['order'];
         }
         if ($orderIdentifier !== null) {
-            if ($order = $this->getOrderByFlowOrderNumber($orderIdentifier)) {
+            if (($order = $this->getOrderByFlowOrderNumber($orderIdentifier))
+                && !$order->isPaymentReview()
+                && $order->getFlowConnectorOrderReady()
+            ) {
                 // Create invoice
-                if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED) {
+                if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED
+                    && ($orderPayment = $order->getPayment())
+                ) {
                     // Create invoice
-                    if(!$order->isPaymentReview()) {
-                        $this->invoiceOrder($order);
-                    } else {
-                        $this->requeue('Order is in payment review so unable to invoice, reprocess.');
-
-                        return;
-                    }
+                    $this->invoiceOrder($order);
                 }
 
                 // Create shipment
@@ -1847,7 +1818,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
-                return;
             }
         } else {
             $this->webhookEventManager->markWebhookEventAsError($this, 'Order identifier not present');
@@ -1857,7 +1827,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     /**
      * Returns the order for Flow order number.
      *
-     * @return Order
+     * @return OrderModel
      */
     private function getOrderByFlowOrderNumber($number) {
         $order = $this->orderFactory->create();
@@ -1888,6 +1858,25 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         foreach ($orderPaymentItems as $orderPaymentItem) {
             // Returns first order payment found if any
             return $orderPaymentItem;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the order payment by Flow authorization ID
+     *
+     * @param $authorizationId
+     * @return Order|null
+     */
+    private function getOrderByFlowAuthorizationId($authorizationId) {
+        $orderPayment = $this->getOrderPaymentByFlowAuthorizationId($authorizationId);
+        if($orderPayment && $orderPayment->getEntityId()) {
+            $order = $this->orderFactory->create();
+            $order->load($orderPayment->getParentId());
+            if($order->getEntityId()) {
+                return $order;
+            }
         }
 
         return null;

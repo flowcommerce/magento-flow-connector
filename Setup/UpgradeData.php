@@ -8,7 +8,6 @@ use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Sales\Setup\SalesSetupFactory;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Magento\Framework\Api\FilterBuilder;
@@ -21,11 +20,6 @@ use FlowCommerce\FlowConnector\Model\SyncSkuManager;
 
 class UpgradeData implements UpgradeDataInterface
 {
-    /**
-     * @var SalesSetupFactory
-     */
-    private $salesSetupFactory;
-
     /**
      * @var StoreManager
      */
@@ -78,7 +72,6 @@ class UpgradeData implements UpgradeDataInterface
 
     /**
      * UpgradeData constructor.
-     * @param SalesSetupFactory $salesSetupFactory
      * @param StoreManager $storeManager
      * @param CustomerRepository $customerRepository
      * @param FilterBuilder $filterBuilder
@@ -90,7 +83,6 @@ class UpgradeData implements UpgradeDataInterface
      * @param AppState $appState
      */
     public function __construct(
-        SalesSetupFactory $salesSetupFactory,
         StoreManager $storeManager,
         CustomerRepository $customerRepository,
         FilterBuilder $filterBuilder,
@@ -102,7 +94,6 @@ class UpgradeData implements UpgradeDataInterface
         AppState $appState,
         SyncSkuManager $syncSkuManager
     ) {
-        $this->salesSetupFactory = $salesSetupFactory;
         $this->storeManager = $storeManager;
         $this->customerRepository = $customerRepository;
         $this->filterBuilder = $filterBuilder;
@@ -127,19 +118,6 @@ class UpgradeData implements UpgradeDataInterface
 
         if ($context->getVersion() && version_compare($context->getVersion(), '1.0.36', '<')) {
             $this->enqueueAllProducts($setup);
-        }
-
-        if ($context->getVersion() && version_compare($context->getVersion(), '1.0.39', '<')) {
-            $this->addDutyVatAndRoundingToOrder($setup);
-            $this->addDutyVatAndRoundingToOrderItem($setup);
-            $this->addDutyVatAndRoundingToInvoice($setup);
-            $this->addDutyVatAndRoundingToInvoiceItem($setup);
-            $this->addDutyVatAndRoundingToCreditMemo($setup);
-            $this->addDutyVatAndRoundingToCreditMemoItem($setup);
-        }
-
-        if (version_compare($context->getVersion(), '1.1.0', '<')) {
-            $this->addOrderReadyToOrder($setup);
         }
     }
 
@@ -233,174 +211,6 @@ class UpgradeData implements UpgradeDataInterface
                     $e->getTraceAsString()
                 )
             );
-        }
-    }
-
-    /**
-     * Add Duty, VAT and Rounding attributes to order.
-     *
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function addDutyVatAndRoundingToOrder(ModuleDataSetupInterface $setup)
-    {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $attributes = [
-            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-        ];
-
-        foreach ($attributes as $attributeCode => $attributeParams) {
-            $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
-        }
-    }
-
-    /**
-     * Add Duty, VAT and Rounding attributes to order item.
-     *
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function addDutyVatAndRoundingToOrderItem(ModuleDataSetupInterface $setup)
-    {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $attributes = [
-            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-        ];
-
-        foreach ($attributes as $attributeCode => $attributeParams) {
-            $salesSetup->addAttribute('order_item', $attributeCode, $attributeParams);
-        }
-    }
-
-    /**
-     * Add Duty, VAT and Rounding attributes to invoice.
-     *
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function addDutyVatAndRoundingToInvoice(ModuleDataSetupInterface $setup)
-    {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $attributes = [
-            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-        ];
-
-        foreach ($attributes as $attributeCode => $attributeParams) {
-            $salesSetup->addAttribute('invoice', $attributeCode, $attributeParams);
-        }
-    }
-
-    /**
-     * Add Duty, VAT and Rounding attributes to invoice item.
-     *
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function addDutyVatAndRoundingToInvoiceItem(ModuleDataSetupInterface $setup)
-    {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $attributes = [
-            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-        ];
-
-        foreach ($attributes as $attributeCode => $attributeParams) {
-            $salesSetup->addAttribute('invoice_item', $attributeCode, $attributeParams);
-        }
-    }
-
-    /**
-     * Add Duty, VAT and Rounding attributes to Credit Memo.
-     *
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function addDutyVatAndRoundingToCreditMemo(ModuleDataSetupInterface $setup)
-    {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $attributes = [
-            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-        ];
-
-        foreach ($attributes as $attributeCode => $attributeParams) {
-            $salesSetup->addAttribute('creditmemo', $attributeCode, $attributeParams);
-        }
-    }
-
-    /**
-     * Add Duty, VAT and Rounding attributes to Credit Memo item.
-     *
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function addDutyVatAndRoundingToCreditMemoItem(ModuleDataSetupInterface $setup)
-    {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $attributes = [
-            'flow_connector_base_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_item_price' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_vat' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_duty' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_base_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-            'flow_connector_rounding' => ['type' => 'decimal', 'visible' => false, 'required' => false],
-        ];
-
-        foreach ($attributes as $attributeCode => $attributeParams) {
-            $salesSetup->addAttribute('creditmemo_item', $attributeCode, $attributeParams);
-        }
-    }
-
-    /**
-     * Add Duty, VAT and Rounding attributes to order.
-     *
-     * @param ModuleDataSetupInterface $setup
-     */
-    private function addOrderReadyToOrder(ModuleDataSetupInterface $setup)
-    {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
-
-        $attributes = [
-            'flow_connector_order_ready' => ['type' => 'int', 'visible' => false, 'required' => false, 'default' => 0]
-        ];
-
-        foreach ($attributes as $attributeCode => $attributeParams) {
-            $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
         }
     }
 }

@@ -138,7 +138,7 @@ class UpgradeData implements UpgradeDataInterface
             $this->addDutyVatAndRoundingToCreditMemoItem($setup);
         }
 
-        if ($context->getVersion() && version_compare($context->getVersion(), '1.1.0', '<')) {
+        if (version_compare($context->getVersion(), '1.1.0', '<')) {
             $this->addOrderReadyToOrder($setup);
         }
     }

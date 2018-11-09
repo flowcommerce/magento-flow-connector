@@ -772,40 +772,44 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->logger->info('Processing capture_upserted_v2 data');
         $data = $this->getPayloadData();
 
-        if((!empty($data['authorization']['order']['number'])
-            && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
-            ) ||
-            (!empty($data['capture']['authorization']['key'])
-                && ($order = $this->getOrderByFlowAuthorizationId($data['capture']['authorization']['key']))
-            )
-        ) {
-            $this->logger->info('Found order id: ' . $order->getEntityId());
+        if(!empty($data['authorization']['order']['number']) || !empty($data['capture']['authorization']['key'])) {
+            if((!empty($data['authorization']['order']['number'])
+                    && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
+                ) ||
+                (!empty($data['capture']['authorization']['key'])
+                    && ($order = $this->getOrderByFlowAuthorizationId($data['capture']['authorization']['key']))
+                )
+            ) {
+                $this->logger->info('Found order id: ' . $order->getEntityId());
 
-            if(($orderPayment = $order->getPayment())) {
-                if($order->getFlowConnectorOrderReady()) {
-                    // Close transaction
-                    /** @var Payment|null $orderPayment */
-                    if ($orderPayment->canCapture()) {
-                        // Mark payment as closed.
-                        $orderPayment->setIsTransactionClosed(true);
+                if(($orderPayment = $order->getPayment())) {
+                    if($order->getFlowConnectorOrderReady()) {
+                        // Close transaction
+                        /** @var Payment|null $orderPayment */
+                        if ($orderPayment->canCapture()) {
+                            // Mark payment as closed.
+                            $orderPayment->setIsTransactionClosed(true);
+                        }
+
+                        // Create invoice
+                        if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
+                            && $order->canInvoice()
+                        ) {
+                            $this->invoiceOrder($order);
+                        }
+
+                        $this->webhookEventManager->markWebhookEventAsDone($this, '');
+                    } else {
+                        $this->requeue('Unable to find order right now, reprocess.');
                     }
-
-                    // Create invoice
-                    if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
-                        && $order->canInvoice()
-                    ) {
-                        $this->invoiceOrder($order);
-                    }
-
-                    $this->webhookEventManager->markWebhookEventAsDone($this, '');
                 } else {
-                    $this->requeue('Unable to find order right now, reprocess.');
+                    $this->logger->info(
+                        sprintf('Unable to find payment for order ID #%s', $order->getEntityId())
+                    );
+                    throw new WebhookException('Unable to find payment for order ID #%s', $orderPayment->getId());
                 }
             } else {
-                $this->logger->info(
-                    sprintf('Unable to find payment for order ID #%s', $order->getEntityId())
-                );
-                throw new WebhookException('Unable to find payment for order ID #%s', $orderPayment->getId());
+                $this->requeue('Unable to find order right now, reprocess.');
             }
         } else {
             throw new WebhookException('Order data not found on capture event: ' . $data['id']);

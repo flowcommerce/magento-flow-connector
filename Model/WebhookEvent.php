@@ -782,9 +782,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->logger->info('Found order id: ' . $order->getEntityId());
 
             if(($orderPayment = $order->getPayment())) {
-                if(!$order->isPaymentReview()
-                    && $order->getFlowConnectorOrderReady()
-                ) {
+                if($order->getFlowConnectorOrderReady()) {
                     // Close transaction
                     /** @var Payment|null $orderPayment */
                     if ($orderPayment->canCapture()) {
@@ -793,7 +791,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     }
 
                     // Create invoice
-                    if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED) {
+                    if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
+                        && $order->canInvoice()
+                    ) {
                         $this->invoiceOrder($order);
                     }
 
@@ -803,7 +803,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
             } else {
                 $this->logger->info(
-                    sprintf('Unable to find payment for order ID #%s', $orderPayment->getId())
+                    sprintf('Unable to find payment for order ID #%s', $order->getEntityId())
                 );
                 throw new WebhookException('Unable to find payment for order ID #%s', $orderPayment->getId());
             }
@@ -1778,41 +1778,41 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
         if ($orderIdentifier !== null) {
             if (($order = $this->getOrderByFlowOrderNumber($orderIdentifier))
-                && !$order->isPaymentReview()
                 && $order->getFlowConnectorOrderReady()
             ) {
                 // Create invoice
                 if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED
-                    && ($orderPayment = $order->getPayment())
+                    && ($orderPayment = $order->getPayment() && $order->canInvoice())
                 ) {
                     // Create invoice
                     $this->invoiceOrder($order);
                 }
 
                 // Create shipment
-                $shipment = $this->shipOrder($order);
-                if($shipment && $shipment->getId()) {
-                    $tracks = [];
-                    if(isset($data['carrier']) && isset($data['carrier_tracking_number'])) {
-                        $carrierTrack = [
-                            'carrier_code' => 'custom',
-                            'title' => $data['carrier'],
-                            'number' => $data['carrier_tracking_number']
-                        ];
-                        $tracks[] = $carrierTrack;
-                    }
-                    if(isset($data['flow_tracking_number'])) {
-                        $flowTrack = [
-                            'carrier_code' => 'custom',
-                            'title' => 'Flow',
-                            'number' => $data['flow_tracking_number']
-                        ];
-                        $tracks[] = $flowTrack;
-                    }
+                if($order->canShip()) {
+                    $shipment = $this->shipOrder($order);
+                    if($shipment && $shipment->getId()) {
+                        $tracks = [];
+                        if(isset($data['carrier']) && isset($data['carrier_tracking_number'])) {
+                            $carrierTrack = [
+                                'carrier_code' => 'custom',
+                                'title' => $data['carrier'],
+                                'number' => $data['carrier_tracking_number']
+                            ];
+                            $tracks[] = $carrierTrack;
+                        }
+                        if(isset($data['flow_tracking_number'])) {
+                            $flowTrack = [
+                                'carrier_code' => 'custom',
+                                'title' => 'Flow',
+                                'number' => $data['flow_tracking_number']
+                            ];
+                            $tracks[] = $flowTrack;
+                        }
 
-                    // Add tracks
-                    $this->addTracksToShipment($shipment, $tracks);
-
+                        // Add tracks
+                        $this->addTracksToShipment($shipment, $tracks);
+                    }
                 }
 
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');

@@ -2,20 +2,17 @@
 
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
-use \FlowCommerce\FlowConnector\Model\Discount;
-use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
-use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Quote\Model\QuoteFactory;
-use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Api\CartRepositoryInterface as CartRepository;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Catalog\Model\ProductFactory;
-use Magento\SalesRule\Model\Coupon;
-use Magento\SalesRule\Model\Rule;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Psr\Log\LoggerInterface as Logger;
+use Magento\SalesRule\Model\Coupon;
+use Magento\SalesRule\Model\Rule;
+use \FlowCommerce\FlowConnector\Model\Discount;
 
 /**
  * Class DiscountRepository
@@ -23,16 +20,6 @@ use Psr\Log\LoggerInterface as Logger;
  */
 class DiscountRepository implements DiscountRepositoryInterface
 {
-    /**
-     * @var JsonSerializer
-     */
-    protected $jsonSerializer;
-
-    /**
-     * @var JsonFactory
-     */
-    protected $jsonFactory;
-
     /**
      * @var StoreManager
      */
@@ -42,6 +29,11 @@ class DiscountRepository implements DiscountRepositoryInterface
      * @var QuoteFactory
      */
     protected $quoteFactory;
+
+    /**
+     * @var CartRepository
+     */
+    protected $cartRepository;
 
     /**
      * @var ProductRepository
@@ -54,9 +46,19 @@ class DiscountRepository implements DiscountRepositoryInterface
     protected $productFactory;
 
     /**
-     * @var FormKey
+     * @var CustomerFactory
      */
-    protected $formKey;
+    protected $customerFactory;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
 
     /**
      * @var Coupon
@@ -74,56 +76,42 @@ class DiscountRepository implements DiscountRepositoryInterface
     protected $discount;     
 
     /**
-     * @var CustomerFactory
-     */
-    protected $customerFactory;
-
-    /**
-     * @var CustomerRepository
-     */
-    protected $customerRepository;
-
-    /**
-     * @param JsonSerializer $jsonSerializer
-     * @param JsonFactory $jsonFactory
      * @param StoreManager $storeManager
      * @param QuoteFactory $quoteFactory
+     * @param QuoteRepository $cartRepository
      * @param ProductRepository $productRepository
      * @param ProductFactory $productFactory
      * @param CustomerFactory $customerFactory
      * @param CustomerRepository $customerRepository
      * @param Logger $logger
+     * @param Coupon $coupon
+     * @param SalesRule $salesRule
+     * @param Discount $discount
      */
     public function __construct(
-        JsonSerializer $jsonSerializer,
-        JsonFactory $jsonFactory,
         StoreManager $storeManager,
         QuoteFactory $quoteFactory,
-        CartRepositoryInterface $quoteRepository,
+        CartRepository $cartRepository,
         ProductRepository $productRepository,
         ProductFactory $productFactory,
-        FormKey $formKey,
-        Coupon $coupon,
-        Rule $saleRule,
-        Discount $discount,
         CustomerFactory $customerFactory,
         CustomerRepository $customerRepository,
-        Logger $logger
+        Logger $logger,
+        Coupon $coupon,
+        Rule $saleRule,
+        Discount $discount
     ) {
-        $this->jsonSerializer = $jsonSerializer;
-        $this->jsonFactory = $jsonFactory;
         $this->storeManager = $storeManager;
         $this->quoteFactory = $quoteFactory;
-        $this->quoteRepository = $quoteRepository;
+        $this->cartRepository = $cartRepository;
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
-        $this->formKey = $formKey;
-        $this->coupon = $coupon;
-        $this->saleRule = $saleRule;
-        $this->discount = $discount;
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
         $this->logger = $logger;
+        $this->coupon = $coupon;
+        $this->saleRule = $saleRule;
+        $this->discount = $discount;
     }
      
     /**
@@ -298,7 +286,7 @@ class DiscountRepository implements DiscountRepositoryInterface
     protected function getStoreByQuoteId($quoteId = false)
     {
         $store = false;
-        $quote = $this->quoteRepository->get($quoteId);
+        $quote = $this->cartRepository->get($quoteId);
 
         if ($storeId = $quote->getStoreId()) {
             $store = $this->storeManager->getStore($storeId);

@@ -2,7 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
-use FlowCommerce\FlowConnector\Api\CheckoutSupportRepositoryInterface;
 use \FlowCommerce\FlowConnector\Model\Discount;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -19,10 +18,10 @@ use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
- * Class CheckoutSupportRepository
- * @package FlowCommerce\FlowConnector\Model
+ * Class DiscountRepository
+ * @package FlowCommerce\FlowConnector\Model\ResourceModel
  */
-class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
+class DiscountRepository implements DiscountRepositoryInterface
 {
     /**
      * @var JsonSerializer
@@ -130,9 +129,9 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
     /**
      * @param $order
      * @param $code
-     * @return Discount
+     * @return \FlowCommerce\FlowConnector\Model\Discount
      */
-    public function discountRequest($order = false, $code = false)
+    public function getDiscount($order = false, $code = false)
     {
         $this->logger->info('Fired discountRequest');
         $this->logger->info('Coupon code provided: ' . (string)$code);
@@ -173,19 +172,6 @@ class CheckoutSupportRepository implements CheckoutSupportRepositoryInterface
             return;
         }
         $this->logger->info('Discount amount found: ' . $orderDiscountAmount);
-
-        /* $result = (object)[ */
-        /*     'order_form' => [ */
-        /*         'order_entitlement_forms' => [[ */
-        /*             'entitlement_key' => 'subtotal', */
-        /*             'offer_form' => [ */
-        /*                 'discriminator' => 'discount_request_offer_fixed_amount_form', */
-        /*                 'amount' => $orderDiscountAmount, */
-        /*                 'currency' => $orderCurrency */ 
-        /*             ] */
-        /*         ]] */
-        /*     ] */
-        /* ]; */
 
         $this->discount->addSubtotalDiscount($orderDiscountAmount, $orderCurrency);
 

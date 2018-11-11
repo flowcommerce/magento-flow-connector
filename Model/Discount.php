@@ -19,4 +19,11 @@ class Discount
     public function addSubtotalDiscount($amount, $currency) {
         $this->order_form->addEntitlement('discount_request_offer_fixed_amount_form', 'subtotal', $amount, $currency);
     }
+
+    /**
+     * @return \FlowCommerce\FlowConnector\Model\Discount\EntitlementForm
+     */
+    public function getOrderForm() {
+        return $this->order_form;
+    }
 }

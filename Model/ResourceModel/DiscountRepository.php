@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface as Logger;
 use Magento\SalesRule\Model\Coupon;
 use Magento\SalesRule\Model\Rule;
 use \FlowCommerce\FlowConnector\Model\Discount;
+use \FlowCommerce\FlowConnector\Api\Data\DiscountRepositoryInterface;
 
 /**
  * Class DiscountRepository

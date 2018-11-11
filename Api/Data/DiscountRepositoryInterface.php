@@ -3,8 +3,8 @@
 namespace FlowCommerce\FlowConnector\Api\Data;
 
 /**
- * Interface DiscountRepositoryInterface
- * @package FlowCommerce\FlowConnector\Api\Data
+ * Discount interface
+ * @api
  */
 interface DiscountRepositoryInterface
 {

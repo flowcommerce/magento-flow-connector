@@ -12,4 +12,25 @@ class OfferForm
         $this->amount = $amount;
         $this->currency = $currency;
     }
+
+    /**
+     * @return string
+     */
+    public function getDiscriminator () {
+        return $this->discriminator;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount () {
+        return $this->amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency () {
+        return $this->currency;
+    }
 }

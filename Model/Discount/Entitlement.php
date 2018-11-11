@@ -14,5 +14,19 @@ class Entitlement
         $this->entitlement_key = $entitlementKey;
         $this->offer_form = new OfferForm($discriminator, $amount, $currency);
     }
+
+    /**
+     * @return string
+     */
+    public function getEntitlementKey () {
+        return $this->entitlement_key;
+    }
+
+    /**
+     * @return \FlowCommerce\FlowConnector\Model\Discount\OfferForm
+     */
+    public function getOfferForm () {
+        return $this->offer_form;
+    }
 }
 

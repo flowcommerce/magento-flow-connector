@@ -19,4 +19,11 @@ class EntitlementForm
     public function addEntitlement($discriminator, $entitlementKey, $amount, $currency) {
         $this->order_entitlement_forms[] = new Entitlement($discriminator, $entitlementKey, $amount, $currency);
     }
+
+    /**
+     * @return \FlowCommerce\FlowConnector\Model\Discount\Entitlement[]
+     */
+    public function getOrderEntitlementForms() {
+        return $this->order_entitlement_forms;
+    }
 }

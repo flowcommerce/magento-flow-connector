@@ -595,6 +595,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $itemPriceInclTax = 0.0;
                             $baseItemPriceInclTax = 0.0;
 
+                            $itemDiscountAmount = 0.0;
+                            $itemBaseDiscountAmount = 0.0;
+
                             $itemPrice = 0.0;
                             $baseItemPrice = 0.0;
                             foreach ($detail['included'] as $included) {
@@ -636,6 +639,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                                     $item->setBaseDiscountAmount($included['price']['base']['amount']);
                                 }
                             }
+
+                            $itemDiscountAmount = (($rawItemPrice * $detail['quantity']) / $order->getSubtotal()) * $order->getDiscountAmount();
+                            $itemBaseDiscountAmount = (($baseRowItemPrice * $detail['quantity']) / $order->getBaseSubtotal()) * $order->getBaseDiscountAmount();
+
                             $item->setOriginalPrice($itemPrice);
                             $item->setBaseOriginalPrice($baseItemPrice);
                             $item->setPrice($itemPrice);
@@ -657,6 +664,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
                             $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
                             $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
+                            $item->setDiscountAmount($itemDiscountAmount);
+                            $item->setBaseDiscountAmount($itemBaseDiscountAmount);
                             $item->save();
                         }
                         break;

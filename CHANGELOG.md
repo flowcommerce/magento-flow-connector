@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.0
+
+- Magento invoices and shipments can now be created automatically.
+
 ## 1.0.39
 
 - VAT, Duty, and Rounding Adjustments are now collected into item pricing, tax, and shipping totals as applicable to ensure totals calculation accuracy

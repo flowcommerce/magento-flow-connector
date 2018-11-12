@@ -27,8 +27,8 @@ class Util {
     // Store configuration key for Flow API Token
     const FLOW_API_TOKEN = 'flowcommerce/flowconnector/api_token';
 
-    // Store configuration key for Flow Invoicing Event
-    const FLOW_INVOICING_EVENT = 'flowcommerce/flowconnector/invoicing_event';
+    // Store configuration key for Flow Invoice Event
+    const FLOW_INVOICE_EVENT = 'flowcommerce/flowconnector/invoice_event';
 
     // Flow API base endpoint
     const FLOW_API_BASE_ENDPOINT = 'https://api.flow.io/';
@@ -231,6 +231,7 @@ class Util {
 
     /**
      * Returns the ID of the current store
+     * @return int
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getCurrentStoreId() {
@@ -290,14 +291,18 @@ class Util {
     }
 
     /**
+     * Returns Flow Invoice Event
+     *
+     * @see \FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent::toOptionArray()
+     *
      * @param null $storeId
-     * @return mixed
+     * @return int
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getFlowInvoicingEvent($storeId = null) {
-        if (is_null($storeId)) {
+    public function getFlowInvoiceEvent($storeId = null) {
+        if ($storeId === null) {
             $storeId = $this->getCurrentStoreId();
         }
-        return $this->scopeConfig->getValue(self::FLOW_INVOICING_EVENT, ScopeInterface::SCOPE_STORE, $storeId);
+        return (int)$this->scopeConfig->getValue(self::FLOW_INVOICE_EVENT, ScopeInterface::SCOPE_STORE, $storeId);
     }
 }

@@ -792,7 +792,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         }
 
                         // Create invoice
-                        if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
+                        if($this->flowUtil->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
                             && $order->canInvoice()
                         ) {
                             $this->invoiceOrder($order);
@@ -1785,7 +1785,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 && $order->getFlowConnectorOrderReady()
             ) {
                 // Create invoice
-                if($this->flowUtil->getFlowInvoicingEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED
+                if($this->flowUtil->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED
                     && ($orderPayment = $order->getPayment() && $order->canInvoice())
                 ) {
                     // Create invoice
@@ -2075,7 +2075,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         $this->logger->info(sprintf('Creating invoice for order #%s', $order->getIncrementId()));
         if(!$order->canInvoice()) {
-            throw new WebhookException(__(sprintf('Order #%s is already invoiced or not ready for invoicing.', $order->getIncrementId())));
+            throw new WebhookException(__(sprintf('Order #%s is already invoiced or not ready for creating invoice.', $order->getIncrementId())));
         }
         $invoice = $this->invoiceService->prepareInvoice($order);
         $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);

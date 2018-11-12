@@ -635,6 +635,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             $this->orderSender->send($order);
 
+            // Save order after sending order confirmation email
+            $order->save();
+
             $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
         } else {
@@ -1701,7 +1704,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     /**
      * Returns the order for Flow order number.
      *
-     * @return Order
+     * @return OrderModel
      */
     private function getOrderByFlowOrderNumber($number) {
         $order = $this->orderFactory->create();

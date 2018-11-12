@@ -16,6 +16,9 @@
     <!-- Overriding Order Totals Block for magento admin -->
     <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
 
+    <!-- API Extension for discount handling -->
+    <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountRepositoryInterface" type="FlowCommerce\FlowConnector\Model\ResourceModel\DiscountRepository" />
+
     <!-- Proxies for CLI commands -->
     <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand">
         <arguments>

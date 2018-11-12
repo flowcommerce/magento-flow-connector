@@ -632,8 +632,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
             }
 
-
             $this->orderSender->send($order);
+
+            // Save order after sending order confirmation email
+            $order->save();
 
             $this->webhookEventManager->markWebhookEventAsDone($this, '');
 
@@ -999,7 +1001,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             $customerId = $receivedOrder['attributes'][self::CUSTOMER_ID];
             $this->logger->info('Retrieving existing user by id: ' . $customerId);
-            $customer->loadById($customerId);
+            $customer->load($customerId);
             if ($customer->getEntityId()) {
                 $this->logger->info('Found customer by id: ' . $customerId);
 
@@ -1603,7 +1605,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID: ' . $authorizationId);
+                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
@@ -1701,7 +1703,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     /**
      * Returns the order for Flow order number.
      *
+<<<<<<< HEAD
      * @return Order
+=======
+     * @return OrderModel
+>>>>>>> master
      */
     private function getOrderByFlowOrderNumber($number) {
         $order = $this->orderFactory->create();

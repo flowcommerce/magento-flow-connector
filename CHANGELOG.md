@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.0.40
+
+- Fix loading customers by email on orders
+- Flow custom fields fix for fresh installations
+- API extension for discount code requests from Checkout UI, only applies to codes which discount the order subtotal directly
+
 ## 1.0.39
 
 - VAT, Duty, and Rounding Adjustments are now collected into item pricing, tax, and shipping totals as applicable to ensure totals calculation accuracy

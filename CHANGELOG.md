@@ -4,6 +4,11 @@
 
 - Magento invoices and shipments can now be created automatically.
 
+## 1.0.40
+
+- Fix loading customers by email on orders
+- Flow custom fields fix for fresh installations
+
 ## 1.0.39
 
 - VAT, Duty, and Rounding Adjustments are now collected into item pricing, tax, and shipping totals as applicable to ensure totals calculation accuracy

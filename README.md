@@ -24,7 +24,7 @@ compose install
 ./bin/magento setup:upgrade
 ```
 
-3. Install Flow.js, [Flow.js Installation Guide](https://docs.flow.io/guides/flowjs/introduction)
+3. Follow the Simple Integration guide for installing Flow.js, [Flow.js Installation Guide](https://docs.flow.io/guides/flowjs/introduction)
 
 ### Initial Setup
 
@@ -67,7 +67,7 @@ compose install
 ./bin/magento setup:upgrade
 ```
 
-## Flow Integration Overview 
+## Overview 
 
 ### Product Catalog
 
@@ -82,13 +82,13 @@ This module will sync product information to Flow in two ways:
 
 Documentation: [Flow Checkout UI](https://docs.flow.io/checkout/checkout)
 
-Once your Magento Catalog is fully synced with Flow, customers can be sent to Flow Hosted Checkout. There is a redirect URL included in this module that will send the user's cart and information to Flow Hosted Checkout.
+Once your Magento 2 Catalog is fully synced with Flow Product Catalog, customers can be sent to Flow Hosted Checkout. There is a redirect URL included in this module that will send the user's cart and information to Flow Hosted Checkout.
 
 ```
 /flowconnector/checkout/redirecttoflow?country=FRA
 ```
 
-For localization of pricing data, please refer to the [Flow.js](https://docs.flow.io/shopify/flow-js) documentation.
+To localize pricing data, please refer to [Flow.js Product Localization](https://docs.flow.io/shopify/flow-js).
 
 ### Discount Codes
 
@@ -98,13 +98,13 @@ Discount codes have limited functionality as of version 1.0.40. The conditions u
 - Does not apply a discount to a specific item in the cart through the use of Magento 2 Sales Rule “Action” conditions
 - Applies to all cart items evenly
 
-This feature requires Flow customer support to enable for your Organization.
+To enable this feature for your Organization please contact your Customer Success Manager.
 
 ### Webhook Processing
 
 Documentation: [Flow Webhook](https://docs.flow.io/module/webhook)
 
-Upon configuring this module with your Flow credentials, the module will configure a set of webhooks to receive event data from Flow. These webhook events are queued and processed with a cron task. For example, after a customer completes the Flow Hosted Checkout process, a series of webhook events will be sent to Magento with detailed order and payment information.
+Upon configuring this module with your Flow credentials, the module will configure a set of webhooks to receive event data from Flow. These webhook events are queued and processed with a cron task. For example, after a customer submits an order through Flow Checkout UI, a series of webhook events will be sent to Magento 2 with detailed order and payment information.
 
 ## Extending Functionality
 

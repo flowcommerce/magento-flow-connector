@@ -8,6 +8,7 @@
 
 - Fix loading customers by email on orders
 - Flow custom fields fix for fresh installations
+- API extension for discount code requests from Checkout UI, only applies to codes which discount the order subtotal directly
 
 ## 1.0.39
 

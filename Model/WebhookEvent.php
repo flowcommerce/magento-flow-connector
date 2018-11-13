@@ -1831,19 +1831,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     /**
      * Returns the order for Flow order number.
      *
-<<<<<<< HEAD
      * @return OrderModel
-=======
-<<<<<<< HEAD
-     * @return OrderModel
-=======
-<<<<<<< HEAD
-     * @return Order
-=======
-     * @return OrderModel
->>>>>>> master
->>>>>>> public_master
->>>>>>> master
      */
     private function getOrderByFlowOrderNumber($number) {
         $order = $this->orderFactory->create();

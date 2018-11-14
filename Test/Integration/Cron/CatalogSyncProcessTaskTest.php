@@ -4,7 +4,6 @@ namespace FlowCommerce\FlowConnector\Test\Integration\Cron;
 
 use FlowCommerce\FlowConnector\Api\LockManagerInterface as LockManager;
 use FlowCommerce\FlowConnector\Cron\CatalogSyncProcessTask as Subject;
-use FlowCommerce\FlowConnector\Model\LockManager\Flag;
 use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\LockManager as LockManagerFixture;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
@@ -113,7 +112,7 @@ class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase
     public function testJobRunsWhenFlagLockedButTtlExpired()
     {
         $this->lockManagerFixture
-            ->acquireLock(Subject::LOCK_CODE, (time() - (Flag::LOCK_TTL + 10)));
+            ->acquireLock(Subject::LOCK_CODE, (time() - (Subject::LOCK_TTL + 10)));
 
         $this->catalogSync
             ->expects($this->once())

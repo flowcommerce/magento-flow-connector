@@ -12,7 +12,7 @@ Flow is a comprehensive global e-commerce solution. For more information about F
 
 ```
 "require": {
-    "flowcommerce/flowconnector": "^1.0.40"
+    "flowcommerce/flowconnector": "^1.1.0"
 }
 ```
 
@@ -99,6 +99,8 @@ Discount codes have limited functionality as of version 1.0.40. The conditions u
 - Applies to all cart items evenly
 
 To enable this feature for your Organization please contact your Customer Success Manager.
+
+IMPORTANT: Due to how Magento 2 calculates Cart Sales Rules it is possible that other Magento 2 Cart Sales Rules may apply to an order when applying a valid discount code. If you need to isolate a Magento 2 Sales Rule, raise the priority of your discount code and enable the option "Discard subsequent rules". This will calculate that discount first and disregard the following Magento 2 Sales Rules.
 
 ### Webhook Processing
 

@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.0
+
+- Magento invoices and shipments can now be created automatically.
+
 ## 1.0.40
 
 - Fix loading customers by email on orders

@@ -80,6 +80,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addDutyVatAndRoundingToCreditMemoItem($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.1.0', '<')) {
+            $this->addOrderReadyToOrder($setup);
+        }
+
         $installer->endSetup();
     }
 
@@ -664,6 +668,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         foreach ($attributes as $attributeCode => $attributeParams) {
             $salesSetup->addAttribute('creditmemo_item', $attributeCode, $attributeParams);
+        }
+    }
+
+    /**
+     * Add Order Ready to Order
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    private function addOrderReadyToOrder(SchemaSetupInterface $setup)
+    {
+        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
+
+        $attributes = [
+            'flow_connector_order_ready' => ['type' => 'int', 'visible' => false, 'required' => false, 'default' => 0]
+        ];
+
+        foreach ($attributes as $attributeCode => $attributeParams) {
+            $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
         }
     }
 }

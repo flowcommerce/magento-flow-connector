@@ -3,6 +3,7 @@
 ## 1.1.0
 
 - Magento invoices and shipments can now be created automatically.
+- Magento now handles storing discounts better for all sales entities.
 
 ## 1.0.40
 

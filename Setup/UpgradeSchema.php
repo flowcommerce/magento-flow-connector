@@ -678,7 +678,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     private function addOrderReadyToOrder(SchemaSetupInterface $setup)
     {
-        $salesSetup = $this->salesSetupFactory->create(['setup' => $setup]);
+        $salesSetup = $this->salesSetupFactory->create();
 
         $attributes = [
             'flow_connector_order_ready' => ['type' => 'int', 'visible' => false, 'required' => false, 'default' => 0]

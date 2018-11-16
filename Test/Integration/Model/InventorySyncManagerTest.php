@@ -120,8 +120,8 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoDbIsolation enabled
-     * @magentoConfigFixture admin_store flowcommerce/flowconnector/enabled 1
-     * @magentoConfigFixture admin_store flowcommerce/flowconnector/default_center_key center-1
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/default_center_key center-1
      */
     public function testSyncsSuccessfullyWhenFlowModuleEnabled()
     {
@@ -134,7 +134,8 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
             ->with($this->callback([$this, 'validateUrl']), $this->callback([$this, 'validateRequest']))
             ->willReturn($this->httpPromise);
 
-        // Creating products will also enqueue them for inventory sync, so no need to enqueue all again
+        $this->subject->enqueueAllStockItems();
+
         $this->subject->process(100, 10);
 
         $searchCriteria = $this->searchCriteriaBuilder
@@ -149,19 +150,19 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
 
         $productIds = [];
         foreach ($products->getItems() as $product) {
-            $productIds[$product->getId()] = $product->getId();
+            $productIds[] = $product->getId();
         }
 
         /** @var InventorySync $inventorySync */
         foreach ($inventorySyncs->getItems() as $inventorySync) {
-            $inventorySyncSku = $inventorySync->getProductId();
+            $inventorySyncProductId = $inventorySync->getProductId();
 
             $this->assertEquals(InventorySync::STATUS_DONE, $inventorySync->getStatus());
-            $this->assertEquals(0, $inventorySync->getStoreId());
-            $this->assertArrayHasKey($inventorySyncSku, $productIds);
+            $this->assertEquals(1, $inventorySync->getStoreId());
+            $this->assertContains($inventorySyncProductId, $productIds);
 
-            if (array_key_exists($inventorySyncSku, $productIds)) {
-                unset($productIds[$inventorySyncSku]);
+            if (($key = array_search($inventorySync->getProductId(), $productIds)) !== false) {
+                unset($productIds[$key]);
             }
         }
         $this->assertCount(0, $productIds);
@@ -244,5 +245,34 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
             $return = false;
         }
         return $return;
+    }
+
+    /**
+     * @magentoDbIsolation enabled
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 0
+     */
+    public function testDoesNotEnqueueWhenFlowModuleDisabled()
+    {
+        $this->createProductsFixture->execute();
+        $this->subject->enqueueAllStockItems();
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->create();
+        $inventorySyncs = $this->inventorySyncRepository->getList($searchCriteria);
+        $this->assertEquals(0, $inventorySyncs->getTotalCount());
+    }
+
+    /**
+     * @magentoDbIsolation enabled
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
+     */
+    public function testEnqueuesWhenFlowModuleEnabled()
+    {
+        $this->createProductsFixture->execute();
+        $products = $this->createProductsFixture->getProducts();
+        $this->subject->enqueueAllStockItems();
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->create();
+        $inventorySyncs = $this->inventorySyncRepository->getList($searchCriteria);
+        $this->assertEquals($products->getTotalCount(), $inventorySyncs->getTotalCount());
     }
 }

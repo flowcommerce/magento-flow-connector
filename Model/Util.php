@@ -30,6 +30,15 @@ class Util {
     // Store configuration key for Flow Invoice Event
     const FLOW_INVOICE_EVENT = 'flowcommerce/flowconnector/invoice_event';
 
+    // Store configuration key for Flow Shipment Event
+    const FLOW_SHIPMENT_EVENT = 'flowcommerce/flowconnector/shipment_event';
+
+    // Store configuration key for Flow Invoice Event
+    const FLOW_INVOICE_SEND_EMAIL = 'flowcommerce/flowconnector/invoice_email';
+
+    // Store configuration key for Flow Invoice Event
+    const FLOW_SHIPMENT_SEND_EMAIL = 'flowcommerce/flowconnector/shipment_email';
+
     // Flow API base endpoint
     const FLOW_API_BASE_ENDPOINT = 'https://api.flow.io/';
 
@@ -304,5 +313,45 @@ class Util {
             $storeId = $this->getCurrentStoreId();
         }
         return (int)$this->scopeConfig->getValue(self::FLOW_INVOICE_EVENT, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
+     * Returns Flow Shipment Event
+     *
+     * @see \FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent::toOptionArray()
+     *
+     * @param null $storeId
+     * @return int
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getFlowShipmentEvent($storeId = null) {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+        return (int)$this->scopeConfig->getValue(self::FLOW_SHIPMENT_EVENT, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
+     * Returns true if send invoice email is enabled in the Admin Store Configuration.
+     * @param storeId ID of store, if null defaults to current store.
+     */
+    public function sendInvoiceEmail($storeId = null) {
+        if (is_null($storeId)) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return $this->scopeConfig->getValue(self::FLOW_INVOICE_SEND_EMAIL, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
+     * Returns true if send shipment email is enabled in the Admin Store Configuration.
+     * @param storeId ID of store, if null defaults to current store.
+     */
+    public function sendShipmentEmail($storeId = null) {
+        if (is_null($storeId)) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return $this->scopeConfig->getValue(self::FLOW_SHIPMENT_SEND_EMAIL, ScopeInterface::SCOPE_STORE, $storeId);
     }
 }

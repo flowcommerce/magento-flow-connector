@@ -55,6 +55,7 @@ use Magento\Sales\Model\Service\InvoiceService;
 use Magento\Shipping\Model\ShipmentNotifier;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
+use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use \Magento\Sales\Model\Order\Shipment\Track;
 
@@ -1805,7 +1806,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
 
                 // Create shipment
-                if($order->canShip()) {
+                if($this->flowUtil->getFlowShipmentEvent($order->getStoreId()) == ShipmentEvent::VALUE_WHEN_SHIPPED
+                    && $order->canShip()) {
                     $shipment = $this->shipOrder($order);
                     if($shipment && $shipment->getId()) {
                         $tracks = [];
@@ -2096,7 +2098,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             ->addObject($invoice)
             ->addObject($invoice->getOrder());
         $transaction->save();
-        $this->invoiceSender->send($invoice);
+        if ($this->flowUtil->sendInvoiceEmail()) {
+            $this->invoiceSender->send($invoice);
+        }
         $order->addStatusHistoryComment(sprintf('Invoice #%s created', $invoice->getIncrementId()))
             ->save();
 
@@ -2181,7 +2185,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $shipment->save();
         $shipment->getOrder()->save();
         // Send shipment email
-        $this->shipmentNotifier->notify($shipment);
+        if ($this->flowUtil->sendShipmentEmail()) {
+            $this->shipmentNotifier->notify($shipment);
+        }
         $shipment->save();
 
         return $shipment;

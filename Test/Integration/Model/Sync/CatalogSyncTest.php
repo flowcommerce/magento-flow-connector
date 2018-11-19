@@ -114,7 +114,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         $this->httpResponse = $this->createPartialMock(HttpResponse::class, ['isSuccess']);
         $httpPromise = $this->objectManager->create(HttpPromise::class, [
             'waitFn' => function () use (&$httpPromise) {
-                $httpPromise->resolve('waited');
+                $httpPromise->resolve($this->httpResponse);
             }
         ]);
         $this->httpPromise = $httpPromise;
@@ -155,7 +155,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         $products = $this->createProductsFixture->getProducts();
 
         $this->httpClient
-            ->expects($this->exactly(4))
+            ->expects($this->any())
             ->method('putAsync')
             ->with($this->callback([$this, 'validateUrl']), $this->callback([$this, 'validateRequest']))
             ->willReturn($this->httpPromise);

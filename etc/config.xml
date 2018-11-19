@@ -23,6 +23,9 @@
             <flowconnector>
                 <enabled>1</enabled>
                 <invoice_event>1</invoice_event>
+                <invoice_email>1</invoice_email>
+                <shipment_event>1</shipment_event>
+                <shipment_email>1</shipment_email>
             </flowconnector>
         </flowcommerce>
     </default>

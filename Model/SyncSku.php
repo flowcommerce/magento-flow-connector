@@ -4,8 +4,14 @@ namespace FlowCommerce\FlowConnector\Model;
 
 use \FlowCommerce\FlowConnector\Api\Data\SyncSkuInterface;
 use \Magento\Catalog\Api\Data\ProductInterface;
+use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use \Magento\Framework\Data\Collection\AbstractDb;
 use \Magento\Framework\DataObject\IdentityInterface;
+use \Magento\Framework\Exception\NoSuchEntityException;
 use \Magento\Framework\Model\AbstractModel;
+use \Magento\Framework\Model\Context;
+use \Magento\Framework\Model\ResourceModel\AbstractResource;
+use \Magento\Framework\Registry;
 
 /**
  * Class SyncSku
@@ -37,6 +43,34 @@ class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterfa
     protected $product = null;
 
     /**
+     * Product Repository
+     * @var ProductRepository
+     */
+    protected $productRepository = null;
+
+    /**
+     * SyncSku constructor.
+     * @param Context $context
+     * @param Registry $registry
+     * @param ProductRepository $productRepository
+     * @param AbstractResource|null $resource
+     * @param AbstractDb|null $resourceCollection
+     * @param array $data
+     */
+    public function __construct(
+        Context $context,
+        Registry $registry,
+        ProductRepository $productRepository,
+        AbstractResource $resource = null,
+        AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        $this->productRepository = $productRepository;
+    }
+
+
+    /**
      * Initializes the model
      */
     protected function _construct()
@@ -55,10 +89,18 @@ class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterfa
 
     /**
      * Returns associated product
-     * @return ProductInterface
+     * @return ProductInterface|null
      */
     public function getProduct()
     {
+        if ($this->product === null && $this->getSku()) {
+            try {
+                $product = $this->productRepository->get($this->getSku());
+            } catch (NoSuchEntityException $e) {
+                $product = false;
+            }
+            $this->product = $product;
+        }
         return $this->product;
     }
 

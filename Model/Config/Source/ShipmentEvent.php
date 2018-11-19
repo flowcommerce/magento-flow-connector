@@ -3,14 +3,13 @@
 namespace FlowCommerce\FlowConnector\Model\Config\Source;
 
 /**
- * Class InvoiceEvent
+ * Class ShipmentEvent
  * @package FlowCommerce\FlowConnector\Model\Config\Source
  */
-class InvoiceEvent implements \Magento\Framework\Option\ArrayInterface
+class ShipmentEvent implements \Magento\Framework\Option\ArrayInterface
 {
     const VALUE_NEVER = 0;
-    const VALUE_WHEN_CAPTURED = 1;
-    const VALUE_WHEN_SHIPPED = 2;
+    const VALUE_WHEN_SHIPPED = 1;
 
     /**
      * Options getter
@@ -21,7 +20,6 @@ class InvoiceEvent implements \Magento\Framework\Option\ArrayInterface
     {
         return [
             ['value' => self::VALUE_NEVER, 'label' => __('Never')],
-            ['value' => self::VALUE_WHEN_CAPTURED, 'label' => __('When Captured in Flow')],
             ['value' => self::VALUE_WHEN_SHIPPED, 'label' => __('When Shipped in Flow')]
         ];
     }
@@ -35,7 +33,6 @@ class InvoiceEvent implements \Magento\Framework\Option\ArrayInterface
     {
         return [
             self::VALUE_NEVER => __('Never'),
-            self::VALUE_WHEN_CAPTURED => __('When Captured in Flow'),
             self::VALUE_WHEN_SHIPPED => __('When Shipped in Flow')
         ];
     }

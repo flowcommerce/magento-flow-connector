@@ -1,0 +1,18 @@
+FROM bitnami/magento:latest as builder
+
+ADD . /opt/flowcommerce/flowconnector
+
+WORKDIR /opt/bitnami/magento/htdocs
+
+RUN composer config repositories.flowconnector path /opt/flowcommerce/flowconnector && \
+  composer config repo.0 false && \
+  composer require --no-interaction flowcommerce/flowconnector @dev && \
+  echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini && \
+  php bin/magento module:enable FlowCommerce_FlowConnector && \
+  php bin/magento setup:di:compile && \
+  php bin/magento setup:static-content:deploy -f
+
+EXPOSE 80 443
+
+ENTRYPOINT ["/opt/flowcommerce/flowconnector/entrypoint.sh"]
+CMD [ "httpd", "-f", "/bitnami/apache/conf/httpd.conf", "-DFOREGROUND" ]

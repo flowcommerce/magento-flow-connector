@@ -20,26 +20,28 @@ phpTemplate(label: label) {
     imageTag = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
   }
 
-  dockerBuild {
-    appName = project
-    vcsRef = scmVars.GIT_COMMIT
-    version = imageTag
-    awsRole = iamRole
-    awsRoleAccount = '479720515435'
-    dockerOrganisation = ecrRepo
-    dockerFile = 'Dockerfile.dev'
-  }
+  if (env.BRANCH_NAME == 'master') {
+    dockerBuild {
+      appName = project
+      vcsRef = scmVars.GIT_COMMIT
+      version = imageTag
+      awsRole = iamRole
+      awsRoleAccount = '479720515435'
+      dockerOrganisation = ecrRepo
+      dockerFile = 'Dockerfile.dev'
+    }
 
-  stage('Deploy Helm Chart') {
-    container('helm') {
-      sh "helm init --client-only"
-      sh """helm dependency update ./deploy/$project"""
+    stage('Deploy Helm Chart') {
+      container('helm') {
+        sh "helm init --client-only"
+        sh """helm dependency update ./deploy/$project"""
 
-      withAWSRole() {
-        sh """helm upgrade --tiller-namespace production --wait \
-              --namespace production \
-              --set stacks.dark.version=$imageTag \
-              -i $project ./deploy/$project"""
+        withAWSRole() {
+          sh """helm upgrade --tiller-namespace production --wait \
+                --namespace production \
+                --set stacks.dark.version=$imageTag \
+                -i $project ./deploy/$project"""
+        }
       }
     }
   }

@@ -1,16 +1,16 @@
 <?php
 namespace FlowCommerce\FlowConnector\Model\Discount;
 
-use FlowCommerce\FlowConnector\Model\Discount\OfferForm;
+use FlowCommerce\FlowConnector\Api\Data\DiscountEntitlementInterface;
 
-class Entitlement
+class Entitlement implements DiscountEntitlementInterface
 {
     public function __construct(
         string $discriminator,
         string $entitlementKey,
         float $amount,
         string $currency
-    ){
+    ) {
         $this->entitlement_key = $entitlementKey;
         $this->offer_form = new OfferForm($discriminator, $amount, $currency);
     }
@@ -18,14 +18,16 @@ class Entitlement
     /**
      * @return string
      */
-    public function getEntitlementKey () {
+    public function getEntitlementKey()
+    {
         return $this->entitlement_key;
     }
 
     /**
-     * @return \FlowCommerce\FlowConnector\Model\Discount\OfferForm
+     * @return \FlowCommerce\FlowConnector\Api\Data\DiscountOfferFormInterface
      */
-    public function getOfferForm () {
+    public function getOfferForm()
+    {
         return $this->offer_form;
     }
 }

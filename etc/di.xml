@@ -18,6 +18,10 @@
 
     <!-- API Extension for discount handling -->
     <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountRepositoryInterface" type="FlowCommerce\FlowConnector\Model\ResourceModel\DiscountRepository" />
+    <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountInterface" type="FlowCommerce\FlowConnector\Model\Discount" />
+    <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountEntitlementInterface" type="FlowCommerce\FlowConnector\Model\Discount\Entitlement" />
+    <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountEntitlementFormInterface" type="FlowCommerce\FlowConnector\Model\Discount\EntitlementForm" />
+    <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountOfferFormInterface" type="FlowCommerce\FlowConnector\Model\Discount\OfferForm" />
 
     <!-- Proxies for CLI commands -->
     <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand">
@@ -80,5 +84,26 @@
     <!-- Plugin to enqueue all products after a mass attribute update is made from the admin -->
     <type name="Magento\Catalog\Model\Product\Action">
         <plugin name="enqueue_products_after_mass_attribute_update" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Model\Product\Action"/>
+    </type>
+
+    <type name="Magento\Setup\Model\FixtureGenerator\ProductGenerator">
+        <arguments>
+            <argument name="customTableMap" xsi:type="array">
+                <item name="flow_connector_sync_skus" xsi:type="array">
+                    <!--
+                    Fix "Cannot find entity id field for table "flow_connector_sync_skus" issue with
+                    Magento\Setup\Fixtures\FixtureModelTest::testFixtureGeneration
+                     -->
+                    <item name="entity_id_field" xsi:type="const">Magento\Setup\Model\FixtureGenerator\EntityGenerator::SKIP_ENTITY_ID_BINDING</item>
+
+                    <!--
+                    Work around "Integrity constraint violation: 1062 Duplicate entry '1-template_sku534221971' for key
+                    'FLOW_CONNECTOR_SYNC_SKUS_STORE_ID_SKU'" issue with
+                     Magento\Setup\Fixtures\FixtureModelTest::testFixtureGeneration.
+                     -->
+                    <item name="handler" xsi:type="object">FlowCommerce\FlowConnector\Model\FixtureGenerator\ProductGenerator\Handler</item>
+                </item>
+            </argument>
+        </arguments>
     </type>
 </config>

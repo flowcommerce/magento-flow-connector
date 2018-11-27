@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
+use FlowCommerce\FlowConnector\Api\Data\DiscountInterface;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Api\CartRepositoryInterface as CartRepository;
@@ -69,12 +70,12 @@ class DiscountRepository implements DiscountRepositoryInterface
     /**
      * @var Rule
      */
-    protected $saleRule;     
+    protected $saleRule;
 
     /**
      * @var Discount
      */
-    protected $discount;     
+    protected $discount;
 
     /**
      * @param StoreManager $storeManager
@@ -118,7 +119,7 @@ class DiscountRepository implements DiscountRepositoryInterface
     /**
      * @param $order
      * @param $code
-     * @return \FlowCommerce\FlowConnector\Model\Discount
+     * @return \FlowCommerce\FlowConnector\Api\Data\DiscountInterface
      */
     public function getDiscount($order = false, $code = false)
     {

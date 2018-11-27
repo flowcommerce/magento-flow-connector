@@ -9,17 +9,21 @@ services:
       - MARIADB_DATABASE=bitnami_magento
     volumes:
       - 'mariadb_data:/bitnami'
+    networks:
+      - backend
   magento:
     image: 'flowcommerce/magento:latest'
     labels:
       kompose.service.type: nodeport
     environment:
-      - NAMI_DEBUG='--log-level=trace8'
+      - NAMI_DEBUG=1
+      - NAMI_LOG_LEVEL=trace8
       - MARIADB_HOST=mariadb
       - MARIADB_PORT_NUMBER=3306
       - MAGENTO_DATABASE_USER=bn_magento
       - MAGENTO_DATABASE_PASSWORD=magento_db_password
       - MAGENTO_DATABASE_NAME=bitnami_magento
+      - COMPOSER_MEMORY_LIMIT=-1
     ports:
       - '80:80'
       - '443:443'
@@ -27,8 +31,15 @@ services:
       - 'magento_data:/bitnami'
     depends_on:
       - mariadb
+    links:
+      - mariadb
+    networks:
+      - backend
 volumes:
   mariadb_data:
     driver: local
   magento_data:
     driver: local
+networks:
+  backend:
+    driver: bridge

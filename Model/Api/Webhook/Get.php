@@ -1,6 +1,6 @@
 <?php
 
-namespace FlowCommerce\FlowConnector\Model\Api\Center;
+namespace FlowCommerce\FlowConnector\Model\Api\Webhook;
 
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
@@ -12,12 +12,12 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
 
-class GetAllCenterKeys
+class Get
 {
     /**
      * Url Stub Prefix of this API endpoint
      */
-    const URL_STUB_PREFIX = '/centers';
+    const URL_STUB_PREFIX = '/webhooks';
 
     /**
      * @var Auth
@@ -83,9 +83,9 @@ class GetAllCenterKeys
     }
 
     /**
-     * Deletes the sku from Flow.
+     * Retrieves all webhooks registered with flow
      * @param int $storeId
-     * @return string[]
+     * @return string[][]
      * @throws NoSuchEntityException
      */
     public function execute($storeId)
@@ -97,12 +97,9 @@ class GetAllCenterKeys
         $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
         $response = $client->get($url, ['auth' => $this->auth->getAuthHeader($storeId)]);
 
-        $centers = $this->jsonSerializer->unserialize($response->getBody()->getContents());
-        foreach ($centers as $center) {
-            if (array_key_exists('key', $center)) {
-                array_push($return, (string) $center['key']);
-                break;
-            }
+        $webhooks = $this->jsonSerializer->unserialize($response->getBody()->getContents());
+        foreach ($webhooks as $webhook) {
+            array_push($return, $webhook);
         }
         return $return;
     }

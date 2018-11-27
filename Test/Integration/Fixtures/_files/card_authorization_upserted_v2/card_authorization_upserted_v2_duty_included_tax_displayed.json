@@ -1,0 +1,115 @@
+{
+  "event_id": "evt-ffa10ff53993454385afcc615071e29f",
+  "timestamp": "2018-11-13T18:04:39.570Z",
+  "organization": "magento-integration-sandbox",
+  "id": "aut-wyzANTXPbvNDAF485yd1hULbE8LGTb98",
+  "authorization": {
+    "id": "aut-wyzANTXPbvNDAF485yd1hULbE8LGTb98",
+    "key": "aut-wyzANTXPbvNDAF485yd1hULbE8LGTb98",
+    "merchant_of_record": "flow",
+    "card": {
+      "id": "crd-7d2dc61b67f54df1b6000508b9f86c27",
+      "token": "XXX",
+      "type": "mastercard",
+      "expiration": {
+        "month": 12,
+        "year": 2022
+      },
+      "iin": "555555",
+      "last4": "4444",
+      "name": "Test Argentina",
+      "issuer": {
+        "iin": "555555",
+        "country": "BRA"
+      },
+      "address": {
+        "name": {
+          "first": "Test2",
+          "last": "Test2"
+        },
+        "streets": [
+          "calle 4"
+        ],
+        "city": "Buenos Aires",
+        "province": "Ciudad de Buenos Aires",
+        "postal": "9900-164",
+        "country": "ARG"
+      },
+      "discriminator": "card"
+    },
+    "amount": 15418.58,
+    "currency": "ARS",
+    "customer": {
+      "name": {
+        "first": "Test2",
+        "last": "Test2"
+      },
+      "phone": "21 292 470 0620",
+      "email": "test3@test.com"
+    },
+    "attributes": {},
+    "result": {
+      "status": "authorized"
+    },
+    "created_at": "2018-11-13T18:04:28.237Z",
+    "method": {
+      "id": "mastercard",
+      "type": "card",
+      "name": "Mastercard",
+      "images": {
+        "small": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/mastercard/30/original.png",
+          "width": 65,
+          "height": 41
+        },
+        "medium": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/mastercard/60/original.png",
+          "width": 100,
+          "height": 60
+        },
+        "large": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/mastercard/120/original.png",
+          "width": 256,
+          "height": 256
+        }
+      },
+      "regions": [
+        "world"
+      ]
+    },
+    "requested": {
+      "amount": 15418.58,
+      "currency": "ARS"
+    },
+    "destination": {
+      "streets": [
+        "calle 4"
+      ],
+      "city": "Buenos Aires",
+      "province": "Ciudad de Buenos Aires",
+      "postal": "9900-164",
+      "country": "ARG"
+    },
+    "billing_address": {
+      "name": {
+        "first": "Test2",
+        "last": "Test2"
+      },
+      "streets": [
+        "calle 4"
+      ],
+      "city": "Buenos Aires",
+      "province": "Ciudad de Buenos Aires",
+      "postal": "9900-164",
+      "country": "ARG"
+    },
+    "order": {
+      "number": "ord-d0930c45bb424a42b454386b70e8ef90"
+    },
+    "base": {
+      "amount": 417.13,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "card_authorization_upserted_v2"
+}

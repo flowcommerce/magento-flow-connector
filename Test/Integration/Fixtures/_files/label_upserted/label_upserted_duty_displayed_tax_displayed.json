@@ -1,0 +1,92 @@
+{
+  "event_id": "evt-6e0cbd4f49d249bb8db3a62818e3fca1",
+  "timestamp": "2018-11-13T20:30:07.428Z",
+  "organization": "magento-integration-sandbox",
+  "label_id": "lab-1aacebccc9b944969f8df6a46087e6ca",
+  "carrier_tracking_number": "LTN_test65765863N1",
+  "commercial_invoice": "https://io-flow-labels-production.s3.amazonaws.com/tO10udcw0s3mQhZlDFL576vCpOCM1Ig2CPjnXvoE.pdf",
+  "flow_tracking_number": "SF705769927663426",
+  "destination": {
+    "contact": {
+      "name": {
+        "first": "Test",
+        "last": "Japan"
+      },
+      "email": "test-jp@test.com",
+      "phone": "+8137-766-5044"
+    },
+    "location": {
+      "streets": [
+        "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+      ],
+      "city": "Tokyo",
+      "province": "Tokyo",
+      "postal": "150-0043",
+      "country": "JPN"
+    }
+  },
+  "origin": {
+    "contact": {
+      "name": {
+        "first": "Kinto",
+        "last": "Doe"
+      },
+      "company": "XYZ Corporation, Inc",
+      "email": "dcone@test.flow.io",
+      "phone": "1-555-444-0001"
+    },
+    "location": {
+      "streets": [
+        "88 East Broad Street"
+      ],
+      "city": "Columbus",
+      "province": "OH",
+      "postal": "43215",
+      "country": "USA"
+    },
+    "center_reference": {
+      "organization_id": "magento-integration-sandbox",
+      "center_key": "center-1"
+    }
+  },
+  "carrier": "landmark",
+  "service": "landmark-global",
+  "zpl": "XlhBXkNJMjheTEwxMjE4XkxIMTAsMTBeRk8zMCwzNF5BME4sNDAsNDBeRkheRkRfMmFfMmFfMmFfMmFfMmFfMmFfMmFfMjBfNTRfNDVfNTNfNTRfMjBfNGNfNDFfNDJfNDVfNGNfMjFfMjFfMjFfMjBfNDRfNGZfMjBfNGVfNGZfNTRfMjBfNTNfNDhfNDlfNTBfMjFfMjFfMjFfMjBfMmFfMmFfMmFfMmFfMmFfMmFfMmFeRlNeRk8zMCw2OF5BME4sMjUsMjVeRkheRkRfMzFfMzhfMzhfMjBfNDNfNGZfNGRfNGRfNDVfNTJfNDNfNDVfMjBfNDJfNGNfNTZfNDReRlNeRk8zMCw5Ml5BME4sMjUsMjVeRkheRkRfNGFfNGZfNDhfNGVfNTNfNTRfNGZfNTdfNGVfMmNfMjBfNGZfNDhfMjBfMzRfMzNfMzBfMzNfMzFeRlNeRk8zMCwxMTdeQTBOLDI1LDI1XkZIXkZEXzU1XzRlXzQ5XzU0XzQ1XzQ0XzIwXzUzXzU0XzQxXzU0XzQ1XzUzXkZTXkZPNDA2LDUxXkEwTiw0MCw0MF5GRDE1IExCU15GU15GTzYzMCw1MV5BME4sNDAsNDBeRkQxIE9GIDFeRlNeRk8xMDAsMTgwXkEwTiw4MCw0MF5GRExHSU5UU1REVSAtIEpQXkZTXkZPMzAsMzE5XkEwTiwzMCwzMF5GRFNISVBeRlNeRk8zMCwzNjBeQTBOLDMwLDMwXkZEVE86XkZTXkZPMTIyLDMwNV5BME4sNDAsNDBeRkheRkRfNTRfNDVfNTNfNTRfMjBfNGFfNDFfNTBfNDFfNGVeRlNeRk8xMjIsMzQ1XkEwTiwzNSwzNV5GSF5GRF83NF82Zl83NV82Yl83OV82Zl83NV83NF82Zl8yY18yMF83M182OF82OV82Ml83NV83OV82MV82Yl83NV8yY15GU15GTzEyMiwzODBeQTBOLDM1LDM1XkZIXkZEXzY0XzZmXzc1XzY3XzY1XzZlXzdhXzYxXzZiXzYxXzJjXzIwXzM3XzJkXzM4XkZTXkZPMTIyLDQxNV5BME4sMzUsMzVeRkheRkRfNTRfNGZfNGJfNTlfNGZfMmNfMjBfNTRfNGZfNGJfNTlfNGZfMjBfMzFfMzVfMzBfMmRfMzBfMzBfMzRfMzNeRlNeRk8xMjIsNDUwXkEwTiw0MCw0MF5GSF5GRF80YV80MV81MF80MV80ZV5GU15GTzEyMiw0OTBeQTBOLDM1LDM1XkZEODEzNy03NjYtNTA0NF5GU15GTzAsNjMwXkdCODA5LDAsMl5GU15GTzMwLDY0OV5BME4sMzAsMzBeRkheRkRTSElQTUVOVCBSRUYgOiBfNTNfNDZfMzdfMzBfMzVfMzdfMzZfMzlfMzlfMzJfMzdfMzZfMzZfMzNfMzRfMzJfMzZeRlNeRk8zMCw3MjleQTBOLDMwLDMwXkZETEFORE1BUksgVFJBQ0tJTkcgOiBURVNULUxUTjY1NzY1ODYzTjEtVEVTVF5GU15GTzU5LDc5OF5CWTMsM15CQ04sMjUwLFleRkRURVNULUxUTjY1NzY1ODYzTjEtVEVTVF5GU15GTzUwMCwxMTAwXkEwTiw1MCw1MF5GRExBTkRNQVJLXkZTIF5YWg==",
+  "pdf": "https://io-flow-labels-production.s3.amazonaws.com/RKW9OOvZEs9Pk65yvsuqd3cx0lF9zCr6yoOJ4cnF.pdf",
+  "order": "ord-555c1f216e664467955f219a6a1fac06",
+  "carrier_tracking_number_url": "https://track.landmarkglobal.com/?trck=LTN_test65765863N1",
+  "flow_tracking_number_url": "https://track.flow.io/SF705769927663426",
+  "center_key": "center-1",
+  "recipient": "customer",
+  "package": {
+    "dimensions": {
+      "depth": {
+        "value": "9",
+        "units": "inch"
+      },
+      "length": {
+        "value": "13",
+        "units": "inch"
+      },
+      "weight": {
+        "value": "15.00",
+        "units": "pound"
+      },
+      "width": {
+        "value": "3",
+        "units": "inch"
+      }
+    },
+    "items": [
+      {
+        "number": "simple_1",
+        "quantity": 10
+      },
+      {
+        "number": "simple_2",
+        "quantity": 10
+      }
+    ]
+  },
+  "discriminator": "label_upserted"
+}

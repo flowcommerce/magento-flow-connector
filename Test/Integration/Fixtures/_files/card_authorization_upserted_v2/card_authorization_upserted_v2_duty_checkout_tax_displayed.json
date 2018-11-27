@@ -1,0 +1,113 @@
+{
+  "event_id": "evt-02500f93ff1b4d328dcd1bceac25198f",
+  "timestamp": "2018-11-12T13:45:43.636Z",
+  "organization": "magento-integration-sandbox",
+  "id": "aut-WUWB2U02fcXl51P4iZcM88VcZLFbUxoe",
+  "authorization": {
+    "id": "aut-WUWB2U02fcXl51P4iZcM88VcZLFbUxoe",
+    "key": "aut-WUWB2U02fcXl51P4iZcM88VcZLFbUxoe",
+    "merchant_of_record": "flow",
+    "card": {
+      "id": "crd-a43e3d01a7c94866831f45db5d06a13e",
+      "token": "XXX",
+      "type": "visa",
+      "expiration": {
+        "month": 4,
+        "year": 2022
+      },
+      "iin": "411111",
+      "last4": "1111",
+      "name": "test colombia",
+      "issuer": {
+        "iin": "411111",
+        "name": "JPMORGAN CHASE BANK, N.A.",
+        "country": "USA"
+      },
+      "address": {
+        "name": {
+          "first": "Test2",
+          "last": "Test2"
+        },
+        "streets": [
+          "Calle 5"
+        ],
+        "city": "Bogota",
+        "postal": "9900-164",
+        "country": "COL"
+      },
+      "discriminator": "card"
+    },
+    "amount": 977951.24,
+    "currency": "COP",
+    "customer": {
+      "name": {
+        "first": "Test2",
+        "last": "Test2"
+      },
+      "phone": "21 292 470 0620",
+      "email": "test3@test.com"
+    },
+    "attributes": {},
+    "result": {
+      "status": "authorized"
+    },
+    "created_at": "2018-11-12T13:45:01.671Z",
+    "method": {
+      "id": "visa",
+      "type": "card",
+      "name": "VISA",
+      "images": {
+        "small": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/30/original.png",
+          "width": 65,
+          "height": 41
+        },
+        "medium": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/60/original.png",
+          "width": 100,
+          "height": 60
+        },
+        "large": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/120/original.png",
+          "width": 256,
+          "height": 256
+        }
+      },
+      "regions": [
+        "world"
+      ]
+    },
+    "requested": {
+      "amount": 977951.24,
+      "currency": "COP"
+    },
+    "destination": {
+      "streets": [
+        "Calle 5"
+      ],
+      "city": "Bogota",
+      "postal": "9900-164",
+      "country": "COL"
+    },
+    "billing_address": {
+      "name": {
+        "first": "Test2",
+        "last": "Test2"
+      },
+      "streets": [
+        "Calle 5"
+      ],
+      "city": "Bogota",
+      "postal": "9900-164",
+      "country": "COL"
+    },
+    "order": {
+      "number": "ord-fa7e52c9229d4605b30e9051291673fe"
+    },
+    "base": {
+      "amount": 297.81,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "card_authorization_upserted_v2"
+}

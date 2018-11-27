@@ -23,15 +23,14 @@ affinity: {}
 
 magento:
   mode: developer
-  adminUri: /admin
+  adminUri: admin
   firstName: Magento
   lastName: User
   email: hi@flow.io
   db:
-    host: mariadb-magento
     name: magento
     user: bn_magento
-    pass: root123
+    pass: bn_magento_password
   username: admin
   pass: admin123
 
@@ -60,7 +59,9 @@ mariadb:
   db:
     name: magento
     user: bn_magento
-    password: root123
+    password: bn_magento_password
+  rootUser:
+    password: bn_magento_password
 
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/

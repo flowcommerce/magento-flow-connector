@@ -12,7 +12,7 @@ services:
     networks:
       - backend
   magento:
-    image: 'flowcommerce/magento:latest'
+    image: '479720515435.dkr.ecr.us-east-1.amazonaws.com/magento-flow-connector:k8s-pr-dd0de5c4a46a5626640f076c33bd2055c75fb5bc'
     labels:
       kompose.service.type: nodeport
     environment:
@@ -25,10 +25,9 @@ services:
       - MAGENTO_DATABASE_NAME=bitnami_magento
       - COMPOSER_MEMORY_LIMIT=-1
     ports:
-      - '80:80'
-      - '443:443'
+      - '8080:80'
     volumes:
-      - 'magento_data:/bitnami'
+      - '/bitnami'
     depends_on:
       - mariadb
     links:
@@ -37,8 +36,6 @@ services:
       - backend
 volumes:
   mariadb_data:
-    driver: local
-  magento_data:
     driver: local
 networks:
   backend:

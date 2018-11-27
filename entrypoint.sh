@@ -11,6 +11,8 @@ if [[ "$1" == "nami" && "$2" == "start" ]] || [[ "$1" == "httpd" ]]; then
   chown -R bitnami:daemon /opt/bitnami/magento/htdocs/var
   chown -R bitnami:daemon /opt/bitnami/magento/htdocs/generated
   chown -R bitnami:daemon /opt/bitnami/magento/htdocs/app/etc
+  echo -e '\nSetEnvIf X-Forwarded-Proto https HTTPS=on' >> .htaccess
+
   nami_initialize apache php mysql-client libphp magento
   info "Starting magento... "
 fi

@@ -1,4 +1,5 @@
 {{- $fullName := include "deploy.fullname" . -}}
+{{- $dbHost := include "magento.mariadb.fullname" . -}}
 {{- range $key, $value := index .Values "stacks" }}
 apiVersion: apps/v1
 kind: Deployment
@@ -34,10 +35,9 @@ spec:
         - name: {{ $.Chart.Name }}
           image: "{{ $.Values.image.repository }}:{{ $value.version }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
-          args: ["production"]
           env:
             - name: MARIADB_HOST
-              value: {{ $.Values.magento.db.host }}
+              value: {{ $dbHost }}
             - name: MARIADB_PORT_NUMBER
               value: "3306"
             - name: MAGENTO_DATABASE_NAME

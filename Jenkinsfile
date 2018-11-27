@@ -29,4 +29,18 @@ phpTemplate(label: label) {
     dockerOrganisation = ecrRepo
     dockerFile = 'Dockerfile.dev'
   }
+
+  stage('Deploy Helm Chart') {
+    container('helm') {
+      sh "helm init --client-only"
+      sh """helm dependency update ./deploy/$project"""
+
+      withAWSRole() {
+        sh """helm upgrade --tiller-namespace production --wait \
+              --namespace production \
+              --set stacks.dark.version=$imageTag \
+              -i $project ./deploy/$project"""
+      }
+    }
+  }
 }

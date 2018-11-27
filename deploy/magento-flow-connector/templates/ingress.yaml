@@ -1,0 +1,23 @@
+{{- $fullName := include "deploy.fullname" . -}}
+{{- range $key, $value := index .Values "stacks" }}
+{{- if $value.ingress -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-{{ $key }}
+  labels:
+    app.kubernetes.io/name: {{ include "deploy.name" $ }}
+    helm.sh/chart: {{ include "deploy.chart" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+spec:
+  rules:
+    - host: {{ $value.host | quote }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ $fullName }}-{{ $key }}
+              servicePort: http
+{{- end }}
+{{- end -}}

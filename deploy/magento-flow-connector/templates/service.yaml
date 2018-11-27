@@ -1,0 +1,24 @@
+{{- $fullName := include "deploy.fullname" . -}}
+{{- range $key, $value := index .Values "stacks" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-{{ $key }}
+  labels:
+    helm.sh/chart: {{ include "deploy.chart" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/name: {{ include "deploy.name" $ }}
+    app.kubernetes.io/stage: {{ $key }}
+spec:
+  type: {{ $.Values.service.type }}
+  ports:
+    - port: {{ $.Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "deploy.name" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/stage: {{ $key }}
+{{- end -}}

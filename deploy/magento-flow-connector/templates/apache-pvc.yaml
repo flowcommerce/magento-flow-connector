@@ -1,0 +1,20 @@
+{{- $fullName := include "deploy.fullname" . -}}
+{{- range $key, $value := index .Values "stacks" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $fullName }}-{{ $key }}-apache
+  labels:
+    helm.sh/chart: {{ include "deploy.chart" $ }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/name: {{ include "deploy.name" $ }}
+    app.kubernetes.io/stage: {{ $key }}
+  annotations:
+    volume.alpha.kubernetes.io/storage-class: default
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 1Gi
+{{- end -}}

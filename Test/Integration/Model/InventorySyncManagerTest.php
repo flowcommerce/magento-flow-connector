@@ -17,6 +17,9 @@ use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use FlowCommerce\FlowConnector\Model\Api\Inventory\Updates\InventoryDataMapper;
 use FlowCommerce\FlowConnector\Model\InventorySyncRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
+use FlowCommerce\FlowConnector\Model\Api\Auth;
+use Magento\Store\Model\StoreManagerInterface as StoreManager;
 
 /**
  * Class InventorySyncManagerTest
@@ -82,6 +85,21 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
     private $searchCriteriaBuilder;
 
     /**
+     * @var UrlBuilder
+     */
+    private $urlBuilder;
+
+    /**
+     * @var Auth
+     */
+    private $auth;
+
+    /**
+     * @var StoreManager
+     */
+    private $storeManager;
+
+    /**
      * Sets up for tests
      * @return void
      */
@@ -116,12 +134,19 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
         $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->inventorySyncRepository = $this->objectManager->create(InventorySyncRepository::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
+        $this->auth = $this->objectManager->create(Auth::class);
+        $this->urlBuilder = $this->objectManager->create(UrlBuilder::class, [
+            'auth' => $this->auth
+        ]);
+        $this->storeManager = $this->objectManager->create(StoreManager::class);
     }
 
     /**
      * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/default_center_key center-1
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/api_token 0123456789
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/organization_id 0123456789
      */
     public function testSyncsSuccessfullyWhenFlowModuleEnabled()
     {
@@ -178,8 +203,11 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
     public function validateRequest($options)
     {
         $rawBody = $options['body'];
+        $auth = $options['auth'];
         $return = true;
         try {
+            $this->assertEquals($this->auth->getAuthHeader($this->storeManager->getStore()->getId()), $auth);
+
             $jsonRequest = json_decode($rawBody);
             /** @var  $product */
             $product = $this->productRepository->get($jsonRequest->item_number);
@@ -237,8 +265,8 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
     {
         $return = true;
         try {
-            $this->assertRegExp(
-                '#^https://api.flow.io/(.*)'.InventoryUpdatesApiClient::URL_STUB_PREFIX.'$#',
+            $this->assertEquals(
+                $this->urlBuilder->getFlowApiEndpoint(InventoryUpdatesApiClient::URL_STUB_PREFIX),
                 $url
             );
         } catch (Exception $e) {

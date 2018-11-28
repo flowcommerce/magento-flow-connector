@@ -4,6 +4,7 @@ namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Model\Quote\AddressFactory as QuoteAddressFactory;
 use Magento\Quote\Api\CartRepositoryInterface as CartRepository;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Catalog\Model\ProductFactory;
@@ -30,6 +31,11 @@ class DiscountRepository implements DiscountRepositoryInterface
      * @var QuoteFactory
      */
     protected $quoteFactory;
+
+    /**
+     * @var QuoteAddressFactory
+     */
+    protected $quoteAddressFactory;
 
     /**
      * @var CartRepository
@@ -80,6 +86,7 @@ class DiscountRepository implements DiscountRepositoryInterface
      * @param StoreManager $storeManager
      * @param QuoteFactory $quoteFactory
      * @param QuoteRepository $cartRepository
+     * @param QuoteAddressFactory $quoteAddressFactory
      * @param ProductRepository $productRepository
      * @param ProductFactory $productFactory
      * @param CustomerFactory $customerFactory
@@ -92,6 +99,7 @@ class DiscountRepository implements DiscountRepositoryInterface
     public function __construct(
         StoreManager $storeManager,
         QuoteFactory $quoteFactory,
+        QuoteAddressFactory $quoteAddressFactory,
         CartRepository $cartRepository,
         ProductRepository $productRepository,
         ProductFactory $productFactory,
@@ -104,6 +112,7 @@ class DiscountRepository implements DiscountRepositoryInterface
     ) {
         $this->storeManager = $storeManager;
         $this->quoteFactory = $quoteFactory;
+        $this->quoteAddressFactory = $quoteAddressFactory;
         $this->cartRepository = $cartRepository;
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
@@ -238,32 +247,19 @@ class DiscountRepository implements DiscountRepositoryInterface
         
         if (array_key_exists('customer', $order)) {
             $receivedCustomer = $order['customer'];
-
             if (array_key_exists('email', $receivedCustomer)) {
                 $customer = $customer->loadByEmail($receivedCustomer['email']);
-
-                if (!$customer->getEntityId() &&
-                    array_key_exists('name', $receivedCustomer)) {
-                    if (array_key_exists('first', $receivedCustomer['name']) &&
-                        array_key_exists('last', $receivedCustomer['name'])) {
-                        $customer->setFirstname($receivedCustomer['name']['first']);
-                        $customer->setLastname($receivedCustomer['name']['last']);
-                        $customer->setEmail($receivedCustomer['email']);
-                        $customer = $customer->save();
-                    }
-                }
             }
         }
 
-        if (!$customer->getEntityId() &&
-            !$customer->loadByEmail('example@email.com')) {
-            $customer->setFirstname('John');
-            $customer->setLastname('Doe');
-            $customer->setEmail('example@email.com');
-            $customer = $customer->save();
+        if ($customer->getEntityId()) {
+            $customer = $this->customerRepository->getById($customer->getEntityId());
+            $quote->assignCustomer($customer);
+        } else {
+            $address = $this->quoteAddressFactory->create();
+            $quote->setBillingAddress($address);
+            $quote->setShippingAddress($address);
         }
-        $customer = $this->customerRepository->getById($customer->getEntityId());
-        $quote->assignCustomer($customer);
 
         if (!array_key_exists('lines', $order)) {
             $this->logger->info('Missing order lines');

@@ -6,18 +6,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\State as AppState;
 use Magento\Framework\Registry;
-use FlowCommerce\FlowConnector\Api\WebhookManagementInterface as WebhookManager;
+use FlowCommerce\FlowConnector\Api\IntegrationManagementInterface as IntegrationManager;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 
 /**
- * Command to register webhooks with Flow.
+ * Class IntegrationInitializeCommand
+ * @package FlowCommerce\FlowConnector\Console\Command
  */
-class WebhookRegisterWebhooksCommand extends BaseCommand
+class IntegrationInitializeCommand extends BaseCommand
 {
     /**
-     * @var WebhookManager
+     * @var IntegrationManager
      */
-    private $webhookManager;
+    private $integrationManager;
 
     /**
      * @var StoreManager
@@ -28,24 +29,25 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
      * WebhookRegisterWebhooksCommand constructor.
      * @param AppState $appState
      * @param Registry $registry
-     * @param WebhookManager $webhookManager
+     * @param IntegrationManager $integrationManager
      * @param StoreManager $storeManager
      */
     public function __construct(
         AppState $appState,
         Registry $registry,
-        WebhookManager $webhookManager,
+        IntegrationManager $integrationManager,
         StoreManager $storeManager
     ) {
         parent::__construct($appState, $registry);
-        $this->webhookManager = $webhookManager;
+        $this->integrationManager = $integrationManager;
         $this->storeManager = $storeManager;
     }
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:webhook-register-webhooks')
-            ->setDescription('Register webhooks with Flow.');
+        $this->setName('flow:flow-connector:integration-initialize')
+            ->setDescription('Initializes integration with flow.io. This is a wrapper for webhooks ' .
+                'registration, attributes creation and inventory center key fetching.');
     }
 
     /**
@@ -57,13 +59,23 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $logger = new FlowConsoleLogger($output);
         $this->initCLI();
-        $this->webhookManager->setLogger($logger);
         foreach ($this->storeManager->getStores() as $store) {
             try {
-                $this->webhookManager->registerAllWebhooks($store->getId());
-                $output->writeln(sprintf('Successfully initialized Flow configuration for store %d.', $store->getId()));
+                $result = $this->integrationManager->initializeIntegrationForStoreView($store->getId());
+                if ($result) {
+                    $output->writeln(sprintf(
+                        'Successfully initialized Flow configuration for store %d.',
+                        $store->getId()
+                    ));
+                } else {
+                    $output->writeln(
+                        sprintf(
+                            'An error occurred while initializing Flow configuration for store %d: %s.',
+                            $store->getId()
+                        )
+                    );
+                }
             } catch (\Exception $e) {
                 $output->writeln(
                     sprintf(

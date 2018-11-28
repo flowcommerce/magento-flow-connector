@@ -12,7 +12,7 @@ Flow is a comprehensive global e-commerce solution. For more information about F
 
 ```
 "require": {
-    "flowcommerce/flowconnector": "^1.1.0"
+    "flowcommerce/flowconnector": "^1.1.1"
 }
 ```
 
@@ -113,10 +113,10 @@ Upon configuring this module with your Flow credentials, the module will configu
 This module will dispatch several events that observers can listen to:
 
 - An event is dispatched when a webhook event is received from Flow.
-  - List of event types can be found in the Model/WebhookEventManger.php registerWebhooks() method.
+  - List of event types can be found in the Model/WebhookManger/EndpointsConfiguration.php class.
   - The event name will be `Flow\FlowConnector\Model\WebhookEvent::EVENT_FLOW_PREFIX` + the event type.
 - An event is dispatched after a webhook event is processed.
-  - List of event types can be found in the Model/WebhookEventManger.php registerWebhooks() method.
+  - List of event types can be found in the Model/WebhookManger/EndpointsConfiguration.php class.
   - The event name will be `Flow\FlowConnector\Model\WebhookEvent::EVENT_FLOW_PREFIX` + the event type + `Flow\FlowConnector\Model\WebhookEvent::EVENT_FLOW_SUFFIX_AFTER`.
 - An event is dispatched after a product has been synced to Flow.
   - The event name is defined in `Flow\FlowConnector\Model\Sync\CatalogSync::EVENT_FLOW_PRODUCT_SYNC_AFTER`.

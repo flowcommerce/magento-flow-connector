@@ -4,8 +4,10 @@ namespace FlowCommerce\FlowConnector\Model;
 
 use Exception;
 use FlowCommerce\FlowConnector\Model\Api\Center\GetAllCenterKeys as FlowCentersApiClient;
+use FlowCommerce\FlowConnector\Api\InventoryCenterManagementInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use Magento\Framework\App\Config\Storage\WriterInterface as ConfigWriter;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManager;
 use Magento\Store\Model\ScopeInterface;
 use Psr\Log\LoggerInterface;
@@ -14,7 +16,7 @@ use Psr\Log\LoggerInterface;
  * Class InventoryCenterManager
  * @package FlowCommerce\FlowConnector\Model
  */
-class InventoryCenterManager
+class InventoryCenterManager implements InventoryCenterManagementInterface
 {
     /**
      * Config Path - Default Center Key
@@ -77,32 +79,33 @@ class InventoryCenterManager
     }
 
     /**
-     * Fetches inventory center keys from Flow's api and stores them in magento's config
-     * @param int[]|null $storeIds
-     * @return bool
+     * {@inheritdoc}
      */
     public function fetchInventoryCenterKeys($storeIds = [])
     {
         try {
             if (!count((array) $storeIds)) {
                 $storeIds = [];
+                /** @var StoreInterface $store */
                 foreach ($this->storeManager->getStores() as $store) {
-                    if ($this->flowUtil->isFlowEnabled($store->getStoreId())) {
-                        array_push($storeIds, $store->getStoreId());
+                    if ($this->flowUtil->isFlowEnabled($store->getId())) {
+                        array_push($storeIds, $store->getId());
                         $this->logger->info('Including products from store: ' . $store->getName() .
-                            ' [id=' . $store->getStoreId() . ']');
+                            ' [id=' . $store->getId() . ']');
                     } else {
                         $this->logger->info('Not including products from store: ' . $store->getName() .
-                            ' [id=' . $store->getStoreId() . '] - Flow disabled');
+                            ' [id=' . $store->getId() . '] - Flow disabled');
                     }
                 }
             }
 
             foreach ($storeIds as $storeId) {
-                $centers = $this->flowCentersApiClient->execute($storeId);
-                if (count($centers)) {
-                    $defaultCenterKey = array_shift($centers);
-                    $this->saveDefaultCenterKeyForStore($storeId, $defaultCenterKey);
+                if ($this->flowUtil->isFlowEnabled($storeId)) {
+                    $centers = $this->flowCentersApiClient->execute($storeId);
+                    if (count($centers)) {
+                        $defaultCenterKey = array_shift($centers);
+                        $this->saveDefaultCenterKeyForStore($storeId, $defaultCenterKey);
+                    }
                 }
             }
         } catch (Exception $e) {
@@ -113,9 +116,7 @@ class InventoryCenterManager
     }
 
     /**
-     * Given a store id, returns the configured default center key
-     * @param $storeId
-     * @return string
+     * {@inheritdoc}
      */
     public function getDefaultCenterKeyForStore($storeId)
     {
@@ -138,5 +139,8 @@ class InventoryCenterManager
                 ScopeInterface::SCOPE_STORES,
                 $storeId
             );
+
+        # This is needed, as config is cached in scope config in case the value is read right after it's written
+        $this->scopeConfig->clean();
     }
 }

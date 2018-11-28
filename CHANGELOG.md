@@ -1,5 +1,12 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.1
+
+- Add configuration option to disable and enable sending invoice email after invoicing Flow order in Magento automatically.
+- Add configuration option to disable and enable sending shipment email after shipping Flow order in Magento automatically.
+- Add create shipment configuration option for disabling creation of shipments for Flow orders in Magento automatically.
+- Fix regression where configuration options had to be re-entered after upgrading to 1.1.0.
+
 ## 1.1.0
 
 - Magento invoices and shipments can now be created automatically.

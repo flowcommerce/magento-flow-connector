@@ -9,7 +9,7 @@
             <label>Connector Settings</label>
             <tab>flowcommerce</tab>
             <resource>FlowCommerce_FlowConnector::connector_config</resource>
-            <group id="connector" translate="label" type="text" sortOrder="1" showInDefault="0" showInWebsite="0" showInStore="1">
+            <group id="flowconnector" translate="label" type="text" sortOrder="1" showInDefault="0" showInWebsite="0" showInStore="1">
                 <label>Flow Credentials</label>
                 <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enabled</label>
@@ -25,9 +25,21 @@
                     <validate>required-entry</validate>
                     <comment>Flow API Token</comment>
                 </field>
-                <field id="invoice_event" translate="label" type="select" sortOrder="3" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="invoice_event" translate="label" type="select" sortOrder="4" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Create Invoice</label>
                     <source_model>FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent</source_model>
+                </field>
+                <field id="invoice_email" translate="label" type="select" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Send invoice email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="shipment_event" translate="label" type="select" sortOrder="6" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Create Shipment</label>
+                    <source_model>FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent</source_model>
+                </field>
+                <field id="shipment_email" translate="label" type="select" sortOrder="7" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Send shipment email</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>

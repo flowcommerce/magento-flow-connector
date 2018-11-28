@@ -77,6 +77,9 @@ if [ "$TEST_SUITE" = "integration_core" ]; then
     test_xml[$INTEGRATION_INDEX]+="            <exclude>testsuite/Magento/InstantPurchase/Model/InstantPurchaseTest.php</exclude>\n"
     test_xml[$INTEGRATION_INDEX]+="            <exclude>testsuite/Magento/Setup/Model/ObjectManagerProviderTest.php</exclude>\n"
     test_xml[$INTEGRATION_INDEX]+="            <exclude>testsuite/Magento/Usps/Api/GuestCouponManagementTest.php</exclude>\n"
+    test_xml[$INTEGRATION_INDEX]+="            <exclude>testsuite/Magento/Setup/Console/Command/GenerateFixturesCommandTest.php</exclude>\n"
+    test_xml[$INTEGRATION_INDEX]+="            <exclude>testsuite/Magento/Setup/Model/FixtureGenerator/ProductGeneratorTest.php</exclude>\n"
+    test_xml[$INTEGRATION_INDEX]+="            <exclude>testsuite/Magento/Setup/Fixtures/FixtureModelTest.php</exclude>\n"
 
     # replace test sets for current index into testsuite
     perl -pi -e "s#\s+<directory.*>testsuite</directory>#${test_xml[INTEGRATION_INDEX]}#g" phpunit.xml

@@ -95,13 +95,6 @@
                     Magento\Setup\Fixtures\FixtureModelTest::testFixtureGeneration
                      -->
                     <item name="entity_id_field" xsi:type="const">Magento\Setup\Model\FixtureGenerator\EntityGenerator::SKIP_ENTITY_ID_BINDING</item>
-
-                    <!--
-                    Work around "Integrity constraint violation: 1062 Duplicate entry '1-template_sku534221971' for key
-                    'FLOW_CONNECTOR_SYNC_SKUS_STORE_ID_SKU'" issue with
-                     Magento\Setup\Fixtures\FixtureModelTest::testFixtureGeneration.
-                     -->
-                    <item name="handler" xsi:type="object">FlowCommerce\FlowConnector\Model\FixtureGenerator\ProductGenerator\Handler</item>
                 </item>
             </argument>
         </arguments>

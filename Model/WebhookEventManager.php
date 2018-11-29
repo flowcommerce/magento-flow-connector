@@ -241,7 +241,6 @@ class WebhookEventManager implements WebhookEventManagementInterface
         } else {
             $message = sprintf('Flow connector disabled for store %d', $storeId);
             $this->logger->notice($message);
-            throw new \Exception($message);
         }
     }
 

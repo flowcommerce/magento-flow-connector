@@ -37,7 +37,7 @@ phpTemplate(label: label) {
         sh """helm dependency update ./deploy/$project"""
 
         withAWSRole() {
-          sh """helm upgrade --tiller-namespace production --wait \
+          sh """helm upgrade --wait \
                 --namespace production \
                 --set stacks.dark.version=$imageTag \
                 -i $project ./deploy/$project"""

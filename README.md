@@ -12,7 +12,7 @@ Flow is a comprehensive global e-commerce solution. For more information about F
 
 ```
 "require": {
-    "flowcommerce/flowconnector": "^1.1.1"
+    "flowcommerce/flowconnector": "^1.1.2"
 }
 ```
 

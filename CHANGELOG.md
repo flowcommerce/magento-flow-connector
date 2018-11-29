@@ -1,5 +1,12 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.2
+
+- Fix guest discount calculation in Checkout UI
+- Fix out of stock exception during quote generation on order creation
+- Fix store view scope for order creation
+- Remove exception for empty configuration of disabled connector on store view
+
 ## 1.1.1
 
 - Add configuration option to disable and enable sending invoice email after invoicing Flow order in Magento automatically.

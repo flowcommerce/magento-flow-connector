@@ -1318,8 +1318,25 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $quote->collectTotals()->save();
 
+
+        /*
+         * Fix for missing ext_order_id due to "This product is out of stock" exception thrown in quote submission process.
+         *
+         * It is required to load quote through the repository before passing it on to
+         * \Magento\Quote\Model\QuoteManagement::submit() due to Magento switching data types for quote item fields upon
+         * loading quote from repository, making strict comparison with quote item fields that were not pulled from
+         * repository fail causing "This product is out of stock" error in:
+         *
+         * https://github.com/magento/magento2/blob/2.2.5/app/code/Magento/Quote/Model/Quote/Item/CartItemPersister.php#L74
+         */
         /** @var Quote $quote */
         $quote = $this->cartRepository->get($quote->getId());
+
+        /*
+         * Workaround for issue where \Magento\Quote\Model\QuoteRepository::loadQuote() method from cart repository used by
+         * \Magento\Quote\Model\QuoteRepository::get() clobbers store ID from quote with current store ID:
+         */
+        $quote->setStoreId($this->getStoreId());
 
         /** @var Order $order */
         $order = $this->quoteManagement->submit($quote);

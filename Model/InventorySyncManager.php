@@ -361,21 +361,20 @@ class InventorySyncManager implements InventorySyncManagementInterface
     public function enqueueStockItem(StockItemInterface $stockItem)
     {
         if (!$this->util->isFlowEnabled()) {
-            $product = $this->productRepository->getById($stockItem->getProductId());
-            $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
-        } else {
-            $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(InventorySync::DATA_KEY_PRODUCT_ID, $stockItem->getProductId(), 'eq')
-                ->addFilter(InventorySync::DATA_KEY_STATUS, InventorySync::STATUS_NEW, 'eq')
-                ->create();
-            $existingStockItems = $this->inventorySyncRepository->getList($searchCriteria);
-            if ($existingStockItems->getTotalCount() == 0) {
-                $inventorySync = $this->inventorySyncFactory->create();
-                $inventorySync->setProductId($stockItem->getProductId());
-                $inventorySync->setStoreId($this->util->getCurrentStoreId());
-                $inventorySync->setStatus(InventorySync::STATUS_NEW);
-                $this->inventorySyncRepository->save($inventorySync);
-            }
+            return;
+        }
+
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter(InventorySync::DATA_KEY_PRODUCT_ID, $stockItem->getProductId(), 'eq')
+            ->addFilter(InventorySync::DATA_KEY_STATUS, InventorySync::STATUS_NEW, 'eq')
+            ->create();
+        $existingStockItems = $this->inventorySyncRepository->getList($searchCriteria);
+        if ($existingStockItems->getTotalCount() == 0) {
+            $inventorySync = $this->inventorySyncFactory->create();
+            $inventorySync->setProductId($stockItem->getProductId());
+            $inventorySync->setStoreId($this->util->getCurrentStoreId());
+            $inventorySync->setStatus(InventorySync::STATUS_NEW);
+            $this->inventorySyncRepository->save($inventorySync);
         }
     }
 

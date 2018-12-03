@@ -1,9 +1,9 @@
 <?php
 namespace FlowCommerce\FlowConnector\Model\Discount;
 
-use \FlowCommerce\FlowConnector\Model\Discount\Entitlement;
+use FlowCommerce\FlowConnector\Api\Data\DiscountEntitlementFormInterface;
 
-class EntitlementForm
+class EntitlementForm implements DiscountEntitlementFormInterface
 {
     public function __construct(){
         $this->order_entitlement_forms = [];
@@ -16,14 +16,16 @@ class EntitlementForm
      * @param string $currency
      * @return $this
      */
-    public function addEntitlement($discriminator, $entitlementKey, $amount, $currency) {
+    public function addEntitlement($discriminator, $entitlementKey, $amount, $currency)
+    {
         $this->order_entitlement_forms[] = new Entitlement($discriminator, $entitlementKey, $amount, $currency);
     }
 
     /**
-     * @return \FlowCommerce\FlowConnector\Model\Discount\Entitlement[]
+     * @return \FlowCommerce\FlowConnector\Api\Data\DiscountEntitlementInterface[]
      */
-    public function getOrderEntitlementForms() {
+    public function getOrderEntitlementForms()
+    {
         return $this->order_entitlement_forms;
     }
 }

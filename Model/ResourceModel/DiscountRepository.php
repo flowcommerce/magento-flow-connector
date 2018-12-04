@@ -130,7 +130,7 @@ class DiscountRepository implements DiscountRepositoryInterface
      * @param $order
      * @param $code
      * @return \FlowCommerce\FlowConnector\Api\Data\DiscountInterface
-     * @throws \FlowCommerce\FlowConnector\Exception\DiscountException
+     * @throws \Magento\Framework\Exception\NotFoundException
      */
     public function getDiscount($order = false, $code = false)
     {
@@ -138,17 +138,17 @@ class DiscountRepository implements DiscountRepositoryInterface
         $this->logger->info('Coupon code provided: ' . (string)$code);
 
         if (!$this->isValidRule($code)) {
-            throw new \FlowCommerce\FlowConnector\Exception\DiscountException();
+            throw new \Magento\Framework\Exception\NotFoundException(__('Invalid code'));
         }
 
         if (!array_key_exists('total', $order)) {
             $this->logger->info('Missing order totals');
-            throw new \FlowCommerce\FlowConnector\Exception\DiscountException();
+            throw new \Magento\Framework\Exception\NotFoundException(__('Invalid code'));
         }
 
         if (!array_key_exists('currency', $order['total'])) {
             $this->logger->info('Missing order currency');
-            throw new \FlowCommerce\FlowConnector\Exception\DiscountException();
+            throw new \Magento\Framework\Exception\NotFoundException(__('Invalid code'));
         }
 
         $orderCurrency = $order['total']['currency'];
@@ -170,7 +170,7 @@ class DiscountRepository implements DiscountRepositoryInterface
 
         if ($orderDiscountAmount <= 0) {
             $this->logger->info('No discount applicable');
-            throw new \FlowCommerce\FlowConnector\Exception\DiscountException();
+            throw new \Magento\Framework\Exception\NotFoundException(__('Invalid code'));
         }
         $this->logger->info('Discount amount found: ' . $orderDiscountAmount);
 

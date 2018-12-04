@@ -13,7 +13,6 @@ use GuzzleHttp\Psr7\Response as HttpResponse;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
-use Zend\Http\Request;
 
 /**
  * Main class for syncing product data to Flow.
@@ -146,57 +145,11 @@ class CatalogSync
     }
 
     /**
-     * Initializes the connector with Flow.
-     * @param int $storeId
-     * @return bool
-     */
-    public function initFlowConnector($storeId)
-    {
-        $data = [
-            'intent' => 'price',
-            'type' => 'decimal',
-            'options' => [
-                'required' => false,
-                'show_in_catalog' => false,
-                'show_in_harmonization' => false,
-            ],
-        ];
-
-        $priceCodes = [
-            'base_price',
-            'bundle_option',
-            'bundle_selection',
-            'catalog_rule_price',
-            'configured_price',
-            'configured_regular_price',
-            'custom_option_price',
-            'final_price',
-            'link_price',
-            'max_price',
-            'min_price',
-            'msrp_price',
-            'regular_price',
-            'special_price',
-            'tier_price',
-        ];
-
-        $isSuccess = true;
-
-        foreach ($priceCodes as $priceCode) {
-            $priceData = array_merge($data, ['key' => $priceCode]);
-            if (!$this->upsertFlowAttribute($storeId, $priceData)) {
-                $isSuccess = false;
-            }
-        }
-
-        return $isSuccess;
-    }
-
-    /**
      * Processes the SyncSku queue.
      * @param int $numToProcess Number of records to process. Pass in -1 to process all records.
      * @param int $keepAlive Number of seconds to keep alive after/between processing.
      * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function process($numToProcess = 1000, $keepAlive = 60)
     {
@@ -226,7 +179,7 @@ class CatalogSync
                             // Product exists in enabled state and was updated - propagate update to Flow.
                             $this->syncSkuManager->markSyncSkuAsProcessing($syncSku);
                             array_push($this->syncSkusToUpdate, $syncSku);
-                        } elseif($syncSku->getState() === SyncSkuInterface::STATE_DONE) {
+                        } elseif ($syncSku->getState() === SyncSkuInterface::STATE_DONE) {
                             // Product was either deleted or disabled in Magento and we have record of it being
                             // previously synced to Flow - delete from Flow as well, then delete SKU from our table.
                             array_push($this->syncSkusToDelete, $syncSku);
@@ -332,37 +285,5 @@ class CatalogSync
     {
         $this->logger = $logger;
         $this->util->setLogger($logger);
-    }
-
-    /**
-     * Helper function to upsert Flow attributes.
-     * @param int $storeId
-     * @param string[] $data
-     * @return bool
-     */
-    private function upsertFlowAttribute($storeId, $data)
-    {
-        $urlStub = '/attributes/' . $data['key'];
-
-        $dataStr = $this->jsonSerializer->serialize($data);
-        $this->logger->info('Updating Flow attribute: ' . $dataStr);
-
-        $client = $this->util->getFlowClient($urlStub, $storeId);
-        $client->setMethod(Request::METHOD_PUT);
-        $client->setRawBody($dataStr);
-
-        $response = $this->util->sendFlowClient($client, 3);
-
-        if ($response->isSuccess()) {
-            $this->logger->info('CatalogSync->upsertFlowAttribute ' . $urlStub . ': success');
-            $this->logger->info('Status code: ' . $response->getStatusCode());
-            $this->logger->info('Body: ' . $response->getBody());
-        } else {
-            $this->logger->error('CatalogSync->upsertFlowAttribute ' . $urlStub . ': failed');
-            $this->logger->error('Status code: ' . $response->getStatusCode());
-            $this->logger->error('Body: ' . $response->getBody());
-        }
-
-        return (bool)$response->isSuccess();
     }
 }

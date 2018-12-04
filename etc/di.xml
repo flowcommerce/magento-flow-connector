@@ -8,10 +8,14 @@
     <preference for="FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterface" type="Magento\Framework\Api\Search\SearchResult" />
     <preference for="FlowCommerce\FlowConnector\Api\Data\InventorySyncSearchResultsInterface" type="Magento\Framework\Api\Search\SearchResult" />
     <preference for="FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface" type="FlowCommerce\FlowConnector\Model\SyncSkuManager" />
+    <preference for="FlowCommerce\FlowConnector\Api\SyncSkuPriceAttributesManagementInterface" type="FlowCommerce\FlowConnector\Model\SyncSkuPriceAttributesManager" />
     <preference for="FlowCommerce\FlowConnector\Api\LockManagerInterface" type="FlowCommerce\FlowConnector\Model\LockManager\Flag" />
+    <preference for="FlowCommerce\FlowConnector\Api\IntegrationManagementInterface" type="FlowCommerce\FlowConnector\Model\IntegrationManager" />
     <preference for="FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface" type="FlowCommerce\FlowConnector\Model\InventorySyncManager" />
+    <preference for="FlowCommerce\FlowConnector\Api\InventoryCenterManagementInterface" type="FlowCommerce\FlowConnector\Model\InventoryCenterManager" />
     <preference for="FlowCommerce\FlowConnector\Api\InventorySyncRepositoryInterface" type="FlowCommerce\FlowConnector\Model\InventorySyncRepository" />
     <preference for="FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface" type="FlowCommerce\FlowConnector\Model\WebhookEventManager" />
+    <preference for="FlowCommerce\FlowConnector\Api\WebhookManagementInterface" type="FlowCommerce\FlowConnector\Model\WebhookManager" />
 
     <!-- Overriding Order Totals Block for magento admin -->
     <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
@@ -51,7 +55,22 @@
     </type>
     <type name="FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand">
         <arguments>
-            <argument name="webhookEventManager" xsi:type="object">FlowCommerce\FlowConnector\Model\WebhookEventManager\Proxy</argument>
+            <argument name="webhookManager" xsi:type="object">FlowCommerce\FlowConnector\Model\WebhookManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\IntegrationInitializeCommand">
+        <arguments>
+            <argument name="integrationManager" xsi:type="object">FlowCommerce\FlowConnector\Model\IntegrationManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\CatalogSyncAttributesSaveCommand">
+        <arguments>
+            <argument name="syncSkuPriceAttributesManager" xsi:type="object">FlowCommerce\FlowConnector\Model\SyncSkuPriceAttributesManager\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\InventoryCenterFetchKeysCommand">
+        <arguments>
+            <argument name="inventoryCenterManager" xsi:type="object">FlowCommerce\FlowConnector\Model\InventoryCenterManager\Proxy</argument>
         </arguments>
     </type>
 
@@ -59,9 +78,11 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
+                <item name="flowcommerce_flowconnector_catalog_sync_attributes_save" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CatalogSyncAttributesSaveCommand</item>
                 <item name="flowcommerce_flowconnector_catalog_sync_queue_all" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CatalogSyncQueueAllCommand</item>
                 <item name="flowcommerce_flowconnector_catalog_sync_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CatalogSyncProcessCommand</item>
-                <item name="flowcommerce_flowconnector_default_centers_update" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\FetchInventoryCenterKeysCommand</item>
+                <item name="flowcommerce_flowconnector_integration_initialize" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\IntegrationInitializeCommand</item>
+                <item name="flowcommerce_flowconnector_inventory_center_fetch_keys" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\InventoryCenterFetchKeysCommand</item>
                 <item name="flowcommerce_flowconnector_inventory_sync_queue_all" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\InventorySyncQueueAllCommand</item>
                 <item name="flowcommerce_flowconnector_inventory_sync_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\InventorySyncProcessCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_event_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookEventProcessCommand</item>

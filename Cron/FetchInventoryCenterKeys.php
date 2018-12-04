@@ -2,9 +2,9 @@
 
 namespace FlowCommerce\FlowConnector\Cron;
 
-use \Exception;
-use \FlowCommerce\FlowConnector\Model\InventoryCenterManager;
-use \Psr\Log\LoggerInterface as Logger;
+use Exception;
+use FlowCommerce\FlowConnector\Api\InventoryCenterManagementInterface as InventoryCenterManager;
+use Psr\Log\LoggerInterface as Logger;
 
 /**
  * Cron Task wrapper fetch default inventory center keys

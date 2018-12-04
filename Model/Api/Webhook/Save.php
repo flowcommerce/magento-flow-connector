@@ -1,7 +1,8 @@
 <?php
 
-namespace FlowCommerce\FlowConnector\Model\Api\Center;
+namespace FlowCommerce\FlowConnector\Model\Api\Webhook;
 
+use Exception;
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Util;
@@ -12,12 +13,12 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
 
-class GetAllCenterKeys
+class Save
 {
     /**
      * Url Stub Prefix of this API endpoint
      */
-    const URL_STUB_PREFIX = '/centers';
+    const URL_STUB_PREFIX = '/webhooks';
 
     /**
      * @var Auth
@@ -83,27 +84,42 @@ class GetAllCenterKeys
     }
 
     /**
-     * Deletes the sku from Flow.
+     * Retrieves all webhooks registered with flow
      * @param int $storeId
-     * @return string[]
+     * @param string $webhookUrl
+     * @param string[] $events
+     * @return bool
      * @throws NoSuchEntityException
      */
-    public function execute($storeId)
+    public function execute($storeId, $webhookUrl, $events)
     {
-        $return = [];
+        $return = false;
 
         /** @var HttpClient $client */
         $client = $this->httpClientFactory->create();
         $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
-        $response = $client->get($url, ['auth' => $this->auth->getAuthHeader($storeId)]);
 
-        $centers = $this->jsonSerializer->unserialize($response->getBody()->getContents());
-        foreach ($centers as $center) {
-            if (array_key_exists('key', $center)) {
-                array_push($return, (string) $center['key']);
-                break;
+        $body = [
+            'url' => $webhookUrl,
+            'events' => $events,
+        ];
+
+        try {
+            $response = $client->post($url, [
+                'auth' => $this->auth->getAuthHeader($storeId),
+                'body' => $this->jsonSerializer->serialize($body)
+            ]);
+
+            if ((int) $response->getStatusCode() === 201) {
+                $this->logger->info('Webhook registered: ' . $response->getBody());
+                $return = true;
+            } else {
+                $this->logger->info('Webhook registration failed: ' . $response->getBody());
             }
+        } catch (Exception $e) {
+            $this->logger->info('Webhook registration failed: ' . $e->getMessage());
         }
+
         return $return;
     }
 }

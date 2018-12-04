@@ -563,6 +563,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
 
         if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
+            if ($order->getFlowConnectorOrderReady()) {
+                $this->logger->info('Order ready, duplicate submission ignored');
+                return;
+            }
+
             foreach ($data['allocation']['details'] as $detail) {
 
                 // allocation_detail is a union model. If there is a "number",

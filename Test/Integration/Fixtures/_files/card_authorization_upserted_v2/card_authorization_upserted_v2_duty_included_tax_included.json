@@ -1,0 +1,116 @@
+{
+  "event_id": "evt-40d261d3ffec4040a2e2cec0d046a853",
+  "timestamp": "2018-11-09T12:08:12.527Z",
+  "organization": "magento-integration-sandbox",
+  "id": "aut-qdDssWlu0qqEXxYPtf1AherDvIIh6ILz",
+  "authorization": {
+    "id": "aut-qdDssWlu0qqEXxYPtf1AherDvIIh6ILz",
+    "key": "aut-qdDssWlu0qqEXxYPtf1AherDvIIh6ILz",
+    "merchant_of_record": "flow",
+    "card": {
+      "id": "crd-9f437e7e784a4378a02d568d289fa628",
+      "token": "XXX",
+      "type": "visa",
+      "expiration": {
+        "month": 4,
+        "year": 2022
+      },
+      "iin": "411111",
+      "last4": "1111",
+      "name": "test cree",
+      "issuer": {
+        "iin": "411111",
+        "name": "JPMORGAN CHASE BANK, N.A.",
+        "country": "USA"
+      },
+      "address": {
+        "name": {
+          "first": "Test",
+          "last": "Tax Included Duty Included"
+        },
+        "streets": [
+          "Avenida das Américas"
+        ],
+        "city": "RIO DE JANEIRO",
+        "province": "RIO DE JANEIRO",
+        "postal": "22222-222",
+        "country": "BRA"
+      },
+      "discriminator": "card"
+    },
+    "amount": 1445,
+    "currency": "BRL",
+    "customer": {
+      "name": {
+        "first": "Test",
+        "last": "Tax Included Duty Included"
+      },
+      "phone": "211212121212",
+      "email": "test-tax-duty@test.com"
+    },
+    "attributes": {},
+    "result": {
+      "status": "review"
+    },
+    "created_at": "2018-11-09T12:08:12.527Z",
+    "method": {
+      "id": "visa",
+      "type": "card",
+      "name": "VISA",
+      "images": {
+        "small": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/30/original.png",
+          "width": 65,
+          "height": 41
+        },
+        "medium": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/60/original.png",
+          "width": 100,
+          "height": 60
+        },
+        "large": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/120/original.png",
+          "width": 256,
+          "height": 256
+        }
+      },
+      "regions": [
+        "world"
+      ]
+    },
+    "requested": {
+      "amount": 1445,
+      "currency": "BRL"
+    },
+    "destination": {
+      "streets": [
+        "Avenida das Américas"
+      ],
+      "city": "RIO DE JANEIRO",
+      "province": "RIO DE JANEIRO",
+      "postal": "22222-222",
+      "country": "BRA"
+    },
+    "billing_address": {
+      "name": {
+        "first": "Test",
+        "last": "Tax Included Duty Included"
+      },
+      "streets": [
+        "Avenida das Américas"
+      ],
+      "city": "RIO DE JANEIRO",
+      "province": "RIO DE JANEIRO",
+      "postal": "22222-222",
+      "country": "BRA"
+    },
+    "order": {
+      "number": "ord-8951066515ec4c469131b1a4ef506113"
+    },
+    "base": {
+      "amount": 369.39,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "card_authorization_upserted_v2"
+}

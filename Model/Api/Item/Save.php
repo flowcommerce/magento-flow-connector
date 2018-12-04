@@ -124,7 +124,7 @@ class Save
                     $this->logger->info('Time to convert product to flow data: ' . (microtime(true) - $ts));
                     $urls = [];
                     foreach ($data as $item) {
-                        $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $syncSku->getStoreId(), $item['number']);
+                        $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX . rawurlencode($item['number']), $syncSku->getStoreId());
                         $storeId = $syncSku->getStoreId();
                         array_push($urls, $url);
                         $serializedItem = $this->jsonSerializer->serialize($item);

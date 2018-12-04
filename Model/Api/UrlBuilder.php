@@ -34,13 +34,11 @@ class UrlBuilder
      * Returns the Flow API endpoint with the specified url stub.
      * @param string $urlStub
      * @param int|null $storeId
-     * @param string|null $param
      * @return string
      * @throws NoSuchEntityException
      */
-    public function getFlowApiEndpoint($urlStub, $storeId = null, $param = null)
+    public function getFlowApiEndpoint($urlStub, $storeId = null)
     {
-        return self::FLOW_API_BASE_ENDPOINT . $this->auth->getFlowOrganizationId($storeId) .
-            $urlStub . rawurlencode($param);
+        return self::FLOW_API_BASE_ENDPOINT . $this->auth->getFlowOrganizationId($storeId) . $urlStub;
     }
 }

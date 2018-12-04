@@ -100,7 +100,7 @@ class Delete
             /** @var SyncSku $syncSku */
             foreach ($syncSkus as $syncSku) {
                 $storeId = $syncSku->getStoreId();
-                $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId, $syncSku->getSku());
+                $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX . rawurlencode($syncSku->getSku()), $storeId);
                 yield function () use ($client, $url, $storeId) {
                     return $client->deleteAsync($url, ['auth' => $this->auth->getAuthHeader($storeId)]);
                 };

@@ -47,14 +47,17 @@ Login to your Magento 2 Back Office:
 Console commands provided by this module:
 
 ```
-flow:flow-connector:catalog-sync-process            Process sync skus queue and send to Flow.
-flow:flow-connector:catalog-sync-queue-all          Queue all products for sync to Flow.
-flow:flow-connector:cron-cleanup                    Cron cleanup.
-flow:flow-connector:fetch-inventory-center-keys     Pull center keys from Flow.
-flow:flow-connector:inventory-sync-process          Inventory sync queue and send to Flow.
-flow:flow-connector:inventory-sync-queue-all        Queue all product inventory for sync to Flow.
-flow:flow-connector:webhook-register-webhooks       Send webhook URLs to Flow.
-flow:flow-connector:webhook-event-process           Process webhooks in queue.
+flow:flow-connector:catalog-sync-attributes-save  Saves product attributes needed for the integration in flow.io
+flow:flow-connector:catalog-sync-process          Process sync skus queue and send to Flow.
+flow:flow-connector:catalog-sync-queue-all        Queue all products for sync to Flow catalog.
+flow:flow-connector:cron-cleanup                  Clean up Flow cron tasks.
+flow:flow-connector:integration-initialize        Initializes integration with flow.io. This is a wrapper for webhooks registration, attributes creation and inventory center key fetching.
+flow:flow-connector:inventory-center-fetch-keys   Fetches inventory center keys for all store views where flowconnector is configured.
+flow:flow-connector:inventory-sync-process        Process inventory sync queue and send to Flow.
+flow:flow-connector:inventory-sync-queue-all      Queue all products for sync to Flow inventory.
+flow:flow-connector:webhook-event-process         Process Flow webhook events.
+flow:flow-connector:webhook-register-webhooks     Register webhooks with Flow.
+
 ```
 
 ### Update version

@@ -9,15 +9,20 @@ cd $HOME
 composer create-project "magento/community-edition:$MAGENTO_VERSION" magento
 cd $HOME/magento
 
-if [ "$TRAVIS_PULL_REQUEST" != false ]; then
-    build_branch=$TRAVIS_PULL_REQUEST_BRANCH
+if [ "$TRAVIS_TAG" != "" ]; then
+    cd $HOME/build/$GITHUB_ORGANIZATION_NAME/$GITHUB_REPOSITORY_NAME
+    REAL_BRANCH=$(git ls-remote origin | sed -n "\|$TRAVIS_COMMIT\s\+refs/heads/|{s///p}")
+    build_branch="dev-$REAL_BRANCH#$TRAVIS_TAG"
+    cd $HOME/magento
+elif [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+    build_branch="dev-$TRAVIS_PULL_REQUEST_BRANCH"
 else
-    build_branch=$TRAVIS_BRANCH
+    build_branch="dev-$TRAVIS_BRANCH"
 fi
 
-echo "==> Requiring flowcommerce/flowconnector from the dev-$build_branch branch"
+echo "==> Requiring flowcommerce/flowconnector from the $build_branch branch"
 composer config repositories.flowconnector vcs git@github.com:$GITHUB_ORGANIZATION_NAME/$GITHUB_REPOSITORY_NAME.git
-composer require --no-interaction "flowcommerce/flowconnector:dev-$build_branch"
+composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
 
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"

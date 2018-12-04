@@ -15,6 +15,7 @@ interface DiscountRepositoryInterface
      * @param string $code
      *
      * @return \FlowCommerce\FlowConnector\Api\Data\DiscountInterface
+     * @throws \Magento\Framework\Exception\NotFoundException
      */
     public function getDiscount($order, $code);
 }

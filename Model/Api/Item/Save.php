@@ -2,18 +2,18 @@
 
 namespace FlowCommerce\FlowConnector\Model\Api\Item;
 
-use \FlowCommerce\FlowConnector\Exception\CatalogSyncException;
-use \FlowCommerce\FlowConnector\Model\Api\Item\Save\ProductDataMapper;
-use \FlowCommerce\FlowConnector\Model\SyncSku;
-use \FlowCommerce\FlowConnector\Model\Util;
-use \FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
-use \FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
-use \GuzzleHttp\PoolFactory as HttpPoolFactory;
-use \GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
-use \Magento\Framework\Exception\LocalizedException;
-use \Magento\Framework\Exception\NoSuchEntityException;
-use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
-use \Psr\Log\LoggerInterface as Logger;
+use FlowCommerce\FlowConnector\Model\Api\Auth;
+use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
+use FlowCommerce\FlowConnector\Model\Api\Item\Save\ProductDataMapper;
+use FlowCommerce\FlowConnector\Model\SyncSku;
+use FlowCommerce\FlowConnector\Model\Util;
+use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
+use GuzzleHttp\PoolFactory as HttpPoolFactory;
+use GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Psr\Log\LoggerInterface as Logger;
+
 /**
  * Class Save
  * @package FlowCommerce\FlowConnector\Model\Api
@@ -24,6 +24,11 @@ class Save
      * Url Stub Prefix of this API endpoint
      */
     const URL_STUB_PREFIX = '/catalog/items/';
+
+    /**
+     * @var Auth
+     */
+    private $auth;
 
     /**
      * @var HttpClientFactory
@@ -56,35 +61,46 @@ class Save
     private $productDataMapper;
 
     /**
+     * @var UrlBuilder
+     */
+    private $urlBuilder;
+
+    /**
      * @var Util
      */
     private $util;
 
     /**
      * Save constructor.
+     * @param Auth $auth
      * @param JsonSerializer $jsonSerializer
      * @param HttpClientFactory $httpClientFactory
      * @param HttpPoolFactory $httpPoolFactory
      * @param HttpRequestFactory $httpRequestFactory
      * @param Logger $logger
      * @param ProductDataMapper $productDataMapper
+     * @param UrlBuilder $urlBuilder
      * @param Util $util
      */
     public function __construct(
+        Auth $auth,
         HttpClientFactory $httpClientFactory,
         HttpPoolFactory $httpPoolFactory,
         HttpRequestFactory $httpRequestFactory,
         JsonSerializer $jsonSerializer,
         Logger $logger,
         ProductDataMapper $productDataMapper,
+        UrlBuilder $urlBuilder,
         Util $util
     ) {
+        $this->auth = $auth;
         $this->jsonSerializer = $jsonSerializer;
         $this->httpClientFactory = $httpClientFactory;
         $this->httpPoolFactory = $httpPoolFactory;
         $this->httpRequestFactory = $httpRequestFactory;
         $this->logger = $logger;
         $this->productDataMapper = $productDataMapper;
+        $this->urlBuilder = $urlBuilder;
         $this->util = $util;
     }
 
@@ -93,9 +109,6 @@ class Save
      * @param SyncSku[] $syncSkus
      * @param callable $successCallback
      * @param callable $failureCallback
-     * @throws CatalogSyncException
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function execute($syncSkus, $successCallback, $failureCallback)
     {
@@ -109,18 +122,17 @@ class Save
                     $ts = microtime(true);
                     $data = $this->productDataMapper->map($syncSku, $product);
                     $this->logger->info('Time to convert product to flow data: ' . (microtime(true) - $ts));
-                    $apiToken = $this->util->getFlowApiToken($syncSku->getStoreId());
                     $urls = [];
                     foreach ($data as $item) {
-                        $urlStub = self::URL_STUB_PREFIX . rawurlencode($item['number']);
-                        $url = $this->util->getFlowApiEndpoint($urlStub, $syncSku->getStoreId());
+                        $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX . rawurlencode($item['number']), $syncSku->getStoreId());
+                        $storeId = $syncSku->getStoreId();
                         array_push($urls, $url);
                         $serializedItem = $this->jsonSerializer->serialize($item);
-                        yield function () use ($client, $url, $apiToken, $serializedItem) {
-                            return $client->putAsync($url, ['body' => $serializedItem, 'auth' => [
-                                $apiToken,
-                                ''
-                            ]]);
+                        yield function () use ($client, $url, $serializedItem, $storeId) {
+                            return $client->putAsync($url, [
+                                'body' => $serializedItem,
+                                'auth' => $this->auth->getAuthHeader($storeId)
+                            ]);
                         };
                     }
                     $syncSku->setData('flow_request_body', $this->jsonSerializer->serialize($data));

@@ -2,18 +2,17 @@
 
 namespace FlowCommerce\FlowConnector\Model\Api\Inventory;
 
-use \FlowCommerce\FlowConnector\Exception\InventorySyncException;
-use \FlowCommerce\FlowConnector\Model\Api\Inventory\Updates\InventoryDataMapper;
-use \FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface as InventorySync;
-use \FlowCommerce\FlowConnector\Model\Util;
-use \FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
-use \FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
-use \GuzzleHttp\PoolFactory as HttpPoolFactory;
-use \GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
-use \Magento\Framework\Exception\LocalizedException;
-use \Magento\Framework\Exception\NoSuchEntityException;
-use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
-use \Psr\Log\LoggerInterface as Logger;
+use FlowCommerce\FlowConnector\Model\Api\Auth;
+use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
+use FlowCommerce\FlowConnector\Model\Api\Inventory\Updates\InventoryDataMapper;
+use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface as InventorySync;
+use FlowCommerce\FlowConnector\Model\Util;
+use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
+use GuzzleHttp\PoolFactory as HttpPoolFactory;
+use GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Psr\Log\LoggerInterface as Logger;
 
 /**
  * Inventory Updates Api async http client
@@ -30,6 +29,11 @@ class Updates
      * Url Stub Prefix of this API endpoint
      */
     const URL_STUB_PREFIX = '/inventory_updates';
+
+    /**
+     * @var Auth
+     */
+    private $auth;
 
     /**
      * @var HttpClientFactory
@@ -62,35 +66,46 @@ class Updates
     private $inventoryDataMapper;
 
     /**
+     * @var UrlBuilder
+     */
+    private $urlBuilder;
+
+    /**
      * @var Util
      */
     private $util;
 
     /**
      * Save constructor.
+     * @param Auth $auth
      * @param JsonSerializer $jsonSerializer
      * @param HttpClientFactory $httpClientFactory
      * @param HttpPoolFactory $httpPoolFactory
      * @param HttpRequestFactory $httpRequestFactory
      * @param Logger $logger
      * @param InventoryDataMapper $inventoryDataMapper
+     * @param UrlBuilder $urlBuilder
      * @param Util $util
      */
     public function __construct(
+        Auth $auth,
         HttpClientFactory $httpClientFactory,
         HttpPoolFactory $httpPoolFactory,
         HttpRequestFactory $httpRequestFactory,
         JsonSerializer $jsonSerializer,
         Logger $logger,
         InventoryDataMapper $inventoryDataMapper,
+        UrlBuilder $urlBuilder,
         Util $util
     ) {
+        $this->auth = $auth;
         $this->jsonSerializer = $jsonSerializer;
         $this->httpClientFactory = $httpClientFactory;
         $this->httpPoolFactory = $httpPoolFactory;
         $this->httpRequestFactory = $httpRequestFactory;
         $this->logger = $logger;
         $this->inventoryDataMapper = $inventoryDataMapper;
+        $this->urlBuilder = $urlBuilder;
         $this->util = $util;
     }
 
@@ -99,9 +114,6 @@ class Updates
      * @param InventorySync[] $inventorySyncs
      * @param callable $successCallback
      * @param callable $failureCallback
-     * @throws InventorySyncException
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
      */
     public function execute($inventorySyncs, $successCallback, $failureCallback)
     {
@@ -111,18 +123,17 @@ class Updates
             /** @var InventorySync $inventorySync */
             foreach ($inventorySyncs as $inventorySync) {
                 try {
-                    $stockItem = $inventorySync->getStockItem();
                     $ts = microtime(true);
-                    $inventoryApiRequest = $this->inventoryDataMapper->map($inventorySync, $stockItem);
+                    $inventoryApiRequest = $this->inventoryDataMapper->map($inventorySync);
                     $this->logger->info('Time to convert stock item to flow data: ' . (microtime(true) - $ts));
                     $serializedInventoryApiRequest = $this->jsonSerializer->serialize($inventoryApiRequest);
-                    $apiToken = $this->util->getFlowApiToken($inventorySync->getStoreId());
-                    $url = $this->util->getFlowApiEndpoint(self::URL_STUB_PREFIX, $inventorySync->getStoreId());
-                    yield function () use ($client, $url, $apiToken, $serializedInventoryApiRequest) {
-                        return $client->postAsync($url, ['body' => $serializedInventoryApiRequest, 'auth' => [
-                            $apiToken,
-                            ''
-                        ]]);
+                    $storeId = $inventorySync->getStoreId();
+                    $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
+                    yield function () use ($client, $url, $storeId, $serializedInventoryApiRequest) {
+                        return $client->postAsync($url, [
+                            'body' => $serializedInventoryApiRequest,
+                            'auth' => $this->auth->getAuthHeader($storeId)
+                        ]);
                     };
                 } catch (\Exception $e) {
                     $this->logger->warning('Error syncing inventory: '

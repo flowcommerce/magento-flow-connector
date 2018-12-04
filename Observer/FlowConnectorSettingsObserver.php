@@ -2,53 +2,54 @@
 
 namespace FlowCommerce\FlowConnector\Observer;
 
-use FlowCommerce\FlowConnector\Model\WebhookEventManager;
+use FlowCommerce\FlowConnector\Api\IntegrationManagementInterface as IntegrationManager;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface as MessageManager;
 
 /**
- * Observer class to update Flow webhooks on Flow Connector changes.
+ * Class FlowConnectorSettingsObserver
+ * @package FlowCommerce\FlowConnector\Observer
  */
 class FlowConnectorSettingsObserver implements ObserverInterface
 {
+    /**
+     * @var IntegrationManager
+     */
+    private $integrationManager;
+
     /**
      * @var MessageManager
      */
     private $messageManager;
 
     /**
-     * @var WebhookEventManager
-     */
-    private $webhookEventManager;
-
-    /**
      * FlowConnectorSettingsObserver constructor.
+     * @param IntegrationManager $integrationManager
      * @param MessageManager $messageManager
-     * @param WebhookEventManager $webhookEventManager
      */
     public function __construct(
-        MessageManager $messageManager,
-        WebhookEventManager $webhookEventManager
+        IntegrationManager $integrationManager,
+        MessageManager $messageManager
     ) {
+        $this->integrationManager = $integrationManager;
         $this->messageManager = $messageManager;
-        $this->webhookEventManager = $webhookEventManager;
     }
 
     /**
-     * This observer triggers after Flow connector settings are updated in the
-     * Admin Store Configuration.
+     * This observer triggers after Flow connector settings are updated in the Admin Store Configuration.
+     * It in turn triggers an initialization of the integration parameters with Flow.io
      * @param Observer $observer
      * @return void
      * @throws
      */
     public function execute(Observer $observer)
     {
-        $storeId = $observer->getStore(); // string of store ID
+        $storeId = $observer->getStore();
 
         try {
-            $this->webhookEventManager->registerWebhooks($storeId);
-            $this->messageManager->addSuccess('Successfully initialized Flow configuration.');
+            $this->integrationManager->initializeIntegrationForStoreView($storeId);
+            $this->messageManager->addSuccessMessage('Successfully initialized Flow configuration.');
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage(sprintf(
                 'An error occurred while initializing Flow configuration: %s.',

@@ -1,0 +1,116 @@
+{
+  "event_id": "evt-7e79662c0c1547b889325fad06c75dc9",
+  "timestamp": "2018-11-13T20:29:52.475Z",
+  "organization": "magento-integration-sandbox",
+  "id": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
+  "authorization": {
+    "id": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
+    "key": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
+    "merchant_of_record": "flow",
+    "card": {
+      "id": "crd-0662efc6b9bf44f69055ac7c14b34db1",
+      "token": "XXX",
+      "type": "american_express",
+      "expiration": {
+        "month": 12,
+        "year": 2023
+      },
+      "iin": "378282",
+      "last4": "0005",
+      "name": "Amex Japan Card",
+      "issuer": {
+        "iin": "378282",
+        "name": "AMERICAN EXPRESS US (CARS)",
+        "country": "USA"
+      },
+      "address": {
+        "name": {
+          "first": "Test",
+          "last": "Japan"
+        },
+        "streets": [
+          "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+        ],
+        "city": "Tokyo",
+        "province": "Tokyo",
+        "postal": "150-0043",
+        "country": "JPN"
+      },
+      "discriminator": "card"
+    },
+    "amount": 25992,
+    "currency": "JPY",
+    "customer": {
+      "name": {
+        "first": "Test",
+        "last": "Japan"
+      },
+      "phone": "+8137-766-5044",
+      "email": "test-jp@test.com"
+    },
+    "attributes": {},
+    "result": {
+      "status": "authorized"
+    },
+    "created_at": "2018-11-13T20:29:46.438Z",
+    "method": {
+      "id": "american_express",
+      "type": "card",
+      "name": "American Express",
+      "images": {
+        "small": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/american_express/30/original.png",
+          "width": 65,
+          "height": 41
+        },
+        "medium": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/american_express/60/original.png",
+          "width": 100,
+          "height": 60
+        },
+        "large": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/american_express/120/original.png",
+          "width": 256,
+          "height": 256
+        }
+      },
+      "regions": [
+        "world"
+      ]
+    },
+    "requested": {
+      "amount": 25992,
+      "currency": "JPY"
+    },
+    "destination": {
+      "streets": [
+        "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+      ],
+      "city": "Tokyo",
+      "province": "Tokyo",
+      "postal": "150-0043",
+      "country": "JPN"
+    },
+    "billing_address": {
+      "name": {
+        "first": "Test",
+        "last": "Japan"
+      },
+      "streets": [
+        "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+      ],
+      "city": "Tokyo",
+      "province": "Tokyo",
+      "postal": "150-0043",
+      "country": "JPN"
+    },
+    "order": {
+      "number": "ord-555c1f216e664467955f219a6a1fac06"
+    },
+    "base": {
+      "amount": 219.41,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "card_authorization_upserted_v2"
+}

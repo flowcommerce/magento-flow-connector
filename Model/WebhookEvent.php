@@ -73,6 +73,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const FLOW_PAYMENT_ORDER_NUMBER = 'flow_payment_order_number';
 
     /**
+     * Flow shipment track title
+     */
+    const FLOW_TRACK_TITLE = 'Flow';
+
+    /**
      * Keys for Flow.io order payment data
      * https://docs.flow.io/type/order-payment
      */
@@ -558,6 +563,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
 
         if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
+            if ($order->getFlowConnectorOrderReady()) {
+                $this->logger->info('Order ready, duplicate submission ignored');
+                return;
+            }
+
             foreach ($data['allocation']['details'] as $detail) {
 
                 // allocation_detail is a union model. If there is a "number",
@@ -1763,7 +1773,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     !in_array($data['flow_tracking_number'], $existingTrackNumbers)) {
                     $flowTrack = [
                         'carrier_code' => 'custom',
-                        'title' => 'Flow',
+                        'title' => self::FLOW_TRACK_TITLE,
                         'number' => $data['flow_tracking_number']
                     ];
                     $tracks[] = $flowTrack;
@@ -1839,7 +1849,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         if(isset($data['flow_tracking_number'])) {
                             $flowTrack = [
                                 'carrier_code' => 'custom',
-                                'title' => 'Flow',
+                                'title' => self::FLOW_TRACK_TITLE,
                                 'number' => $data['flow_tracking_number']
                             ];
                             $tracks[] = $flowTrack;

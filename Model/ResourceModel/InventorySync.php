@@ -71,6 +71,33 @@ class InventorySync extends AbstractDb
         }
     }
 
+
+    /**
+     * Delete Inventory Syncs by Store ID
+     * @param null $storeId
+     * @throws LocalizedException
+     */
+    public function deleteByStoreId($storeId = null)
+    {
+        if($storeId) {
+            $condition = $this->getConnection()->quoteInto(
+                InventorySyncInterface::DATA_KEY_STORE_ID. ' = ?',
+                $storeId
+            );
+        } else {
+            $condition = '';
+        }
+
+        $connection = $this->getConnection();
+        $this->objectRelationProcessor->delete(
+            $this->transactionManager,
+            $connection,
+            $this->getMainTable(),
+            $condition,
+            []
+        );
+    }
+
     /**
      * Deletes items with errors where there is a new record that is done.
      * @return void

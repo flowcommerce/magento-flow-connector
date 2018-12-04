@@ -1,0 +1,115 @@
+{
+  "event_id": "evt-56b6d5c3e4c24647966522c0efd589ae",
+  "timestamp": "2018-11-13T19:00:35.957Z",
+  "organization": "magento-integration-sandbox",
+  "id": "aut-RRX2sdQXtD0RfW9BrxmaooU3XjLw4HlJ",
+  "authorization": {
+    "id": "aut-RRX2sdQXtD0RfW9BrxmaooU3XjLw4HlJ",
+    "key": "aut-RRX2sdQXtD0RfW9BrxmaooU3XjLw4HlJ",
+    "merchant_of_record": "flow",
+    "card": {
+      "id": "crd-da23b608515d484e8901a0feb1f58cb4",
+      "token": "XXX",
+      "type": "jcb",
+      "expiration": {
+        "month": 12,
+        "year": 2022
+      },
+      "iin": "356600",
+      "last4": "0505",
+      "name": "test jcb card",
+      "issuer": {
+        "iin": "356600",
+        "country": "USA"
+      },
+      "address": {
+        "name": {
+          "first": "Test2",
+          "last": "Test2"
+        },
+        "streets": [
+          "Thai Address"
+        ],
+        "city": "Bangkok",
+        "province": "Bangkok",
+        "postal": "9900-164",
+        "country": "THA"
+      },
+      "discriminator": "card"
+    },
+    "amount": 21844.02,
+    "currency": "THB",
+    "customer": {
+      "name": {
+        "first": "Test2",
+        "last": "Test2"
+      },
+      "phone": "21 292 470 0620",
+      "email": "test3@test.com"
+    },
+    "attributes": {},
+    "result": {
+      "status": "authorized"
+    },
+    "created_at": "2018-11-13T19:00:35.957Z",
+    "method": {
+      "id": "jcb",
+      "type": "card",
+      "name": "Jcb",
+      "images": {
+        "small": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/jcb/30/original.png",
+          "width": 65,
+          "height": 41
+        },
+        "medium": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/jcb/60/original.png",
+          "width": 100,
+          "height": 60
+        },
+        "large": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/jcb/120/original.png",
+          "width": 256,
+          "height": 256
+        }
+      },
+      "regions": [
+        "jpn"
+      ]
+    },
+    "requested": {
+      "amount": 21844.02,
+      "currency": "THB"
+    },
+    "destination": {
+      "streets": [
+        "Thai Address"
+      ],
+      "city": "Bangkok",
+      "province": "Bangkok",
+      "postal": "9900-164",
+      "country": "THA"
+    },
+    "billing_address": {
+      "name": {
+        "first": "Test2",
+        "last": "Test2"
+      },
+      "streets": [
+        "Thai Address"
+      ],
+      "city": "Bangkok",
+      "province": "Bangkok",
+      "postal": "9900-164",
+      "country": "THA"
+    },
+    "order": {
+      "number": "ord-954c1e3647c242748ff092ca2f676e16"
+    },
+    "base": {
+      "amount": 636.96,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "card_authorization_upserted_v2"
+}

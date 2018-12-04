@@ -249,7 +249,7 @@ class CreateProductsWithCategories
                 ->setSku(self::SKU_PREFIX . $i)
                 ->setPrice(10)
                 ->setWeight(18)
-                ->setStockData(['use_config_manage_stock' => 0])
+                ->setStockData(['use_config_manage_stock' => 1, 'qty' => 999999, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
                 ->setVisibility(ProductVisibility::VISIBILITY_BOTH)
                 ->setStatus(ProductStatus::STATUS_ENABLED)
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])

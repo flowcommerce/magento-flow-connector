@@ -6,18 +6,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\State as AppState;
 use Magento\Framework\Registry;
-use FlowCommerce\FlowConnector\Model\WebhookEventManager;
+use FlowCommerce\FlowConnector\Api\WebhookManagementInterface as WebhookManager;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 
 /**
  * Command to register webhooks with Flow.
  */
-final class WebhookRegisterWebhooksCommand extends BaseCommand
+class WebhookRegisterWebhooksCommand extends BaseCommand
 {
     /**
-     * @var WebhookEventManager
+     * @var WebhookManager
      */
-    private $webhookEventManager;
+    private $webhookManager;
 
     /**
      * @var StoreManager
@@ -28,17 +28,17 @@ final class WebhookRegisterWebhooksCommand extends BaseCommand
      * WebhookRegisterWebhooksCommand constructor.
      * @param AppState $appState
      * @param Registry $registry
-     * @param WebhookEventManager $webhookEventManager
+     * @param WebhookManager $webhookManager
      * @param StoreManager $storeManager
      */
     public function __construct(
         AppState $appState,
         Registry $registry,
-        WebhookEventManager $webhookEventManager,
+        WebhookManager $webhookManager,
         StoreManager $storeManager
     ) {
         parent::__construct($appState, $registry);
-        $this->webhookEventManager = $webhookEventManager;
+        $this->webhookManager = $webhookManager;
         $this->storeManager = $storeManager;
     }
 
@@ -53,15 +53,16 @@ final class WebhookRegisterWebhooksCommand extends BaseCommand
      * @param OutputInterface $output
      * @return int|null|void
      * @throws \Exception
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $logger = new FlowConsoleLogger($output);
         $this->initCLI();
-        $this->webhookEventManager->setLogger($logger);
+        $this->webhookManager->setLogger($logger);
         foreach ($this->storeManager->getStores() as $store) {
             try {
-                $this->webhookEventManager->registerWebhooks($store->getId());
+                $this->webhookManager->registerAllWebhooks($store->getId());
                 $output->writeln(sprintf('Successfully initialized Flow configuration for store %d.', $store->getId()));
             } catch (\Exception $e) {
                 $output->writeln(

@@ -1,0 +1,54 @@
+{
+  "event_id": "evt-3295e0e1d5f34fa8b7cc24077fb3ec98",
+  "timestamp": "2018-11-14T13:03:01.660Z",
+  "organization": "magento-integration-sandbox",
+  "id": "ref-1180eb9d8c62481ebaecdc628be9bb2a",
+  "refund": {
+    "id": "ref-1180eb9d8c62481ebaecdc628be9bb2a",
+    "key": "ref-1180eb9d8c62481ebaecdc628be9bb2a",
+    "authorization": {
+      "id": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
+      "key": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq"
+    },
+    "amount": 25992,
+    "currency": "JPY",
+    "captures": [
+      {
+        "capture": {
+          "id": "cap-a45b1ba79e7a4b56a821d30770ba712f",
+          "key": "cap-a45b1ba79e7a4b56a821d30770ba712f",
+          "authorization": {
+            "id": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
+            "key": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq"
+          },
+          "amount": 25992,
+          "currency": "JPY",
+          "created_at": "2018-11-13T20:30:48.068Z",
+          "status": "succeeded",
+          "requested": {
+            "amount": 25992,
+            "currency": "JPY"
+          },
+          "attributes": {},
+          "base": {
+            "amount": 219.41,
+            "currency": "USD"
+          }
+        },
+        "amount": 25992
+      }
+    ],
+    "created_at": "2018-11-14T13:03:01.660Z",
+    "status": "succeeded",
+    "requested": {
+      "amount": 25992,
+      "currency": "JPY"
+    },
+    "attributes": {},
+    "base": {
+      "amount": 219.41,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "refund_upserted_v2"
+}

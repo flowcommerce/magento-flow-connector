@@ -14,7 +14,7 @@ interface DiscountRepositoryInterface
      * @param mixed $order
      * @param string $code
      *
-     * @return \FlowCommerce\FlowConnector\Model\Discount
+     * @return \FlowCommerce\FlowConnector\Api\Data\DiscountInterface
      */
-    public function getDiscount($order,$code);
+    public function getDiscount($order, $code);
 }

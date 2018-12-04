@@ -17,11 +17,13 @@ use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface as StockItemRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SortOrderBuilder;
+use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Intl\DateTimeFactory;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManager;
 use Psr\Log\LoggerInterface as Logger;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 
 /**
  * Class InventorySyncManager
@@ -99,6 +101,9 @@ class InventorySyncManager implements InventorySyncManagementInterface
      */
     private $util = null;
 
+    /** @var ProductRepositoryInterface  */
+    private $productRepository;
+
     /**
      * InventorySyncManager constructor.
      * @param DateTimeFactory $dateTimeFactory
@@ -106,12 +111,14 @@ class InventorySyncManager implements InventorySyncManagementInterface
      * @param InventorySyncRepository $inventorySyncRepository
      * @param InventoryUpdatesApiClient $itemUpdateApiClient
      * @param Logger $logger
+     * @param ProductCollectionFactory $productCollectionFactory
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param SortOrderBuilder $sortOrderBuilder
      * @param StockItemCriteriaFactory $stockItemCriteriaFactory
      * @param StockItemRepository $stockItemRepository
      * @param StoreManager $storeManager
      * @param FlowUtil $util
+     * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
         DateTimeFactory $dateTimeFactory,
@@ -125,7 +132,8 @@ class InventorySyncManager implements InventorySyncManagementInterface
         StockItemCriteriaFactory $stockItemCriteriaFactory,
         StockItemRepository $stockItemRepository,
         StoreManager $storeManager,
-        FlowUtil $util
+        FlowUtil $util,
+        ProductRepositoryInterface $productRepository
     ) {
         $this->dateTimeFactory = $dateTimeFactory;
         $this->inventorySyncFactory = $inventorySyncFactory;
@@ -139,6 +147,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         $this->stockItemCriteriaFactory = $stockItemCriteriaFactory;
         $this->stockItemRepository = $stockItemRepository;
         $this->util = $util;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -296,6 +305,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
      * Defers enqueueing of all stock items from enabled stores
      * @param int[] $storeIds
      * @throws CouldNotSaveException
+     * @throws CouldNotDeleteException
      */
     private function enqueueAllStockItemsFromStores(array $storeIds)
     {
@@ -303,14 +313,19 @@ class InventorySyncManager implements InventorySyncManagementInterface
         foreach ($storeIds as $storeId) {
             $searchCriteria = $this->stockItemCriteriaFactory->create();
             $stockItems = $this->stockItemRepository->getList($searchCriteria);
-            /** @var StockItemInterface $stockItem */
-            foreach ($stockItems->getItems() as $stockItem) {
-                /** @var InventorySync $inventorySync */
-                $inventorySync = $this->inventorySyncFactory->create();
-                $inventorySync->setStoreId($storeId);
-                $inventorySync->setProductId($stockItem->getProductId());
-                $inventorySync->setStatus(InventorySync::STATUS_NEW);
-                array_push($inventorySyncs, $inventorySync);
+
+            if($stockItems->getTotalCount()) {
+                $this->inventorySyncRepository->deleteByStoreId($storeId);
+
+                /** @var StockItemInterface $stockItem */
+                foreach ($stockItems->getItems() as $stockItem) {
+                    /** @var InventorySync $inventorySync */
+                    $inventorySync = $this->inventorySyncFactory->create();
+                    $inventorySync->setStoreId($storeId);
+                    $inventorySync->setProductId($stockItem->getProductId());
+                    $inventorySync->setStatus(InventorySync::STATUS_NEW);
+                    array_push($inventorySyncs, $inventorySync);
+                }
             }
         }
 
@@ -345,6 +360,10 @@ class InventorySyncManager implements InventorySyncManagementInterface
      */
     public function enqueueStockItem(StockItemInterface $stockItem)
     {
+        if (!$this->util->isFlowEnabled()) {
+            return;
+        }
+
         $searchCriteria = $this->searchCriteriaBuilder
             ->addFilter(InventorySync::DATA_KEY_PRODUCT_ID, $stockItem->getProductId(), 'eq')
             ->addFilter(InventorySync::DATA_KEY_STATUS, InventorySync::STATUS_NEW, 'eq')
@@ -353,6 +372,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         if ($existingStockItems->getTotalCount() == 0) {
             $inventorySync = $this->inventorySyncFactory->create();
             $inventorySync->setProductId($stockItem->getProductId());
+            $inventorySync->setStoreId($this->util->getCurrentStoreId());
             $inventorySync->setStatus(InventorySync::STATUS_NEW);
             $this->inventorySyncRepository->save($inventorySync);
         }

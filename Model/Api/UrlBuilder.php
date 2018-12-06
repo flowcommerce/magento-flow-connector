@@ -16,6 +16,11 @@ class UrlBuilder
     const FLOW_API_BASE_ENDPOINT = 'https://api.flow.io/';
 
     /**
+     * Flow Checkout base endpoint
+     */
+    const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
+
+    /**
      * @var Auth
      */
     private $auth;
@@ -40,5 +45,17 @@ class UrlBuilder
     public function getFlowApiEndpoint($urlStub, $storeId = null)
     {
         return self::FLOW_API_BASE_ENDPOINT . $this->auth->getFlowOrganizationId($storeId) . $urlStub;
+    }
+
+    /**
+     * Returns the Flow Checkout endpoint with the specified url stub.
+     * @param string $urlStub
+     * @param int|null $storeId
+     * @return string
+     * @throws NoSuchEntityException
+     */
+    public function getFlowCheckoutEndpoint($urlStub, $storeId = null)
+    {
+        return self::FLOW_CHECKOUT_BASE_URL . $this->auth->getFlowOrganizationId($storeId) . $urlStub;
     }
 }

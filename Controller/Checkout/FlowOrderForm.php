@@ -2,47 +2,92 @@
 
 namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
+use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Customer\Model\Session;
+use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use FlowCommerce\FlowConnector\Model\Util;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Controller class that returns a Flow order_form object for use with Flow.js.
  *
  * https://docs.flow.io/type/order-form
  */
-class FlowOrderForm extends \Magento\Framework\App\Action\Action {
-
-    protected $logger;
-    protected $jsonHelper;
-    protected $util;
-    protected $cart;
-    protected $storeManager;
-    protected $customerSession;
-    protected $checkoutSession;
-    protected $addressRepository;
-    protected $cookieManager;
+class FlowOrderForm extends \Magento\Framework\App\Action\Action
+{
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
-    * @param \Magento\Framework\App\Action\Context $context
-    * @param \Psr\Log\LoggerInterface $logger
-    */
+     * @var Data
+     */
+    private $jsonHelper;
+
+    /**
+     * @var Util
+     */
+    private $util;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var Session
+     */
+    private $customerSession;
+
+    /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
+
+    /**
+     * @var AddressRepositoryInterface
+     */
+    private $addressRepository;
+
+    /**
+     * @var CookieManagerInterface
+     */
+    private $cookieManager;
+
+    /**
+     * FlowOrderForm constructor.
+     * @param Context $context
+     * @param LoggerInterface $logger
+     * @param Data $jsonHelper
+     * @param Util $util
+     * @param StoreManagerInterface $storeManager
+     * @param Session $customerSession
+     * @param CheckoutSession $checkoutSession
+     * @param AddressRepositoryInterface $addressRepository
+     * @param CookieManagerInterface $cookieManager
+     */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        Context $context,
+        LoggerInterface $logger,
+        Data $jsonHelper,
         \FlowCommerce\FlowConnector\Model\Util $util,
-        \Magento\Checkout\Model\Cart $cart,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository,
-        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
+        StoreManagerInterface $storeManager,
+        Session $customerSession,
+        CheckoutSession $checkoutSession,
+        AddressRepositoryInterface $addressRepository,
+        CookieManagerInterface $cookieManager
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
         $this->util = $util;
-        $this->cart = $cart;
         $this->storeManager = $storeManager;
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
@@ -52,10 +97,11 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
     }
 
     /**
-    * Returns a JSON response for a Flow order_form object.
-    *
-    * @return string https://docs.flow.io/type/order-form
-    */
+     * Returns a JSON response for a Flow order_form object.
+     *
+     * @return string https://docs.flow.io/type/order-form
+     * @throws LocalizedException
+     */
     public function execute()
     {
         $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
@@ -64,22 +110,25 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
     }
 
     /**
-    * Returns a Flow order_form object for use with Flow.js.
-    *
-    * @return string https://docs.flow.io/type/order-form
-    */
-    private function getFlowOrderForm() {
-
+     * Returns a Flow order_form object for use with Flow.js.
+     *
+     * @return string https://docs.flow.io/type/order-form
+     * @throws LocalizedException
+     */
+    private function getFlowOrderForm()
+    {
+        $quote = $this->checkoutSession->getQuote();
         $data = [];
 
         // Additional custom attributes to pass through hosted checkout
         $attribs = [];
         $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
-        $attribs[WebhookEvent::QUOTE_ID] = $this->checkoutSession->getQuote()->getId();
+        $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
 
         if ($customer = $this->customerSession->getCustomer()) {
             $attribs[WebhookEvent::CUSTOMER_ID] = $this->customerSession->getId();
             $attribs[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
+            $attribs[WebhookEvent::QUOTE_APPLIED_RULE_IDS] = $quote->getAppliedRuleIds();
 
             // Add customer info
             $data['customer'] = [
@@ -117,12 +166,16 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         }
 
         // Add cart items
-        if ($items = $this->cart->getQuote()->getItems()) {
+        if ($items = $quote->getItems()) {
             $data['items'] = [];
             foreach($items as $item) {
                 $lineItem = [
                     'number' => $item->getSku(),
-                    'quantity' => $item->getQty()
+                    'quantity' => $item->getQty(),
+                    'discount' => [
+                        'amount' => $item->getBaseDiscountAmount(),
+                        'currency' => $quote->getBaseCurrencyCode()
+                    ]
                 ];
                 array_push($data['items'], $lineItem);
             }

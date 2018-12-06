@@ -92,6 +92,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const CUSTOMER_ID = 'customer_id';
     const CUSTOMER_SESSION_ID = 'customer_session_id';
     const QUOTE_ID = 'quote_id';
+    const QUOTE_APPLIED_RULE_IDS = 'applied_rule_ids';
 
     /**
      * Constants for event dispatching

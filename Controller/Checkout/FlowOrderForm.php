@@ -175,11 +175,7 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action
             foreach($items as $item) {
                 $lineItem = [
                     'number' => $item->getSku(),
-                    'quantity' => $item->getQty(),
-                    'discount' => [
-                        'amount' => $item->getBaseDiscountAmount(),
-                        'currency' => $quote->getBaseCurrencyCode()
-                    ]
+                    'quantity' => $item->getQty()
                 ];
 
                 if($this->util->getCheckoutPriceSource($this->storeManager->getStore()->getId())

@@ -40,6 +40,12 @@ class Util
     // Store configuration key for Flow Invoice Event
     const FLOW_SHIPMENT_SEND_EMAIL = 'flowcommerce/flowconnector/shipment_email';
 
+    // Store configuration key for Checkout Price Source
+    const FLOW_CHECKOUT_PRICE_SOURCE = 'flowcommerce/flowconnector/price_source';
+
+    // Store configuration key for Checkout Discount Source
+    const FLOW_CHECKOUT_DISCOUNT_SOURCE = 'flowcommerce/flowconnector/discount_source';
+
     // Flow API base endpoint
     const FLOW_API_BASE_ENDPOINT = 'https://api.flow.io/';
 
@@ -373,6 +379,42 @@ class Util
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_SHIPMENT_SEND_EMAIL,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns Checkout Price Source from Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function getCheckoutPriceSource($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+        return (int)$this->scopeConfig->getValue(
+            self::FLOW_CHECKOUT_PRICE_SOURCE,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns Checkout Discount Source from Admin Store Configuration.
+     * @param int|null $storeId
+     * @return int
+     * @throws NoSuchEntityException
+     */
+    public function getCheckoutDiscountSource($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+        return (int)$this->scopeConfig->getValue(
+            self::FLOW_CHECKOUT_DISCOUNT_SOURCE,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

@@ -26,6 +26,8 @@
                 <invoice_email>1</invoice_email>
                 <shipment_event>1</shipment_event>
                 <shipment_email>1</shipment_email>
+                <price_source>1</price_source>
+                <discount_source>1</discount_source>
             </flowconnector>
         </flowcommerce>
     </default>

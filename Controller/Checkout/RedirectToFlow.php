@@ -4,6 +4,7 @@ namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
 use FlowCommerce\FlowConnector\Helper\Data;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
+use FlowCommerce\FlowConnector\Model\Config\Source\DataSource;
 use Magento\Checkout\Model\Session;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Model\Session as CustomerSession;
@@ -17,6 +18,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Item;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -156,6 +158,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
      * @throws NoSuchEntityException
      */
     private function getCheckoutUrlWithCart($quote, $country = null) {
+        /** @var Item[] $items */
         $items = $quote->getItems();
 
         $url = $this->urlBuilder->getFlowCheckoutEndpoint(
@@ -213,13 +216,27 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
 
         // Add cart items
         $ctr = 0;
+        $currencyCode = $quote->getBaseCurrencyCode();
         foreach($items as $item) {
             $params['items[' . $ctr . '][number]'] = $item->getSku();
             $params['items[' . $ctr . '][quantity]'] = $item->getQty();
-            $params['items[' . $ctr . '][discount]'] = [
-                'amount' => $item->getBaseDiscountAmount(),
-                'currency' => $quote->getBaseCurrencyCode()
-            ];
+
+            if($this->util->getCheckoutPriceSource($this->storeManager->getStore()->getId())
+                === DataSource::VALUE_MAGENTO) {
+                $params['items[' . $ctr . '][price]'] = [
+                    'amount' => $item->getBasePrice(),
+                    'currency' => $currencyCode
+                ];
+            }
+
+            if($this->util->getCheckoutDiscountSource($this->storeManager->getStore()->getId())
+                === DataSource::VALUE_MAGENTO) {
+                $params['items[' . $ctr . '][discount]'] = [
+                    'amount' => $item->getBaseDiscountAmount(),
+                    'currency' => $currencyCode
+                ];
+            }
+
             $ctr += 1;
         }
 

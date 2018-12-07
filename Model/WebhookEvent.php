@@ -607,9 +607,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $itemPriceInclTax = 0.0;
                             $baseItemPriceInclTax = 0.0;
 
-                            $itemDiscountAmount = 0.0;
-                            $itemBaseDiscountAmount = 0.0;
-
                             $itemPrice = 0.0;
                             $baseItemPrice = 0.0;
                             foreach ($detail['included'] as $included) {
@@ -652,12 +649,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                                 }
                             }
 
-                            // Split order discount among order items. Note: Order's/Flow's subtotal includes tax.
-                            $itemDiscountAmount += -((($rawItemPrice * $detail['quantity']) /
-                                    ($order->getFlowConnectorItemPrice())) * $order->getDiscountAmount());
-                            $itemBaseDiscountAmount += -((($baseRawItemPrice * $detail['quantity']) /
-                                    ($order->getFlowConnectorBaseItemPrice())) * $order->getBaseDiscountAmount());
-
                             $item->setOriginalPrice($itemPrice);
                             $item->setBaseOriginalPrice($baseItemPrice);
                             $item->setPrice($itemPrice);
@@ -679,8 +670,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
                             $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
                             $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
-                            $item->setDiscountAmount($itemDiscountAmount);
-                            $item->setBaseDiscountAmount($itemBaseDiscountAmount);
                             $item->save();
                         }
                         break;

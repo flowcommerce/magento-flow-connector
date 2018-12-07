@@ -12,7 +12,11 @@ cd $HOME/magento
 if [ "$TRAVIS_TAG" != "" ]; then
     cd $HOME/build/$GITHUB_ORGANIZATION_NAME/$GITHUB_REPOSITORY_NAME
     REAL_BRANCH=$(git ls-remote origin | sed -n "\|$TRAVIS_COMMIT\s\+refs/heads/|{s///p}")
-    build_branch="dev-$REAL_BRANCH#$TRAVIS_TAG"
+    if [ "$REAL_BRANCH" == "" ]; then
+        build_branch="dev-master#$TRAVIS_TAG"
+    else
+        build_branch="dev-$REAL_BRANCH#$TRAVIS_TAG"
+    fi
     cd $HOME/magento
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     build_branch="dev-$TRAVIS_PULL_REQUEST_BRANCH"

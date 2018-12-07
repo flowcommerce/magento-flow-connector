@@ -15,7 +15,6 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Quote\Model\Quote\Item;
-use FlowCommerce\FlowConnector\Model\Config\Source\DataSource;
 
 /**
  * Controller class that returns a Flow order_form object for use with Flow.js.
@@ -178,21 +177,10 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action
                     'quantity' => $item->getQty()
                 ];
 
-                if($this->util->getCheckoutPriceSource($this->storeManager->getStore()->getId())
-                    === DataSource::VALUE_MAGENTO) {
-                    $lineItem['price'] = [
-                        'amount' => $item->getBasePrice(),
-                        'currency' => $currencyCode
-                    ];
-                }
-
-                if($this->util->getCheckoutDiscountSource($this->storeManager->getStore()->getId())
-                    === DataSource::VALUE_MAGENTO) {
-                    $lineItem['discount'] = [
-                        'amount' => $item->getBaseDiscountAmount(),
-                        'currency' => $currencyCode
-                    ];
-                }
+                $lineItem['discount'] = [
+                    'amount' => $item->getBaseDiscountAmount(),
+                    'currency' => $currencyCode
+                ];
 
                 array_push($data['items'], $lineItem);
             }

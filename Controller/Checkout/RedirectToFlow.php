@@ -157,7 +157,8 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
-    private function getCheckoutUrlWithCart($quote, $country = null) {
+    private function getCheckoutUrlWithCart($quote, $country = null)
+    {
         /** @var Item[] $items */
         $items = $quote->getItems();
 
@@ -198,7 +199,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
 
                 $ctr = 0;
-                foreach($shippingAddress->getStreet() as $street) {
+                foreach ($shippingAddress->getStreet() as $street) {
                     $params['destination[streets][' . $ctr . ']'] = $street;
                     $ctr += 1;
                 }
@@ -217,31 +218,19 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         // Add cart items
         $ctr = 0;
         $currencyCode = $quote->getBaseCurrencyCode();
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $params['items[' . $ctr . '][number]'] = $item->getSku();
             $params['items[' . $ctr . '][quantity]'] = $item->getQty();
-
-            if($this->util->getCheckoutPriceSource($this->storeManager->getStore()->getId())
-                === DataSource::VALUE_MAGENTO) {
-                $params['items[' . $ctr . '][price]'] = [
-                    'amount' => $item->getBasePrice(),
-                    'currency' => $currencyCode
-                ];
-            }
-
-            if($this->util->getCheckoutDiscountSource($this->storeManager->getStore()->getId())
-                === DataSource::VALUE_MAGENTO) {
-                $params['items[' . $ctr . '][discount]'] = [
-                    'amount' => $item->getBaseDiscountAmount(),
-                    'currency' => $currencyCode
-                ];
-            }
+            $params['items[' . $ctr . '][discount]'] = [
+                'amount' => $item->getBaseDiscountAmount(),
+                'currency' => $currencyCode
+            ];
 
             $ctr += 1;
         }
 
         // Add custom attributes
-        foreach($attribs as $k => $v) {
+        foreach ($attribs as $k => $v) {
             $params['attributes[' . $k . ']'] = $v;
         }
 

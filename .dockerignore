@@ -1,0 +1,5 @@
+.travis.yaml
+CHANGELOG.md
+README.md
+.git/
+dev/

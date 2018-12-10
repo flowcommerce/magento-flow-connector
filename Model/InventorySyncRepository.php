@@ -9,6 +9,7 @@ use Magento\Framework\Api\SearchResultsInterface;
 use Magento\Framework\Api\SearchResultsInterfaceFactory as SearchResultsFactory;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Reflection\DataObjectProcessor;
 use FlowCommerce\FlowConnector\Api\InventorySyncRepositoryInterface;
@@ -198,6 +199,19 @@ class InventorySyncRepository implements InventorySyncRepositoryInterface
     {
         try {
             $this->resource->updateMultipleStatuses($inventorySyncs, $newStatus);
+        } catch (\Exception $exception) {
+            throw new CouldNotDeleteException(__($exception->getMessage()));
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteByStoreId(int $storeId)
+    {
+        try {
+            $this->resource->deleteByStoreId($storeId);
         } catch (\Exception $exception) {
             throw new CouldNotDeleteException(__($exception->getMessage()));
         }

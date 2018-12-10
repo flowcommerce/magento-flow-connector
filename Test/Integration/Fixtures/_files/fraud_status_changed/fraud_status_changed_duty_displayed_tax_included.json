@@ -1,0 +1,12 @@
+{
+  "event_id": "evt-10b9345311024230a5ec7c87abbf6f15",
+  "timestamp": "2018-11-13T19:01:14.965Z",
+  "id": "frd-3a82f5595a79401da4be5e0d58e120ed",
+  "organization": "magento-integration-sandbox",
+  "order": {
+    "id": "ior-2e338c7868364815b600f5492c1a3deb",
+    "number": "ord-954c1e3647c242748ff092ca2f676e16"
+  },
+  "status": "approved",
+  "discriminator": "fraud_status_changed"
+}

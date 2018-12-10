@@ -6,7 +6,7 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
-use FlowCommerce\FlowConnector\Model\WebhookEventManager;
+use FlowCommerce\FlowConnector\Api\IntegrationManagementInterface as IntegrationManager;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
@@ -15,6 +15,11 @@ use Psr\Log\LoggerInterface as Logger;
  */
 class Recurring implements InstallSchemaInterface
 {
+    /**
+     * @var IntegrationManager
+     */
+    private $integrationManager;
+
     /**
      * @var Logger
      */
@@ -26,24 +31,19 @@ class Recurring implements InstallSchemaInterface
     private $storeManager;
 
     /**
-     * @var WebhookEventManager
-     */
-    private $webhookEventManager;
-
-    /**
      * Recurring constructor.
+     * @param IntegrationManager $integrationManager
      * @param Logger $logger
      * @param StoreManager $storeManager
-     * @param WebhookEventManager $webhookEventManager
      */
     public function __construct(
+        IntegrationManager $integrationManager,
         Logger $logger,
-        StoreManager $storeManager,
-        WebhookEventManager $webhookEventManager
+        StoreManager $storeManager
     ) {
+        $this->integrationManager = $integrationManager;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
-        $this->webhookEventManager = $webhookEventManager;
     }
 
     /**
@@ -53,7 +53,7 @@ class Recurring implements InstallSchemaInterface
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        $this->registerWebhooks();
+        $this->initializeFlowIntegration();
     }
 
     /**
@@ -61,16 +61,23 @@ class Recurring implements InstallSchemaInterface
      * all of them
      * @return void
      */
-    private function registerWebhooks()
+    private function initializeFlowIntegration()
     {
         foreach ($this->storeManager->getStores() as $store) {
             try {
-                $this->webhookEventManager->registerWebhooks($store->getId());
-                $this->logger->info('Successfully registered Flow.io webhooks for store ' . $store->getId());
+                $result = $this->integrationManager->initializeIntegrationForStoreView($store->getId());
+                if ($result) {
+                    $this->logger
+                        ->info('Successfully initialized integration configuration for store ' . $store->getId());
+                } else {
+                    $this->logger->error(
+                        'An error occurred while initializing integration configuration for store ' . $store->getId()
+                    );
+                }
             } catch (\Exception $e) {
                 $this->logger->error(
-                    'An error occurred while registering Flow.io webhooks for store ' . $store->getId() . ': ' .
-                        $e->getMessage(),
+                    'An error occurred while initializing integration configuration for store ' .
+                    $store->getId() . ': ' . $e->getMessage(),
                     ['exception' => $e]
                 );
             }

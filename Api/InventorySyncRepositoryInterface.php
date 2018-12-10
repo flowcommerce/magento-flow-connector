@@ -8,6 +8,7 @@ use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface;
+use Magento\Framework\Exception\CouldNotDeleteException;
 
 /**
  * Inventory Sync CRUD Interface
@@ -51,7 +52,7 @@ interface InventorySyncRepositoryInterface
      * Delete Inventory Sync.
      * @param InventorySyncInterface $inventorySync
      * @return bool true on success
-     * @throws LocalizedException
+     * @throws CouldNotDeleteException
      */
     public function delete(InventorySyncInterface $inventorySync);
 
@@ -60,7 +61,7 @@ interface InventorySyncRepositoryInterface
      * @param int $inventorySyncId
      * @return bool true on success
      * @throws NoSuchEntityException
-     * @throws LocalizedException
+     * @throws CouldNotDeleteException
      */
     public function deleteById($inventorySyncId);
 
@@ -69,7 +70,7 @@ interface InventorySyncRepositoryInterface
      * @param InventorySyncInterface[] $inventorySyncs
      * @return bool true on success
      * @throws NoSuchEntityException
-     * @throws LocalizedException
+     * @throws CouldNotDeleteException
      */
     public function deleteMultiple(array $inventorySyncs);
 
@@ -92,4 +93,12 @@ interface InventorySyncRepositoryInterface
      * @throws LocalizedException
      */
     public function updateMultipleStatuses(array $inventorySyncs, $newStatus);
+
+    /**
+     * Delete Inventory Syncs by Store ID.
+     * @param int $storeId
+     * @return bool true on success
+     * @throws CouldNotDeleteException
+     */
+    public function deleteByStoreId(int $storeId);
 }

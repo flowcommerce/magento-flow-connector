@@ -3,6 +3,7 @@
 namespace FlowCommerce\FlowConnector\Test\Integration\Model\Sync;
 
 use Exception;
+use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Collection as SyncSkuCollection;
 use FlowCommerce\FlowConnector\Model\Sync\CatalogSync as Subject;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save as FlowSaveItemApi;
@@ -29,6 +30,11 @@ use Magento\TestFramework\Helper\Bootstrap;
  */
 class CatalogSyncTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * Url Stub Prefix of this API endpoint
+     */
+    const URL_STUB_PREFIX = '/catalog/items/';
+    
     /**
      * @var CreateProductsWithCategories
      */
@@ -103,6 +109,11 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
      * @var FlowUtil
      */
     private $util;
+    
+    /**
+     * @var UrlBuilder
+     */
+    private $urlBuilder;
 
     /**
      * Sets up for tests
@@ -143,6 +154,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         $this->subject = $this->objectManager->create(Subject::class, [
             'flowSaveItemApi' => $this->flowSaveItemApi,
         ]);
+        $this->urlBuilder = $this->objectManager->create(UrlBuilder::class);
     }
 
     /**
@@ -382,6 +394,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         }
         return $return;
     }
+    
     /**
      * Validates given url
      * @param $url
@@ -391,7 +404,26 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
     {
         $return = true;
         try {
-            $this->assertRegExp('/^https\:\/\/api\.flow\.io/', $url);
+            $endpoint = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX);
+            $this->assertContains($endpoint, $url);
+            $sku = substr($url, strrpos($url, '/') + 1);//get last string
+            $this->assertTrue($this->isValidSku($sku));
+        } catch (Exception $e) {
+            $return = false;
+        }
+        return $return;
+    }
+    
+    /**
+     * Check if sku is valid
+     * @param $sku
+     * @return bool
+     */
+    public function isValidSku($sku)
+    {
+        $return = true;
+        try {
+            $this->productRepository->get($sku);
         } catch (Exception $e) {
             $return = false;
         }

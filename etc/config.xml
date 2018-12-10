@@ -21,7 +21,7 @@
         </carriers>
         <flowcommerce>
             <flowconnector>
-                <enabled>1</enabled>
+                <enabled>0</enabled>
                 <invoice_event>1</invoice_event>
                 <invoice_email>1</invoice_email>
                 <shipment_event>1</shipment_event>

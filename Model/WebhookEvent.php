@@ -73,6 +73,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const FLOW_PAYMENT_ORDER_NUMBER = 'flow_payment_order_number';
 
     /**
+     * Flow shipment track title
+     */
+    const FLOW_TRACK_TITLE = 'Flow';
+
+    /**
      * Keys for Flow.io order payment data
      * https://docs.flow.io/type/order-payment
      */
@@ -558,6 +563,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
 
         if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
+            if ($order->getFlowConnectorOrderReady()) {
+                $this->logger->info('Order ready, duplicate submission ignored');
+                return;
+            }
+
             foreach ($data['allocation']['details'] as $detail) {
 
                 // allocation_detail is a union model. If there is a "number",
@@ -1318,8 +1328,25 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $quote->collectTotals()->save();
 
+
+        /*
+         * Fix for missing ext_order_id due to "This product is out of stock" exception thrown in quote submission process.
+         *
+         * It is required to load quote through the repository before passing it on to
+         * \Magento\Quote\Model\QuoteManagement::submit() due to Magento switching data types for quote item fields upon
+         * loading quote from repository, making strict comparison with quote item fields that were not pulled from
+         * repository fail causing "This product is out of stock" error in:
+         *
+         * https://github.com/magento/magento2/blob/2.2.5/app/code/Magento/Quote/Model/Quote/Item/CartItemPersister.php#L74
+         */
         /** @var Quote $quote */
         $quote = $this->cartRepository->get($quote->getId());
+
+        /*
+         * Workaround for issue where \Magento\Quote\Model\QuoteRepository::loadQuote() method from cart repository used by
+         * \Magento\Quote\Model\QuoteRepository::get() clobbers store ID from quote with current store ID:
+         */
+        $quote->setStoreId($this->getStoreId());
 
         /** @var Order $order */
         $order = $this->quoteManagement->submit($quote);
@@ -1746,7 +1773,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     !in_array($data['flow_tracking_number'], $existingTrackNumbers)) {
                     $flowTrack = [
                         'carrier_code' => 'custom',
-                        'title' => 'Flow',
+                        'title' => self::FLOW_TRACK_TITLE,
                         'number' => $data['flow_tracking_number']
                     ];
                     $tracks[] = $flowTrack;
@@ -1822,7 +1849,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         if(isset($data['flow_tracking_number'])) {
                             $flowTrack = [
                                 'carrier_code' => 'custom',
-                                'title' => 'Flow',
+                                'title' => self::FLOW_TRACK_TITLE,
                                 'number' => $data['flow_tracking_number']
                             ];
                             $tracks[] = $flowTrack;

@@ -1,0 +1,327 @@
+{
+  "event_id": "evt-56543020bde74fbb9954b3282c554edd",
+  "timestamp": "2018-11-09T11:54:24.679Z",
+  "organization": "magento-integration-sandbox",
+  "allocation": {
+    "id": "alc-b6dd8583f8e248ed95ba67bbd8e4e803",
+    "order": {
+      "id": "ord-281677a4eecd47d1828f7db5e5b1d002",
+      "number": "ord-890701f03f314d9e912103d16ac97fdc",
+      "submitted_at": "2018-11-09T11:54:24.677Z"
+    },
+    "details": [
+      {
+        "number": "simple_1",
+        "quantity": 10,
+        "key": "subtotal",
+        "price": {
+          "currency": "CAD",
+          "amount": 13.95,
+          "label": "CA$13.95",
+          "base": {
+            "amount": 10.2,
+            "currency": "USD",
+            "label": "US$10.20"
+          }
+        },
+        "total": {
+          "currency": "CAD",
+          "amount": 139.5,
+          "label": "CA$139.50",
+          "base": {
+            "amount": 102,
+            "currency": "USD",
+            "label": "US$102.00"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "CAD",
+              "amount": 136.7,
+              "label": "CA$136.70",
+              "base": {
+                "amount": 100,
+                "currency": "USD",
+                "label": "US$100.00"
+              }
+            },
+            "price": {
+              "currency": "CAD",
+              "amount": 13.67,
+              "label": "CA$13.67",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "CAD",
+              "amount": 2.8,
+              "label": "CA$2.80",
+              "base": {
+                "amount": 2,
+                "currency": "USD",
+                "label": "US$2.00"
+              }
+            },
+            "price": {
+              "currency": "CAD",
+              "amount": 0.28,
+              "label": "CA$0.28",
+              "base": {
+                "amount": 0.2,
+                "currency": "USD",
+                "label": "US$0.20"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "not_included": [
+          {
+            "key": "vat_item_price",
+            "total": {
+              "currency": "CAD",
+              "amount": 24.2,
+              "label": "CA$24.20",
+              "base": {
+                "amount": 17.7,
+                "currency": "USD",
+                "label": "US$17.70"
+              }
+            },
+            "rate": 0.14975,
+            "name": "GST + QST",
+            "price": {
+              "currency": "CAD",
+              "amount": 2.42,
+              "label": "CA$2.42",
+              "base": {
+                "amount": 1.77,
+                "currency": "USD",
+                "label": "US$1.77"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          },
+          {
+            "key": "duties_item_price",
+            "total": {
+              "currency": "CAD",
+              "amount": 24.6,
+              "label": "CA$24.60",
+              "base": {
+                "amount": 18,
+                "currency": "USD",
+                "label": "US$18.00"
+              }
+            },
+            "rate": 0.18,
+            "name": "Duty",
+            "price": {
+              "currency": "CAD",
+              "amount": 2.46,
+              "label": "CA$2.46",
+              "base": {
+                "amount": 1.8,
+                "currency": "USD",
+                "label": "US$1.80"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "number": "simple_2",
+        "quantity": 10,
+        "key": "subtotal",
+        "price": {
+          "currency": "CAD",
+          "amount": 13.95,
+          "label": "CA$13.95",
+          "base": {
+            "amount": 10.2,
+            "currency": "USD",
+            "label": "US$10.20"
+          }
+        },
+        "total": {
+          "currency": "CAD",
+          "amount": 139.5,
+          "label": "CA$139.50",
+          "base": {
+            "amount": 102,
+            "currency": "USD",
+            "label": "US$102.00"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "CAD",
+              "amount": 136.7,
+              "label": "CA$136.70",
+              "base": {
+                "amount": 100,
+                "currency": "USD",
+                "label": "US$100.00"
+              }
+            },
+            "price": {
+              "currency": "CAD",
+              "amount": 13.67,
+              "label": "CA$13.67",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "CAD",
+              "amount": 2.8,
+              "label": "CA$2.80",
+              "base": {
+                "amount": 2,
+                "currency": "USD",
+                "label": "US$2.00"
+              }
+            },
+            "price": {
+              "currency": "CAD",
+              "amount": 0.28,
+              "label": "CA$0.28",
+              "base": {
+                "amount": 0.2,
+                "currency": "USD",
+                "label": "US$0.20"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "not_included": [
+          {
+            "key": "vat_item_price",
+            "total": {
+              "currency": "CAD",
+              "amount": 24.2,
+              "label": "CA$24.20",
+              "base": {
+                "amount": 17.7,
+                "currency": "USD",
+                "label": "US$17.70"
+              }
+            },
+            "rate": 0.14975,
+            "name": "GST + QST",
+            "price": {
+              "currency": "CAD",
+              "amount": 2.42,
+              "label": "CA$2.42",
+              "base": {
+                "amount": 1.77,
+                "currency": "USD",
+                "label": "US$1.77"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          },
+          {
+            "key": "duties_item_price",
+            "total": {
+              "currency": "CAD",
+              "amount": 24.6,
+              "label": "CA$24.60",
+              "base": {
+                "amount": 18,
+                "currency": "USD",
+                "label": "US$18.00"
+              }
+            },
+            "rate": 0.18,
+            "name": "Duty",
+            "price": {
+              "currency": "CAD",
+              "amount": 2.46,
+              "label": "CA$2.46",
+              "base": {
+                "amount": 1.8,
+                "currency": "USD",
+                "label": "US$1.80"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "key": "shipping",
+        "total": {
+          "currency": "CAD",
+          "amount": 22,
+          "label": "CA$22.00",
+          "base": {
+            "amount": 16.09,
+            "currency": "USD",
+            "label": "US$16.09"
+          }
+        },
+        "included": [
+          {
+            "key": "shipping",
+            "total": {
+              "currency": "CAD",
+              "amount": 22,
+              "label": "CA$22.00",
+              "base": {
+                "amount": 16.09,
+                "currency": "USD",
+                "label": "US$16.09"
+              }
+            },
+            "price": {
+              "currency": "CAD",
+              "amount": 22,
+              "label": "CA$22.00",
+              "base": {
+                "amount": 16.09,
+                "currency": "USD",
+                "label": "US$16.09"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_order_detail"
+      }
+    ],
+    "total": {
+      "currency": "CAD",
+      "amount": 398.6,
+      "label": "CA$398.60",
+      "base": {
+        "amount": 291.49,
+        "currency": "USD",
+        "label": "US$291.49"
+      }
+    }
+  },
+  "discriminator": "allocation_upserted_v2"
+}

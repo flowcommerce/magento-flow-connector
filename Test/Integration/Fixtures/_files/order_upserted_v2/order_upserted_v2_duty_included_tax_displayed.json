@@ -1,0 +1,447 @@
+{
+  "event_id": "evt-2f9aea99bee94b4a93093aab82b28430",
+  "timestamp": "2018-11-13T18:04:28.332Z",
+  "organization": "magento-integration-sandbox",
+  "order": {
+    "id": "ord-5e64cf28e87d4b3087e163daf0c54c63",
+    "number": "ord-d0930c45bb424a42b454386b70e8ef90",
+    "customer": {
+      "name": {
+        "first": "Test2",
+        "last": "Test2"
+      },
+      "phone": "21 292 470 0620",
+      "email": "test3@test.com",
+      "address": {
+        "name": {
+          "first": "Test2",
+          "last": "Test2"
+        },
+        "streets": [
+          "calle 4"
+        ],
+        "city": "Buenos Aires",
+        "province": "Ciudad de Buenos Aires",
+        "postal": "9900-164",
+        "country": "ARG",
+        "company": "TT"
+      }
+    },
+    "delivered_duty": "unpaid",
+    "destination": {
+      "streets": [
+        "calle 4"
+      ],
+      "city": "Buenos Aires",
+      "province": "Ciudad de Buenos Aires",
+      "postal": "9900-164",
+      "country": "ARG",
+      "contact": {
+        "name": {
+          "first": "Test2",
+          "last": "Test2"
+        },
+        "company": "TT",
+        "email": "test3@test.com",
+        "phone": "21 292 470 0620"
+      }
+    },
+    "expires_at": "2018-11-13T19:04:26.711Z",
+    "items": [
+      {
+        "number": "simple_1",
+        "name": "Simple Product 1",
+        "quantity": 40,
+        "local": {
+          "experience": {
+            "id": "exp-d007811c449b4b84bba1fdc4ad56bcbd",
+            "key": "argentina",
+            "name": "Argentina"
+          },
+          "prices": [
+            {
+              "currency": "ARS",
+              "amount": 370,
+              "label": "370,00 ARS",
+              "base": {
+                "amount": 10.01,
+                "currency": "USD",
+                "label": "US$10.01"
+              },
+              "includes": {
+                "key": "duty",
+                "label": "Includes duty"
+              },
+              "key": "localized_item_price"
+            },
+            {
+              "currency": "ARS",
+              "amount": 0,
+              "label": "0,00 ARS",
+              "base": {
+                "amount": 0,
+                "currency": "USD",
+                "label": "US$0.00"
+              },
+              "name": "VAT",
+              "key": "localized_item_vat"
+            }
+          ],
+          "rates": [],
+          "spot_rates": [],
+          "status": "included",
+          "attributes": {
+            "weight_type": "No",
+            "sku_type": "No",
+            "weight": "18.0000",
+            "name": "Simple Product 1",
+            "sku": "simple_1",
+            "quantity_and_stock_status": "In Stock",
+            "magento_version": "2.2.5",
+            "meta_keyword": "Configurable",
+            "country_of_manufacture": " ",
+            "price": "10.0000",
+            "options_container": "Block after Info Column",
+            "regular_price": "370.0",
+            "price_type": "No",
+            "parent_entity_id": "2050",
+            "user_agent": "Flow-M2-1.0.38",
+            "minimal_price": "10.0000",
+            "attribute_set_id": "4",
+            "final_price": "370.0",
+            "page_layout": "No layout updates",
+            "entity_id": "2047",
+            "gift_message_available": "No",
+            "custom_design": "-- Please Select --",
+            "status": "Enabled",
+            "url_key": "simple-product-1",
+            "tax_class_id": "Taxable Goods",
+            "product_id": "2047",
+            "meta_description": "Configurable ",
+            "meta_title": "Configurable",
+            "shipment_type": "Together",
+            "type_id": "simple",
+            "created_at": "2018-11-07 16:05:32",
+            "custom_layout": "No layout updates",
+            "msrp_display_actual_price_type": "Use config",
+            "updated_at": "2018-11-07 16:05:32",
+            "visibility": "Not Visible Individually",
+            "test_configurable": "option_1",
+            "price_view": "Price Range",
+            "parent_sku": "Configurable"
+          },
+          "price_attributes": {
+            "regular_price": {
+              "currency": "ARS",
+              "amount": 370,
+              "label": "370,00 ARS",
+              "base": {
+                "amount": 10.01,
+                "currency": "USD",
+                "label": "US$10.01"
+              }
+            },
+            "final_price": {
+              "currency": "ARS",
+              "amount": 370,
+              "label": "370,00 ARS",
+              "base": {
+                "amount": 10.01,
+                "currency": "USD",
+                "label": "US$10.01"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "deliveries": [
+      {
+        "id": "del-f3ffb7b35c7241f3850b6903e7a58d75",
+        "items": [
+          {
+            "number": "simple_1",
+            "quantity": 40,
+            "price": {
+              "currency": "ARS",
+              "amount": 370,
+              "base": {
+                "amount": 10.01,
+                "currency": "USD"
+              }
+            },
+            "attributes": {
+              "base_amount": "10.01",
+              "base_currency": "USD"
+            }
+          }
+        ],
+        "options": [
+          {
+            "id": "opt-398c2c25eded4d7ea197d65c7b07cad1",
+            "cost": {
+              "currency": "ARS",
+              "amount": 618.58,
+              "label": "618,58 ARS",
+              "base": {
+                "amount": 16.73,
+                "currency": "USD",
+                "label": "US$16.73"
+              },
+              "details": [
+                {
+                  "source": "ratecard",
+                  "currency": "ARS",
+                  "amount": 618.58,
+                  "label": "618,58 ARS",
+                  "components": [
+                    {
+                      "key": "ratecard_base_cost",
+                      "currency": "ARS",
+                      "amount": 618.58,
+                      "label": "618,58 ARS",
+                      "base": {
+                        "amount": 16.73,
+                        "currency": "USD",
+                        "label": "US$16.73"
+                      }
+                    }
+                  ],
+                  "base": {
+                    "amount": 16.73,
+                    "currency": "USD",
+                    "label": "US$16.73"
+                  }
+                }
+              ]
+            },
+            "delivered_duty": "unpaid",
+            "price": {
+              "currency": "ARS",
+              "amount": 618.58,
+              "label": "618,58 ARS",
+              "base": {
+                "amount": 16.73,
+                "currency": "USD",
+                "label": "US$16.73"
+              }
+            },
+            "service": {
+              "id": "landmark-global",
+              "carrier": {
+                "id": "landmark"
+              },
+              "name": "Global"
+            },
+            "tier": {
+              "id": "tie-1b57c0e9e083403b82fad4281e51013a",
+              "integration": "information",
+              "name": "Shipping",
+              "services": [
+                "landmark-global"
+              ],
+              "strategy": "fastest",
+              "visibility": "public",
+              "currency": "ARS",
+              "display": {
+                "estimate": {
+                  "type": "calculated",
+                  "label": "4-7 Business Days"
+                }
+              }
+            },
+            "window": {
+              "from": "2018-11-19T00:00:00.000Z",
+              "to": "2018-11-22T00:00:00.000Z",
+              "timezone": "UTC",
+              "label": "4-7 Business Days"
+            },
+            "rule_outcome": {
+              "discriminator": "at_cost"
+            },
+            "weight": {
+              "gravitational": {
+                "value": "30.5",
+                "units": "pound"
+              },
+              "dimensional": {
+                "value": "13.7",
+                "units": "inch"
+              }
+            }
+          }
+        ],
+        "center": {
+          "id": "cen-6f8b247bf7004c2e9dfa0bd2970d91eb",
+          "key": "center-1"
+        },
+        "discriminator": "physical_delivery"
+      }
+    ],
+    "selections": [
+      "opt-398c2c25eded4d7ea197d65c7b07cad1"
+    ],
+    "prices": [
+      {
+        "key": "subtotal",
+        "currency": "ARS",
+        "amount": 14800,
+        "label": "14.800,00 ARS",
+        "base": {
+          "amount": 400.4,
+          "currency": "USD",
+          "label": "US$400.40"
+        },
+        "components": [
+          {
+            "key": "item_price",
+            "currency": "ARS",
+            "amount": 14789.6,
+            "label": "14.789,60 ARS",
+            "base": {
+              "amount": 400,
+              "currency": "USD",
+              "label": "US$400.00"
+            },
+            "name": "Item price"
+          },
+          {
+            "key": "rounding",
+            "currency": "ARS",
+            "amount": 10.4,
+            "label": "10,40 ARS",
+            "base": {
+              "amount": 0.4,
+              "currency": "USD",
+              "label": "US$0.40"
+            },
+            "name": "Rounding"
+          }
+        ],
+        "name": "Item subtotal"
+      },
+      {
+        "key": "shipping",
+        "currency": "ARS",
+        "amount": 618.58,
+        "label": "618,58 ARS",
+        "base": {
+          "amount": 16.73,
+          "currency": "USD",
+          "label": "US$16.73"
+        },
+        "components": [
+          {
+            "key": "shipping",
+            "currency": "ARS",
+            "amount": 618.58,
+            "label": "618,58 ARS",
+            "base": {
+              "amount": 16.73,
+              "currency": "USD",
+              "label": "US$16.73"
+            },
+            "name": "Shipping"
+          }
+        ],
+        "name": "Shipping"
+      }
+    ],
+    "total": {
+      "currency": "ARS",
+      "amount": 15418.58,
+      "label": "15.418,58 ARS",
+      "base": {
+        "amount": 417.13,
+        "currency": "USD",
+        "label": "US$417.13"
+      }
+    },
+    "attributes": {
+      "checkout_session_id": "6ffb5256182a77190f8f3a52bb52f0d6",
+      "customer_session_id": "6ffb5256182a77190f8f3a52bb52f0d6",
+      "quote_id": "9"
+    },
+    "merchant_of_record": "flow",
+    "experience": {
+      "key": "argentina",
+      "discriminator": "experience_reference"
+    },
+    "submitted_at": "2018-11-13T18:04:28.330Z",
+    "lines": [
+      {
+        "item_number": "simple_1",
+        "quantity": 40,
+        "price": {
+          "currency": "ARS",
+          "amount": 370,
+          "label": "370,00 ARS",
+          "base": {
+            "amount": 10.01,
+            "currency": "USD",
+            "label": "US$10.01"
+          }
+        },
+        "total": {
+          "currency": "ARS",
+          "amount": 14800,
+          "label": "14.800,00 ARS",
+          "base": {
+            "amount": 400.4,
+            "currency": "USD",
+            "label": "US$400.40"
+          }
+        }
+      }
+    ],
+    "promotions": {
+      "applied": [],
+      "available": []
+    },
+    "payments": [
+      {
+        "id": "opm-99ea3fc06f974d6dbb3b42a018dcb123",
+        "type": "card",
+        "merchant_of_record": "flow",
+        "reference": "aut-wyzANTXPbvNDAF485yd1hULbE8LGTb98",
+        "description": "Mastercard ending with 4444",
+        "total": {
+          "currency": "ARS",
+          "amount": 15418.58,
+          "label": "15.418,58 ARS",
+          "base": {
+            "amount": 417.13,
+            "currency": "USD",
+            "label": "US$417.13"
+          }
+        },
+        "attributes": {},
+        "address": {
+          "name": {
+            "first": "Test2",
+            "last": "Test2"
+          },
+          "streets": [
+            "calle 4"
+          ],
+          "city": "Buenos Aires",
+          "province": "Ciudad de Buenos Aires",
+          "postal": "9900-164",
+          "country": "ARG"
+        },
+        "date": "2018-11-13T18:04:28.237Z"
+      }
+    ],
+    "balance": {
+      "currency": "ARS",
+      "amount": 0,
+      "label": "0,00 ARS",
+      "base": {
+        "amount": 0,
+        "currency": "USD",
+        "label": "US$0.00"
+      }
+    }
+  },
+  "discriminator": "order_upserted_v2"
+}

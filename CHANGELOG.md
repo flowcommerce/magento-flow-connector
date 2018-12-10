@@ -1,5 +1,23 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.3
+
+- Fix issue where multiple order confirmation emails can be dispatched under specific circumstances.
+- Improve discount requests error handling.
+- Improve integration tests for catalog sync functionality.
+- Fix the most significant core Magento integration test suite failures appearing when Flow Connector is installed.
+- Add integration tests for webhook processing feature.
+- Add integration tests for catalog inventory sync feature.
+- Split register webhooks command into 3 separate commands and add automated integration tests for all 3.
+- Fix Travis composer require step when building against Git tags.
+
+## 1.1.2
+
+- Fix guest discount calculation in Checkout UI
+- Fix out of stock exception during quote generation on order creation
+- Fix store view scope for order creation
+- Remove exception for empty configuration of disabled connector on store view
+
 ## 1.1.1
 
 - Add configuration option to disable and enable sending invoice email after invoicing Flow order in Magento automatically.

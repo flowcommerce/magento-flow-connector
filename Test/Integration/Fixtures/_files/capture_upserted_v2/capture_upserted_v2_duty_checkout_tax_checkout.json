@@ -1,0 +1,31 @@
+{
+  "event_id": "evt-336c447580e84afc85f3566f905e8fc7",
+  "timestamp": "2018-11-09T11:54:36.693Z",
+  "organization": "magento-integration-sandbox",
+  "id": "cap-f12df925e35e403aab9c78336b86fe18",
+  "capture": {
+    "id": "cap-f12df925e35e403aab9c78336b86fe18",
+    "key": "cap-f12df925e35e403aab9c78336b86fe18",
+    "authorization": {
+      "id": "aut-JQ2vxOm0ZZqNvttcpTDGhrFgCQ20tVi5",
+      "key": "aut-JQ2vxOm0ZZqNvttcpTDGhrFgCQ20tVi5",
+      "order": {
+        "number": "ord-890701f03f314d9e912103d16ac97fdc"
+      }
+    },
+    "amount": 398.6,
+    "currency": "CAD",
+    "created_at": "2018-11-09T11:54:36.693Z",
+    "status": "succeeded",
+    "requested": {
+      "amount": 398.6,
+      "currency": "CAD"
+    },
+    "attributes": {},
+    "base": {
+      "amount": 291.49,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "capture_upserted_v2"
+}

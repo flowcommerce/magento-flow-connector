@@ -3,7 +3,7 @@
 namespace FlowCommerce\FlowConnector\Model\Api\Inventory\Updates;
 
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface;
-use FlowCommerce\FlowConnector\Model\InventoryCenterManager;
+use FlowCommerce\FlowConnector\Api\InventoryCenterManagementInterface as InventoryCenterManager;
 use Psr\Log\LoggerInterface as Logger;
 
 /**

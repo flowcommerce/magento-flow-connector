@@ -1,29 +1,29 @@
 {{- $fullName := include "deploy.fullname" . -}}
 {{- $dbHost := include "magento.mariadb.fullname" . -}}
-{{- range $key, $value := index .Values "stacks" }}
+{{- range $stage, $deployment := index .Values "deployments" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $fullName }}-{{ $key }}
+  name: {{ $fullName }}-{{ $stage }}
   labels:
     helm.sh/chart: {{ include "deploy.chart" $ }}
     app.kubernetes.io/instance: {{ $.Release.Name }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
     app.kubernetes.io/name: {{ include "deploy.name" $ }}
-    app.kubernetes.io/stage: {{ $key }}
+    app.kubernetes.io/stage: {{ $stage }}
 spec:
-  replicas: {{ $value.replicaCount }}
+  replicas: {{ $deployment.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "deploy.name" $ }}
       app.kubernetes.io/instance: {{ $.Release.Name }}
-      app.kubernetes.io/stage: {{ $key }}
+      app.kubernetes.io/stage: {{ $stage }}
   template:
     metadata:
       labels:
         app.kubernetes.io/name: {{ include "deploy.name" $ }}
         app.kubernetes.io/instance: {{ $.Release.Name }}
-        app.kubernetes.io/stage: {{ $key }}
+        app.kubernetes.io/stage: {{ $stage }}
       annotations:
         iam.amazonaws.com/role: {{ $.Values.iamRole }}
     spec:
@@ -33,7 +33,7 @@ spec:
           - "status.localhost"
       containers:
         - name: {{ $.Chart.Name }}
-          image: "{{ $.Values.image.repository }}:{{ $value.version }}"
+          image: "{{ $.Values.image.repository }}:{{ $deployment.version }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:
             - name: MARIADB_HOST
@@ -46,8 +46,6 @@ spec:
               value: {{ $.Values.magento.db.user | quote }}
             - name: MAGENTO_DATABASE_PASSWORD
               value: {{ $.Values.magento.db.pass | quote }}
-            - name: MAGENTO_HOST
-              value:  {{ $value.host | quote }}
             - name: MAGENTO_USERNAME
               value: {{ $.Values.magento.username | quote }}
             - name: MAGENTO_PASSWORD
@@ -62,6 +60,13 @@ spec:
               value: {{ $.Values.magento.lastName | quote }}
             - name: MAGENTO_MODE
               value: {{ $.Values.magento.mode | quote }}
+            - name: BASH_DEBUG
+              value: "1"
+            - name: NAMI_DEBUG
+              value: "1"
+            - name: NAMI_LOG_LEVEL
+              value: "trace8"
+{{ toYaml $deployment.env | indent 12 }}
           ports:
             - name: http
               containerPort: {{ $.Values.service.port }}
@@ -72,7 +77,7 @@ spec:
               port: http
               httpHeaders:
               - name: Host
-                value: {{ $value.host | quote }}
+                value: {{ $deployment.host | quote }}
             initialDelaySeconds: 1000
             periodSeconds: 10
             timeoutSeconds: 5
@@ -84,7 +89,7 @@ spec:
               port: http
               httpHeaders:
               - name: Host
-                value: {{ $value.host | quote }}
+                value: {{ $deployment.host | quote }}
             initialDelaySeconds: 30
             periodSeconds: 5
             timeoutSeconds: 3

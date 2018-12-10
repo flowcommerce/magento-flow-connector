@@ -2,7 +2,6 @@ nameOverride: ""
 fullnameOverride: ""
 
 service:
-  type: ClusterIP
   port: 80
 
 iamRole: arn:aws:iam::479720515435:role/ecsInstanceRole
@@ -21,6 +20,35 @@ tolerations:
 nodeSelector: {}
 affinity: {}
 
+ingress:
+  enabled: true
+  gateways:
+    - key: flo-pub
+      tld: flo.pub
+      hosts:
+        - magento.flo.pub
+
+services:
+  live:
+    hosts:
+      - magento-flow-connector
+      - magento.flo.pub
+    gateways:
+      - mesh
+      - magento-flow-connector-flo-pub
+    stages:
+      - deployment: live
+        weight: 100
+
+deployments:
+  live:
+    replicaCount: 1
+    version: master-1
+    host: magento.flo.pub
+    env:
+      - name: MAGENTO_HOST
+        value: magento.flo.pub
+
 magento:
   mode: developer
   adminUri: admin
@@ -34,12 +62,6 @@ magento:
   username: admin
   pass: admin123
 
-stacks:
-  dark:
-    ingress: true
-    replicaCount: 1
-    version: master-1
-    host: magento.flo.pub
 
 ##
 ## MariaDB chart configuration
@@ -47,15 +69,13 @@ stacks:
 ## https://github.com/helm/charts/blob/master/stable/mariadb/values.yaml
 ##
 mariadb:
-  ## Whether to deploy a mariadb server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters
   enabled: true
-  ## Disable MariaDB replication
   replication:
     enabled: false
 
-  ## Create a database and a database user
-  ## ref: https://github.com/bitnami/bitnami-docker-mariadb/blob/master/README.md#creating-a-database-user-on-first-run
-  ##
+  securityContext:
+    enabled: false
+
   db:
     name: magento
     user: bn_magento
@@ -63,19 +83,9 @@ mariadb:
   rootUser:
     password: bn_magento_password
 
-  ## Enable persistence using Persistent Volume Claims
-  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
-  ##
   master:
     persistence:
       enabled: true
-      ## mariadb data Persistent Volume Storage Class
-      ## If defined, storageClassName: <storageClass>
-      ## If set to "-", storageClassName: "", which disables dynamic provisioning
-      ## If undefined (the default) or set to null, no storageClassName spec is
-      ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-      ##   GKE, AWS & OpenStack)
-      ##
       accessMode: ReadWriteOnce
       size: 8Gi
 

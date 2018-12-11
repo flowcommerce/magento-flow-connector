@@ -11,10 +11,10 @@ use FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged;
 use FlowCommerce\FlowConnector\Controller\Webhooks\LabelUpserted;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeletedV2;
-use FlowCommerce\FlowConnector\Controller\Webhooks\OrderUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\TrackingLabelEventUpserted;
+use FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced;
 
 /**
  * Class EndpointsConfiguration
@@ -32,7 +32,6 @@ class EndpointsConfiguration
     {
         return [
             $this->getRouteStub(AllocationDeletedV2::class) => [AllocationDeletedV2::EVENT_TYPE],
-            $this->getRouteStub(AllocationUpsertedV2::class) => [AllocationUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(AuthorizationDeletedV2::class) => [AuthorizationDeletedV2::EVENT_TYPE],
             $this->getRouteStub(CaptureUpsertedV2::class) => [CaptureUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(CardAuthorizationUpsertedV2::class) => [CardAuthorizationUpsertedV2::EVENT_TYPE],
@@ -40,10 +39,10 @@ class EndpointsConfiguration
             $this->getRouteStub(LabelUpserted::class) => [LabelUpserted::EVENT_TYPE],
             $this->getRouteStub(OnlineAuthorizationUpsertedV2::class) => [OnlineAuthorizationUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(OrderDeletedV2::class) => [OrderDeletedV2::EVENT_TYPE],
-            $this->getRouteStub(OrderUpsertedV2::class) => [OrderUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(RefundCaptureUpsertedV2::class) => [RefundCaptureUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(RefundUpsertedV2::class) => [RefundUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(TrackingLabelEventUpserted::class) => [TrackingLabelEventUpserted::EVENT_TYPE],
+            $this->getRouteStub(OrderPlaced::class) => [OrderPlaced::EVENT_TYPE],
         ];
     }
 

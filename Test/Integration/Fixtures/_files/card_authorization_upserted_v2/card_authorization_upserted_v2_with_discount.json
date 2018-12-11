@@ -1,0 +1,112 @@
+{
+  "event_id": "evt-3804cb4b1f424025800a501944067fe6",
+  "timestamp": "2018-12-11T12:42:13.076Z",
+  "organization": "magento-integration-sandbox",
+  "id": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
+  "authorization": {
+    "id": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
+    "key": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
+    "merchant_of_record": "flow",
+    "card": {
+      "id": "crd-82f18a0b74d34a62964908c360340877",
+      "token": "XXX",
+      "type": "visa",
+      "expiration": {
+        "month": 12,
+        "year": 2021
+      },
+      "iin": "444433",
+      "last4": "1111",
+      "name": "testing test",
+      "issuer": {
+        "iin": "444433",
+        "country": "USA"
+      },
+      "address": {
+        "name": {
+          "first": "Testing",
+          "last": "Test"
+        },
+        "streets": [
+          "25  rue Ernest Renan"
+        ],
+        "city": "CHELLES",
+        "postal": "77500",
+        "country": "FRA"
+      },
+      "discriminator": "card"
+    },
+    "amount": 43.12,
+    "currency": "EUR",
+    "customer": {
+      "name": {
+        "first": "Testing",
+        "last": "Test"
+      },
+      "phone": "01.44.62.12697",
+      "email": "testing@test.com"
+    },
+    "attributes": {},
+    "result": {
+      "status": "authorized"
+    },
+    "created_at": "2018-12-11T12:42:06.267Z",
+    "method": {
+      "id": "visa",
+      "type": "card",
+      "name": "VISA",
+      "images": {
+        "small": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/30/original.png",
+          "width": 65,
+          "height": 41
+        },
+        "medium": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/60/original.png",
+          "width": 100,
+          "height": 60
+        },
+        "large": {
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/120/original.png",
+          "width": 256,
+          "height": 256
+        }
+      },
+      "regions": [
+        "world"
+      ]
+    },
+    "requested": {
+      "amount": 43.12,
+      "currency": "EUR"
+    },
+    "destination": {
+      "streets": [
+        "25  rue Ernest Renan"
+      ],
+      "city": "CHELLES",
+      "postal": "77500",
+      "country": "FRA"
+    },
+    "billing_address": {
+      "name": {
+        "first": "Testing",
+        "last": "Test"
+      },
+      "streets": [
+        "25  rue Ernest Renan"
+      ],
+      "city": "CHELLES",
+      "postal": "77500",
+      "country": "FRA"
+    },
+    "order": {
+      "number": "ord-c8647c2e01d24d0cae8254a87956de94"
+    },
+    "base": {
+      "amount": 47.14,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "card_authorization_upserted_v2"
+}

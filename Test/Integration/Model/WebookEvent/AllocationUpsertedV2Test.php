@@ -191,13 +191,11 @@ class AllocationUpsertedV2Test extends \PHPUnit\Framework\TestCase
                         $dutyPct += $included['rate'];
                         $dutyPrice += $included['price']['amount'];
                         $baseDutyPrice += $included['price']['base']['amount'];
+                    } elseif ($included['key'] == 'item_discount') {
+                        $itemDiscountAmount = $included['price']['amount'];
+                        $itemBaseDiscountAmount = $included['price']['base']['amount'];
                     }
                 }
-
-                $itemDiscountAmount += -((($rawItemPrice * $quantity) /
-                        ($order->getFlowConnectorItemPrice())) * $order->getDiscountAmount());
-                $itemBaseDiscountAmount += -((($baseRawItemPrice * $quantity) /
-                        ($order->getFlowConnectorBaseItemPrice())) * $order->getBaseDiscountAmount());
 
                 $this->assertEquals($item->getQtyOrdered(), $quantity);
                 $this->assertEquals($itemPrice, $item->getOriginalPrice());

@@ -32,6 +32,7 @@ class EndpointsConfiguration
     {
         return [
             $this->getRouteStub(AllocationDeletedV2::class) => [AllocationDeletedV2::EVENT_TYPE],
+            $this->getRouteStub(AllocationUpsertedV2::class) => [AllocationUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(AuthorizationDeletedV2::class) => [AuthorizationDeletedV2::EVENT_TYPE],
             $this->getRouteStub(CaptureUpsertedV2::class) => [CaptureUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(CardAuthorizationUpsertedV2::class) => [CardAuthorizationUpsertedV2::EVENT_TYPE],

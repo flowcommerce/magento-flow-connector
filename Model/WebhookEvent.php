@@ -454,9 +454,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 case 'allocation_deleted_v2':
                     $this->processAllocationDeletedV2();
                     break;
-                case 'allocation_upserted_v2':
-                    $this->processAllocationUpsertedV2();
-                    break;
                 case 'authorization_deleted_v2':
                     $this->processAuthorizationDeletedV2();
                     break;
@@ -549,33 +546,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         } else {
             throw new WebhookException('Failed to retrieve Flow allocation: ' . $data['id']);
-        }
-    }
-
-    /**
-     * Process allocation_upserted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/allocation-upserted-v-2
-     * @param null $order
-     * @throws WebhookException
-     * @throws LocalizedException
-     */
-    private function processAllocationUpsertedV2()
-    {
-        $this->logger->info('Processing allocation_upserted_v2 data');
-
-        $data = $this->getPayloadData();
-
-        if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
-            try {
-                $this->doAllocationUpsertedV2($order, $data);
-            } catch (LocalizedException $e) {
-                $this->webhookEventManager->markWebhookEventAsDone($this, $e->getMessage());
-            }
-
-            $this->webhookEventManager->markWebhookEventAsDone($this, '');
-        } else {
-            $this->requeue('Unable to find order right now, reprocess.');
         }
     }
 

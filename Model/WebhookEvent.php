@@ -454,6 +454,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 case 'allocation_deleted_v2':
                     $this->processAllocationDeletedV2();
                     break;
+                case 'allocation_upserted_v2':
+                    $this->processAllocationUpsertedV2();
+                    break;
                 case 'authorization_deleted_v2':
                     $this->processAuthorizationDeletedV2();
                     break;
@@ -546,6 +549,33 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         } else {
             throw new WebhookException('Failed to retrieve Flow allocation: ' . $data['id']);
+        }
+    }
+
+    /**
+     * Process allocation_upserted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/allocation-upserted-v-2
+     * @param null $order
+     * @throws WebhookException
+     * @throws LocalizedException
+     */
+    private function processAllocationUpsertedV2()
+    {
+        $this->logger->info('Processing allocation_upserted_v2 data');
+
+        $data = $this->getPayloadData();
+
+        if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
+            try {
+                $this->doAllocationUpsertedV2($order, $data);
+            } catch (LocalizedException $e) {
+                $this->webhookEventManager->markWebhookEventAsDone($this, $e->getMessage());
+            }
+
+            $this->webhookEventManager->markWebhookEventAsDone($this, '');
+        } else {
+            $this->requeue('Unable to find order right now, reprocess.');
         }
     }
 
@@ -1553,14 +1583,14 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         // Check if order is present in payload
         if (!array_key_exists('order', $data)) {
-            throw new LocalizedException('Order data not present in payload, skipping.');
+            throw new LocalizedException(__('Order data not present in payload, skipping.'));
         }
 
         $receivedOrder = $data['order'];
 
         // Check if this order has already been processed
         if ($this->getOrderByFlowOrderNumber($receivedOrder['number'])) {
-            throw new LocalizedException('Order previously processed, skipping');
+            throw new LocalizedException(__('Order previously processed, skipping'));
         }
 
         if ($storeId = $this->getStoreId()) {
@@ -2092,12 +2122,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      */
     private function doAllocationUpsertedV2(Order $order, array $data)
     {
-        if ($order->getFlowConnectorOrderReady()) {
-            throw new LocalizedException('Order ready, duplicate submission ignored');
+        // Check if order is present in payload
+        if (!array_key_exists('allocation', $data)) {
+            throw new LocalizedException(__('Allocation data not present in payload, skipping.'));
+        }
+
+        // Do not process allocations until their order has submitted_at date
+        if (!array_key_exists('order', $data['allocation'])
+            || !array_key_exists('submitted_at', $data['allocation']['order'])) {
+            throw new LocalizedException(__('Order data incomplete, skipping.'));
         }
 
         foreach ($data['allocation']['details'] as $detail) {
-
             // allocation_detail is a union model. If there is a "number",
             // then the detail refers to a line item, otherwise the detail
             // is for the order.
@@ -2244,13 +2280,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     throw new WebhookException('Unrecognized allocation detail key: ' . $detail['key']);
             }
         }
-
-        $order->setFlowConnectorOrderReady(1);
-
-        $this->orderSender->send($order);
-
-        // Save order after sending order confirmation email
-        $order->save();
     }
 
     /**
@@ -2266,6 +2295,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         try {
             $order = $this->doOrderUpserted($data);
             $this->doAllocationUpsertedV2($order, $data);
+
+            $order->setFlowConnectorOrderReady(1);
+            $this->orderSender->send($order);
+
+            // Save order after sending order confirmation email
+            $order->save();
         } catch (LocalizedException $e) {
             $this->webhookEventManager->markWebhookEventAsDone($this, $e->getMessage());
         }

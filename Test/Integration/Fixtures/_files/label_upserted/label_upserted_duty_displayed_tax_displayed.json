@@ -1,27 +1,27 @@
 {
-  "event_id": "evt-6e0cbd4f49d249bb8db3a62818e3fca1",
-  "timestamp": "2018-11-13T20:30:07.428Z",
+  "event_id": "evt-4d9ca0bfdfa14d6ea9cf6df474ea7d6f",
+  "timestamp": "2018-12-12T19:42:49.248Z",
   "organization": "magento-integration-sandbox",
-  "label_id": "lab-1aacebccc9b944969f8df6a46087e6ca",
-  "carrier_tracking_number": "LTN_test65765863N1",
-  "commercial_invoice": "https://io-flow-labels-production.s3.amazonaws.com/tO10udcw0s3mQhZlDFL576vCpOCM1Ig2CPjnXvoE.pdf",
-  "flow_tracking_number": "SF705769927663426",
+  "label_id": "lab-e5cd42dd3d134ae5a84de20ab81fa048",
+  "carrier_tracking_number": "LTN_test70783169N1",
+  "commercial_invoice": "https://io-flow-labels-production.s3.amazonaws.com/Wj5aJcrg4QsQY7U9mBggn6NUKqSRCrMnOhTp8AoT.pdf",
+  "flow_tracking_number": "SF700888700356326",
   "destination": {
     "contact": {
       "name": {
-        "first": "Test",
-        "last": "Japan"
+        "first": "Testing",
+        "last": "Test"
       },
-      "email": "test-jp@test.com",
-      "phone": "+8137-766-5044"
+      "email": "test@test.com",
+      "phone": "12377710"
     },
     "location": {
       "streets": [
-        "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+        "アキタケン, ユリホンジョウシ, イワキシモヘビタ, 201-1253"
       ],
-      "city": "Tokyo",
-      "province": "Tokyo",
-      "postal": "150-0043",
+      "city": "Shimokawara",
+      "province": "Akita",
+      "postal": "307-1273",
       "country": "JPN"
     }
   },
@@ -51,11 +51,11 @@
   },
   "carrier": "landmark",
   "service": "landmark-global",
-  "zpl": "XlhBXkNJMjheTEwxMjE4XkxIMTAsMTBeRk8zMCwzNF5BME4sNDAsNDBeRkheRkRfMmFfMmFfMmFfMmFfMmFfMmFfMmFfMjBfNTRfNDVfNTNfNTRfMjBfNGNfNDFfNDJfNDVfNGNfMjFfMjFfMjFfMjBfNDRfNGZfMjBfNGVfNGZfNTRfMjBfNTNfNDhfNDlfNTBfMjFfMjFfMjFfMjBfMmFfMmFfMmFfMmFfMmFfMmFfMmFeRlNeRk8zMCw2OF5BME4sMjUsMjVeRkheRkRfMzFfMzhfMzhfMjBfNDNfNGZfNGRfNGRfNDVfNTJfNDNfNDVfMjBfNDJfNGNfNTZfNDReRlNeRk8zMCw5Ml5BME4sMjUsMjVeRkheRkRfNGFfNGZfNDhfNGVfNTNfNTRfNGZfNTdfNGVfMmNfMjBfNGZfNDhfMjBfMzRfMzNfMzBfMzNfMzFeRlNeRk8zMCwxMTdeQTBOLDI1LDI1XkZIXkZEXzU1XzRlXzQ5XzU0XzQ1XzQ0XzIwXzUzXzU0XzQxXzU0XzQ1XzUzXkZTXkZPNDA2LDUxXkEwTiw0MCw0MF5GRDE1IExCU15GU15GTzYzMCw1MV5BME4sNDAsNDBeRkQxIE9GIDFeRlNeRk8xMDAsMTgwXkEwTiw4MCw0MF5GRExHSU5UU1REVSAtIEpQXkZTXkZPMzAsMzE5XkEwTiwzMCwzMF5GRFNISVBeRlNeRk8zMCwzNjBeQTBOLDMwLDMwXkZEVE86XkZTXkZPMTIyLDMwNV5BME4sNDAsNDBeRkheRkRfNTRfNDVfNTNfNTRfMjBfNGFfNDFfNTBfNDFfNGVeRlNeRk8xMjIsMzQ1XkEwTiwzNSwzNV5GSF5GRF83NF82Zl83NV82Yl83OV82Zl83NV83NF82Zl8yY18yMF83M182OF82OV82Ml83NV83OV82MV82Yl83NV8yY15GU15GTzEyMiwzODBeQTBOLDM1LDM1XkZIXkZEXzY0XzZmXzc1XzY3XzY1XzZlXzdhXzYxXzZiXzYxXzJjXzIwXzM3XzJkXzM4XkZTXkZPMTIyLDQxNV5BME4sMzUsMzVeRkheRkRfNTRfNGZfNGJfNTlfNGZfMmNfMjBfNTRfNGZfNGJfNTlfNGZfMjBfMzFfMzVfMzBfMmRfMzBfMzBfMzRfMzNeRlNeRk8xMjIsNDUwXkEwTiw0MCw0MF5GSF5GRF80YV80MV81MF80MV80ZV5GU15GTzEyMiw0OTBeQTBOLDM1LDM1XkZEODEzNy03NjYtNTA0NF5GU15GTzAsNjMwXkdCODA5LDAsMl5GU15GTzMwLDY0OV5BME4sMzAsMzBeRkheRkRTSElQTUVOVCBSRUYgOiBfNTNfNDZfMzdfMzBfMzVfMzdfMzZfMzlfMzlfMzJfMzdfMzZfMzZfMzNfMzRfMzJfMzZeRlNeRk8zMCw3MjleQTBOLDMwLDMwXkZETEFORE1BUksgVFJBQ0tJTkcgOiBURVNULUxUTjY1NzY1ODYzTjEtVEVTVF5GU15GTzU5LDc5OF5CWTMsM15CQ04sMjUwLFleRkRURVNULUxUTjY1NzY1ODYzTjEtVEVTVF5GU15GTzUwMCwxMTAwXkEwTiw1MCw1MF5GRExBTkRNQVJLXkZTIF5YWg==",
-  "pdf": "https://io-flow-labels-production.s3.amazonaws.com/RKW9OOvZEs9Pk65yvsuqd3cx0lF9zCr6yoOJ4cnF.pdf",
-  "order": "ord-555c1f216e664467955f219a6a1fac06",
-  "carrier_tracking_number_url": "https://track.landmarkglobal.com/?trck=LTN_test65765863N1",
-  "flow_tracking_number_url": "https://track.flow.io/SF705769927663426",
+  "zpl": "XlhBXkNJMjheTEwxMjE4XkxIMTAsMTBeRk8zMCwzNF5BME4sNDAsNDBeRkheRkRfMmFfMmFfMmFfMmFfMmFfMmFfMmFfMjBfNTRfNDVfNTNfNTRfMjBfNGNfNDFfNDJfNDVfNGNfMjFfMjFfMjFfMjBfNDRfNGZfMjBfNGVfNGZfNTRfMjBfNTNfNDhfNDlfNTBfMjFfMjFfMjFfMjBfMmFfMmFfMmFfMmFfMmFfMmFfMmFeRlNeRk8zMCw2OF5BME4sMjUsMjVeRkheRkRfMzFfMzhfMzhfMjBfNDNfNGZfNGRfNGRfNDVfNTJfNDNfNDVfMjBfNDJfNGNfNTZfNDReRlNeRk8zMCw5Ml5BME4sMjUsMjVeRkheRkRfNGFfNGZfNDhfNGVfNTNfNTRfNGZfNTdfNGVfMmNfMjBfNGZfNDhfMjBfMzRfMzNfMzBfMzNfMzFeRlNeRk8zMCwxMTdeQTBOLDI1LDI1XkZIXkZEXzU1XzRlXzQ5XzU0XzQ1XzQ0XzIwXzUzXzU0XzQxXzU0XzQ1XzUzXkZTXkZPNDA2LDUxXkEwTiw0MCw0MF5GRDEuNSBMQlNeRlNeRk82MzAsNTFeQTBOLDQwLDQwXkZEMSBPRiAxXkZTXkZPMTAwLDE4MF5BME4sODAsNDBeRkRMR0lOVFNURFUgLSBKUF5GU15GTzMwLDMxOV5BME4sMzAsMzBeRkRTSElQXkZTXkZPMzAsMzYwXkEwTiwzMCwzMF5GRFRPOl5GU15GTzEyMiwzMDVeQTBOLDQwLDQwXkZIXkZEXzU0XzQ1XzUzXzU0XzQ5XzRlXzQ3XzIwXzU0XzQ1XzUzXzU0XkZTXkZPMTIyLDM0NV5BME4sMzUsMzVeRkheRkRfNDFfNGJfNDlfNTRfNDFfNGJfNDVfNGVfMmNfMjBfNTlfNTVfNTJfNDlfNDhfNGZfNGVfNGFfNGZfNTVfNTNfNDhfNDlfMmNfMjBfNDlfNTdfNDFfNGJfNDlfNTNfNDhfNDlfNGRfNGZeRlNeRk8xMjIsMzgwXkEwTiwzNSwzNV5GSF5GRF80OF80NV80Ml80OV81NF80MV8yY18yMF8zMl8zMF8zMV8yZF8zMV8zMl8zNV8zM15GU15GTzEyMiw0MTVeQTBOLDM1LDM1XkZIXkZEXzUzXzQ4XzQ5XzRkXzRmXzRiXzQxXzU3XzQxXzUyXzQxXzJjXzIwXzQxXzRiXzQ5XzU0XzQxXzIwXzMzXzMwXzM3XzJkXzMxXzMyXzM3XzMzXkZTXkZPMTIyLDQ1MF5BME4sNDAsNDBeRkheRkRfNGFfNDFfNTBfNDFfNGVeRlNeRk8xMjIsNDkwXkEwTiwzNSwzNV5GRDEyMzc3NzEwXkZTXkZPMCw2MzBeR0I4MDksMCwyXkZTXkZPMzAsNjQ5XkEwTiwzMCwzMF5GSF5GRFNISVBNRU5UIFJFRiA6IF81M180Nl8zN18zMF8zMF8zOF8zOF8zOF8zN18zMF8zMF8zM18zNV8zNl8zM18zMl8zNl5GU15GTzMwLDcyOV5BME4sMzAsMzBeRkRMQU5ETUFSSyBUUkFDS0lORyA6IFRFU1QtTFRONzA3ODMxNjlOMS1URVNUXkZTXkZPNTksNzk4XkJZMywzXkJDTiwyNTAsWV5GRFRFU1QtTFRONzA3ODMxNjlOMS1URVNUXkZTXkZPNTAwLDExMDBeQTBOLDUwLDUwXkZETEFORE1BUkteRlMgXlha",
+  "pdf": "https://io-flow-labels-production.s3.amazonaws.com/azxIj8Eh6oZlRzbDyy3cBmGEhKvVaZnEvZ1Sfdng.pdf",
+  "order": "ord-78219a4797ff467f9dc214e9972e84fe",
+  "carrier_tracking_number_url": "https://track.landmarkglobal.com/?trck=LTN_test70783169N1",
+  "flow_tracking_number_url": "https://track.flow.io/SF700888700356326",
   "center_key": "center-1",
   "recipient": "customer",
   "package": {
@@ -69,7 +69,7 @@
         "units": "inch"
       },
       "weight": {
-        "value": "15.00",
+        "value": "1.50",
         "units": "pound"
       },
       "width": {
@@ -80,11 +80,11 @@
     "items": [
       {
         "number": "simple_1",
-        "quantity": 10
+        "quantity": 1
       },
       {
         "number": "simple_2",
-        "quantity": 10
+        "quantity": 1
       }
     ]
   },

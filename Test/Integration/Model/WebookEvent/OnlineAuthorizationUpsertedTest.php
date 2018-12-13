@@ -97,12 +97,8 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture
-            ->createOrderUpsertedWebhooks(['order_upserted_v2_paypal.json']);
-        $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture
-            ->createAllocationUpsertedWebhooks(['allocation_upserted_v2_paypal.json']);
+        $orderPlacedEvents = $this->createWebhookEventsFixture
+            ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
         $this->webhookEventManager->process(1000, 1);
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
@@ -161,7 +157,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($onlineAuthorizationUpsertedEvents),
+            count($orderPlacedEvents) + count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }
@@ -176,12 +172,8 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture
-            ->createOrderUpsertedWebhooks(['order_upserted_v2_paypal.json']);
-        $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture
-            ->createAllocationUpsertedWebhooks(['allocation_upserted_v2_paypal']);
+        $orderPlacedEvents = $this->createWebhookEventsFixture
+            ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
         $this->webhookEventManager->process(1000, 1);
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
@@ -239,7 +231,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($onlineAuthorizationUpsertedEvents),
+            count($orderPlacedEvents) + count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }
@@ -254,12 +246,8 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture
-            ->createOrderUpsertedWebhooks(['order_upserted_v2_paypal.json']);
-        $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture
-            ->createAllocationUpsertedWebhooks(['allocation_upserted_v2_paypal']);
+        $orderPlacedEvents = $this->createWebhookEventsFixture
+            ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
         $this->webhookEventManager->process(1000, 1);
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
@@ -318,7 +306,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($onlineAuthorizationUpsertedEvents),
+            count($orderPlacedEvents) + count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }
@@ -333,14 +321,10 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture
-            ->createOrderUpsertedWebhooks(['order_upserted_v2_paypal.json']);
+        $orderPlacedEvents = $this->createWebhookEventsFixture
+            ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
         $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture
-            ->createAllocationUpsertedWebhooks(['allocation_upserted_v2_paypal']);
-        $this->webhookEventManager->process(1000, 1);
-
+        
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal_pending.json']);
 
@@ -396,7 +380,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($onlineAuthorizationUpsertedEvents),
+            count($orderPlacedEvents) + count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }
@@ -411,12 +395,8 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture
-            ->createOrderUpsertedWebhooks(['order_upserted_v2_paypal.json']);
-        $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture
-            ->createAllocationUpsertedWebhooks(['allocation_upserted_v2_paypal']);
+        $orderPlacedEvents = $this->createWebhookEventsFixture
+            ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
         $this->webhookEventManager->process(1000, 1);
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
@@ -475,7 +455,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($onlineAuthorizationUpsertedEvents),
+            count($orderPlacedEvents) + count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }
@@ -490,12 +470,8 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture
-            ->createOrderUpsertedWebhooks(['order_upserted_v2_paypal.json']);
-        $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture
-            ->createAllocationUpsertedWebhooks(['allocation_upserted_v2_paypal']);
+        $orderPlacedEvents = $this->createWebhookEventsFixture
+            ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
         $this->webhookEventManager->process(1000, 1);
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
@@ -554,7 +530,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($onlineAuthorizationUpsertedEvents),
+            count($orderPlacedEvents) + count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }

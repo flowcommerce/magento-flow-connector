@@ -1,28 +1,27 @@
 {
-  "event_id": "evt-3719c8c3ef8d4a72a3a917e992395122",
-  "timestamp": "2018-11-13T18:04:45.496Z",
+  "event_id": "evt-f92fd8e9add8411eae502331b27f1632",
+  "timestamp": "2018-12-12T20:15:02.363Z",
   "organization": "magento-integration-sandbox",
-  "label_id": "lab-29cd243da421424787c15498501a3376",
-  "carrier_tracking_number": "LTN_test49022362N1",
-  "commercial_invoice": "https://io-flow-labels-production.s3.amazonaws.com/eZUueOrzwpJ054mPehDqQMgL3pYcIMJ1ydAhkja4.pdf",
-  "flow_tracking_number": "SF704367689682535",
+  "label_id": "lab-a519c52d1c18444bb55ffcffabf9ffb5",
+  "carrier_tracking_number": "LTN_test8848065N1",
+  "commercial_invoice": "https://io-flow-labels-production.s3.amazonaws.com/tuQ4uO4gz6Xe4BBmHMQzN1cWBoIErBSAvSr2nWrD.pdf",
+  "flow_tracking_number": "SF709363140856014",
   "destination": {
     "contact": {
       "name": {
-        "first": "Test2",
-        "last": "Test2"
+        "first": "Test",
+        "last": "Test 4"
       },
-      "company": "TT",
-      "email": "test3@test.com",
-      "phone": "21 292 470 0620"
+      "email": "test-arg@test.com",
+      "phone": "12377710"
     },
     "location": {
       "streets": [
-        "calle 4"
+        "H Yrigoyen 424"
       ],
-      "city": "Buenos Aires",
-      "province": "Ciudad de Buenos Aires",
-      "postal": "9900-164",
+      "city": "Azul",
+      "province": "Buenos Aires",
+      "postal": "N/A",
       "country": "ARG"
     }
   },
@@ -52,11 +51,11 @@
   },
   "carrier": "landmark",
   "service": "landmark-global",
-  "zpl": "XlhBXkNJMjheTEwxMjE4XkxIMTAsMTBeRk8zMCwzNF5BME4sNDAsNDBeRkheRkRfMmFfMmFfMmFfMmFfMmFfMmFfMmFfMjBfNTRfNDVfNTNfNTRfMjBfNGNfNDFfNDJfNDVfNGNfMjFfMjFfMjFfMjBfNDRfNGZfMjBfNGVfNGZfNTRfMjBfNTNfNDhfNDlfNTBfMjFfMjFfMjFfMjBfMmFfMmFfMmFfMmFfMmFfMmFfMmFeRlNeRk8zMCw2OF5BME4sMjUsMjVeRkheRkRfMzFfMzhfMzhfMjBfNDNfNGZfNGRfNGRfNDVfNTJfNDNfNDVfMjBfNDJfNGNfNTZfNDReRlNeRk8zMCw5Ml5BME4sMjUsMjVeRkheRkRfNGFfNGZfNDhfNGVfNTNfNTRfNGZfNTdfNGVfMmNfMjBfNGZfNDhfMjBfMzRfMzNfMzBfMzNfMzFeRlNeRk8zMCwxMTdeQTBOLDI1LDI1XkZIXkZEXzU1XzRlXzQ5XzU0XzQ1XzQ0XzIwXzUzXzU0XzQxXzU0XzQ1XzUzXkZTXkZPNDA2LDUxXkEwTiw0MCw0MF5GRDMwIExCU15GU15GTzYzMCw1MV5BME4sNDAsNDBeRkQxIE9GIDFeRlNeRk8xMDAsMTgwXkEwTiw4MCw0MF5GRExHSU5UU1REVSAtIEFSXkZTXkZPMzAsMzE5XkEwTiwzMCwzMF5GRFNISVBeRlNeRk8zMCwzNjBeQTBOLDMwLDMwXkZEVE86XkZTXkZPMTIyLDMwNV5BME4sNDAsNDBeRkheRkRfNTRfNDVfNTNfNTRfMzJfMjBfNTRfNDVfNTNfNTRfMzJeRlNeRk8xMjIsMzQ1XkEwTiwzNSwzNV5GSF5GRF80M180MV80Y180Y180NV8yMF8zNF5GU15GTzEyMiwzODBeQTBOLDM1LDM1XkZIXkZEXzQyXzU1XzQ1XzRlXzRmXzUzXzIwXzQxXzQ5XzUyXzQ1XzUzXzJjXzIwXzQzXzQ5XzU1XzQ0XzQxXzQ0XzIwXzQ0XzQ1XzIwXzQyXzU1XzQ1XzRlXzRmXzUzXzIwXzQxXzQ5XzUyXzQ1XzUzXzIwXzM5XzM5XzMwXzMwXzJkXzMxXzM2XzM0XkZTXkZPMTIyLDQxNV5BME4sNDAsNDBeRkheRkRfNDFfNTJfNDdfNDVfNGVfNTRfNDlfNGVfNDFeRlNeRk8xMjIsNDU1XkEwTiwzNSwzNV5GRDIxIDI5MiA0NzAgMDYyMF5GU15GTzAsNjMwXkdCODA5LDAsMl5GU15GTzMwLDY0OV5BME4sMzAsMzBeRkheRkRTSElQTUVOVCBSRUYgOiBfNTNfNDZfMzdfMzBfMzRfMzNfMzZfMzdfMzZfMzhfMzlfMzZfMzhfMzJfMzVfMzNfMzVeRlNeRk8zMCw3MjleQTBOLDMwLDMwXkZETEFORE1BUksgVFJBQ0tJTkcgOiBURVNULUxUTjQ5MDIyMzYyTjEtVEVTVF5GU15GTzU5LDc5OF5CWTMsM15CQ04sMjUwLFleRkRURVNULUxUTjQ5MDIyMzYyTjEtVEVTVF5GU15GTzUwMCwxMTAwXkEwTiw1MCw1MF5GRExBTkRNQVJLXkZTIF5YWg==",
-  "pdf": "https://io-flow-labels-production.s3.amazonaws.com/AIgi8nUxGjnCieinDS6sld0KmBFzfcLPKqZSuKXJ.pdf",
-  "order": "ord-d0930c45bb424a42b454386b70e8ef90",
-  "carrier_tracking_number_url": "https://track.landmarkglobal.com/?trck=LTN_test49022362N1",
-  "flow_tracking_number_url": "https://track.flow.io/SF704367689682535",
+  "zpl": "XlhBXkNJMjheTEwxMjE4XkxIMTAsMTBeRk8zMCwzNF5BME4sNDAsNDBeRkheRkRfMmFfMmFfMmFfMmFfMmFfMmFfMmFfMjBfNTRfNDVfNTNfNTRfMjBfNGNfNDFfNDJfNDVfNGNfMjFfMjFfMjFfMjBfNDRfNGZfMjBfNGVfNGZfNTRfMjBfNTNfNDhfNDlfNTBfMjFfMjFfMjFfMjBfMmFfMmFfMmFfMmFfMmFfMmFfMmFeRlNeRk8zMCw2OF5BME4sMjUsMjVeRkheRkRfMzFfMzhfMzhfMjBfNDNfNGZfNGRfNGRfNDVfNTJfNDNfNDVfMjBfNDJfNGNfNTZfNDReRlNeRk8zMCw5Ml5BME4sMjUsMjVeRkheRkRfNGFfNGZfNDhfNGVfNTNfNTRfNGZfNTdfNGVfMmNfMjBfNGZfNDhfMjBfMzRfMzNfMzBfMzNfMzFeRlNeRk8zMCwxMTdeQTBOLDI1LDI1XkZIXkZEXzU1XzRlXzQ5XzU0XzQ1XzQ0XzIwXzUzXzU0XzQxXzU0XzQ1XzUzXkZTXkZPNDA2LDUxXkEwTiw0MCw0MF5GRDEuNSBMQlNeRlNeRk82MzAsNTFeQTBOLDQwLDQwXkZEMSBPRiAxXkZTXkZPMTAwLDE4MF5BME4sODAsNDBeRkRMR0lOVFNURFUgLSBBUl5GU15GTzMwLDMxOV5BME4sMzAsMzBeRkRTSElQXkZTXkZPMzAsMzYwXkEwTiwzMCwzMF5GRFRPOl5GU15GTzEyMiwzMDVeQTBOLDQwLDQwXkZIXkZEXzU0XzQ1XzUzXzU0XzIwXzU0XzQ1XzUzXzU0XzIwXzM0XkZTXkZPMTIyLDM0NV5BME4sMzUsMzVeRkheRkRfNDhfMjBfNTlfNTJfNDlfNDdfNGZfNTlfNDVfNGVfMjBfMzRfMzJfMzReRlNeRk8xMjIsMzgwXkEwTiwzNSwzNV5GSF5GRF80MV81YV81NV80Y18yY18yMF80Ml81NV80NV80ZV80Zl81M18yMF80MV80OV81Ml80NV81M18yMF80ZV8yZl80MV5GU15GTzEyMiw0MTVeQTBOLDQwLDQwXkZIXkZEXzQxXzUyXzQ3XzQ1XzRlXzU0XzQ5XzRlXzQxXkZTXkZPMTIyLDQ1NV5BME4sMzUsMzVeRkQxMjM3NzcxMF5GU15GTzAsNjMwXkdCODA5LDAsMl5GU15GTzMwLDY0OV5BME4sMzAsMzBeRkheRkRTSElQTUVOVCBSRUYgOiBfNTNfNDZfMzdfMzBfMzlfMzNfMzZfMzNfMzFfMzRfMzBfMzhfMzVfMzZfMzBfMzFfMzReRlNeRk8zMCw3MjleQTBOLDMwLDMwXkZETEFORE1BUksgVFJBQ0tJTkcgOiBURVNULUxUTjg4NDgwNjVOMS1URVNUXkZTXkZPNTksNzk4XkJZMywzXkJDTiwyNTAsWV5GRFRFU1QtTFROODg0ODA2NU4xLVRFU1ReRlNeRk81MDAsMTEwMF5BME4sNTAsNTBeRkRMQU5ETUFSS15GUyBeWFo=",
+  "pdf": "https://io-flow-labels-production.s3.amazonaws.com/WE9uZWEHHjG1GoOQfRAd7La1MhqIoi4Vze5jhu67.pdf",
+  "order": "ord-c8dfe5c7e624437bad247fc772e68f08",
+  "carrier_tracking_number_url": "https://track.landmarkglobal.com/?trck=LTN_test8848065N1",
+  "flow_tracking_number_url": "https://track.flow.io/SF709363140856014",
   "center_key": "center-1",
   "recipient": "customer",
   "package": {
@@ -70,7 +69,7 @@
         "units": "inch"
       },
       "weight": {
-        "value": "30.00",
+        "value": "1.50",
         "units": "pound"
       },
       "width": {
@@ -81,7 +80,11 @@
     "items": [
       {
         "number": "simple_1",
-        "quantity": 40
+        "quantity": 1
+      },
+      {
+        "number": "simple_2",
+        "quantity": 1
       }
     ]
   },

@@ -6,13 +6,17 @@ use FlowCommerce\FlowConnector\Model\Api\Auth;
 use \Magento\Framework\App\Helper\AbstractHelper;
 use \Magento\Framework\App\Helper\Context;
 
+/**
+ * Class Data
+ * @package FlowCommerce\FlowConnector\Helper
+ */
 class Data extends AbstractHelper
 {
     /**
      * @var Auth
      */
     private $auth;
-    
+
     /**
      * Data constructor.
      * @param Context $context
@@ -28,7 +32,9 @@ class Data extends AbstractHelper
 
     /**
      * Returns the Flow Organization Id set in the Admin Store Configuration.
-     * @param storeId ID of store, if null defaults to current store.
+     *
+     * @deprecated 1.1.4
+     * @param int|null $storeId Store ID, if null defaults to current store.
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
@@ -36,5 +42,4 @@ class Data extends AbstractHelper
     {
         return $this->auth->getFlowOrganizationId($storeId);
     }
-
 }

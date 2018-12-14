@@ -120,4 +120,9 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- Entirely disable quote validation for Flow orders -->
+    <type name="Magento\Quote\Model\QuoteValidator">
+        <plugin name="flowcommerce_flowconnector_quote_validator" type="FlowCommerce\FlowConnector\Plugin\Magento\Quote\Model\QuoteValidator"/>
+    </type>
 </config>

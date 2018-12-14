@@ -1661,26 +1661,26 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $destination = $receivedOrder['destination'];
         $shippingAddress = $quote->getShippingAddress();
 
-        if (array_key_exists('streets', $destination)) {
+        if (isset($destination['streets'])) {
             $shippingAddress->setStreet($destination['streets']);
         }
-
-        if (array_key_exists('city', $destination)) {
+    
+        if (isset($destination['city'])) {
             $shippingAddress->setCity($destination['city']);
         }
-
-        if (array_key_exists('province', $destination)) {
+    
+        if (isset($destination['province'])) {
             $shippingAddress->setRegion($destination['province']);
         } else {
             $shippingAddress->unsRegion();
             $shippingAddress->unsRegionId();
         }
-
-        if (array_key_exists('postal', $destination)) {
+    
+        if (isset($destination['postal'])) {
             $shippingAddress->setPostcode($destination['postal']);
         }
-
-        if (array_key_exists('country', $destination)) {
+    
+        if (isset($destination['country'])) {
             $shippingAddress->setCountryCode($destination['country']);
 
             // set country id
@@ -1693,24 +1693,24 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $shippingAddress->setRegionId($region->getId());
             }
         }
-
-        if (array_key_exists('contact', $destination)) {
+    
+        if (isset($destination['contact'])) {
             $contact = $destination['contact'];
             if (array_key_exists('name', $contact)) {
-                if (array_key_exists('first', $contact['name'])) {
+                if (isset($contact['name']['first'])) {
                     $shippingAddress->setFirstname($contact['name']['first']);
                 }
-                if (array_key_exists('last', $contact['name'])) {
+                if (isset($contact['name']['last'])) {
                     $shippingAddress->setLastname($contact['name']['last']);
                 }
             }
-            if (array_key_exists('company', $contact)) {
+            if (isset($contact['company'])) {
                 $shippingAddress->setCompany($contact['company']);
             }
-            if (array_key_exists('email', $contact)) {
+            if (isset($contact['email'])) {
                 $shippingAddress->setEmail($contact['email']);
             }
-            if (array_key_exists('phone', $contact)) {
+            if (isset($contact['phone'])) {
                 $shippingAddress->setTelephone($contact['phone']);
             }
         }
@@ -1760,62 +1760,65 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // are additional billing addresses, they must be added to the order
             // later since Magento quotes only supports 1 billing address.
             foreach ($receivedOrder['payments'] as $flowPayment) {
-
-                if (
-                    array_key_exists('address', $flowPayment) ||
-                    (array_key_exists('address', $receivedOrder['customer']) && $flowPayment['type'] == 'online')
-                ) {
-                    $this->logger->info('Adding billing address');
-
-                    // Paypal orders have no billing address on the payments entity
-                    if ($flowPayment['type'] == 'online') {
+        
+                $this->logger->info('Adding billing address');
+        
+                // Paypal orders have no billing address on the payments entity
+                // If payment has no address use shipping address
+                // In case shipping addres is empty, use customer address
+                if ((isset($flowPayment['type']) && $flowPayment['type'] == 'online') ||
+                    !isset($flowPayment['address'])) {
+                    if ($destination) {
+                        $paymentAddress = $destination;
+                    } else {
                         $paymentAddress = $receivedOrder['customer']['address'];
-                    } else {
-                        $paymentAddress = $flowPayment['address'];
                     }
-                    $billingAddress = $quote->getBillingAddress();
-
-                    if (array_key_exists('streets', $paymentAddress)) {
-                        $billingAddress->setStreet($paymentAddress['streets']);
-                    }
-
-                    if (array_key_exists('city', $paymentAddress)) {
-                        $billingAddress->setCity($paymentAddress['city']);
-                    }
-
-                    if (array_key_exists('province', $paymentAddress)) {
-                        $billingAddress->setRegion($paymentAddress['province']);
-                    } else {
-                        $billingAddress->unsRegion();
-                        $billingAddress->unsRegionId();
-                    }
-
-                    if (array_key_exists('postal', $paymentAddress)) {
-                        $billingAddress->setPostcode($paymentAddress['postal']);
-                    }
-
-                    if (array_key_exists('country', $paymentAddress)) {
-                        $billingAddress->setCountryCode($paymentAddress['country']);
-
-                        // set country id
-                        $country = $this->countryFactory->create()->loadByCode($paymentAddress['country']);
-                        $billingAddress->setCountryId($country->getId());
-
-                        // set region
-                        if (array_key_exists('province', $paymentAddress)) {
-                            $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
-                            $billingAddress->setRegionId($region->getId());
-                        }
-                    }
-
-                    $billingAddress->setFirstname($receivedOrder['customer']['name']['first']);
-                    $billingAddress->setLastname($receivedOrder['customer']['name']['last']);
-                    $billingAddress->setTelephone($receivedOrder['customer']['phone']);
-
-                    break;
+                } else {
+                    $paymentAddress = $flowPayment['address'];
                 }
+                $billingAddress = $quote->getBillingAddress();
+        
+                if (isset($paymentAddress['streets'])) {
+                    $billingAddress->setStreet($paymentAddress['streets']);
+                }
+    
+                if (isset($paymentAddress['city'])) {
+                    $billingAddress->setCity($paymentAddress['city']);
+                }
+    
+                if (isset($paymentAddress['province'])) {
+                    $billingAddress->setRegion($paymentAddress['province']);
+                } else {
+                    $billingAddress->unsRegion();
+                    $billingAddress->unsRegionId();
+                }
+    
+                if (isset($paymentAddress['postal'])) {
+                    $billingAddress->setPostcode($paymentAddress['postal']);
+                }
+    
+                if (isset($paymentAddress['country'])) {
+                    $billingAddress->setCountryCode($paymentAddress['country']);
+            
+                    // set country id
+                    $country = $this->countryFactory->create()->loadByCode($paymentAddress['country']);
+                    $billingAddress->setCountryId($country->getId());
+            
+                    // set region
+                    if (isset($paymentAddress['province'])) {
+                        $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
+                        $billingAddress->setRegionId($region->getId());
+                    }
+                }
+        
+                $billingAddress->setFirstname($receivedOrder['customer']['name']['first']);
+                $billingAddress->setLastname($receivedOrder['customer']['name']['last']);
+                $billingAddress->setTelephone($receivedOrder['customer']['phone']);
+        
+                break;
             }
         }
+        
 
         ////////////////////////////////////////////////////////////
         // Discounts
@@ -1856,6 +1859,14 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
          * \Magento\Quote\Model\QuoteRepository::get() clobbers store ID from quote with current store ID:
          */
         $quote->setStoreId($this->getStoreId());
+
+        /**
+         * Allow creating orders with malformed addresses
+         */
+        $quote->getShippingAddress()
+            ->setShouldIgnoreValidation(true);
+        $quote->getBillingAddress()
+            ->setShouldIgnoreValidation(true);
 
         /** @var Order $order */
         $order = $this->quoteManagement->submit($quote);

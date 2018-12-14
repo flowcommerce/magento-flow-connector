@@ -25,12 +25,12 @@ use Magento\Sales\Model\Order\Item as OrderItem;
 
 
 /**
- * Class OrderPlacedTest
+ * Test class for Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
+ * @magentoAppIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  */
 class OrderPlacedTest extends \PHPUnit\Framework\TestCase
 {
-    
     /**
      * @var CreateProductsWithCategories
      */
@@ -115,7 +115,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
     
     /**
      * Sets up for tests
-     * @magentoDbIsolation enabled
      */
     public function setUp()
     {
@@ -132,6 +131,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         $this->webhookEventCollectionFactory = $this->objectManager->create(WebhookEventCollectionFactory::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
         $this->subject = $this->objectManager->create(Subject::class);
+        $this->createProductsFixture->execute();
     }
     
     /**
@@ -141,9 +141,8 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      */
     public function testOrderPlaced()
     {
-        $this->createProductsFixture->execute();
         $orderPlacedEvents = $this->createWebhookEventsFixture
-            ->createOrderPlacedWebhooks(['order_placed_duty_checkout_tax_checkout.json']);
+            ->createOrderPlacedWebhooks();
     
         //Process
         $this->webhookEventManager->process(1000, 1);
@@ -380,27 +379,86 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals($itemCount, count($allocationItems));
         
             //Shipping Address
-            $shippingAddress = $payloadOrderInfo['destination'];
-            $contact = $shippingAddress['contact'];
-            $this->assertEquals($contact['name']['first'], $order->getShippingAddress()->getFirstname());
-            $this->assertEquals($contact['name']['last'], $order->getShippingAddress()->getLastname());
-            $this->assertEquals($shippingAddress['streets'], $order->getShippingAddress()->getStreet());
-            $this->assertEquals($shippingAddress['city'], $order->getShippingAddress()->getCity());
-            $shippingProvince = isset($shippingAddress['province']) ? $shippingAddress['province'] : '';
-            $this->assertEquals(strtoupper($shippingProvince), strtoupper($order->getShippingAddress()->getRegion()));
-            $this->assertEquals($shippingAddress['postal'], $order->getShippingAddress()->getPostcode());
-            $country = $this->countryFactory->create()->loadByCode($shippingAddress['country']);
-            $this->assertEquals($country->getId(), $order->getShippingAddress()->getCountryId());
+            if (isset($payloadOrderInfo['destination'])) {
+                $shippingAddress = $payloadOrderInfo['destination'];
+    
+                $contact = isset($shippingAddress['contact']) ? $shippingAddress['contact'] : null;
+                $this->assertEquals($contact['name']['first'], $order->getShippingAddress()->getFirstname());
+                $this->assertEquals($contact['name']['last'], $order->getShippingAddress()->getLastname());
+                
+                $streets = isset($shippingAddress['streets']) ? $shippingAddress['streets'] : [''];
+                $this->assertEquals($streets, $order->getShippingAddress()->getStreet());
+    
+                $city = isset($shippingAddress['city']) ? $shippingAddress['city'] : '';
+                $this->assertEquals($city, $order->getShippingAddress()->getCity());
+    
+                $shippingProvince = isset($shippingAddress['province']) ? $shippingAddress['province'] : '';
+                $this->assertEquals(strtoupper($shippingProvince), strtoupper($order->getShippingAddress()->getRegion()));
+    
+                $postal = isset($shippingAddress['postal']) ? $shippingAddress['postal'] : '';
+                $this->assertEquals($postal, $order->getShippingAddress()->getPostcode());
+    
+                $country = isset($shippingAddress['country']) ? $shippingAddress['country'] : '';
+                $mageCountry = $this->countryFactory->create()->loadByCode($country);
+                $this->assertEquals($mageCountry->getId(), $order->getShippingAddress()->getCountryId());
+            }
         
-            //Billing Address
-            $billingAddress = $payloadOrderInfo['customer']['address'];
-            $this->assertEquals($billingAddress['streets'], $order->getBillingAddress()->getStreet());
-            $this->assertEquals($billingAddress['city'], $order->getBillingAddress()->getCity());
-            $billingProvince = isset($billingAddress['province']) ? $billingAddress['province'] : '';
-            $this->assertEquals(strtoupper($billingProvince), strtoupper($order->getBillingAddress()->getRegion()));
-            $this->assertEquals($billingAddress['postal'], $order->getBillingAddress()->getPostcode());
-            $country = $this->countryFactory->create()->loadByCode($billingAddress['country']);
-            $this->assertEquals($country->getId(), $order->getShippingAddress()->getCountryId());
+            //Billing Address from payment
+            // Paypal orders have no billing address on the payments entity
+            $flowPayment = isset($payloadOrderInfo['payments']) ? $payloadOrderInfo['payments'] : null;
+            if ((isset($flowPayment['type']) && $flowPayment['type'] == 'online') ||
+                !isset($flowPayment['address'])) {
+                if ($shippingAddress) {
+                    $billingAddress = $shippingAddress;
+                } else {
+                    $billingAddress = $payloadOrderInfo['customer']['address'];
+                }
+            } else {
+                $billingAddress = $flowPayment['address'];
+            }
+            if ($billingAddress) {
+                $streets = isset($billingAddress['streets']) ? $billingAddress['streets'] : [''];
+                $this->assertEquals($streets, $order->getBillingAddress()->getStreet());
+    
+                $city = isset($billingAddress['city']) ? $billingAddress['city'] : '';
+                $this->assertEquals($city, $order->getBillingAddress()->getCity());
+                
+                $billingProvince = isset($billingAddress['province']) ? $billingAddress['province'] : '';
+                $this->assertEquals(strtoupper($billingProvince), strtoupper($order->getBillingAddress()->getRegion()));
+                
+                $postal = isset($billingAddress['postal']) ? $billingAddress['postal'] : '';
+                $this->assertEquals($postal, $order->getBillingAddress()->getPostcode());
+    
+                $country = isset($billingAddress['country']) ? $billingAddress['country'] : '';
+                $mageCountry = $this->countryFactory->create()->loadByCode($country);
+                $this->assertEquals($mageCountry->getId(), $order->getBillingAddress()->getCountryId());
+            }
+        }
+    }
+
+    /**
+     * @magentoDbIsolation enabled
+     * @throws \Exception
+     * @throws LocalizedException
+     */
+    public function testOrderPlacedMalformedAddress()
+    {
+        $orderPlacedEvents = $this->createWebhookEventsFixture
+            ->createOrderPlacedWebhooks(['order_placed_duty_included_tax_included_malformed_address.json']);
+
+        //Process
+        $this->webhookEventManager->process(1000, 1);
+
+        //Test values in magento orders
+        foreach ($orderPlacedEvents as $orderPlacedEvent) {
+            $payload = $orderPlacedEvent->getPayloadData();
+            $flowOrderId = $payload['order']['number'];
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->create();
+            /** @var OrderCollection $orders */
+            $orders = $this->mageOrderRepository->getList($searchCriteria);
+            $this->assertEquals(1, $orders->count());
         }
     }
 }

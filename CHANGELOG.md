@@ -1,5 +1,14 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.4
+
+- Fix Travis when building against Git tags.
+- Switch to using order placed event for creating Magento order instead of order and allocation upserted.
+- Bring back support for deprecated Helper class, and flag methods of this class as deprecated.
+- Completely disable Magento quote validation for Flow orders.
+- Implement fallback to shipping address if billing address is blank for Flow orders.
+- Up Magento 2 version to 2.2.7 for Travis.
+
 ## 1.1.3
 
 - Fix issue where multiple order confirmation emails can be dispatched under specific circumstances.

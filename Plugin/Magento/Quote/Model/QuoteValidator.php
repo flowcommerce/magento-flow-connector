@@ -19,7 +19,7 @@ class QuoteValidator
     {
         $paymentMethod = $quote->getPayment()->getMethod();
         if($paymentMethod !== 'flowpayment') {
-            $returnValue = $proceed();
+            $returnValue = $proceed($quote);
         } else {
             $returnValue = $subject;
         }

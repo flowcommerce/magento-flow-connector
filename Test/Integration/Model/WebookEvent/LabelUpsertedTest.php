@@ -105,10 +105,7 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
+        $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
 
         $labelUpsertedEvents = $this->createWebhookEventsFixture->createLabelUpsertedWebhooks();
@@ -158,7 +155,7 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($labelUpsertedEvents),
+            count($orderPlacedEvents) + count($labelUpsertedEvents),
             $webhookCollection->count()
         );
     }

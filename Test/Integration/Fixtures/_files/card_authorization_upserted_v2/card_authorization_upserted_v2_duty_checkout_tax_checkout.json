@@ -1,58 +1,57 @@
 {
-  "event_id": "evt-ee3fc18347c9408faee0c2443aad6444",
-  "timestamp": "2018-11-09T11:54:30.903Z",
+  "event_id": "evt-242a646e15464adf9d5320c4baec28ec",
+  "timestamp": "2018-12-12T11:57:36.051Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-JQ2vxOm0ZZqNvttcpTDGhrFgCQ20tVi5",
+  "id": "aut-lD3KjtA7hKzwXvsi8EpDAuO7xlhMRypH",
   "authorization": {
-    "id": "aut-JQ2vxOm0ZZqNvttcpTDGhrFgCQ20tVi5",
-    "key": "aut-JQ2vxOm0ZZqNvttcpTDGhrFgCQ20tVi5",
+    "id": "aut-lD3KjtA7hKzwXvsi8EpDAuO7xlhMRypH",
+    "key": "aut-lD3KjtA7hKzwXvsi8EpDAuO7xlhMRypH",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-0143cd3adf68481b8ccf08b0a4d56e07",
+      "id": "crd-98c02c6ae5774592a00ee50cf1b51d3a",
       "token": "XXX",
       "type": "visa",
       "expiration": {
-        "month": 4,
-        "year": 2022
+        "month": 12,
+        "year": 2023
       },
-      "iin": "411111",
+      "iin": "444433",
       "last4": "1111",
-      "name": "test duty tax",
+      "name": "test test",
       "issuer": {
-        "iin": "411111",
-        "name": "JPMORGAN CHASE BANK, N.A.",
+        "iin": "444433",
         "country": "USA"
       },
       "address": {
         "name": {
           "first": "Test",
-          "last": "Duty Tax"
+          "last": "Test"
         },
         "streets": [
-          "Avenue"
+          "4140  chemin du Lac"
         ],
-        "city": "Montreal",
+        "city": "Boucherville",
         "province": "Quebec",
-        "postal": "99099",
+        "postal": "J4B 5B1",
         "country": "CAN"
       },
       "discriminator": "card"
     },
-    "amount": 398.6,
+    "amount": 1971.79,
     "currency": "CAD",
     "customer": {
       "name": {
         "first": "Test",
-        "last": "Duty Tax"
+        "last": "Test"
       },
-      "phone": "1234567",
-      "email": "test-duty-tax@test.com"
+      "phone": "450-449-7693",
+      "email": "test@test.com"
     },
     "attributes": {},
     "result": {
       "status": "authorized"
     },
-    "created_at": "2018-11-09T11:54:24.599Z",
+    "created_at": "2018-12-12T11:57:27.498Z",
     "method": {
       "id": "visa",
       "type": "card",
@@ -79,36 +78,36 @@
       ]
     },
     "requested": {
-      "amount": 398.6,
+      "amount": 1971.79,
       "currency": "CAD"
     },
     "destination": {
       "streets": [
-        "Avenue"
+        "4140  chemin du Lac"
       ],
-      "city": "Montreal",
+      "city": "Boucherville",
       "province": "Quebec",
-      "postal": "99099",
+      "postal": "J4B 5B1",
       "country": "CAN"
     },
     "billing_address": {
       "name": {
         "first": "Test",
-        "last": "Duty Tax"
+        "last": "Test"
       },
       "streets": [
-        "Avenue"
+        "4140  chemin du Lac"
       ],
-      "city": "Montreal",
+      "city": "Boucherville",
       "province": "Quebec",
-      "postal": "99099",
+      "postal": "J4B 5B1",
       "country": "CAN"
     },
     "order": {
-      "number": "ord-890701f03f314d9e912103d16ac97fdc"
+      "number": "ord-a95fee9c73f74faca31e760c35b699d0"
     },
     "base": {
-      "amount": 291.49,
+      "amount": 1414.52,
       "currency": "USD"
     }
   },

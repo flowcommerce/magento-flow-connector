@@ -1,11 +1,11 @@
 {
-  "event_id": "evt-9e6798af67b041668e9f9a7bce518664",
-  "timestamp": "2018-11-13T20:29:50.033Z",
-  "id": "frd-e1793057f5b1408e94a1766f478b911b",
+  "event_id": "evt-3906bceb3caf43988d852bbf8796c1c5",
+  "timestamp": "2018-12-12T19:42:03.470Z",
+  "id": "frd-f707293373a0443c81431266f75b83fc",
   "organization": "magento-integration-sandbox",
   "order": {
-    "id": "ior-a210deaadbc34b5ca0c44f516211061c",
-    "number": "ord-555c1f216e664467955f219a6a1fac06"
+    "id": "ior-e351ec16acfc4d0db7cfeac93153ff59",
+    "number": "ord-78219a4797ff467f9dc214e9972e84fe"
   },
   "status": "approved",
   "discriminator": "fraud_status_changed"

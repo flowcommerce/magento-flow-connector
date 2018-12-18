@@ -1,113 +1,113 @@
 {
-  "event_id": "evt-56b6d5c3e4c24647966522c0efd589ae",
-  "timestamp": "2018-11-13T19:00:35.957Z",
+  "event_id": "evt-35ef28d3fef54cdc83aa9a227f6c3018",
+  "timestamp": "2018-12-12T19:50:04.522Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-RRX2sdQXtD0RfW9BrxmaooU3XjLw4HlJ",
+  "id": "aut-rI0hX08UWjnapIS3WsSflywTL1Nsi02d",
   "authorization": {
-    "id": "aut-RRX2sdQXtD0RfW9BrxmaooU3XjLw4HlJ",
-    "key": "aut-RRX2sdQXtD0RfW9BrxmaooU3XjLw4HlJ",
+    "id": "aut-rI0hX08UWjnapIS3WsSflywTL1Nsi02d",
+    "key": "aut-rI0hX08UWjnapIS3WsSflywTL1Nsi02d",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-da23b608515d484e8901a0feb1f58cb4",
+      "id": "crd-4a32ed1857c7491ca5622986f6b4fd7f",
       "token": "XXX",
-      "type": "jcb",
+      "type": "visa",
       "expiration": {
         "month": 12,
         "year": 2022
       },
-      "iin": "356600",
-      "last4": "0505",
-      "name": "test jcb card",
+      "iin": "444433",
+      "last4": "1111",
+      "name": "Testing Test",
       "issuer": {
-        "iin": "356600",
+        "iin": "444433",
         "country": "USA"
       },
       "address": {
         "name": {
-          "first": "Test2",
-          "last": "Test2"
+          "first": "Testing",
+          "last": "Testing"
         },
         "streets": [
-          "Thai Address"
+          "9/52 Soi Patnavej 12 Sukhumvit 71 R"
         ],
-        "city": "Bangkok",
+        "city": "Wattana",
         "province": "Bangkok",
-        "postal": "9900-164",
+        "postal": "10120",
         "country": "THA"
       },
       "discriminator": "card"
     },
-    "amount": 21844.02,
+    "amount": 2623.84,
     "currency": "THB",
     "customer": {
       "name": {
-        "first": "Test2",
-        "last": "Test2"
+        "first": "Testing",
+        "last": "Testing"
       },
-      "phone": "21 292 470 0620",
-      "email": "test3@test.com"
+      "phone": "382 1641 2",
+      "email": "test@test.com"
     },
     "attributes": {},
     "result": {
       "status": "authorized"
     },
-    "created_at": "2018-11-13T19:00:35.957Z",
+    "created_at": "2018-12-12T19:49:48.807Z",
     "method": {
-      "id": "jcb",
+      "id": "visa",
       "type": "card",
-      "name": "Jcb",
+      "name": "VISA",
       "images": {
         "small": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/jcb/30/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/30/original.png",
           "width": 65,
           "height": 41
         },
         "medium": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/jcb/60/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/60/original.png",
           "width": 100,
           "height": 60
         },
         "large": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/jcb/120/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/120/original.png",
           "width": 256,
           "height": 256
         }
       },
       "regions": [
-        "jpn"
+        "world"
       ]
     },
     "requested": {
-      "amount": 21844.02,
+      "amount": 2623.84,
       "currency": "THB"
     },
     "destination": {
       "streets": [
-        "Thai Address"
+        "9/52 Soi Patnavej 12 Sukhumvit 71 R"
       ],
-      "city": "Bangkok",
+      "city": "Wattana",
       "province": "Bangkok",
-      "postal": "9900-164",
+      "postal": "10120",
       "country": "THA"
     },
     "billing_address": {
       "name": {
-        "first": "Test2",
-        "last": "Test2"
+        "first": "Testing",
+        "last": "Testing"
       },
       "streets": [
-        "Thai Address"
+        "9/52 Soi Patnavej 12 Sukhumvit 71 R"
       ],
-      "city": "Bangkok",
+      "city": "Wattana",
       "province": "Bangkok",
-      "postal": "9900-164",
+      "postal": "10120",
       "country": "THA"
     },
     "order": {
-      "number": "ord-954c1e3647c242748ff092ca2f676e16"
+      "number": "ord-71acd1f18d384cac95cbdda145361b0c"
     },
     "base": {
-      "amount": 636.96,
+      "amount": 76.96,
       "currency": "USD"
     }
   },

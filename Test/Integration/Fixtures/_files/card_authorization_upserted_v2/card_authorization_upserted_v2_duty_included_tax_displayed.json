@@ -1,74 +1,74 @@
 {
-  "event_id": "evt-ffa10ff53993454385afcc615071e29f",
-  "timestamp": "2018-11-13T18:04:39.570Z",
+  "event_id": "evt-2b8da81adc46481aa1c1e99dac267e4e",
+  "timestamp": "2018-12-12T20:14:58.222Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-wyzANTXPbvNDAF485yd1hULbE8LGTb98",
+  "id": "aut-V5krgLRCGhwvgWsW3CJdrAhGoZjm0q6D",
   "authorization": {
-    "id": "aut-wyzANTXPbvNDAF485yd1hULbE8LGTb98",
-    "key": "aut-wyzANTXPbvNDAF485yd1hULbE8LGTb98",
+    "id": "aut-V5krgLRCGhwvgWsW3CJdrAhGoZjm0q6D",
+    "key": "aut-V5krgLRCGhwvgWsW3CJdrAhGoZjm0q6D",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-7d2dc61b67f54df1b6000508b9f86c27",
+      "id": "crd-63f29659f6f14a69a3dc876f0916fee3",
       "token": "XXX",
-      "type": "mastercard",
+      "type": "visa",
       "expiration": {
         "month": 12,
         "year": 2022
       },
-      "iin": "555555",
-      "last4": "4444",
-      "name": "Test Argentina",
+      "iin": "444433",
+      "last4": "1111",
+      "name": "Testing Testing",
       "issuer": {
-        "iin": "555555",
-        "country": "BRA"
+        "iin": "444433",
+        "country": "USA"
       },
       "address": {
         "name": {
-          "first": "Test2",
-          "last": "Test2"
+          "first": "Test",
+          "last": "Test 4"
         },
         "streets": [
-          "calle 4"
+          "H Yrigoyen 424"
         ],
-        "city": "Buenos Aires",
-        "province": "Ciudad de Buenos Aires",
-        "postal": "9900-164",
+        "city": "Azul",
+        "province": "Buenos Aires",
+        "postal": "N/A",
         "country": "ARG"
       },
       "discriminator": "card"
     },
-    "amount": 15418.58,
+    "amount": 1438.64,
     "currency": "ARS",
     "customer": {
       "name": {
-        "first": "Test2",
-        "last": "Test2"
+        "first": "Test",
+        "last": "Test 4"
       },
-      "phone": "21 292 470 0620",
-      "email": "test3@test.com"
+      "phone": "12377710",
+      "email": "test-arg@test.com"
     },
     "attributes": {},
     "result": {
       "status": "authorized"
     },
-    "created_at": "2018-11-13T18:04:28.237Z",
+    "created_at": "2018-12-12T20:13:50.393Z",
     "method": {
-      "id": "mastercard",
+      "id": "visa",
       "type": "card",
-      "name": "Mastercard",
+      "name": "VISA",
       "images": {
         "small": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/mastercard/30/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/30/original.png",
           "width": 65,
           "height": 41
         },
         "medium": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/mastercard/60/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/60/original.png",
           "width": 100,
           "height": 60
         },
         "large": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/mastercard/120/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/120/original.png",
           "width": 256,
           "height": 256
         }
@@ -78,36 +78,36 @@
       ]
     },
     "requested": {
-      "amount": 15418.58,
+      "amount": 1438.64,
       "currency": "ARS"
     },
     "destination": {
       "streets": [
-        "calle 4"
+        "H Yrigoyen 424"
       ],
-      "city": "Buenos Aires",
-      "province": "Ciudad de Buenos Aires",
-      "postal": "9900-164",
+      "city": "Azul",
+      "province": "Buenos Aires",
+      "postal": "N/A",
       "country": "ARG"
     },
     "billing_address": {
       "name": {
-        "first": "Test2",
-        "last": "Test2"
+        "first": "Test",
+        "last": "Test 4"
       },
       "streets": [
-        "calle 4"
+        "H Yrigoyen 424"
       ],
-      "city": "Buenos Aires",
-      "province": "Ciudad de Buenos Aires",
-      "postal": "9900-164",
+      "city": "Azul",
+      "province": "Buenos Aires",
+      "postal": "N/A",
       "country": "ARG"
     },
     "order": {
-      "number": "ord-d0930c45bb424a42b454386b70e8ef90"
+      "number": "ord-c8dfe5c7e624437bad247fc772e68f08"
     },
     "base": {
-      "amount": 417.13,
+      "amount": 36.77,
       "currency": "USD"
     }
   },

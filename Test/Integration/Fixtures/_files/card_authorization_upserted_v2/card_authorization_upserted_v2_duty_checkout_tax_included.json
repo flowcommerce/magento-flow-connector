@@ -1,58 +1,56 @@
 {
-  "event_id": "evt-5238970632d14b51b805e0f48ff3004c",
-  "timestamp": "2018-11-08T17:01:44.017Z",
+  "event_id": "evt-25beae48578b47de96fb265939217fbf",
+  "timestamp": "2018-12-12T18:06:30.492Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-Lx3Hq66WiQrcYUwi10Knw65P0dTy7HVQ",
+  "id": "aut-UK0GGSqz7TXOC3oj7Cm5Nfg1VRG517an",
   "authorization": {
-    "id": "aut-Lx3Hq66WiQrcYUwi10Knw65P0dTy7HVQ",
-    "key": "aut-Lx3Hq66WiQrcYUwi10Knw65P0dTy7HVQ",
+    "id": "aut-UK0GGSqz7TXOC3oj7Cm5Nfg1VRG517an",
+    "key": "aut-UK0GGSqz7TXOC3oj7Cm5Nfg1VRG517an",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-5f89c61532b9434aa781c46038ef9a0f",
+      "id": "crd-6b481d2537434f2581865b7ee074c6e7",
       "token": "XXX",
       "type": "visa",
       "expiration": {
-        "month": 4,
-        "year": 2022
+        "month": 12,
+        "year": 2029
       },
-      "iin": "411111",
+      "iin": "444433",
       "last4": "1111",
-      "name": "test test",
+      "name": "Testing Testing",
       "issuer": {
-        "iin": "411111",
-        "name": "JPMORGAN CHASE BANK, N.A.",
+        "iin": "444433",
         "country": "USA"
       },
       "address": {
         "name": {
-          "first": "Test",
-          "last": "Discount"
+          "first": "Testing",
+          "last": "Testing"
         },
         "streets": [
-          "Avenue",
-          "123"
+          "63  rue du Général Ailleret"
         ],
-        "city": "Paris",
-        "postal": "99000",
+        "city": "LES ABYMES",
+        "postal": "97142",
         "country": "FRA"
       },
       "discriminator": "card"
     },
-    "amount": 241.48,
+    "amount": 285.25,
     "currency": "EUR",
     "customer": {
       "name": {
-        "first": "Test",
-        "last": "Discount"
+        "first": "Testing",
+        "last": "Testing"
       },
-      "phone": "12302020202",
-      "email": "test-discount@cree.com"
+      "phone": "05.32.30.51027",
+      "email": "test@test.com"
     },
     "attributes": {},
     "result": {
       "status": "authorized"
     },
-    "created_at": "2018-11-08T17:01:39.006Z",
+    "created_at": "2018-12-12T18:06:24.597Z",
     "method": {
       "id": "visa",
       "type": "card",
@@ -79,36 +77,34 @@
       ]
     },
     "requested": {
-      "amount": 241.48,
+      "amount": 285.25,
       "currency": "EUR"
     },
     "destination": {
       "streets": [
-        "Avenue",
-        "123"
+        "63  rue du Général Ailleret"
       ],
-      "city": "Paris",
-      "postal": "99000",
+      "city": "LES ABYMES",
+      "postal": "97142",
       "country": "FRA"
     },
     "billing_address": {
       "name": {
-        "first": "Test",
-        "last": "Discount"
+        "first": "Testing",
+        "last": "Testing"
       },
       "streets": [
-        "Avenue",
-        "123"
+        "63  rue du Général Ailleret"
       ],
-      "city": "Paris",
-      "postal": "99000",
+      "city": "LES ABYMES",
+      "postal": "97142",
       "country": "FRA"
     },
     "order": {
-      "number": "ord-23039523be4a49f9a11751403722041c"
+      "number": "ord-c9f401aa157d4e258dfb9c4b7fa99d43"
     },
     "base": {
-      "amount": 265.56,
+      "amount": 311.05,
       "currency": "USD"
     }
   },

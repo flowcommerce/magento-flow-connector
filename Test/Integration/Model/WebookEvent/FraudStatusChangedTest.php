@@ -96,12 +96,9 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
+        $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
+        
         $fraudStatusChangedEvents = $this->createWebhookEventsFixture->createFraudStatusChangeWebhooks();
 
         $webhookCollection = $this->webhookEventCollectionFactory->create();
@@ -143,14 +140,13 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
                 case 'review':
                     break;
             }
-
         }
 
         $webhookCollection = $this->webhookEventCollectionFactory->create();
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($fraudStatusChangedEvents),
+            count($orderPlacedEvents) + count($fraudStatusChangedEvents),
             $webhookCollection->count()
         );
     }

@@ -10,14 +10,13 @@ use FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged;
 use FlowCommerce\FlowConnector\Controller\Webhooks\LabelUpserted;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeletedV2;
-use FlowCommerce\FlowConnector\Controller\Webhooks\OrderUpsertedV2;
+use FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\TrackingLabelEventUpserted;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
-use FlowCommerce\FlowConnector\Controller\Webhooks\AllocationUpsertedV2;
 use \Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Sales\Api\Data\OrderSearchResultInterface;
 use Magento\Sales\Model\OrderRepository;
@@ -98,17 +97,7 @@ class CreateWebhookEvents
     {
         return $this->createWebhooks(AllocationDeletedV2::EVENT_TYPE, $filenames);
     }
-
-    /**
-     * Create and process webhook event
-     * @param string[] $filenames
-     * @return WebhookEvent[]
-     */
-    public function createAllocationUpsertedWebhooks($filenames = null)
-    {
-        return $this->createWebhooks(AllocationUpsertedV2::EVENT_TYPE, $filenames);
-    }
-
+    
     /**
      * Create and process webhook event
      * @param string[] $filenames
@@ -184,9 +173,9 @@ class CreateWebhookEvents
      * @param string[] $filenames
      * @return WebhookEvent[]
      */
-    public function createOrderUpsertedWebhooks($filenames = null)
+    public function createOrderPlacedWebhooks($filenames = null)
     {
-        return $this->createWebhooks(OrderUpsertedV2::EVENT_TYPE, $filenames);
+        return $this->createWebhooks(OrderPlaced::EVENT_TYPE, $filenames);
     }
 
     /**
@@ -292,12 +281,8 @@ class CreateWebhookEvents
     {
         $payload = $this->jsonSerializer->unserialize($payloadJson);
         switch ($eventName) {
-            case OrderUpsertedV2::EVENT_TYPE:
-                return $payload['order']['number'];
             case OrderDeletedV2::EVENT_TYPE:
                 return $payload['order']['number'];
-            case AllocationUpsertedV2::EVENT_TYPE:
-                return $payload['allocation']['order']['number'];
             case AllocationDeletedV2::EVENT_TYPE:
                 return $payload['allocation']['order']['number'];
             case FraudStatusChanged::EVENT_TYPE:

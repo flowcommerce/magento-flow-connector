@@ -1,27 +1,27 @@
 {
-  "event_id": "evt-a8af595de09e4a4aa42f15703a497a49",
-  "timestamp": "2018-11-14T18:37:05.597Z",
+  "event_id": "evt-b5a080ee1c1c49e49ad81bdcc857da55",
+  "timestamp": "2018-12-12T20:50:55.017Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-I0DKWYYpablCpePoWizNi4uZNxKLETn7",
+  "id": "aut-GMmJmyU6UnR9ezC8ye4GWSHFFi0WLRqa",
   "authorization": {
-    "id": "aut-I0DKWYYpablCpePoWizNi4uZNxKLETn7",
-    "key": "aut-I0DKWYYpablCpePoWizNi4uZNxKLETn7",
+    "id": "aut-GMmJmyU6UnR9ezC8ye4GWSHFFi0WLRqa",
+    "key": "aut-GMmJmyU6UnR9ezC8ye4GWSHFFi0WLRqa",
     "merchant_of_record": "flow",
-    "amount": 418.67,
+    "amount": 34.04,
     "currency": "EUR",
     "customer": {
       "name": {
         "first": "Test",
         "last": "Paypal"
       },
-      "phone": "9397007431",
+      "phone": "0310 6666332",
       "email": "test-ita@test.com"
     },
     "attributes": {},
     "result": {
       "status": "authorized"
     },
-    "created_at": "2018-11-14T18:37:05.597Z",
+    "created_at": "2018-12-12T20:50:49.083Z",
     "method": {
       "id": "paypal",
       "type": "online",
@@ -48,26 +48,26 @@
       ]
     },
     "payment": {
-      "id": "pmt-ecd15a22d68f4b528c0ccac15b21d82a"
+      "id": "pmt-a3dd9093bb8048f883982c1c03a760ee"
     },
     "requested": {
-      "amount": 418.67,
+      "amount": 34.04,
       "currency": "EUR"
     },
     "destination": {
       "streets": [
-        "Via Nicolai 65"
+        "Via Archimede 122"
       ],
-      "city": "Ospitale Di Cadore",
-      "province": "Belluno",
-      "postal": "32010",
+      "city": "Pioppe Di Salvaro",
+      "province": "Bologna",
+      "postal": "40038",
       "country": "ITA"
     },
     "order": {
-      "number": "ord-20729677e37a48f3b77601600d2c2c11"
+      "number": "ord-f534225438e042a4afe1fb9b1450fcde"
     },
     "base": {
-      "amount": 455.77,
+      "amount": 37.12,
       "currency": "USD"
     }
   },

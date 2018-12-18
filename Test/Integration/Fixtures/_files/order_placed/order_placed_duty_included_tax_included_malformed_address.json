@@ -1,0 +1,958 @@
+{
+  "event_id": "evt-8da004cf409e44b5a85b11c3d5b00c8b",
+  "timestamp": "2018-12-12T20:23:49.873Z",
+  "organization": "magento-integration-sandbox",
+  "order_number": "ord-7ab8ac78b5a34eabb2bd6fa9eb9775a2",
+  "order": {
+    "id": "ior-2fc019fe99f845e58678c7bd66dd2971",
+    "number": "ord-7ab8ac78b5a34eabb2bd6fa9eb9775a2",
+    "customer": {
+      "name": {
+        "first": "Test",
+        "last": "Test"
+      },
+      "phone": "2122212121",
+      "email": "test@test.com",
+      "address": {
+      }
+    },
+    "delivered_duty": "paid",
+    "destination": {
+    },
+    "expires_at": "2018-12-12T21:22:37.470Z",
+    "items": [
+      {
+        "number": "simple_1",
+        "name": "Simple Product 1",
+        "quantity": 1,
+        "local": {
+          "experience": {
+            "id": "exp-18875731f2f741acbf2a5f4aa7d42df7",
+            "key": "brazil",
+            "name": "Brazil"
+          },
+          "prices": [
+            {
+              "currency": "BRL",
+              "amount": 73,
+              "label": "R$73,00",
+              "base": {
+                "amount": 18.13,
+                "currency": "USD",
+                "label": "US$18.13"
+              },
+              "includes": {
+                "key": "vat_and_duty",
+                "label": "Includes VAT and duty"
+              },
+              "key": "localized_item_price"
+            }
+          ],
+          "rates": [],
+          "spot_rates": [],
+          "status": "included",
+          "attributes": {
+            "weight_type": "No",
+            "sku_type": "No",
+            "weight": "18.0000",
+            "name": "Simple Product 1",
+            "sku": "simple_1",
+            "quantity_and_stock_status": "In Stock",
+            "magento_version": "2.2.5",
+            "country_of_manufacture": " ",
+            "price": "10.0000",
+            "options_container": "Block after Info Column",
+            "regular_price": "73.0",
+            "price_type": "No",
+            "parent_entity_id": "22",
+            "color": "No",
+            "user_agent": "Flow-M2-1.1.1",
+            "minimal_price": "10.0000",
+            "attribute_set_id": "4",
+            "final_price": "73.0",
+            "page_layout": "No layout updates",
+            "entity_id": "19",
+            "gift_message_available": "No",
+            "custom_design": "-- Please Select --",
+            "status": "Enabled",
+            "url_key": "simple-product-1",
+            "tax_class_id": "Taxable Goods",
+            "product_id": "19",
+            "shipment_type": "Together",
+            "type_id": "simple",
+            "created_at": "2018-11-12 19:01:31",
+            "custom_layout": "No layout updates",
+            "msrp_display_actual_price_type": "Use config",
+            "updated_at": "2018-11-12 19:01:31",
+            "visibility": "Catalog, Search",
+            "test_configurable": "Option 1",
+            "price_view": "Price Range",
+            "parent_sku": "configurable"
+          },
+          "price_attributes": {
+            "regular_price": {
+              "currency": "BRL",
+              "amount": 73,
+              "label": "R$73,00",
+              "base": {
+                "amount": 18.13,
+                "currency": "USD",
+                "label": "US$18.13"
+              }
+            },
+            "final_price": {
+              "currency": "BRL",
+              "amount": 73,
+              "label": "R$73,00",
+              "base": {
+                "amount": 18.13,
+                "currency": "USD",
+                "label": "US$18.13"
+              }
+            }
+          }
+        }
+      },
+      {
+        "number": "simple_2",
+        "name": "Simple Product 2",
+        "quantity": 1,
+        "local": {
+          "experience": {
+            "id": "exp-18875731f2f741acbf2a5f4aa7d42df7",
+            "key": "brazil",
+            "name": "Brazil"
+          },
+          "prices": [
+            {
+              "currency": "BRL",
+              "amount": 73,
+              "label": "R$73,00",
+              "base": {
+                "amount": 18.13,
+                "currency": "USD",
+                "label": "US$18.13"
+              },
+              "includes": {
+                "key": "vat_and_duty",
+                "label": "Includes VAT and duty"
+              },
+              "key": "localized_item_price"
+            }
+          ],
+          "rates": [],
+          "spot_rates": [],
+          "status": "included",
+          "attributes": {
+            "weight_type": "No",
+            "sku_type": "No",
+            "weight": "18.0000",
+            "name": "Simple Product 2",
+            "sku": "simple_2",
+            "quantity_and_stock_status": "In Stock",
+            "magento_version": "2.2.5",
+            "country_of_manufacture": " ",
+            "price": "10.0000",
+            "options_container": "Block after Info Column",
+            "regular_price": "73.0",
+            "price_type": "No",
+            "parent_entity_id": "22",
+            "color": "No",
+            "user_agent": "Flow-M2-1.1.1",
+            "minimal_price": "10.0000",
+            "attribute_set_id": "4",
+            "final_price": "73.0",
+            "page_layout": "No layout updates",
+            "entity_id": "20",
+            "gift_message_available": "No",
+            "custom_design": "-- Please Select --",
+            "status": "Enabled",
+            "url_key": "simple-product-2",
+            "tax_class_id": "Taxable Goods",
+            "product_id": "20",
+            "shipment_type": "Together",
+            "type_id": "simple",
+            "created_at": "2018-11-12 19:01:32",
+            "custom_layout": "No layout updates",
+            "msrp_display_actual_price_type": "Use config",
+            "updated_at": "2018-11-12 19:01:32",
+            "visibility": "Catalog, Search",
+            "test_configurable": "Option 2",
+            "price_view": "Price Range",
+            "parent_sku": "configurable"
+          },
+          "price_attributes": {
+            "regular_price": {
+              "currency": "BRL",
+              "amount": 73,
+              "label": "R$73,00",
+              "base": {
+                "amount": 18.13,
+                "currency": "USD",
+                "label": "US$18.13"
+              }
+            },
+            "final_price": {
+              "currency": "BRL",
+              "amount": 73,
+              "label": "R$73,00",
+              "base": {
+                "amount": 18.13,
+                "currency": "USD",
+                "label": "US$18.13"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "deliveries": [
+      {
+        "id": "del-85e9c1ab04ed42aa8d0eafd741daa2dd",
+        "items": [
+          {
+            "number": "simple_1",
+            "quantity": 1,
+            "price": {
+              "currency": "BRL",
+              "amount": 73,
+              "base": {
+                "amount": 18.13,
+                "currency": "USD"
+              }
+            },
+            "attributes": {
+              "base_amount": "18.13",
+              "base_currency": "USD"
+            }
+          },
+          {
+            "number": "simple_2",
+            "quantity": 1,
+            "price": {
+              "currency": "BRL",
+              "amount": 73,
+              "base": {
+                "amount": 18.13,
+                "currency": "USD"
+              }
+            },
+            "attributes": {
+              "base_amount": "18.13",
+              "base_currency": "USD"
+            }
+          }
+        ],
+        "options": [
+          {
+            "id": "opt-036d85b1e86e40a0ba1c0a2c27b0d3bd",
+            "cost": {
+              "currency": "BRL",
+              "amount": 93.58,
+              "label": "R$93,58",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              },
+              "details": [
+                {
+                  "source": "ratecard",
+                  "currency": "BRL",
+                  "amount": 93.58,
+                  "label": "R$93,58",
+                  "components": [
+                    {
+                      "key": "ratecard_base_cost",
+                      "currency": "BRL",
+                      "amount": 93.58,
+                      "label": "R$93,58",
+                      "base": {
+                        "amount": 23.24,
+                        "currency": "USD",
+                        "label": "US$23.24"
+                      }
+                    }
+                  ],
+                  "base": {
+                    "amount": 23.24,
+                    "currency": "USD",
+                    "label": "US$23.24"
+                  }
+                }
+              ]
+            },
+            "delivered_duty": "unpaid",
+            "price": {
+              "currency": "BRL",
+              "amount": 25,
+              "label": "R$25,00",
+              "base": {
+                "amount": 6.21,
+                "currency": "USD",
+                "label": "US$6.21"
+              }
+            },
+            "service": {
+              "id": "dhl-express-worldwide",
+              "carrier": {
+                "id": "dhl"
+              },
+              "name": "Express Worldwide"
+            },
+            "tier": {
+              "id": "tie-700f7ebae00b442b8d915d6be6330f21",
+              "integration": "information",
+              "name": "Express",
+              "services": [
+                "dhl-express-worldwide"
+              ],
+              "strategy": "lowest_cost",
+              "visibility": "public",
+              "currency": "BRL",
+              "display": {
+                "estimate": {
+                  "type": "calculated",
+                  "label": "1-3 Business Days"
+                }
+              }
+            },
+            "window": {
+              "from": "2018-12-13T00:00:00.000Z",
+              "to": "2018-12-17T00:00:00.000Z",
+              "timezone": "UTC",
+              "label": "1-3 Business Days"
+            },
+            "rule_outcome": {
+              "price": {
+                "amount": 25,
+                "currency": "BRL",
+                "label": "R$25,00"
+              },
+              "discriminator": "flat_rate"
+            },
+            "weight": {
+              "gravitational": {
+                "value": "2.5",
+                "units": "pound"
+              },
+              "dimensional": {
+                "value": "2.12",
+                "units": "inch"
+              }
+            }
+          },
+          {
+            "id": "opt-03b0c7f719e6434e8390722cb77860d0",
+            "cost": {
+              "currency": "BRL",
+              "amount": 93.58,
+              "label": "R$93,58",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              },
+              "details": [
+                {
+                  "source": "ratecard",
+                  "currency": "BRL",
+                  "amount": 93.58,
+                  "label": "R$93,58",
+                  "components": [
+                    {
+                      "key": "ratecard_base_cost",
+                      "currency": "BRL",
+                      "amount": 93.58,
+                      "label": "R$93,58",
+                      "base": {
+                        "amount": 23.24,
+                        "currency": "USD",
+                        "label": "US$23.24"
+                      }
+                    }
+                  ],
+                  "base": {
+                    "amount": 23.24,
+                    "currency": "USD",
+                    "label": "US$23.24"
+                  }
+                }
+              ]
+            },
+            "delivered_duty": "paid",
+            "price": {
+              "currency": "BRL",
+              "amount": 25,
+              "label": "R$25,00",
+              "base": {
+                "amount": 6.21,
+                "currency": "USD",
+                "label": "US$6.21"
+              }
+            },
+            "service": {
+              "id": "dhl-express-worldwide",
+              "carrier": {
+                "id": "dhl"
+              },
+              "name": "Express Worldwide"
+            },
+            "tier": {
+              "id": "tie-700f7ebae00b442b8d915d6be6330f21",
+              "integration": "information",
+              "name": "Express",
+              "services": [
+                "dhl-express-worldwide"
+              ],
+              "strategy": "lowest_cost",
+              "visibility": "public",
+              "currency": "BRL",
+              "display": {
+                "estimate": {
+                  "type": "calculated",
+                  "label": "1-3 Business Days"
+                }
+              }
+            },
+            "window": {
+              "from": "2018-12-13T00:00:00.000Z",
+              "to": "2018-12-17T00:00:00.000Z",
+              "timezone": "UTC",
+              "label": "1-3 Business Days"
+            },
+            "rule_outcome": {
+              "price": {
+                "amount": 25,
+                "currency": "BRL",
+                "label": "R$25,00"
+              },
+              "discriminator": "flat_rate"
+            },
+            "weight": {
+              "gravitational": {
+                "value": "2.5",
+                "units": "pound"
+              },
+              "dimensional": {
+                "value": "2.12",
+                "units": "inch"
+              }
+            }
+          }
+        ],
+        "center": {
+          "id": "cen-6f8b247bf7004c2e9dfa0bd2970d91eb",
+          "key": "center-1"
+        },
+        "discriminator": "physical_delivery"
+      }
+    ],
+    "selections": [
+      "opt-03b0c7f719e6434e8390722cb77860d0"
+    ],
+    "prices": [
+      {
+        "key": "subtotal",
+        "currency": "BRL",
+        "amount": 146,
+        "label": "R$146,00",
+        "base": {
+          "amount": 36.26,
+          "currency": "USD",
+          "label": "US$36.26"
+        },
+        "components": [
+          {
+            "key": "duties_item_price",
+            "currency": "BRL",
+            "amount": 48.94,
+            "label": "R$48,94",
+            "base": {
+              "amount": 12.16,
+              "currency": "USD",
+              "label": "US$12.16"
+            },
+            "name": "Duties on item price"
+          },
+          {
+            "key": "vat_item_price",
+            "currency": "BRL",
+            "amount": 15.5,
+            "label": "R$15,50",
+            "base": {
+              "amount": 3.84,
+              "currency": "USD",
+              "label": "US$3.84"
+            },
+            "name": "ICMS on item price"
+          },
+          {
+            "key": "item_price",
+            "currency": "BRL",
+            "amount": 80.54,
+            "label": "R$80,54",
+            "base": {
+              "amount": 20,
+              "currency": "USD",
+              "label": "US$20.00"
+            },
+            "name": "Item price"
+          },
+          {
+            "key": "rounding",
+            "currency": "BRL",
+            "amount": 1.02,
+            "label": "R$1,02",
+            "base": {
+              "amount": 0.26,
+              "currency": "USD",
+              "label": "US$0.26"
+            },
+            "name": "Rounding"
+          }
+        ],
+        "name": "Item subtotal"
+      },
+      {
+        "key": "shipping",
+        "currency": "BRL",
+        "amount": 25,
+        "label": "R$25,00",
+        "base": {
+          "amount": 6.21,
+          "currency": "USD",
+          "label": "US$6.21"
+        },
+        "components": [
+          {
+            "key": "shipping",
+            "currency": "BRL",
+            "amount": 25,
+            "label": "R$25,00",
+            "base": {
+              "amount": 6.21,
+              "currency": "USD",
+              "label": "US$6.21"
+            },
+            "name": "Shipping"
+          }
+        ],
+        "name": "Shipping"
+      }
+    ],
+    "total": {
+      "currency": "BRL",
+      "amount": 171,
+      "label": "R$171,00",
+      "base": {
+        "amount": 42.47,
+        "currency": "USD",
+        "label": "US$42.47"
+      }
+    },
+    "attributes": {
+      "checkout_session_id": "63f7816e5cc8bcb7ccb1f0ee62c1d08c",
+      "customer_session_id": "63f7816e5cc8bcb7ccb1f0ee62c1d08c",
+      "quote_id": "32"
+    },
+    "experience": {
+      "key": "brazil",
+      "discriminator": "experience_reference"
+    },
+    "submitted_at": "2018-12-12T20:22:39.090Z",
+    "lines": [
+      {
+        "item_number": "simple_1",
+        "quantity": 1,
+        "price": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        },
+        "total": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        }
+      },
+      {
+        "item_number": "simple_2",
+        "quantity": 1,
+        "price": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        },
+        "total": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        }
+      }
+    ],
+    "payments": [
+      {
+        "id": "opm-c64a440cafba414d844fce424de7e0d7",
+        "type": "card",
+        "merchant_of_record": "flow",
+        "reference": "aut-kW9W5V0vBA4J508IcFL19ihtYfEUYCRD",
+        "description": "VISA ending with 1111",
+        "total": {
+          "currency": "BRL",
+          "amount": 171,
+          "label": "R$171,00",
+          "base": {
+            "amount": 42.47,
+            "currency": "USD",
+            "label": "US$42.47"
+          }
+        },
+        "attributes": {},
+        "address": {
+        },
+        "date": "2018-12-12T20:22:38.987Z"
+      }
+    ]
+  },
+  "allocation": {
+    "id": "evt-5e488d87a852486e95279400330fb3f6",
+    "order": {
+      "id": "ior-2fc019fe99f845e58678c7bd66dd2971",
+      "number": "ord-7ab8ac78b5a34eabb2bd6fa9eb9775a2",
+      "submitted_at": "2018-12-12T20:22:39.090Z"
+    },
+    "details": [
+      {
+        "number": "simple_1",
+        "quantity": 1,
+        "key": "subtotal",
+        "price": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        },
+        "total": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "BRL",
+              "amount": 40.27,
+              "label": "R$40,27",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "price": {
+              "currency": "BRL",
+              "amount": 40.27,
+              "label": "R$40,27",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "BRL",
+              "amount": 0.51,
+              "label": "R$0,51",
+              "base": {
+                "amount": 0.13,
+                "currency": "USD",
+                "label": "US$0.13"
+              }
+            },
+            "price": {
+              "currency": "BRL",
+              "amount": 0.51,
+              "label": "R$0,51",
+              "base": {
+                "amount": 0.13,
+                "currency": "USD",
+                "label": "US$0.13"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "vat_item_price",
+            "total": {
+              "currency": "BRL",
+              "amount": 7.75,
+              "label": "R$7,75",
+              "base": {
+                "amount": 1.92,
+                "currency": "USD",
+                "label": "US$1.92"
+              }
+            },
+            "rate": 0.19,
+            "name": "ICMS",
+            "price": {
+              "currency": "BRL",
+              "amount": 7.75,
+              "label": "R$7,75",
+              "base": {
+                "amount": 1.92,
+                "currency": "USD",
+                "label": "US$1.92"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          },
+          {
+            "key": "duties_item_price",
+            "total": {
+              "currency": "BRL",
+              "amount": 24.47,
+              "label": "R$24,47",
+              "base": {
+                "amount": 6.08,
+                "currency": "USD",
+                "label": "US$6.08"
+              }
+            },
+            "rate": 0.6,
+            "name": "Duty",
+            "price": {
+              "currency": "BRL",
+              "amount": 24.47,
+              "label": "R$24,47",
+              "base": {
+                "amount": 6.08,
+                "currency": "USD",
+                "label": "US$6.08"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "number": "simple_2",
+        "quantity": 1,
+        "key": "subtotal",
+        "price": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        },
+        "total": {
+          "currency": "BRL",
+          "amount": 73,
+          "label": "R$73,00",
+          "base": {
+            "amount": 18.13,
+            "currency": "USD",
+            "label": "US$18.13"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "BRL",
+              "amount": 40.27,
+              "label": "R$40,27",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "price": {
+              "currency": "BRL",
+              "amount": 40.27,
+              "label": "R$40,27",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "BRL",
+              "amount": 0.51,
+              "label": "R$0,51",
+              "base": {
+                "amount": 0.13,
+                "currency": "USD",
+                "label": "US$0.13"
+              }
+            },
+            "price": {
+              "currency": "BRL",
+              "amount": 0.51,
+              "label": "R$0,51",
+              "base": {
+                "amount": 0.13,
+                "currency": "USD",
+                "label": "US$0.13"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "vat_item_price",
+            "total": {
+              "currency": "BRL",
+              "amount": 7.75,
+              "label": "R$7,75",
+              "base": {
+                "amount": 1.92,
+                "currency": "USD",
+                "label": "US$1.92"
+              }
+            },
+            "rate": 0.19,
+            "name": "ICMS",
+            "price": {
+              "currency": "BRL",
+              "amount": 7.75,
+              "label": "R$7,75",
+              "base": {
+                "amount": 1.92,
+                "currency": "USD",
+                "label": "US$1.92"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          },
+          {
+            "key": "duties_item_price",
+            "total": {
+              "currency": "BRL",
+              "amount": 24.47,
+              "label": "R$24,47",
+              "base": {
+                "amount": 6.08,
+                "currency": "USD",
+                "label": "US$6.08"
+              }
+            },
+            "rate": 0.6,
+            "name": "Duty",
+            "price": {
+              "currency": "BRL",
+              "amount": 24.47,
+              "label": "R$24,47",
+              "base": {
+                "amount": 6.08,
+                "currency": "USD",
+                "label": "US$6.08"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "key": "shipping",
+        "total": {
+          "currency": "BRL",
+          "amount": 25,
+          "label": "R$25,00",
+          "base": {
+            "amount": 6.21,
+            "currency": "USD",
+            "label": "US$6.21"
+          }
+        },
+        "included": [
+          {
+            "key": "shipping",
+            "total": {
+              "currency": "BRL",
+              "amount": 25,
+              "label": "R$25,00",
+              "base": {
+                "amount": 6.21,
+                "currency": "USD",
+                "label": "US$6.21"
+              }
+            },
+            "price": {
+              "currency": "BRL",
+              "amount": 25,
+              "label": "R$25,00",
+              "base": {
+                "amount": 6.21,
+                "currency": "USD",
+                "label": "US$6.21"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_order_detail"
+      }
+    ],
+    "total": {
+      "currency": "BRL",
+      "amount": 171,
+      "label": "R$171,00",
+      "base": {
+        "amount": 42.47,
+        "currency": "USD",
+        "label": "US$42.47"
+      }
+    }
+  },
+  "discriminator": "order_placed"
+}

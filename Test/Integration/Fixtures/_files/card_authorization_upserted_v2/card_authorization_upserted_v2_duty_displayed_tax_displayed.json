@@ -1,75 +1,74 @@
 {
-  "event_id": "evt-7e79662c0c1547b889325fad06c75dc9",
-  "timestamp": "2018-11-13T20:29:52.475Z",
+  "event_id": "evt-654a8f1608b44deaa1bdf917305d972f",
+  "timestamp": "2018-12-12T19:42:05.414Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
+  "id": "aut-s4bLUxVM6xpRNxyxuuAp5OQ2vnCyPRBa",
   "authorization": {
-    "id": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
-    "key": "aut-qgJp3h93RvzZqGfOsbvPDuNy69YE7zuq",
+    "id": "aut-s4bLUxVM6xpRNxyxuuAp5OQ2vnCyPRBa",
+    "key": "aut-s4bLUxVM6xpRNxyxuuAp5OQ2vnCyPRBa",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-0662efc6b9bf44f69055ac7c14b34db1",
+      "id": "crd-d9b2e6ba79d449aaa4f0c1a91705022c",
       "token": "XXX",
-      "type": "american_express",
+      "type": "visa",
       "expiration": {
-        "month": 12,
-        "year": 2023
+        "month": 1,
+        "year": 2021
       },
-      "iin": "378282",
-      "last4": "0005",
-      "name": "Amex Japan Card",
+      "iin": "444433",
+      "last4": "1111",
+      "name": "Test Testing",
       "issuer": {
-        "iin": "378282",
-        "name": "AMERICAN EXPRESS US (CARS)",
+        "iin": "444433",
         "country": "USA"
       },
       "address": {
         "name": {
-          "first": "Test",
-          "last": "Japan"
+          "first": "Testing",
+          "last": "Test"
         },
         "streets": [
-          "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+          "アキタケン, ユリホンジョウシ, イワキシモヘビタ, 201-1253"
         ],
-        "city": "Tokyo",
-        "province": "Tokyo",
-        "postal": "150-0043",
+        "city": "Shimokawara",
+        "province": "Akita",
+        "postal": "307-1273",
         "country": "JPN"
       },
       "discriminator": "card"
     },
-    "amount": 25992,
+    "amount": 4382,
     "currency": "JPY",
     "customer": {
       "name": {
-        "first": "Test",
-        "last": "Japan"
+        "first": "Testing",
+        "last": "Test"
       },
-      "phone": "+8137-766-5044",
-      "email": "test-jp@test.com"
+      "phone": "12377710",
+      "email": "test@test.com"
     },
     "attributes": {},
     "result": {
       "status": "authorized"
     },
-    "created_at": "2018-11-13T20:29:46.438Z",
+    "created_at": "2018-12-12T19:41:56.260Z",
     "method": {
-      "id": "american_express",
+      "id": "visa",
       "type": "card",
-      "name": "American Express",
+      "name": "VISA",
       "images": {
         "small": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/american_express/30/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/30/original.png",
           "width": 65,
           "height": 41
         },
         "medium": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/american_express/60/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/60/original.png",
           "width": 100,
           "height": 60
         },
         "large": {
-          "url": "https://flowcdn.io/util/logos/payment-methods/american_express/120/original.png",
+          "url": "https://flowcdn.io/util/logos/payment-methods/visa/120/original.png",
           "width": 256,
           "height": 256
         }
@@ -79,36 +78,36 @@
       ]
     },
     "requested": {
-      "amount": 25992,
+      "amount": 4382,
       "currency": "JPY"
     },
     "destination": {
       "streets": [
-        "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+        "アキタケン, ユリホンジョウシ, イワキシモヘビタ, 201-1253"
       ],
-      "city": "Tokyo",
-      "province": "Tokyo",
-      "postal": "150-0043",
+      "city": "Shimokawara",
+      "province": "Akita",
+      "postal": "307-1273",
       "country": "JPN"
     },
     "billing_address": {
       "name": {
-        "first": "Test",
-        "last": "Japan"
+        "first": "Testing",
+        "last": "Test"
       },
       "streets": [
-        "トウキョウト, シブヤク, ドウゲンザカ, 7-8"
+        "アキタケン, ユリホンジョウシ, イワキシモヘビタ, 201-1253"
       ],
-      "city": "Tokyo",
-      "province": "Tokyo",
-      "postal": "150-0043",
+      "city": "Shimokawara",
+      "province": "Akita",
+      "postal": "307-1273",
       "country": "JPN"
     },
     "order": {
-      "number": "ord-555c1f216e664467955f219a6a1fac06"
+      "number": "ord-78219a4797ff467f9dc214e9972e84fe"
     },
     "base": {
-      "amount": 219.41,
+      "amount": 37.17,
       "currency": "USD"
     }
   },

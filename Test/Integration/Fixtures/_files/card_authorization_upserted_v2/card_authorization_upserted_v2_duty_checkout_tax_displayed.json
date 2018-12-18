@@ -1,57 +1,56 @@
 {
-  "event_id": "evt-02500f93ff1b4d328dcd1bceac25198f",
-  "timestamp": "2018-11-12T13:45:43.636Z",
+  "event_id": "evt-a6ff83259df24ed9a10efd2b445df09d",
+  "timestamp": "2018-12-12T12:40:49.364Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-WUWB2U02fcXl51P4iZcM88VcZLFbUxoe",
+  "id": "aut-ak61YLcrX6ZiigqoNsmpCgHnCA28Q0M3",
   "authorization": {
-    "id": "aut-WUWB2U02fcXl51P4iZcM88VcZLFbUxoe",
-    "key": "aut-WUWB2U02fcXl51P4iZcM88VcZLFbUxoe",
+    "id": "aut-ak61YLcrX6ZiigqoNsmpCgHnCA28Q0M3",
+    "key": "aut-ak61YLcrX6ZiigqoNsmpCgHnCA28Q0M3",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-a43e3d01a7c94866831f45db5d06a13e",
+      "id": "crd-85ed0edca1bb40efb6d3ce77101a7903",
       "token": "XXX",
       "type": "visa",
       "expiration": {
-        "month": 4,
-        "year": 2022
+        "month": 12,
+        "year": 2029
       },
-      "iin": "411111",
+      "iin": "444433",
       "last4": "1111",
-      "name": "test colombia",
+      "name": "test test",
       "issuer": {
-        "iin": "411111",
-        "name": "JPMORGAN CHASE BANK, N.A.",
+        "iin": "444433",
         "country": "USA"
       },
       "address": {
         "name": {
-          "first": "Test2",
-          "last": "Test2"
+          "first": "Test",
+          "last": "Test"
         },
         "streets": [
-          "Calle 5"
+          "Cl 92 No. 49 C-133, C.P 08001"
         ],
-        "city": "Bogota",
-        "postal": "9900-164",
+        "city": "Barranquilla",
+        "postal": "N/A",
         "country": "COL"
       },
       "discriminator": "card"
     },
-    "amount": 977951.24,
+    "amount": 126970.43,
     "currency": "COP",
     "customer": {
       "name": {
-        "first": "Test2",
-        "last": "Test2"
+        "first": "Test",
+        "last": "Test"
       },
-      "phone": "21 292 470 0620",
-      "email": "test3@test.com"
+      "phone": "12377710",
+      "email": "test@test.com"
     },
     "attributes": {},
     "result": {
       "status": "authorized"
     },
-    "created_at": "2018-11-12T13:45:01.671Z",
+    "created_at": "2018-12-12T12:40:43.352Z",
     "method": {
       "id": "visa",
       "type": "card",
@@ -78,34 +77,34 @@
       ]
     },
     "requested": {
-      "amount": 977951.24,
+      "amount": 126970.43,
       "currency": "COP"
     },
     "destination": {
       "streets": [
-        "Calle 5"
+        "Cl 92 No. 49 C-133, C.P 08001"
       ],
-      "city": "Bogota",
-      "postal": "9900-164",
+      "city": "Barranquilla",
+      "postal": "N/A",
       "country": "COL"
     },
     "billing_address": {
       "name": {
-        "first": "Test2",
-        "last": "Test2"
+        "first": "Test",
+        "last": "Test"
       },
       "streets": [
-        "Calle 5"
+        "Cl 92 No. 49 C-133, C.P 08001"
       ],
-      "city": "Bogota",
-      "postal": "9900-164",
+      "city": "Barranquilla",
+      "postal": "N/A",
       "country": "COL"
     },
     "order": {
-      "number": "ord-fa7e52c9229d4605b30e9051291673fe"
+      "number": "ord-9dcd7b67881a4b1ca06984d9ead4fb45"
     },
     "base": {
-      "amount": 297.81,
+      "amount": 38.23,
       "currency": "USD"
     }
   },

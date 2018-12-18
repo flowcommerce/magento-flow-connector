@@ -108,12 +108,9 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
+        $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
+        
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process(1000, 1);
 
@@ -179,7 +176,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) +
+            count($orderPlacedEvents) +
             count($cardAuthorizationUpsertedEvents)+ count($captureEvents)+ count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
@@ -195,11 +192,9 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
+        $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
+        
 
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process(1000, 1);
@@ -266,7 +261,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) +
+            count($orderPlacedEvents) +
             count($cardAuthorizationUpsertedEvents)+ count($captureEvents)+ count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
@@ -283,12 +278,9 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
+        $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
+        
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process(1000, 1);
 
@@ -351,7 +343,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) +
+            count($orderPlacedEvents) +
             count($cardAuthorizationUpsertedEvents)+ count($captureEvents)+ count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
@@ -367,12 +359,9 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
+        $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
+        
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process(1000, 1);
 
@@ -434,7 +423,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) +
+            count($orderPlacedEvents) +
             count($cardAuthorizationUpsertedEvents)+ count($captureEvents)+ count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
@@ -451,12 +440,9 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
+        $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-
-        $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
+        
         $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process(1000, 1);
 
@@ -503,10 +489,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
-        $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
+        $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
 
         $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();

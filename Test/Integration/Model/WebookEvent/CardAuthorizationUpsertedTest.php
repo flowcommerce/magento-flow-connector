@@ -97,12 +97,9 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     {
         $this->createProductsFixture->execute();
 
-        $orderUpsertedEvents = $this->createWebhookEventsFixture->createOrderUpsertedWebhooks();
+        $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-
-        $allocationUpsertedEvents = $this->createWebhookEventsFixture->createAllocationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
-
+        
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
 
         $webhookCollection = $this->webhookEventCollectionFactory->create();
@@ -190,7 +187,7 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
-            count($orderUpsertedEvents) + count($allocationUpsertedEvents) + count($cardAuthorizationUpsertedEvents),
+            count($orderPlacedEvents) + count($cardAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }

@@ -1,58 +1,57 @@
 {
-  "event_id": "evt-4da5bac8443049c1b29e19ae9fcff2b7",
-  "timestamp": "2018-11-09T12:01:24.075Z",
+  "event_id": "evt-f660581a89954beeb23e1e8fba76d56b",
+  "timestamp": "2018-12-12T19:59:23.602Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-lLL018u6TAsmObpBFmCTmSQRHrbTIamj",
+  "id": "aut-B7K4oZolooBfBY6Qc91Zuf2bMJCspx1v",
   "authorization": {
-    "id": "aut-lLL018u6TAsmObpBFmCTmSQRHrbTIamj",
-    "key": "aut-lLL018u6TAsmObpBFmCTmSQRHrbTIamj",
+    "id": "aut-B7K4oZolooBfBY6Qc91Zuf2bMJCspx1v",
+    "key": "aut-B7K4oZolooBfBY6Qc91Zuf2bMJCspx1v",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-3ed2afaed73946089dc22c81e2235f8b",
+      "id": "crd-14f19dc5232f4377a63f53b11be66d0e",
       "token": "XXX",
       "type": "visa",
       "expiration": {
-        "month": 4,
-        "year": 2022
+        "month": 12,
+        "year": 2019
       },
-      "iin": "411111",
+      "iin": "444433",
       "last4": "1111",
-      "name": "test duty included",
+      "name": "Test Test",
       "issuer": {
-        "iin": "411111",
-        "name": "JPMORGAN CHASE BANK, N.A.",
+        "iin": "444433",
         "country": "USA"
       },
       "address": {
         "name": {
-          "first": "Test",
-          "last": "Test Duty Included"
+          "first": "Testing",
+          "last": "Test2"
         },
         "streets": [
-          "Rua Vasco Gama 95"
+          "Rua Longuinha 112"
         ],
-        "city": "Horta",
-        "province": "Ilha do Faial",
-        "postal": "9900-164",
+        "city": "Olival Basto",
+        "province": "Lisboa",
+        "postal": "2620-493",
         "country": "PRT"
       },
       "discriminator": "card"
     },
-    "amount": 256.64,
+    "amount": 31.9,
     "currency": "EUR",
     "customer": {
       "name": {
-        "first": "Test",
-        "last": "Test Duty Included"
+        "first": "Testing",
+        "last": "Test2"
       },
-      "phone": "21 292 470 0620",
-      "email": "test-duty-included@test.com"
+      "phone": "12377710",
+      "email": "test@test.com"
     },
     "attributes": {},
     "result": {
-      "status": "review"
+      "status": "authorized"
     },
-    "created_at": "2018-11-09T12:01:24.075Z",
+    "created_at": "2018-12-12T19:58:45.343Z",
     "method": {
       "id": "visa",
       "type": "card",
@@ -79,36 +78,36 @@
       ]
     },
     "requested": {
-      "amount": 256.64,
+      "amount": 31.9,
       "currency": "EUR"
     },
     "destination": {
       "streets": [
-        "Rua Vasco Gama 95"
+        "Rua Longuinha 112"
       ],
-      "city": "Horta",
-      "province": "Ilha do Faial",
-      "postal": "9900-164",
+      "city": "Olival Basto",
+      "province": "Lisboa",
+      "postal": "2620-493",
       "country": "PRT"
     },
     "billing_address": {
       "name": {
-        "first": "Test",
-        "last": "Test Duty Included"
+        "first": "Testing",
+        "last": "Test2"
       },
       "streets": [
-        "Rua Vasco Gama 95"
+        "Rua Longuinha 112"
       ],
-      "city": "Horta",
-      "province": "Ilha do Faial",
-      "postal": "9900-164",
+      "city": "Olival Basto",
+      "province": "Lisboa",
+      "postal": "2620-493",
       "country": "PRT"
     },
     "order": {
-      "number": "ord-37bc9e246a764ef190bfbde22bd751a6"
+      "number": "ord-c68489c639594270adf845e13dab50e0"
     },
     "base": {
-      "amount": 280.5,
+      "amount": 34.79,
       "currency": "USD"
     }
   },

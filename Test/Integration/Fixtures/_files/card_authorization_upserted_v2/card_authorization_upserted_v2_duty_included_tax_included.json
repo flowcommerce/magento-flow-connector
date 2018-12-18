@@ -1,58 +1,58 @@
 {
-  "event_id": "evt-40d261d3ffec4040a2e2cec0d046a853",
-  "timestamp": "2018-11-09T12:08:12.527Z",
+  "event_id": "evt-b5cebad37c0e47bcb8b2d725edab01e7",
+  "timestamp": "2018-12-12T20:22:49.819Z",
   "organization": "magento-integration-sandbox",
-  "id": "aut-qdDssWlu0qqEXxYPtf1AherDvIIh6ILz",
+  "id": "aut-kW9W5V0vBA4J508IcFL19ihtYfEUYCRD",
   "authorization": {
-    "id": "aut-qdDssWlu0qqEXxYPtf1AherDvIIh6ILz",
-    "key": "aut-qdDssWlu0qqEXxYPtf1AherDvIIh6ILz",
+    "id": "aut-kW9W5V0vBA4J508IcFL19ihtYfEUYCRD",
+    "key": "aut-kW9W5V0vBA4J508IcFL19ihtYfEUYCRD",
     "merchant_of_record": "flow",
     "card": {
-      "id": "crd-9f437e7e784a4378a02d568d289fa628",
+      "id": "crd-a13abc3e608f4b4bb81b51fd6975bb39",
       "token": "XXX",
       "type": "visa",
       "expiration": {
-        "month": 4,
-        "year": 2022
+        "month": 12,
+        "year": 2021
       },
-      "iin": "411111",
+      "iin": "444433",
       "last4": "1111",
-      "name": "test cree",
+      "name": "Test Test",
       "issuer": {
-        "iin": "411111",
-        "name": "JPMORGAN CHASE BANK, N.A.",
+        "iin": "444433",
         "country": "USA"
       },
       "address": {
         "name": {
           "first": "Test",
-          "last": "Tax Included Duty Included"
+          "last": "Test"
         },
         "streets": [
-          "Avenida das Américas"
+          "Avenida das Amérias",
+          "123"
         ],
-        "city": "RIO DE JANEIRO",
-        "province": "RIO DE JANEIRO",
-        "postal": "22222-222",
+        "city": "Rio de Janeiro",
+        "province": "Rio de Janeiro",
+        "postal": "22222222",
         "country": "BRA"
       },
       "discriminator": "card"
     },
-    "amount": 1445,
+    "amount": 171,
     "currency": "BRL",
     "customer": {
       "name": {
         "first": "Test",
-        "last": "Tax Included Duty Included"
+        "last": "Test"
       },
-      "phone": "211212121212",
-      "email": "test-tax-duty@test.com"
+      "phone": "2122212121",
+      "email": "test@test.com"
     },
     "attributes": {},
     "result": {
-      "status": "review"
+      "status": "authorized"
     },
-    "created_at": "2018-11-09T12:08:12.527Z",
+    "created_at": "2018-12-12T20:22:38.987Z",
     "method": {
       "id": "visa",
       "type": "card",
@@ -79,36 +79,38 @@
       ]
     },
     "requested": {
-      "amount": 1445,
+      "amount": 171,
       "currency": "BRL"
     },
     "destination": {
       "streets": [
-        "Avenida das Américas"
+        "Avenida das Amérias",
+        "123"
       ],
-      "city": "RIO DE JANEIRO",
-      "province": "RIO DE JANEIRO",
-      "postal": "22222-222",
+      "city": "Rio de Janeiro",
+      "province": "Rio de Janeiro",
+      "postal": "22222222",
       "country": "BRA"
     },
     "billing_address": {
       "name": {
         "first": "Test",
-        "last": "Tax Included Duty Included"
+        "last": "Test"
       },
       "streets": [
-        "Avenida das Américas"
+        "Avenida das Amérias",
+        "123"
       ],
-      "city": "RIO DE JANEIRO",
-      "province": "RIO DE JANEIRO",
-      "postal": "22222-222",
+      "city": "Rio de Janeiro",
+      "province": "Rio de Janeiro",
+      "postal": "22222222",
       "country": "BRA"
     },
     "order": {
-      "number": "ord-8951066515ec4c469131b1a4ef506113"
+      "number": "ord-7ab8ac78b5a34eabb2bd6fa9eb9776b3"
     },
     "base": {
-      "amount": 369.39,
+      "amount": 42.47,
       "currency": "USD"
     }
   },

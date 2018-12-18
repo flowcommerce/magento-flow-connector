@@ -1,0 +1,753 @@
+{
+  "event_id": "evt-4b9305c9451e43a9af1a9e07644bacee",
+  "timestamp": "2018-12-12T12:41:04.490Z",
+  "organization": "magento-integration-sandbox",
+  "order_number": "ord-9dcd7b67881a4b1ca06984d9ead4fb45",
+  "order": {
+    "id": "ior-398c15146f9e4eb3a6ba5c264de55ae7",
+    "number": "ord-9dcd7b67881a4b1ca06984d9ead4fb45",
+    "customer": {
+      "name": {
+        "first": "Test",
+        "last": "Test"
+      },
+      "phone": "12377710",
+      "email": "test@test.com",
+      "address": {
+        "name": {
+          "first": "Test",
+          "last": "Test"
+        },
+        "streets": [
+          "Cl 92 No. 49 C-133, C.P 08001"
+        ],
+        "city": "Barranquilla",
+        "postal": "N/A",
+        "country": "COL"
+      }
+    },
+    "delivered_duty": "paid",
+    "destination": {
+      "streets": [
+        "Cl 92 No. 49 C-133, C.P 08001"
+      ],
+      "city": "Barranquilla",
+      "postal": "N/A",
+      "country": "COL",
+      "contact": {
+        "name": {
+          "first": "Test",
+          "last": "Test"
+        },
+        "email": "test@test.com",
+        "phone": "12377710"
+      }
+    },
+    "expires_at": "2018-12-12T13:40:41.847Z",
+    "items": [
+      {
+        "number": "simple_1",
+        "name": "Simple Product 1",
+        "quantity": 1,
+        "local": {
+          "experience": {
+            "id": "exp-7691feaf326045b19b0d772fd1e15a96",
+            "key": "colombia",
+            "name": "Colombia"
+          },
+          "prices": [
+            {
+              "currency": "COP",
+              "amount": 33216,
+              "label": "33.216,00 COP",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              },
+              "key": "localized_item_price"
+            },
+            {
+              "currency": "COP",
+              "amount": 0,
+              "label": "0,00 COP",
+              "base": {
+                "amount": 0,
+                "currency": "USD",
+                "label": "US$0.00"
+              },
+              "name": "VAT",
+              "key": "localized_item_vat"
+            }
+          ],
+          "rates": [
+            {
+              "id": "usd-cop",
+              "base": "USD",
+              "target": "COP",
+              "effective_at": "2018-12-12T12:40:41.846Z",
+              "value": 3321.56074016
+            }
+          ],
+          "spot_rates": [],
+          "status": "included",
+          "attributes": {
+            "weight_type": "No",
+            "sku_type": "No",
+            "weight": "18.0000",
+            "name": "Simple Product 1",
+            "sku": "simple_1",
+            "quantity_and_stock_status": "In Stock",
+            "magento_version": "2.2.5",
+            "country_of_manufacture": " ",
+            "price": "10.0000",
+            "options_container": "Block after Info Column",
+            "regular_price": "33216.0",
+            "price_type": "No",
+            "parent_entity_id": "22",
+            "color": "No",
+            "user_agent": "Flow-M2-1.1.1",
+            "minimal_price": "10.0000",
+            "attribute_set_id": "4",
+            "final_price": "33216.0",
+            "page_layout": "No layout updates",
+            "entity_id": "19",
+            "gift_message_available": "No",
+            "custom_design": "-- Please Select --",
+            "status": "Enabled",
+            "url_key": "simple-product-1",
+            "tax_class_id": "Taxable Goods",
+            "product_id": "19",
+            "shipment_type": "Together",
+            "type_id": "simple",
+            "created_at": "2018-11-12 19:01:31",
+            "custom_layout": "No layout updates",
+            "msrp_display_actual_price_type": "Use config",
+            "updated_at": "2018-11-12 19:01:31",
+            "visibility": "Catalog, Search",
+            "test_configurable": "Option 1",
+            "price_view": "Price Range",
+            "parent_sku": "configurable"
+          },
+          "price_attributes": {
+            "regular_price": {
+              "currency": "COP",
+              "amount": 33216,
+              "label": "33.216,00 COP",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "final_price": {
+              "currency": "COP",
+              "amount": 33216,
+              "label": "33.216,00 COP",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "deliveries": [
+      {
+        "id": "del-69ffd5db21b24d0da531637d9034c941",
+        "items": [
+          {
+            "number": "simple_1",
+            "quantity": 1,
+            "price": {
+              "currency": "COP",
+              "amount": 33216,
+              "base": {
+                "amount": 10,
+                "currency": "USD"
+              }
+            },
+            "attributes": {
+              "base_amount": "10.0",
+              "base_currency": "USD"
+            }
+          }
+        ],
+        "options": [
+          {
+            "id": "opt-7d98590b1fd64efea06f61c7de06ea09",
+            "cost": {
+              "currency": "COP",
+              "amount": 77193.07,
+              "label": "77.193,07 COP",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              },
+              "details": [
+                {
+                  "source": "ratecard",
+                  "currency": "COP",
+                  "amount": 77193.07,
+                  "label": "77.193,07 COP",
+                  "components": [
+                    {
+                      "key": "ratecard_base_cost",
+                      "currency": "COP",
+                      "amount": 77193.07,
+                      "label": "77.193,07 COP",
+                      "base": {
+                        "amount": 23.24,
+                        "currency": "USD",
+                        "label": "US$23.24"
+                      }
+                    }
+                  ],
+                  "base": {
+                    "amount": 23.24,
+                    "currency": "USD",
+                    "label": "US$23.24"
+                  }
+                }
+              ]
+            },
+            "delivered_duty": "unpaid",
+            "price": {
+              "currency": "COP",
+              "amount": 77193.07,
+              "label": "77.193,07 COP",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              }
+            },
+            "service": {
+              "id": "dhl-express-worldwide",
+              "carrier": {
+                "id": "dhl"
+              },
+              "name": "Express Worldwide"
+            },
+            "tier": {
+              "id": "tie-14572dda09c54d3ab2e6ca6523ed424e",
+              "integration": "information",
+              "name": "Shipping",
+              "services": [
+                "dhl-express-worldwide"
+              ],
+              "strategy": "fastest",
+              "visibility": "public",
+              "currency": "COP",
+              "display": {
+                "estimate": {
+                  "type": "calculated",
+                  "label": "1-3 Business Days"
+                }
+              }
+            },
+            "window": {
+              "from": "2018-12-13T00:00:00.000Z",
+              "to": "2018-12-17T00:00:00.000Z",
+              "timezone": "UTC",
+              "label": "1-3 Business Days"
+            },
+            "rule_outcome": {
+              "discriminator": "at_cost"
+            },
+            "weight": {
+              "gravitational": {
+                "value": "1.25",
+                "units": "pound"
+              },
+              "dimensional": {
+                "value": "2.12",
+                "units": "inch"
+              }
+            }
+          },
+          {
+            "id": "opt-b3630435fb354a02af8d04b1d416a543",
+            "cost": {
+              "currency": "COP",
+              "amount": 77193.07,
+              "label": "77.193,07 COP",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              },
+              "details": [
+                {
+                  "source": "ratecard",
+                  "currency": "COP",
+                  "amount": 77193.07,
+                  "label": "77.193,07 COP",
+                  "components": [
+                    {
+                      "key": "ratecard_base_cost",
+                      "currency": "COP",
+                      "amount": 77193.07,
+                      "label": "77.193,07 COP",
+                      "base": {
+                        "amount": 23.24,
+                        "currency": "USD",
+                        "label": "US$23.24"
+                      }
+                    }
+                  ],
+                  "base": {
+                    "amount": 23.24,
+                    "currency": "USD",
+                    "label": "US$23.24"
+                  }
+                }
+              ]
+            },
+            "delivered_duty": "paid",
+            "price": {
+              "currency": "COP",
+              "amount": 77193.07,
+              "label": "77.193,07 COP",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              }
+            },
+            "service": {
+              "id": "dhl-express-worldwide",
+              "carrier": {
+                "id": "dhl"
+              },
+              "name": "Express Worldwide"
+            },
+            "tier": {
+              "id": "tie-14572dda09c54d3ab2e6ca6523ed424e",
+              "integration": "information",
+              "name": "Shipping",
+              "services": [
+                "dhl-express-worldwide"
+              ],
+              "strategy": "fastest",
+              "visibility": "public",
+              "currency": "COP",
+              "display": {
+                "estimate": {
+                  "type": "calculated",
+                  "label": "1-3 Business Days"
+                }
+              }
+            },
+            "window": {
+              "from": "2018-12-13T00:00:00.000Z",
+              "to": "2018-12-17T00:00:00.000Z",
+              "timezone": "UTC",
+              "label": "1-3 Business Days"
+            },
+            "rule_outcome": {
+              "discriminator": "at_cost"
+            },
+            "weight": {
+              "gravitational": {
+                "value": "1.25",
+                "units": "pound"
+              },
+              "dimensional": {
+                "value": "2.12",
+                "units": "inch"
+              }
+            }
+          }
+        ],
+        "center": {
+          "id": "cen-6f8b247bf7004c2e9dfa0bd2970d91eb",
+          "key": "center-1"
+        },
+        "discriminator": "physical_delivery"
+      }
+    ],
+    "selections": [
+      "opt-b3630435fb354a02af8d04b1d416a543"
+    ],
+    "prices": [
+      {
+        "key": "subtotal",
+        "currency": "COP",
+        "amount": 33216,
+        "label": "33.216,00 COP",
+        "base": {
+          "amount": 10,
+          "currency": "USD",
+          "label": "US$10.00"
+        },
+        "components": [
+          {
+            "key": "item_price",
+            "currency": "COP",
+            "amount": 33215.61,
+            "label": "33.215,61 COP",
+            "base": {
+              "amount": 10,
+              "currency": "USD",
+              "label": "US$10.00"
+            },
+            "name": "Item price"
+          },
+          {
+            "key": "rounding",
+            "currency": "COP",
+            "amount": 0.39,
+            "label": "0,39 COP",
+            "base": {
+              "amount": 0,
+              "currency": "USD",
+              "label": "US$0.00"
+            },
+            "name": "Rounding"
+          }
+        ],
+        "name": "Item subtotal"
+      },
+      {
+        "key": "duty",
+        "currency": "COP",
+        "amount": 16561.36,
+        "label": "16.561,36 COP",
+        "base": {
+          "amount": 4.99,
+          "currency": "USD",
+          "label": "US$4.99"
+        },
+        "components": [
+          {
+            "key": "duties_item_price",
+            "currency": "COP",
+            "amount": 4982.4,
+            "label": "4.982,40 COP",
+            "base": {
+              "amount": 1.5,
+              "currency": "USD",
+              "label": "US$1.50"
+            },
+            "name": "Duties on item price"
+          },
+          {
+            "key": "duties_freight",
+            "currency": "COP",
+            "amount": 11578.96,
+            "label": "11.578,96 COP",
+            "base": {
+              "amount": 3.49,
+              "currency": "USD",
+              "label": "US$3.49"
+            },
+            "name": "Duties on freight"
+          }
+        ],
+        "name": "Duties"
+      },
+      {
+        "key": "shipping",
+        "currency": "COP",
+        "amount": 77193.07,
+        "label": "77.193,07 COP",
+        "base": {
+          "amount": 23.24,
+          "currency": "USD",
+          "label": "US$23.24"
+        },
+        "components": [
+          {
+            "key": "shipping",
+            "currency": "COP",
+            "amount": 77193.07,
+            "label": "77.193,07 COP",
+            "base": {
+              "amount": 23.24,
+              "currency": "USD",
+              "label": "US$23.24"
+            },
+            "name": "Shipping"
+          }
+        ],
+        "name": "Shipping"
+      }
+    ],
+    "total": {
+      "currency": "COP",
+      "amount": 126970.43,
+      "label": "126.970,43 COP",
+      "base": {
+        "amount": 38.23,
+        "currency": "USD",
+        "label": "US$38.23"
+      }
+    },
+    "attributes": {
+      "checkout_session_id": "d41a2101b86d9a977bc7d7eeffb58b7d",
+      "customer_session_id": "d41a2101b86d9a977bc7d7eeffb58b7d",
+      "quote_id": "28"
+    },
+    "experience": {
+      "key": "colombia",
+      "discriminator": "experience_reference"
+    },
+    "submitted_at": "2018-12-12T12:40:43.445Z",
+    "lines": [
+      {
+        "item_number": "simple_1",
+        "quantity": 1,
+        "price": {
+          "currency": "COP",
+          "amount": 33216,
+          "label": "33.216,00 COP",
+          "base": {
+            "amount": 10,
+            "currency": "USD",
+            "label": "US$10.00"
+          }
+        },
+        "total": {
+          "currency": "COP",
+          "amount": 33216,
+          "label": "33.216,00 COP",
+          "base": {
+            "amount": 10,
+            "currency": "USD",
+            "label": "US$10.00"
+          }
+        }
+      }
+    ],
+    "payments": [
+      {
+        "id": "opm-94e54aabe9944667876067532c72f537",
+        "type": "card",
+        "merchant_of_record": "flow",
+        "reference": "aut-ak61YLcrX6ZiigqoNsmpCgHnCA28Q0M3",
+        "description": "VISA ending with 1111",
+        "total": {
+          "currency": "COP",
+          "amount": 126970.43,
+          "label": "126.970,43 COP",
+          "base": {
+            "amount": 38.23,
+            "currency": "USD",
+            "label": "US$38.23"
+          }
+        },
+        "attributes": {},
+        "address": {
+          "name": {
+            "first": "Test",
+            "last": "Test"
+          },
+          "streets": [
+            "Cl 92 No. 49 C-133, C.P 08001"
+          ],
+          "city": "Barranquilla",
+          "postal": "N/A",
+          "country": "COL"
+        },
+        "date": "2018-12-12T12:40:43.352Z"
+      }
+    ]
+  },
+  "allocation": {
+    "id": "evt-98ba7673eb6c42dcaad6a9f18c100db2",
+    "order": {
+      "id": "ior-398c15146f9e4eb3a6ba5c264de55ae7",
+      "number": "ord-9dcd7b67881a4b1ca06984d9ead4fb45",
+      "submitted_at": "2018-12-12T12:40:43.445Z"
+    },
+    "details": [
+      {
+        "number": "simple_1",
+        "quantity": 1,
+        "key": "subtotal",
+        "price": {
+          "currency": "COP",
+          "amount": 33216,
+          "label": "33.216,00 COP",
+          "base": {
+            "amount": 10,
+            "currency": "USD",
+            "label": "US$10.00"
+          }
+        },
+        "total": {
+          "currency": "COP",
+          "amount": 33216,
+          "label": "33.216,00 COP",
+          "base": {
+            "amount": 10,
+            "currency": "USD",
+            "label": "US$10.00"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "COP",
+              "amount": 33215.61,
+              "label": "33.215,61 COP",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "price": {
+              "currency": "COP",
+              "amount": 33215.61,
+              "label": "33.215,61 COP",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "COP",
+              "amount": 0.39,
+              "label": "0,39 COP",
+              "base": {
+                "amount": 0,
+                "currency": "USD",
+                "label": "US$0.00"
+              }
+            },
+            "price": {
+              "currency": "COP",
+              "amount": 0.39,
+              "label": "0,39 COP",
+              "base": {
+                "amount": 0,
+                "currency": "USD",
+                "label": "US$0.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "not_included": [
+          {
+            "key": "duties_item_price",
+            "total": {
+              "currency": "COP",
+              "amount": 4982.4,
+              "label": "4.982,40 COP",
+              "base": {
+                "amount": 1.5,
+                "currency": "USD",
+                "label": "US$1.50"
+              }
+            },
+            "rate": 0.15,
+            "name": "Duty",
+            "price": {
+              "currency": "COP",
+              "amount": 4982.4,
+              "label": "4.982,40 COP",
+              "base": {
+                "amount": 1.5,
+                "currency": "USD",
+                "label": "US$1.50"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "key": "shipping",
+        "total": {
+          "currency": "COP",
+          "amount": 77193.07,
+          "label": "77.193,07 COP",
+          "base": {
+            "amount": 23.24,
+            "currency": "USD",
+            "label": "US$23.24"
+          }
+        },
+        "included": [
+          {
+            "key": "shipping",
+            "total": {
+              "currency": "COP",
+              "amount": 77193.07,
+              "label": "77.193,07 COP",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              }
+            },
+            "price": {
+              "currency": "COP",
+              "amount": 77193.07,
+              "label": "77.193,07 COP",
+              "base": {
+                "amount": 23.24,
+                "currency": "USD",
+                "label": "US$23.24"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "not_included": [
+          {
+            "key": "duties_freight",
+            "total": {
+              "currency": "COP",
+              "amount": 11578.96,
+              "label": "11.578,96 COP",
+              "base": {
+                "amount": 3.49,
+                "currency": "USD",
+                "label": "US$3.49"
+              }
+            },
+            "rate": 0.15,
+            "name": "Duty",
+            "price": {
+              "currency": "COP",
+              "amount": 11578.96,
+              "label": "11.578,96 COP",
+              "base": {
+                "amount": 3.49,
+                "currency": "USD",
+                "label": "US$3.49"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "discriminator": "allocation_order_detail"
+      }
+    ],
+    "total": {
+      "currency": "COP",
+      "amount": 126970.43,
+      "label": "126.970,43 COP",
+      "base": {
+        "amount": 38.23,
+        "currency": "USD",
+        "label": "US$38.23"
+      }
+    }
+  },
+  "discriminator": "order_placed"
+}

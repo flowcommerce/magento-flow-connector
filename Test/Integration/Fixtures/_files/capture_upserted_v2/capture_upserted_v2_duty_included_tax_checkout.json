@@ -1,29 +1,29 @@
 {
-  "event_id": "evt-45f89669b4274192bef9dc4362c3c00f",
-  "timestamp": "2018-11-09T12:03:57.908Z",
+  "event_id": "evt-a8691dae65ad42f4809f0154c622b070",
+  "timestamp": "2018-12-12T19:59:24.493Z",
   "organization": "magento-integration-sandbox",
-  "id": "cap-5bcac35f1bd84bf99625fcd4067a021c",
+  "id": "cap-cbd6dee890a34f29a5cf4d8e9135f01f",
   "capture": {
-    "id": "cap-5bcac35f1bd84bf99625fcd4067a021c",
-    "key": "cap-5bcac35f1bd84bf99625fcd4067a021c",
+    "id": "cap-cbd6dee890a34f29a5cf4d8e9135f01f",
+    "key": "cap-cbd6dee890a34f29a5cf4d8e9135f01f",
     "authorization": {
-      "id": "aut-lLL018u6TAsmObpBFmCTmSQRHrbTIamj",
-      "key": "aut-lLL018u6TAsmObpBFmCTmSQRHrbTIamj",
+      "id": "aut-B7K4oZolooBfBY6Qc91Zuf2bMJCspx1v",
+      "key": "aut-B7K4oZolooBfBY6Qc91Zuf2bMJCspx1v",
       "order": {
-        "number": "ord-37bc9e246a764ef190bfbde22bd751a6"
+        "number": "ord-c68489c639594270adf845e13dab50e0"
       }
     },
-    "amount": 256.64,
+    "amount": 31.9,
     "currency": "EUR",
-    "created_at": "2018-11-09T12:03:57.908Z",
+    "created_at": "2018-12-12T19:59:24.493Z",
     "status": "succeeded",
     "requested": {
-      "amount": 256.64,
+      "amount": 31.9,
       "currency": "EUR"
     },
     "attributes": {},
     "base": {
-      "amount": 280.5,
+      "amount": 34.79,
       "currency": "USD"
     }
   },

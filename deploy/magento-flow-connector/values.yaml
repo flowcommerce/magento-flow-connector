@@ -1,0 +1,92 @@
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  port: 80
+
+iamRole: arn:aws:iam::479720515435:role/ecsInstanceRole
+image:
+  repository: 479720515435.dkr.ecr.us-east-1.amazonaws.com/magento-flow-connector
+  pullPolicy: IfNotPresent
+resources:
+  requests:
+    memory: "500Mi"
+    cpu: .3
+
+tolerations:
+  - key: node-role.kubernetes.io/spot-worker
+    value: "true"
+
+nodeSelector: {}
+affinity: {}
+
+ingress:
+  enabled: true
+  gateways:
+    - key: flo-pub
+      tld: flo.pub
+      hosts:
+        - magento.flo.pub
+
+services:
+  live:
+    hosts:
+      - magento-flow-connector
+      - magento.flo.pub
+    gateways:
+      - mesh
+      - magento-flow-connector-flo-pub
+    stages:
+      - deployment: live
+        weight: 100
+
+deployments:
+  live:
+    replicaCount: 1
+    version: master-1
+    host: magento.flo.pub
+    env:
+      - name: MAGENTO_HOST
+        value: magento.flo.pub
+
+magento:
+  mode: developer
+  adminUri: admin
+  firstName: Magento
+  lastName: User
+  email: hi@flow.io
+  db:
+    name: magento
+    user: bn_magento
+    pass: bn_magento_password
+  username: admin
+  pass: admin123
+
+
+##
+## MariaDB chart configuration
+##
+## https://github.com/helm/charts/blob/master/stable/mariadb/values.yaml
+##
+mariadb:
+  enabled: true
+  replication:
+    enabled: false
+
+  securityContext:
+    enabled: false
+
+  db:
+    name: magento
+    user: bn_magento
+    password: bn_magento_password
+  rootUser:
+    password: bn_magento_password
+
+  master:
+    persistence:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 8Gi
+
+

@@ -2,17 +2,20 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
+use FlowCommerce\FlowConnector\Model\Api\Auth;
+use FlowCommerce\FlowConnector\Model\Configuration;
 use FlowCommerce\FlowConnector\Model\Util;
 
 /**
  * Test class for CatalogSync.
  */
-class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
+class CatalogSyncTest extends \PHPUnit\Framework\TestCase
+{
 
     const SCOPE_CONFIG_VALUE_MAP = [
-        Util::FLOW_ENABLED => true,
-        Util::FLOW_ORGANIZATION_ID => 'test-organization',
-        Util::FLOW_API_TOKEN => 'abcdefghijklmnopqrstuvwxyz'
+        Configuration::FLOW_ENABLED => true,
+        Auth::FLOW_ORGANIZATION_ID => 'test-organization',
+        Auth::FLOW_API_TOKEN => 'abcdefghijklmnopqrstuvwxyz'
     ];
 
     protected $logger;
@@ -48,7 +51,8 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
     protected $countryFactory;
     protected $productMetaData;
 
-    protected function setUp() {
+    protected function setUp()
+    {
         $this->scopeConfig = $this->createMock(\Magento\Framework\App\Config\ScopeConfigInterface::class);
         $this->scopeConfig->method('getValue')
             ->will($this->returnCallback(function($key) {
@@ -85,6 +89,9 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
 
         $this->appEmulation = $this->createMock(\Magento\Store\Model\App\Emulation::class);
         $this->imageFactory = $this->createMock(\Magento\Catalog\Model\Product\ImageFactory::class);
+
+        $this->categoryCollectionFactory = $this->createMock(\Magento\Catalog\Model\ResourceModel\Category\CollectionFactory::class);
+
         $this->productCollectionFactory = $this->createMock(\Magento\Catalog\Model\ResourceModel\Product\CollectionFactory::class);
         $this->mediaGallery = $this->createMock(\Magento\Catalog\Api\ProductAttributeMediaGalleryManagementInterface::class);
         $this->localeResolver = $this->createMock(\Magento\Framework\Locale\Resolver::class);
@@ -143,7 +150,8 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase {
     /**
      * Test CatalogSync queue and syncProduct.
      */
-    public function testQueueAndSync() {
+    public function testQueueAndSync()
+    {
         $product = $this->createMock(\Magento\Catalog\Model\Product::class);
         $product->method('getAttributes')
             ->willReturn([$this->productAttribute]);

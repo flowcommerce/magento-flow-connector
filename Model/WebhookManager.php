@@ -7,7 +7,6 @@ use FlowCommerce\FlowConnector\Model\Api\Webhook\Delete as WebhookDeleteApiClien
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Get as WebhookGetApiClient;
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Save as WebhookSaveApiClient;
 use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use FlowCommerce\FlowConnector\Model\WebhookManager\EndpointsConfiguration as WebhookEndpointConfig;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
@@ -32,9 +31,9 @@ class WebhookManager implements WebhookManagementInterface
     private $storeManager;
 
     /**
-     * @var FlowUtil
+     * @var Notification
      */
-    private $util;
+    private $notification;
 
     /**
      * @var WebhookDeleteApiClient
@@ -67,8 +66,13 @@ class WebhookManager implements WebhookManagementInterface
     private $inventoryCenterManager;
 
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * WebhookEventManager constructor.
-     * @param Util $util
+     * @param Notification $notification
      * @param Logger $logger
      * @param StoreManager $storeManager
      * @param WebhookDeleteApiClient $webhookDeleteApiClient
@@ -77,9 +81,10 @@ class WebhookManager implements WebhookManagementInterface
      * @param WebhookSaveApiClient $webhookSaveApiClient
      * @param CatalogSync $catalogSync
      * @param InventoryCenterManager $inventoryCenterManager
+     * @param Configuration $configuration
      */
     public function __construct(
-        FlowUtil $util,
+        Notification $notification,
         Logger $logger,
         StoreManager $storeManager,
         WebhookDeleteApiClient $webhookDeleteApiClient,
@@ -87,9 +92,10 @@ class WebhookManager implements WebhookManagementInterface
         WebhookGetApiClient $webhookGetApiClient,
         WebhookSaveApiClient $webhookSaveApiClient,
         CatalogSync $catalogSync,
-        InventoryCenterManager $inventoryCenterManager
+        InventoryCenterManager $inventoryCenterManager,
+        Configuration $configuration
     ) {
-        $this->util = $util;
+        $this->notification = $notification;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->webhookDeleteApiClient = $webhookDeleteApiClient;
@@ -98,6 +104,7 @@ class WebhookManager implements WebhookManagementInterface
         $this->webhookSaveApiClient = $webhookSaveApiClient;
         $this->catalogSync = $catalogSync;
         $this->inventoryCenterManager = $inventoryCenterManager;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -122,7 +129,7 @@ class WebhookManager implements WebhookManagementInterface
      */
     public function getRegisteredWebhooks($storeId)
     {
-        if (!$this->util->isFlowEnabled($storeId)) {
+        if (!$this->configuration->isFlowEnabled($storeId)) {
             return [];
         }
         return $this->webhookGetApiClient->execute($storeId);
@@ -136,7 +143,7 @@ class WebhookManager implements WebhookManagementInterface
         $return = false;
         $this->logger->info('Updating Flow webhooks for store: ' . $storeId);
 
-        $enabled = $this->util->isFlowEnabled($storeId);
+        $enabled = $this->configuration->isFlowEnabled($storeId);
 
         if ($enabled) {
             try {
@@ -183,6 +190,6 @@ class WebhookManager implements WebhookManagementInterface
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
-        $this->util->setLogger($logger);
+        $this->notification->setLogger($logger);
     }
 }

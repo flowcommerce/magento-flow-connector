@@ -2,8 +2,8 @@
 
 namespace FlowCommerce\FlowConnector\Model\Api\Item\Save;
 
+use FlowCommerce\FlowConnector\Model\Api\Session;
 use \FlowCommerce\FlowConnector\Model\SyncSku;
-use \FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use \Magento\Catalog\Api\Data\ProductInterface;
 use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use \Magento\Catalog\Block\Product\ListProduct as ListProductBlock;
@@ -25,6 +25,7 @@ use \Magento\Store\Model\App\Emulation as AppEmulation;
 use \Magento\Store\Model\StoreManagerInterface as StoreManager;
 use \Magento\Store\Model\ScopeInterface as StoreScope;
 use \Psr\Log\LoggerInterface as Logger;
+use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Class ProductDataMapper
@@ -61,9 +62,9 @@ class ProductDataMapper
     private $jsonSerializer;
 
     /**
-     * @var FlowUtil
+     * @var GuzzleClient
      */
-    private $util;
+    private $guzzleClient;
 
     /**
      * @var StoreManager
@@ -146,7 +147,7 @@ class ProductDataMapper
     public function __construct(
         Logger $logger,
         JsonSerializer $jsonSerializer,
-        FlowUtil $util,
+        GuzzleClient $guzzleClient,
         StoreManager $storeManager,
         LinkManagement $linkManagement,
         CategoryCollectionFactory $categoryCollectionFactory,
@@ -162,7 +163,7 @@ class ProductDataMapper
     ) {
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
-        $this->util = $util;
+        $this->guzzleClient = $guzzleClient;
         $this->storeManager = $storeManager;
         $this->linkManagement = $linkManagement;
         $this->categoryCollectionFactory = $categoryCollectionFactory;
@@ -462,7 +463,7 @@ class ProductDataMapper
         $data['product_id'] = $product->getId();
 
         // Add user agent
-        $data['user_agent'] = $this->util->getFlowClientUserAgent();
+        $data['user_agent'] = $this->guzzleClient->getFlowClientUserAgent();
 
         // Add magento version
         $data['magento_version'] = $this->getMagentoVersion();

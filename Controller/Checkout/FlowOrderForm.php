@@ -3,8 +3,17 @@
 namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
 use Magento\Framework\Controller\ResultFactory;
-use FlowCommerce\FlowConnector\Model\Util;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Exception\LocalizedException;
+use Psr\Log\LoggerInterface;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Checkout\Model\Cart;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Framework\Stdlib\CookieManagerInterface;
 
 /**
  * Controller class that returns a Flow order_form object for use with Flow.js.
@@ -15,7 +24,6 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
 
     protected $logger;
     protected $jsonHelper;
-    protected $util;
     protected $cart;
     protected $storeManager;
     protected $customerSession;
@@ -24,24 +32,30 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
     protected $cookieManager;
 
     /**
-    * @param \Magento\Framework\App\Action\Context $context
-    * @param \Psr\Log\LoggerInterface $logger
-    */
+     * FlowOrderForm constructor.
+     * @param Context $context
+     * @param LoggerInterface $logger
+     * @param Data $jsonHelper
+     * @param Cart $cart
+     * @param StoreManagerInterface $storeManager
+     * @param CustomerSession $customerSession
+     * @param CheckoutSession $checkoutSession
+     * @param AddressRepositoryInterface $addressRepository
+     * @param CookieManagerInterface $cookieManager
+     */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \FlowCommerce\FlowConnector\Model\Util $util,
-        \Magento\Checkout\Model\Cart $cart,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository,
-        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
+        Context $context,
+        LoggerInterface $logger,
+        Data $jsonHelper,
+        Cart $cart,
+        StoreManagerInterface $storeManager,
+        CustomerSession $customerSession,
+        CheckoutSession $checkoutSession,
+        AddressRepositoryInterface $addressRepository,
+        CookieManagerInterface $cookieManager
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
-        $this->util = $util;
         $this->cart = $cart;
         $this->storeManager = $storeManager;
         $this->customerSession = $customerSession;
@@ -52,10 +66,10 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
     }
 
     /**
-    * Returns a JSON response for a Flow order_form object.
-    *
-    * @return string https://docs.flow.io/type/order-form
-    */
+     * Returns a JSON response for a Flow order_form object.
+     * @return string https://docs.flow.io/type/order-form
+     * @throws LocalizedException
+     */
     public function execute()
     {
         $response = $this->resultFactory->create(ResultFactory::TYPE_JSON);
@@ -64,11 +78,12 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
     }
 
     /**
-    * Returns a Flow order_form object for use with Flow.js.
-    *
-    * @return string https://docs.flow.io/type/order-form
-    */
-    private function getFlowOrderForm() {
+     * Returns a Flow order_form object for use with Flow.js.
+     * @return string https://docs.flow.io/type/order-form
+     * @throws LocalizedException
+     */
+    private function getFlowOrderForm()
+    {
 
         $data = [];
 
@@ -119,7 +134,7 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         // Add cart items
         if ($items = $this->cart->getQuote()->getItems()) {
             $data['items'] = [];
-            foreach($items as $item) {
+            foreach ($items as $item) {
                 $lineItem = [
                     'number' => $item->getSku(),
                     'quantity' => $item->getQty()

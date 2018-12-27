@@ -97,7 +97,7 @@ class WebhookManager implements WebhookManagementInterface
     private $payloadValidator;
 
     /**
-     * WebhookEventManager constructor.
+     * WebhookManager constructor.
      * @param Notification $notification
      * @param Logger $logger
      * @param StoreManager $storeManager
@@ -109,6 +109,7 @@ class WebhookManager implements WebhookManagementInterface
      * @param InventoryCenterManager $inventoryCenterManager
      * @param Configuration $configuration
      * @param WebhookSettingsApiClient $webhookSettingsApiClient
+     * @param PayloadValidator $payloadValidator
      */
     public function __construct(
         Notification $notification,

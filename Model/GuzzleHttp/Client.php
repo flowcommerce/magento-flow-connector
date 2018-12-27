@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Model\GuzzleHttp;
 
+use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Configuration;
 use GuzzleHttp\Client as GuzzleClient;
@@ -71,6 +72,11 @@ class Client extends GuzzleClient
     private $storeManager;
 
     /**
+     * @var Auth
+     */
+    private $auth;
+
+    /**
      * Client constructor.
      *
      * Adjusts FlowCommerce_FlowConnector specific configuration settings for \GuzzleHttp\Client
@@ -82,6 +88,7 @@ class Client extends GuzzleClient
      * @param Configuration $configuration
      * @param StoreManager $storeManager
      * @param array $config
+     * @param Auth $auth
      */
     public function __construct(
         ModuleList $moduleList,
@@ -90,6 +97,7 @@ class Client extends GuzzleClient
         Logger $logger,
         Configuration $configuration,
         StoreManager $storeManager,
+        Auth $auth,
         array $config = []
     ) {
         $this->moduleList = $moduleList;
@@ -98,6 +106,8 @@ class Client extends GuzzleClient
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->storeManager = $storeManager;
+        $this->auth = $auth;
+
         $this->moduleVersion = $this->moduleList
             ->getOne('FlowCommerce_FlowConnector')['setup_version'];
 

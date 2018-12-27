@@ -68,7 +68,10 @@ class IntegrationManagerTest extends TestCase
         );
         $this->webhookManager = $this->createPartialMock(
             WebhookManager::class,
-            ['registerAllWebhooks']
+            [
+                'registerAllWebhooks',
+                'updateWebhookSettings'
+            ]
         );
         $this->subject = $this->objectManager->create(Subject::class, [
             'inventoryCenterManager' => $this->inventoryCenterManager,
@@ -99,6 +102,12 @@ class IntegrationManagerTest extends TestCase
         $this->webhookManager
             ->expects($this->once())
             ->method('registerAllWebhooks')
+            ->with(self::STORE_ID)
+            ->willReturn(true);
+
+        $this->webhookManager
+            ->expects($this->once())
+            ->method('updateWebhookSettings')
             ->with(self::STORE_ID)
             ->willReturn(true);
 

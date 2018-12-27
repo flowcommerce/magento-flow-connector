@@ -6,7 +6,6 @@ use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save\ProductDataMapper;
 use FlowCommerce\FlowConnector\Model\SyncSku;
-use FlowCommerce\FlowConnector\Model\Util;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\PoolFactory as HttpPoolFactory;
@@ -66,11 +65,6 @@ class Save
     private $urlBuilder;
 
     /**
-     * @var Util
-     */
-    private $util;
-
-    /**
      * Save constructor.
      * @param Auth $auth
      * @param JsonSerializer $jsonSerializer
@@ -80,7 +74,6 @@ class Save
      * @param Logger $logger
      * @param ProductDataMapper $productDataMapper
      * @param UrlBuilder $urlBuilder
-     * @param Util $util
      */
     public function __construct(
         Auth $auth,
@@ -90,8 +83,7 @@ class Save
         JsonSerializer $jsonSerializer,
         Logger $logger,
         ProductDataMapper $productDataMapper,
-        UrlBuilder $urlBuilder,
-        Util $util
+        UrlBuilder $urlBuilder
     ) {
         $this->auth = $auth;
         $this->jsonSerializer = $jsonSerializer;
@@ -101,7 +93,6 @@ class Save
         $this->logger = $logger;
         $this->productDataMapper = $productDataMapper;
         $this->urlBuilder = $urlBuilder;
-        $this->util = $util;
     }
 
     /**

@@ -81,9 +81,9 @@ class SyncSkuManager implements SyncSkuManagementInterface
     private $syncSkuFactory;
 
     /**
-     * @var Util
+     * @var Configuration
      */
-    private $util;
+    private $configuration;
 
     /**
      * SyncSkuManagement constructor.
@@ -97,7 +97,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
      * @param SyncSkuCollectionFactory $syncSkuCollectionFactory
      * @param SyncSkuFactory $syncSkuFactory
      * @param SyncSkuResourceModel $syncSkuResourceModel
-     * @param Util $util
+     * @param Configuration $configuration
      */
     public function __construct(
         Logger $logger,
@@ -110,7 +110,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
         SyncSkuCollectionFactory $syncSkuCollectionFactory,
         SyncSkuFactory $syncSkuFactory,
         SyncSkuResourceModel $syncSkuResourceModel,
-        Util $util
+        Configuration $configuration
     ) {
         $this->logger = $logger;
         $this->productCollectionFactory = $productCollectionFactory;
@@ -122,7 +122,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
         $this->syncSkuCollectionFactory = $syncSkuCollectionFactory;
         $this->syncSkuFactory = $syncSkuFactory;
         $this->syncSkuResourceModel = $syncSkuResourceModel;
-        $this->util = $util;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -218,7 +218,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     {
         if ($product->getStoreId() == 0) {
             // Global store, queue product for all valid stores
-            foreach($this->util->getEnabledStores() as $store) {
+            foreach($this->configuration->getEnabledStores() as $store) {
                 $product2 = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
                 if ($product2->getId() != null) {
                     $this->logger->info('queuing product2');
@@ -226,7 +226,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
                 }
             }
 
-        } else if (!$this->util->isFlowEnabled($product->getStoreId())) {
+        } else if (!$this->configuration->isFlowEnabled($product->getStoreId())) {
             $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
 
         } else {
@@ -286,7 +286,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
         // Get list of stores with enabled connectors
         $storeIds = [];
         /** @var Store $store */
-        foreach ($this->util->getEnabledStores() as $store) {
+        foreach ($this->configuration->getEnabledStores() as $store) {
             array_push($storeIds, $store->getStoreId());
             $this->logger->info('Including products from store: ' . $store->getName() .
                 ' [id=' . $store->getStoreId() . ']');

@@ -1,4 +1,5 @@
 <?php
+
 namespace FlowCommerce\FlowConnector\Model\Payment;
 
 use Zend\Http\Request;
@@ -31,9 +32,9 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_jsonHelper;
 
     /**
-     * @var \FlowCommerce\FlowConnector\Model\Util
+     * @var \FlowCommerce\FlowConnector\Model\Api\Session
      */
-    protected $_util;
+    private $session;
 
     /**
      * @var string
@@ -41,15 +42,18 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_infoBlockType = \FlowCommerce\FlowConnector\Block\Info\Flow::class;
 
     /**
+     * FlowPaymentMethod constructor.
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
      * @param \Magento\Framework\Api\AttributeValueFactory $customAttributeFactory
      * @param \Magento\Payment\Helper\Data $paymentData
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param Logger $logger
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
+     * @param \Magento\Payment\Model\Method\Logger $logger
+     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
+     * @param \FlowCommerce\FlowConnector\Model\Api\Session $session
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -62,7 +66,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \FlowCommerce\FlowConnector\Model\Util $util,
+        \FlowCommerce\FlowConnector\Model\Api\Session $session,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -81,7 +85,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         );
 
         $this->_jsonHelper = $jsonHelper;
-        $this->_util = $util;
+        $this->session = $session;
     }
 
     /**
@@ -90,7 +94,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
      * @param \Magento\Framework\DataObject|InfoInterface $payment
      * @param float $amount
      * @return $this
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      * @api
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -98,7 +102,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     {
         if (!$this->canAuthorize()) {
             // Flow hosted checkout will always authorize the payment.
-            throw new \Magento\Framework\Exception\LocalizedException(__('The authorize action is not available.'));
+            throw new LocalizedException(__('The authorize action is not available.'));
         }
         return $this;
     }
@@ -109,7 +113,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
      * @param \Magento\Framework\DataObject|InfoInterface $payment
      * @param float $amount
      * @return $this
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      * @api
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -118,7 +122,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         $this->logger->info('FlowPayment capture: paymentId=' . $payment->getId() . ', amount=' . $amount);
 
         if (!$this->canCapture()) {
-            throw new \Magento\Framework\Exception\LocalizedException(__('The capture action is not available.'));
+            throw new LocalizedException(__('The capture action is not available.'));
         }
 
         $flowPaymentRef = $payment->getAdditionalInformation(WebhookEvent::FLOW_PAYMENT_REFERENCE);
@@ -132,7 +136,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                 ]
             ];
 
-            $client = $this->_util->getFlowClient('/captures', $this->getStore());
+            $client = $this->session->getFlowClient('/captures', $this->getStore());
             $client->setMethod(Request::METHOD_POST);
             $client->setRawBody($this->_jsonHelper->jsonEncode($data));
 
@@ -166,54 +170,53 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
      * @param \Magento\Framework\DataObject|InfoInterface $payment
      * @param float $amount
      * @return $this
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      * @api
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-     public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
-     {
-         $this->logger->info('FlowPayment refund: paymentId=' . $payment->getId() . ', amount=' . $amount);
+    public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
+    {
+        $this->logger->info('FlowPayment refund: paymentId=' . $payment->getId() . ', amount=' . $amount);
 
-         if (!$this->canRefund()) {
-             throw new \Magento\Framework\Exception\LocalizedException(__('The refund action is not available.'));
-         }
+        if (!$this->canRefund()) {
+            throw new LocalizedException(__('The refund action is not available.'));
+        }
 
-         $flowPaymentRef = $payment->getAdditionalInformation(WebhookEvent::FLOW_PAYMENT_REFERENCE);
+        $flowPaymentRef = $payment->getAdditionalInformation(WebhookEvent::FLOW_PAYMENT_REFERENCE);
 
-         if ($flowPayment) {
-             $data = [
-                 'authorization_id' => $flowPaymentRef,
-                 'amount' => $amount,
-                 'attributes' => [
-                     'magento_payment_id' => $payment->getId()
-                 ]
-             ];
+        if ($flowPaymentRef) {
+            $data = [
+                'authorization_id' => $flowPaymentRef,
+                'amount' => $amount,
+                'attributes' => [
+                    'magento_payment_id' => $payment->getId()
+                ]
+            ];
 
-             $client = $this->_util->getFlowClient('/refunds', $this->getStore());
-             $client->setMethod(Request::METHOD_POST);
-             $client->setRawBody($this->_jsonHelper->jsonEncode($data));
+            $client = $this->session->getFlowClient('/refunds', $this->getStore());
+            $client->setMethod(Request::METHOD_POST);
+            $client->setRawBody($this->_jsonHelper->jsonEncode($data));
 
-             $response = $client->send();
+            $response = $client->send();
 
-             $content = $response->getContent();
-             $contentData = $this->_jsonHelper->jsonDecode($content);
-             $this->logger->info('Content: ' . $contentData);
+            $content = $response->getContent();
+            $contentData = $this->_jsonHelper->jsonDecode($content);
+            $this->logger->info('Content: ' . $contentData);
 
-             if ($response->isSuccess()) {
-                 $this->logger->info('Successfully refunded payment with Flow: ' . $flowPaymentRef . ', paymentId: ' . $payment->getId());
+            if ($response->isSuccess()) {
+                $this->logger->info('Successfully refunded payment with Flow: ' . $flowPaymentRef . ', paymentId: ' .
+                    $payment->getId());
+            } else {
+                $errorMsg = 'Unable to refund payment with Flow: paymentId=' . $payment->getId() . ', flowPaymentRef=' .
+                    $flowPaymentRef . ', errorCode=' . $contentData['code'] . ', declineCode=' .
+                    $contentData['decline_code'] . ', message=' . implode(", ", $contentData['messages']);
 
-             } else {
-
-                 $errorMsg = 'Unable to refund payment with Flow: paymentId=' . $payment->getId() . ', flowPaymentRef=' . $flowPaymentRef . ', errorCode=' . $contentData['code'] . ', declineCode=' . $contentData['decline_code'] . ', message=' . implode(", ", $contentData['messages']);
-
-                 $this->logger->error($errorMsg);
-                 throw new LocalizedException($errorMsg);
-             }
-
-         } else {
-             throw new LocalizedException('Payment does not contain Flow payment reference: ' . $payment->getId());
-         }
-
-         return $this;
-     }
- }
+                $this->logger->error($errorMsg);
+                throw new LocalizedException($errorMsg);
+            }
+        } else {
+            throw new LocalizedException('Payment does not contain Flow payment reference: ' . $payment->getId());
+        }
+        return $this;
+    }
+}

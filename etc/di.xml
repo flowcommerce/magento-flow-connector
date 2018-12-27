@@ -73,6 +73,11 @@
             <argument name="inventoryCenterManager" xsi:type="object">FlowCommerce\FlowConnector\Model\InventoryCenterManager\Proxy</argument>
         </arguments>
     </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand">
+        <arguments>
+            <argument name="webhookManager" xsi:type="object">FlowCommerce\FlowConnector\Model\WebhookManager\Proxy</argument>
+        </arguments>
+    </type>
 
     <!-- CLI Commands -->
     <type name="Magento\Framework\Console\CommandList">
@@ -88,7 +93,20 @@
                 <item name="flowcommerce_flowconnector_webhook_event_process" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookEventProcessCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_register_webhooks" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand</item>
                 <item name="flowcommerce_flowconnector_cron_cleanup" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CronCleanupCommand</item>
+                <item name="flowcommerce_flowconnector_webhook_update_settings" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand</item>
             </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="FlowCommerceFlowConnectorModelCryptHashSha256" type="phpseclib\Crypt\Hash">
+        <arguments>
+            <argument name="hash" xsi:type="string">sha256</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="FlowCommerce\FlowConnector\Model\WebhookManager\PayloadValidator">
+        <arguments>
+            <argument name="hash" xsi:type="object">FlowCommerceFlowConnectorModelCryptHashSha256</argument>
         </arguments>
     </type>
 

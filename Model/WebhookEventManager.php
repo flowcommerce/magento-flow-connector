@@ -3,7 +3,6 @@
 namespace FlowCommerce\FlowConnector\Model;
 
 use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent as WebhookEventResourceModel;
 use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\CollectionFactory as WebhookEventCollectionFactory;
 use Magento\Framework\Exception\LocalizedException;
@@ -37,9 +36,9 @@ class WebhookEventManager implements WebhookEventManagementInterface
     private $logger;
 
     /**
-     * @var FlowUtil
+     * @var Notification
      */
-    private $util;
+    private $notification;
 
     /**
      * @var WebhookEventCollectionFactory
@@ -58,7 +57,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
 
     /**
      * WebhookEventManager constructor.
-     * @param Util $util
+     * @param Notification $notification
      * @param JsonSerializer $jsonSerializer
      * @param Logger $logger
      * @param WebhookEventCollectionFactory $webhookEventCollectionFactory
@@ -66,14 +65,14 @@ class WebhookEventManager implements WebhookEventManagementInterface
      * @param WebhookEventResourceModel $webhookEventResourceModel
      */
     public function __construct(
-        FlowUtil $util,
+        Notification $notification,
         JsonSerializer $jsonSerializer,
         Logger $logger,
         WebhookEventCollectionFactory $webhookEventCollectionFactory,
         WebhookEventFactory $webhookEventFactory,
         WebhookEventResourceModel $webhookEventResourceModel
     ) {
-        $this->util = $util;
+        $this->notification = $notification;
         $this->jsonSerializer = $jsonSerializer;
         $this->logger = $logger;
         $this->webhookEventCollectionFactory = $webhookEventCollectionFactory;
@@ -89,7 +88,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
-        $this->util->setLogger($logger);
+        $this->notification->setLogger($logger);
     }
 
     /**

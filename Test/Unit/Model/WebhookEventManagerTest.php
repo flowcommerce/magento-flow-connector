@@ -2,6 +2,18 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
+use FlowCommerce\FlowConnector\Model\Notification;
+use FlowCommerce\FlowConnector\Model\WebhookEvent;
+use FlowCommerce\FlowConnector\Model\WebhookEventFactory;
+use FlowCommerce\FlowConnector\Model\WebhookEventManager;
+use Psr\Log\LoggerInterface;
+use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent as WebhookEventResourceModel;
+use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\CollectionFactory as WebhookEventCollectionFactory;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Psr\Log\LoggerInterface as Logger;
+use Magento\Framework\ObjectManagerInterface;
+use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\Collection as WebhookEventCollection;
+
 /**
  * Test class for WebhookEventManager.
  */
@@ -9,58 +21,109 @@ class WebhookEventManagerTest extends \PHPUnit\Framework\TestCase {
 
     const WEBHOOK_EVENT_TYPE = 'test_event_type';
 
-    protected $logger;
-    protected $jsonHelper;
-    protected $util;
-    protected $webhookEventFactory;
-    protected $storeManager;
-    protected $objectManager;
-    protected $webhookEvent;
-    protected $webhookEventManager;
+    /**
+     * @var Logger
+     */
+    private $logger;
 
-    protected function setUp() {
-        $this->logger = $this->createMock(\Psr\Log\LoggerInterface::class);
+    /**
+     * @var WebhookEventFactory
+     */
+    private $webhookEventFactory;
 
-        $this->jsonHelper = $this->createMock(\Magento\Framework\Json\Helper\Data::class);
-        $this->jsonHelper->method('jsonEncode')
-            ->will($this->returnCallback(function($data) {
+    /**
+     * @var WebhookEvent
+     */
+    private $webhookEvent;
+
+    /**
+     * @var WebhookEventManager
+     */
+    private $webhookEventManager;
+
+    /**
+     * @var WebhookEventResourceModel
+     */
+    private $webhookEventResourceModel;
+
+    /**
+     * @var JsonSerializer
+     */
+    private $jsonSerializer;
+
+    /**
+     * @var Notification
+     */
+    private $notification;
+
+    /**
+     * @var WebhookEventCollectionFactory
+     */
+    private $webhookEventCollectionFactory;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+
+    /**
+     * @var WebhookEventCollection
+     */
+    private $webhookEventCollection;
+
+    protected function setUp()
+    {
+
+        $this->notification = $this->createMock(Notification::class);
+
+        $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->jsonSerializer = $this->createMock(JsonSerializer::class);
+        $this->jsonSerializer->method('serialize')
+            ->will($this->returnCallback(function ($data) {
                 return json_encode($data);
             }));
-        $this->jsonHelper->method('jsonDecode')
-            ->will($this->returnCallback(function($data) {
+        $this->jsonSerializer->method('unserialize')
+            ->will($this->returnCallback(function ($data) {
                 return json_decode($data, true);
             }));
 
-        $this->util = $this->createMock(\FlowCommerce\FlowConnector\Model\Util::class);
-
-        $this->webhookEvent = $this->createMock(\FlowCommerce\FlowConnector\Model\WebhookEvent::class);
+        $this->webhookEvent = $this->createMock(WebhookEvent::class);
         $this->webhookEvent->expects($this->once())->method('save');
 
-        $this->webhookEventFactory = $this->createMock(\FlowCommerce\FlowConnector\Model\WebhookEventFactory::class);
+        $this->webhookEventCollection = $this->createMock(WebhookEventCollection::class);
+
+        $this->webhookEventCollectionFactory = $this->createMock(WebhookEventCollectionFactory::class);
+        $this->webhookEventCollectionFactory->method('create')->willReturn($this->webhookEventCollection);
+
+        $this->webhookEventFactory = $this->createMock(WebhookEventFactory::class);
         $this->webhookEventFactory->method('create')->willReturn($this->webhookEvent);
 
-        $this->storeManager = $this->createMock(\Magento\Store\Model\StoreManagerInterface::class);
-        $this->objectManager = $this->createMock(\Magento\Framework\ObjectManagerInterface::class);
+        $this->webhookEventResourceModel = $this->createMock(WebhookEventResourceModel::class);
 
-        $this->webhookEventManager = new \FlowCommerce\FlowConnector\Model\WebhookEventManager(
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+
+        $this->webhookEventManager = new WebhookEventManager(
+            $this->notification,
+            $this->jsonSerializer,
             $this->logger,
-            $this->jsonHelper,
-            $this->util,
+            $this->webhookEventCollectionFactory,
             $this->webhookEventFactory,
-            $this->storeManager,
-            $this->objectManager
+            $this->webhookEventResourceModel
         );
     }
 
     /**
      * Test WebhookEventManager queue.
      */
-    public function testQueue() {
+    public function testQueue()
+    {
         $payloadData = [
             'hello' => 'world',
             'timestamp' => '1/1/2018'
         ];
-        $payload = json_encode($payloadData);
+        $payload = $this->jsonSerializer->serialize($payloadData);
         $this->webhookEventManager->queue(self::WEBHOOK_EVENT_TYPE, $payload, 0);
     }
 

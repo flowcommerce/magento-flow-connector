@@ -12,7 +12,7 @@ use FlowCommerce\FlowConnector\Model\Configuration;
 /**
  * Command to register webhooks with Flow.
  */
-class WebhookRegisterWebhooksCommand extends BaseCommand
+class WebhookUpdateSettingsCommand extends BaseCommand
 {
     /**
      * @var WebhookManager
@@ -25,7 +25,7 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
     private $configuration;
 
     /**
-     * WebhookRegisterWebhooksCommand constructor.
+     * WebhookUpdateSettingsCommand constructor.
      * @param AppState $appState
      * @param Registry $registry
      * @param WebhookManager $webhookManager
@@ -44,7 +44,7 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:webhook-register-webhooks')
+        $this->setName('flow:flow-connector:webhook-update-settings')
             ->setDescription('Register webhooks with Flow.');
     }
 
@@ -62,12 +62,12 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
         $this->webhookManager->setLogger($logger);
         foreach ($this->configuration->getEnabledStores() as $store) {
             try {
-                $this->webhookManager->registerAllWebhooks($store->getId());
-                $output->writeln(sprintf('Successfully registered webhooks for store %d.', $store->getId()));
+                $this->webhookManager->updateWebhookSettings($store->getId());
+                $output->writeln(sprintf('Successfully updated webhook settings for store %d.', $store->getId()));
             } catch (\Exception $e) {
                 $output->writeln(
                     sprintf(
-                        'An error occurred while registering webhooks for store %d: %s.',
+                        'An error occurred while updating webhook settings for store %d: %s.',
                         $store->getId(),
                         $e->getMessage()
                     )

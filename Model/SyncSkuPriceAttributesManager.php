@@ -5,6 +5,7 @@ namespace FlowCommerce\FlowConnector\Model;
 use FlowCommerce\FlowConnector\Api\SyncSkuPriceAttributesManagementInterface;
 use FlowCommerce\FlowConnector\Model\Api\Attribute\Save as AttributeApiClientSave;
 use Magento\Framework\Exception\NoSuchEntityException;
+use FlowCommerce\FlowConnector\Model\Configuration;
 
 /**
  * Class SyncSkuPriceAttributesManager
@@ -39,21 +40,21 @@ class SyncSkuPriceAttributesManager implements SyncSkuPriceAttributesManagementI
     private $attributeApiClientSave;
 
     /**
-     * @var Util
+     * @var Configuration
      */
-    private $util;
+    private $configuration;
 
     /**
      * SyncSkuPriceAttributesManager constructor.
      * @param AttributeApiClientSave $attributeApiClientSave
-     * @param Util $util
+     * @param Configuration $configuration
      */
     public function __construct(
         AttributeApiClientSave $attributeApiClientSave,
-        Util $util
+        Configuration $configuration
     ) {
         $this->attributeApiClientSave = $attributeApiClientSave;
-        $this->util = $util;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -64,7 +65,7 @@ class SyncSkuPriceAttributesManager implements SyncSkuPriceAttributesManagementI
     {
         $isSuccess = false;
 
-        $enabled = $this->util->isFlowEnabled($storeId);
+        $enabled = $this->configuration->isFlowEnabled($storeId);
         if ($enabled) {
             $isSuccess = true;
             $priceCodes = $this->getPriceAttributeCodes();

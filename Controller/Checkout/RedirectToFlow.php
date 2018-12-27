@@ -2,19 +2,20 @@
 
 namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
+use FlowCommerce\FlowConnector\Model\Api\Session;
+use FlowCommerce\FlowConnector\Model\Configuration;
 use Magento\Framework\Controller\ResultFactory;
-use FlowCommerce\FlowConnector\Model\Util;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 
 /**
  * Controller class for redirecting to Flow's hosted checkout.
  */
-class RedirectToFlow extends \Magento\Framework\App\Action\Action {
+class RedirectToFlow extends \Magento\Framework\App\Action\Action
+{
 
     protected $logger;
     protected $jsonHelper;
     protected $flowHelper;
-    protected $util;
     protected $cart;
     protected $storeManager;
     protected $customerSession;
@@ -23,42 +24,56 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
     protected $cookieManager;
 
     /**
-    * @param \Magento\Framework\App\Action\Context $context
-    * @param \Psr\Log\LoggerInterface $logger
-    */
+     * RedirectToFlow constructor.
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
+     * @param \FlowCommerce\FlowConnector\Helper\Data $flowHelper
+     * @param \Magento\Checkout\Model\Cart $cart
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
+     * @param Configuration $configuration
+     */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \FlowCommerce\FlowConnector\Helper\Data $flowHelper,
-        \FlowCommerce\FlowConnector\Model\Util $util,
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Checkout\Model\Session $checkoutSession,
         \Magento\Customer\Api\AddressRepositoryInterface $addressRepository,
-        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
+        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
+        Configuration $configuration
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
         $this->flowHelper = $flowHelper;
-        $this->util = $util;
         $this->cart = $cart;
         $this->storeManager = $storeManager;
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
         $this->addressRepository = $addressRepository;
         $this->cookieManager = $cookieManager;
+        $this->configuration = $configuration;
         parent::__construct($context);
     }
 
     /**
-    * Redirects to Flow checkout
-    *
-    * The Flow experience can be set by passing in the "country" URL param.
-    *
-    * @return void
-    */
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
+     * Redirects to Flow checkout
+     * The Flow experience can be set by passing in the "country" URL param.
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface|void
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function execute()
     {
         $url = null;
@@ -77,14 +92,17 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
     }
 
     /**
-    * Returns the full Flow checkout url with the specified items.
-    * https://docs.flow.io/checkout/checkout
-    *
-    * @param items List of items for checkout
-    * @param country Country code for the experience
-    */
-    private function getCheckoutUrlWithCart($items, $country = null) {
-        $url = $this->util->getFlowCheckoutUrl($this->storeManager->getStore()->getId()) . '?';
+     * Returns the full Flow checkout url with the specified items.
+     * https://docs.flow.io/checkout/checkout
+     * @param $items
+     * @param null $country
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getCheckoutUrlWithCart($items, $country = null)
+    {
+        $url = $this->configuration->getFlowCheckoutUrl($this->storeManager->getStore()->getId()) . '?';
 
         // Additional custom attributes to pass through hosted checkout
         $attribs = [];
@@ -97,7 +115,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
             $params['country'] = $country;
         }
 
-        if ($flowSessionId = $this->cookieManager->getCookie(Util::FLOW_SESSION_COOKIE)) {
+        if ($flowSessionId = $this->cookieManager->getCookie(Session::FLOW_SESSION_COOKIE)) {
             $params['flow_session_id'] = $flowSessionId;
         }
 
@@ -117,7 +135,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
 
                 $ctr = 0;
-                foreach($shippingAddress->getStreet() as $street) {
+                foreach ($shippingAddress->getStreet() as $street) {
                     $params['destination[streets][' . $ctr . ']'] = $street;
                     $ctr += 1;
                 }
@@ -135,14 +153,14 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action {
 
         // Add cart items
         $ctr = 0;
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $params['items[' . $ctr . '][number]'] = $item->getSku();
             $params['items[' . $ctr . '][quantity]'] = $item->getQty();
             $ctr += 1;
         }
 
         // Add custom attributes
-        foreach($attribs as $k => $v) {
+        foreach ($attribs as $k => $v) {
             $params['attributes[' . $k . ']'] = $v;
         }
 

@@ -9,7 +9,7 @@ use FlowCommerce\FlowConnector\Model\Sync\CatalogSync as Subject;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save as FlowSaveItemApi;
 use FlowCommerce\FlowConnector\Model\SyncSku;
 use FlowCommerce\FlowConnector\Model\SyncSkuManager;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
+use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as GuzzleClient;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateProductsWithCategories;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
@@ -106,10 +106,10 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
     private $syncSkuManager;
 
     /**
-     * @var FlowUtil
+     * @var GuzzleClient
      */
-    private $util;
-    
+    private $guzzleClient;
+
     /**
      * @var UrlBuilder
      */
@@ -147,7 +147,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->productMetaData = $this->objectManager->create(ProductMetaData::class);
         $this->localeResolver = $this->objectManager->create(LocaleResolver::class);
-        $this->util = $this->objectManager->create(FlowUtil::class);
+        $this->guzzleClient = $this->objectManager->create(GuzzleClient::class);
         $this->storeManager = $this->objectManager->create(StoreManager::class);
         $this->syncSkuCollection = $this->objectManager->create(SyncSkuCollection::class);
         $this->syncSkuManager = $this->objectManager->create(SyncSkuManager::class);
@@ -318,7 +318,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 'Failed asserting that shipment_type matches'
             );
             $this->assertEquals(
-                $this->util->getFlowClientUserAgent(),
+                $this->guzzleClient->getFlowClientUserAgent(),
                 $jsonRequest->attributes->user_agent,
                 'Failed asserting that user_agent matches'
             );

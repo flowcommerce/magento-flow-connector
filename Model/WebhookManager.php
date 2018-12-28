@@ -97,6 +97,7 @@ class WebhookManager implements WebhookManagementInterface
     private $payloadValidator;
 
     /**
+     * WebhookEventManager constructor.
      * WebhookManager constructor.
      * @param Notification $notification
      * @param Logger $logger

@@ -1,19 +1,19 @@
 <?php
 
-namespace FlowCommerce\FlowConnector\Controller\Experience;
+namespace FlowCommerce\FlowConnector\Controller\Session;
 
 use FlowCommerce\FlowConnector\Model\Api\Session;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\Redirect;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
  * Controller class that sets experience and add cookie to add flow session cookie with experience information,
  * overrides current session.
  */
-class SetSession extends Action
+class Set extends Action
 {
-
     const EXPERIENCE_PARAM_KEY = 'flow_experience';
 
     /**
@@ -26,6 +26,12 @@ class SetSession extends Action
      */
     private $session;
 
+    /**
+     * Set constructor.
+     * @param Context $context
+     * @param Logger $logger
+     * @param Session $session
+     */
     public function __construct(
         Context $context,
         Logger $logger,
@@ -37,12 +43,20 @@ class SetSession extends Action
     }
 
     /**
-     * Set experience based on url
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface|void
+     * Set experience based on url then redirect to referrer or base URL
+     *
+     * @see \Magento\Store\App\Response\Redirect::_getUrl
+     * @return \Magento\Framework\App\ResponseInterface|Redirect|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
         $this->session->setFlowSessionData($this->getExperienceFromUrl());
+
+        /** @var Redirect $resultRedirect */
+        $resultRedirect = $this->resultRedirectFactory->create();
+        $resultRedirect->setRefererOrBaseUrl();
+
+        return $resultRedirect;
     }
 
     /**

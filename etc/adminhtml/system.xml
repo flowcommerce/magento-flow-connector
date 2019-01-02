@@ -33,14 +33,21 @@
                     </depends>
                     <frontend_class>required-entry</frontend_class>
                 </field>
-                <field id="invoice_event" translate="label" type="select" sortOrder="4" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="redirect_enabled" translate="label" type="select" sortOrder="4" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Redirect to Flow Checkout</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="invoice_event" translate="label" type="select" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Create Invoice</label>
                     <source_model>FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="invoice_email" translate="label" type="select" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="invoice_email" translate="label" type="select" sortOrder="6" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Send invoice email</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
@@ -48,14 +55,14 @@
                         <field id="invoice_event" separator=",">1,2</field>
                     </depends>
                 </field>
-                <field id="shipment_event" translate="label" type="select" sortOrder="6" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="shipment_event" translate="label" type="select" sortOrder="7" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Create Shipment</label>
                     <source_model>FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="shipment_email" translate="label" type="select" sortOrder="7" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="shipment_email" translate="label" type="select" sortOrder="8" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Send shipment email</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>

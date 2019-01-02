@@ -2,18 +2,21 @@
 
 namespace FlowCommerce\FlowConnector\Controller\Session;
 
-use FlowCommerce\FlowConnector\Model\Api\Session;
+use FlowCommerce\FlowConnector\Model\SessionManager;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\Redirect;
 use Psr\Log\LoggerInterface as Logger;
+use Exception;
 
 /**
- * Controller class that sets experience and add cookie to add flow session cookie with experience information,
- * overrides current session.
+ * Controller class that sets Flow experience and overrides current session if there is any.
  */
-class Set extends Action
+class Start extends Action
 {
+    /**
+     * Experience query parameter
+     */
     const EXPERIENCE_PARAM_KEY = 'flow_experience';
 
     /**
@@ -22,23 +25,23 @@ class Set extends Action
     private $logger;
 
     /**
-     * @var Session
+     * @var SessionManager
      */
-    private $session;
+    private $sessionManager;
 
     /**
      * Set constructor.
      * @param Context $context
      * @param Logger $logger
-     * @param Session $session
+     * @param SessionManager $sessionManager
      */
     public function __construct(
         Context $context,
         Logger $logger,
-        Session $session
+        SessionManager $sessionManager
     ) {
         $this->logger = $logger;
-        $this->session = $session;
+        $this->sessionManager = $sessionManager;
         parent::__construct($context);
     }
 
@@ -50,7 +53,11 @@ class Set extends Action
      */
     public function execute()
     {
-        $this->session->setFlowSessionData($this->getExperienceFromUrl());
+        try {
+            $this->sessionManager->startFlowSession($this->getExperienceFromUrl());
+        } catch (Exception $e) {
+            $this->logger->error(sprintf('Unable to start Flow Session due to %s', $e->getMessage()));
+        }
 
         /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();

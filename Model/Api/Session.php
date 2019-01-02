@@ -3,7 +3,6 @@
 namespace FlowCommerce\FlowConnector\Model\Api;
 
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as GuzzleHttpFactory;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
@@ -26,9 +25,14 @@ class Session
     const COOKIE_DURATION = 86400;
 
     /**
-     * Sessions url
+     * URL stub for starting new session
      */
-    const URL_STUB_PREFIX = 'sessions/';
+    const START_URL_STUB_PREFIX = '/sessions/organizations/';
+
+    /**
+     * URL stub for fetching session data
+     */
+    const GET_URL_STUB_PREFIX = '/sessions/';
 
     /**
      * Name of Flow session cookie
@@ -143,72 +147,59 @@ class Session
 
     /**
      * Returns array of current session data
+     * @param $sessionId
+     * @return array|null
+     * @throws NoSuchEntityException
      */
-    public function getFlowSessionData()
+    public function getFlowSessionData($sessionId)
     {
-        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
-        $contents = null;
-        if ($sessionId) {
-            $url = $this->getFlowApiSessionEndpoint() . $sessionId;
-            $client = $this->guzzleHttpClientFactory->create();
-            $response = $client->get($url);
-            $contents = $this->jsonSerializer->unserialize($response->getBody());
-        }
+        $url = $this->urlBuilder->getFlowApiEndpointWithoutOrganization(self::GET_URL_STUB_PREFIX) . $sessionId;
+        $client = $this->guzzleHttpClientFactory->create();
+        $response = $client->get($url);
+        $contents = $this->jsonSerializer->unserialize($response->getBody());
         return $contents;
     }
 
     /**
      * Set flow session
      * @param null $country
+     * @return array|null
+     * @throws NoSuchEntityException
      */
-    public function setFlowSessionData($country = null)
+    public function startFlowSession($country = null)
     {
+        $result = null;
+
         //Add country to body if set
         $body = [];
         if ($country) {
             $body = ['country' => $country];
         }
-        $this->logger->info('Setting Flow Session');
+        $this->logger->info('Starting new Flow Session');
 
         /** @var GuzzleClient $client */
         $client = $this->guzzleHttpClientFactory->create();
 
-        try {
-            $url = $this->getFlowApiSessionEndpoint() . 'organizations/' .
-                $this->auth->getFlowOrganizationId($this->getCurrentStoreId());
+        $url = $this->getFlowApiSessionEndpoint();
 
-            $response = $client->post($url, [
-                'auth' => $this->auth->getAuthHeader($this->getCurrentStoreId()),
-                'body' => $this->jsonSerializer->serialize($body)
-            ]);
-            $responseBody = $this->jsonSerializer->unserialize($response->getBody());
-            $sessionId = $responseBody['id'];
-            if ($sessionId && $sessionId !== '') {
-                $cookieMeta = $this->cookieMetadataFactory
-                    ->createPublicCookieMetadata()
-                    ->setDuration(self::COOKIE_DURATION)
-                    ->setPath('/')
-                    ->setDomain($this->sessionManagerInterface->getCookieDomain())
-                    ->setHttpOnly(false);
+        $response = $client->post($url, [
+            'auth' => $this->auth->getAuthHeader($this->getCurrentStoreId()),
+            'body' => $this->jsonSerializer->serialize($body)
+        ]);
+        $result = $this->jsonSerializer->unserialize($response->getBody());
 
-                $this->cookieManagerInterface->setPublicCookie(
-                    self::FLOW_SESSION_COOKIE,
-                    $sessionId,
-                    $cookieMeta
-                );
-            }
-        } catch (LocalizedException $exception) {
-            $this->logger->info('Flow session not created');
-        }
+        return $result;
     }
 
     /**
      * Returns the Flow API Session endpoint with the specified url stub.
      * @return string
+     * @throws NoSuchEntityException
      */
     private function getFlowApiSessionEndpoint()
     {
-        return UrlBuilder::FLOW_API_BASE_ENDPOINT . self::URL_STUB_PREFIX;
+        return $this->urlBuilder->getFlowApiEndpointWithoutOrganization(self::START_URL_STUB_PREFIX)
+            .$this->auth->getFlowOrganizationId($this->getCurrentStoreId());
     }
 
     /**

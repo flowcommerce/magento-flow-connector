@@ -125,4 +125,16 @@
     <type name="Magento\Quote\Model\QuoteValidator">
         <plugin name="flowcommerce_flowconnector_quote_validator" type="FlowCommerce\FlowConnector\Plugin\Magento\Quote\Model\QuoteValidator"/>
     </type>
+
+    <!-- Add custom session -->
+    <virtualType name="FlowCommerce\FlowConnector\Model\Session\Storage" type="Magento\Framework\Session\Storage">
+        <arguments>
+            <argument name="namespace" xsi:type="string">flowcommerce_flowconnector_session</argument>
+        </arguments>
+    </virtualType>
+    <type name="FlowCommerce\FlowConnector\Model\Session">
+        <arguments>
+            <argument name="storage" xsi:type="object">FlowCommerce\FlowConnector\Model\Session\Storage</argument>
+        </arguments>
+    </type>
 </config>

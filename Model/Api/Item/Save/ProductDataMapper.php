@@ -2,7 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Model\Api\Item\Save;
 
-use FlowCommerce\FlowConnector\Model\Api\Session;
 use \FlowCommerce\FlowConnector\Model\SyncSku;
 use \Magento\Catalog\Api\Data\ProductInterface;
 use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
@@ -25,7 +24,8 @@ use \Magento\Store\Model\App\Emulation as AppEmulation;
 use \Magento\Store\Model\StoreManagerInterface as StoreManager;
 use \Magento\Store\Model\ScopeInterface as StoreScope;
 use \Psr\Log\LoggerInterface as Logger;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
+use FlowCommerce\FlowConnector\Model\Configuration;
 
 /**
  * Class ProductDataMapper
@@ -127,10 +127,15 @@ class ProductDataMapper
     private $productMetaData;
 
     /**
-     * CatalogSync constructor.
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
+     * ProductDataMapper constructor.
      * @param Logger $logger
      * @param JsonSerializer $jsonSerializer
-     * @param FlowUtil $util
+     * @param GuzzleClient $guzzleClient
      * @param StoreManager $storeManager
      * @param LinkManagement $linkManagement
      * @param CategoryCollectionFactory $categoryCollectionFactory
@@ -143,6 +148,7 @@ class ProductDataMapper
      * @param ProductRepository $productRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param ProductMetaData $productMetadata
+     * @param Configuration $configuration
      */
     public function __construct(
         Logger $logger,
@@ -159,7 +165,8 @@ class ProductDataMapper
         ProductFactory $productFactory,
         ProductRepository $productRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        ProductMetaData $productMetadata
+        ProductMetaData $productMetadata,
+        Configuration $configuration
     ) {
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
@@ -176,6 +183,7 @@ class ProductDataMapper
         $this->productRepository = $productRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->productMetaData = $productMetadata;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -463,7 +471,7 @@ class ProductDataMapper
         $data['product_id'] = $product->getId();
 
         // Add user agent
-        $data['user_agent'] = $this->guzzleClient->getFlowClientUserAgent();
+        $data['user_agent'] = $this->configuration->getFlowClientUserAgent();
 
         // Add magento version
         $data['magento_version'] = $this->getMagentoVersion();

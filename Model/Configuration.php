@@ -42,9 +42,6 @@ class Configuration
     // Timeout for Flow http client
     const FLOW_CLIENT_TIMEOUT = 30;
 
-    // Number of seconds to delay before retrying
-    const FLOW_CLIENT_RETRY_DELAY = 30;
-
     // User agent for connecting to Flow
     const HTTP_USERAGENT = 'Flow-M2';
 
@@ -227,5 +224,14 @@ class Configuration
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * Returns the Flow Client user agent
+     * @return string
+     */
+    public function getFlowClientUserAgent()
+    {
+        return self::HTTP_USERAGENT . '-' . $this->getModuleVersion();
     }
 }

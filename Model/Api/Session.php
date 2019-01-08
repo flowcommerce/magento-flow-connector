@@ -3,8 +3,8 @@
 namespace FlowCommerce\FlowConnector\Model\Api;
 
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as GuzzleHttpFactory;
-use \Magento\Framework\Stdlib\CookieManagerInterface;
-use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 
 /**
  * Class Session

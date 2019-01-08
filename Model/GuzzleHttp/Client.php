@@ -10,6 +10,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Module\ModuleListInterface as ModuleList;
 use Magento\Store\Model\StoreManager;
 use Zend\Http\Client\Adapter\Exception\RuntimeException;
+use Zend\Http\Client as HttpClient;
 use Zend\Http\ClientFactory as HttpClientFactory;
 use Zend\Http\Request;
 use Psr\Log\LoggerInterface as Logger;
@@ -23,16 +24,22 @@ class Client extends GuzzleClient
 {
     /**
      * Timeout for Flow http client
+     *
+     * @deprecated
      */
     const FLOW_CLIENT_TIMEOUT = 30;
 
     /**
      * Number of seconds to delay before retrying
+     *
+     * @deprecated
      */
     const FLOW_CLIENT_RETRY_DELAY = 30;
 
     /**
      * Static portion of HTTP User-Agent
+     *
+     * @deprecated
      */
     const HTTP_USERAGENT = 'Flow-M2';
 
@@ -119,6 +126,8 @@ class Client extends GuzzleClient
 
     /**
      * Returns the Flow Client user agent
+     *
+     * @deprecated 1.1.5
      * @return string
      */
     public function getFlowClientUserAgent()
@@ -128,9 +137,11 @@ class Client extends GuzzleClient
 
     /**
      * Returns a Zend Client preconfigured for the Flow API.
+     *
+     * @deprecated 1.1.5
      * @param string $urlStub
      * @param int|null $storeId
-     * @return Client
+     * @return HttpClient
      * @throws NoSuchEntityException
      */
     public function getFlowClient($urlStub, $storeId = null)
@@ -152,9 +163,11 @@ class Client extends GuzzleClient
 
     /**
      * Returns Zend client instance
+     *
+     * @deprecated 1.1.5
      * @param $url
      * @param $userAgent
-     * @return Client
+     * @return HttpClient
      */
     private function getHttpClient($url, $userAgent)
     {
@@ -169,7 +182,9 @@ class Client extends GuzzleClient
 
     /**
      * Wrapper function to retry on timeout for http client send().
-     * @param Client $client
+     *
+     * @deprecated 1.1.5
+     * @param HttpClient $client
      * @param int|null $numRetries
      * @return mixed
      */
@@ -191,6 +206,8 @@ class Client extends GuzzleClient
 
     /**
      * Returns the ID of the current store
+     *
+     * @deprecated 1.1.5
      * @return int
      * @throws NoSuchEntityException
      */

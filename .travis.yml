@@ -25,13 +25,13 @@ matrix:
     env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_flow
   - php: 7.1
     env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=1
-    if: type=pull_request AND branch=master
+    if: branch=master
   - php: 7.1
     env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=2
-    if: type=pull_request AND branch=master
+    if: branch=master
   - php: 7.1
     env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=3
-    if: type=pull_request AND branch=master
+    if: branch=master
 cache:
   apt: true
   directories:

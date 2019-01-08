@@ -58,8 +58,7 @@ use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
 use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use \Magento\Sales\Model\Order\Shipment\Track;
-use FlowCommerce\FlowConnector\Model\Configuration;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Model class for storing a Flow webhook event.

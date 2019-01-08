@@ -5,7 +5,7 @@ namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Api\Attribute\Save as AttributeApiClientSave;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use FlowCommerce\FlowConnector\Model\SyncSkuPriceAttributesManager as Subject;
 use GuzzleHttp\Psr7\Response as HttpResponse;

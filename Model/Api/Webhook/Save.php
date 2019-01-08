@@ -5,7 +5,7 @@ namespace FlowCommerce\FlowConnector\Model\Api\Webhook;
 use Exception;
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
 use Magento\Framework\Exception\NoSuchEntityException;

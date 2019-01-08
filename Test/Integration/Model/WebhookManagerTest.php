@@ -8,7 +8,7 @@ use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Delete as WebhookApiClientDelete;
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Get as WebhookApiClientGet;
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Save as WebhookApiClientSave;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use FlowCommerce\FlowConnector\Model\WebhookManager as Subject;
 use FlowCommerce\FlowConnector\Model\WebhookManager\EndpointsConfiguration as WebhookEndpointsConfig;

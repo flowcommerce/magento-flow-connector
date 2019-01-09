@@ -113,11 +113,11 @@ class SessionManager implements SessionManagementInterface
     public function getFlowSessionData()
     {
         $flowSessionData = $this->session->getFlowSessionData();
-        if(!$flowSessionData) {
+        if (!$flowSessionData) {
             $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
             if ($sessionId) {
                 $flowSessionData = $this->sessionApiClient->getFlowSessionData($sessionId);
-                if($flowSessionData) {
+                if ($flowSessionData) {
                     $this->session->setFlowSessionData($flowSessionData);
                 }
             }
@@ -138,7 +138,7 @@ class SessionManager implements SessionManagementInterface
     public function startFlowSession($country)
     {
         $flowSessionData = $this->sessionApiClient->startFlowSession($country);
-        if($flowSessionData && isset($flowSessionData['id']) && $flowSessionData['id']) {
+        if ($flowSessionData && isset($flowSessionData['id']) && $flowSessionData['id']) {
             $cookieMeta = $this->cookieMetadataFactory
                 ->createPublicCookieMetadata()
                 ->setDuration(self::COOKIE_DURATION)
@@ -169,7 +169,7 @@ class SessionManager implements SessionManagementInterface
         $quote = $this->checkoutSession->getQuote();
 
         $items = $quote->getItems();
-        if(!$items) {
+        if (!$items) {
             return null;
         }
 
@@ -237,5 +237,17 @@ class SessionManager implements SessionManagementInterface
 
         $url = $url . http_build_query($params);
         return $url;
+    }
+
+    /**
+     * Get session experience country
+     * @return string|null $country
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getSessionExperienceCountry()
+    {
+        $sessionData = $this->getFlowSessionData();
+        $country = isset($sessionData['experience']['country']) ? $sessionData['experience']['country'] : null;
+        return $country;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Controller\Webhooks;
 
+use FlowCommerce\FlowConnector\Model\Configuration;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
@@ -17,6 +18,7 @@ use FlowCommerce\FlowConnector\Model\WebhookManager\PayloadValidator;
  */
 abstract class Base extends \Magento\Framework\App\Action\Action
 {
+
     /**
      * @var LoggerInterface
      */
@@ -43,6 +45,11 @@ abstract class Base extends \Magento\Framework\App\Action\Action
     private $payloadValidator;
 
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * Base constructor.
      * @param Context $context
      * @param LoggerInterface $logger
@@ -50,6 +57,7 @@ abstract class Base extends \Magento\Framework\App\Action\Action
      * @param ManagerInterface $eventManager
      * @param WebhookEventManager $webhookEventManager
      * @param PayloadValidator $payloadValidator
+     * @param Configuration $configuration
      */
     public function __construct(
         Context $context,
@@ -57,35 +65,40 @@ abstract class Base extends \Magento\Framework\App\Action\Action
         ResponseInterface $response,
         ManagerInterface $eventManager,
         WebhookEventManager $webhookEventManager,
-        PayloadValidator $payloadValidator
+        PayloadValidator $payloadValidator,
+        Configuration $configuration
     ) {
         $this->logger = $logger;
         $this->response = $response;
         $this->eventManager = $eventManager;
         $this->webhookEventManager = $webhookEventManager;
         $this->payloadValidator = $payloadValidator;
+        $this->configuration = $configuration;
         parent::__construct($context);
     }
 
     /**
-    * Returns the event type for the webhook.
-    */
+     * Returns the event type for the webhook.
+     */
     abstract public function getEventType();
 
     /**
-     * Process webhook.
-     *
-     * @return void
+     * Process webhook
+     * @return ResponseInterface|\Magento\Framework\Controller\ResultInterface
      * @throws NotFoundException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException|\Exception
      */
     public function execute()
     {
-        $payload = $this->getRequest()->getContent();
-        $xFlowSignatureHeader = $this->getRequest()->getHeader('X-Flow-Signature', '');
 
-        if(!$this->payloadValidator->validate($xFlowSignatureHeader, $payload)) {
-            $this->logger->warning(sprintf('X-Flow-Signature not valid for %s', $this->getEventType()));
-            throw new NotFoundException(__('Page not found.'));
+        $payload = $this->getRequest()->getContent();
+
+        if ($this->configuration->isWebhookValidationEnabled()) {
+            $xFlowSignatureHeader = $this->getRequest()->getHeader('X-Flow-Signature', '');
+            if (!$this->payloadValidator->validate($xFlowSignatureHeader, $payload)) {
+                $this->logger->warning(sprintf('X-Flow-Signature not valid for %s', $this->getEventType()));
+                throw new NotFoundException(__('Page not found.'));
+            }
         }
 
         $storeId = $this->getRequest()->getParam('storeId');

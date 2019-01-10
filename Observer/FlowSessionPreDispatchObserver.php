@@ -53,7 +53,8 @@ class FlowSessionPreDispatchObserver implements ObserverInterface
     {
         $request = $observer->getRequest();
         try {
-            if ($experience = $this->getExperienceFromUrl($request) !== null) {
+            $experience = $this->getExperienceFromUrl($request);
+            if ($experience !== null) {
                 $this->sessionManager->startFlowSession($experience);
             }
         } catch (\Exception $e) {
@@ -64,7 +65,7 @@ class FlowSessionPreDispatchObserver implements ObserverInterface
     /**
      * Get experience from URL
      * @param RequestInterface $request
-     * @return bool|string
+     * @return null|string
      */
     private function getExperienceFromUrl(RequestInterface $request)
     {

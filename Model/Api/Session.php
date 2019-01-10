@@ -153,7 +153,7 @@ class Session
 
     /**
      * Set flow session
-     * @param null $country
+     * @param null|string $country
      * @return array|null
      * @throws NoSuchEntityException
      */

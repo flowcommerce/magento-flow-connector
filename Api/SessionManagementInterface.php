@@ -21,4 +21,11 @@ interface SessionManagementInterface
      * @param $country
      */
     public function startFlowSession($country);
+  
+    /**
+     * Get session experience country
+     *
+     * @return string|null $country
+     */
+    public function getSessionExperienceCountry();
 }

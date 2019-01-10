@@ -21,6 +21,9 @@ class Configuration
     // Store configuration key for Flow Enabled
     const FLOW_ENABLED = 'flowcommerce/flowconnector/enabled';
 
+    // Store configuration key for Redirect to Flow Checkout
+    const FLOW_REDIRECT_ENABLED = 'flowcommerce/flowconnector/redirect_enabled';
+
     // Store configuration key for Flow Invoice Event
     const FLOW_INVOICE_EVENT = 'flowcommerce/flowconnector/invoice_event';
 
@@ -104,6 +107,23 @@ class Configuration
             $storeId = $this->getCurrentStoreId();
         }
         return (bool) $this->scopeConfig->getValue(self::FLOW_ENABLED, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
+     * Returns true if Redirect to Flow Checkout is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isRedirectEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_REDIRECT_ENABLED,
+            ScopeInterface::SCOPE_STORE, $storeId
+        );
     }
 
     /**

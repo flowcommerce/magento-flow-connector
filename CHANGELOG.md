@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.5
+- Refactor functionality then deprecate Util class.
+- Add webhook verification feature (on by default).
+- Add feature to redirect regular Magento checkout to Flow checkout (off by default).
+- Add support for triggering core Magento test suite when merging to master using CLI in addition to Github UI.
+
 ## 1.1.4
 
 - Fix Travis when building against Git tags.

@@ -34,9 +34,9 @@ class InventoryCenterManager implements InventoryCenterManagementInterface
     private $flowCentersApiClient;
 
     /**
-     * @var Util
+     * @var Configuration
      */
-    private $flowUtil;
+    private $configuration;
 
     /**
      * @var LoggerInterface
@@ -60,7 +60,7 @@ class InventoryCenterManager implements InventoryCenterManagementInterface
      * @param LoggerInterface $logger
      * @param ScopeConfig $scopeConfig
      * @param StoreManager $storeManager
-     * @param Util $util
+     * @param Configuration $configuration
      */
     public function __construct(
         ConfigWriter $configWriter,
@@ -68,11 +68,11 @@ class InventoryCenterManager implements InventoryCenterManagementInterface
         LoggerInterface $logger,
         ScopeConfig $scopeConfig,
         StoreManager $storeManager,
-        Util $util
+        Configuration $configuration
     ) {
         $this->configWriter = $configWriter;
         $this->flowCentersApiClient = $flowCentersApiClient;
-        $this->flowUtil = $util;
+        $this->configuration = $configuration;
         $this->logger = $logger;
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
@@ -88,7 +88,7 @@ class InventoryCenterManager implements InventoryCenterManagementInterface
                 $storeIds = [];
                 /** @var StoreInterface $store */
                 foreach ($this->storeManager->getStores() as $store) {
-                    if ($this->flowUtil->isFlowEnabled($store->getId())) {
+                    if ($this->configuration->isFlowEnabled($store->getId())) {
                         array_push($storeIds, $store->getId());
                         $this->logger->info('Including products from store: ' . $store->getName() .
                             ' [id=' . $store->getId() . ']');
@@ -100,7 +100,7 @@ class InventoryCenterManager implements InventoryCenterManagementInterface
             }
 
             foreach ($storeIds as $storeId) {
-                if ($this->flowUtil->isFlowEnabled($storeId)) {
+                if ($this->configuration->isFlowEnabled($storeId)) {
                     $centers = $this->flowCentersApiClient->execute($storeId);
                     if (count($centers)) {
                         $defaultCenterKey = array_shift($centers);

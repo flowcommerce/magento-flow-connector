@@ -5,7 +5,6 @@ namespace FlowCommerce\FlowConnector\Model;
 use FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface;
 use FlowCommerce\FlowConnector\Exception\WebhookException;
 use FlowCommerce\FlowConnector\Model\OrderFactory as FlowOrderFactory;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEventManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\AbstractModel;
@@ -59,6 +58,7 @@ use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
 use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use \Magento\Sales\Model\Order\Shipment\Track;
+use GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -249,9 +249,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     protected $webhookEventManager;
 
     /**
-     * @var FlowUtil
+     * @var GuzzleClient
      */
-    protected $flowUtil;
+    protected $guzzleClient;
 
     /**
      * @var OrderPaymentRepositoryInterface
@@ -291,6 +291,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private $trackFactory;
 
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
@@ -320,7 +325,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param WebhookEventManager $webhookEventManager
      * @param FlowShippingMethod $flowShippingMethod
      * @param OrderSender $orderSender
-     * @param Util $flowUtil
+     * @param GuzzleClient $guzzleClient
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
      * @param FilterBuilder $filterBuilder
      * @param InvoiceService $invoiceService
@@ -329,6 +334,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param ShipmentNotifier $shipmentNotifier
      * @param InvoiceSender $invoiceSender
      * @param TrackFactory $trackFactory
+     * @param Configuration $configuration
      * @param AbstractResource|null $resource
      * @param ResourceCollection|null $resourceCollection
      * @param array $data
@@ -362,7 +368,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         WebhookEventManager $webhookEventManager,
         FlowShippingMethod $flowShippingMethod,
         OrderSender $orderSender,
-        FlowUtil $flowUtil,
+        GuzzleClient $guzzleClient,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
         FilterBuilder $filterBuilder,
         InvoiceService $invoiceService,
@@ -371,6 +377,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ShipmentNotifier $shipmentNotifier,
         InvoiceSender $invoiceSender,
         TrackFactory $trackFactory,
+        Configuration $configuration,
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
         array $data = []
@@ -408,7 +415,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->flowShippingMethod = $flowShippingMethod;
         $this->orderSender = $orderSender;
         $this->webhookEventManager = $webhookEventManager;
-        $this->flowUtil = $flowUtil;
+        $this->guzzleClient = $guzzleClient;
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->filterBuilder = $filterBuilder;
         $this->invoiceService = $invoiceService;
@@ -417,6 +424,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->convertOrder = $convertOrder;
         $this->shipmentNotifier = $shipmentNotifier;
         $this->trackFactory = $trackFactory;
+        $this->configuration = $configuration;
     }
 
     protected function _construct()
@@ -526,7 +534,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $data = $this->getPayloadData();
 
         $urlStub = '/orders/allocations/' . $data['id'];
-        $client = $this->flowUtil->getFlowClient($urlStub, $this->getStoreId());
+        $client = $this->guzzleClient->getFlowClient($urlStub, $this->getStoreId());
         $response = $client->send();
 
         if ($response->isSuccess()) {
@@ -560,7 +568,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $data = $this->getPayloadData();
 
         $urlStub = '/authorizations?id=' . $data['id'];
-        $client = $this->flowUtil->getFlowClient($urlStub, $this->getStoreId());
+        $client = $this->guzzleClient->getFlowClient($urlStub, $this->getStoreId());
         $response = $client->send();
 
         if ($response->isSuccess()) {
@@ -634,7 +642,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         }
 
                         // Create invoice
-                        if ($this->flowUtil->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
+                        if ($this->configuration->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
                             && $order->canInvoice()
                         ) {
                             $this->invoiceOrder($order);
@@ -1137,7 +1145,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 && $order->getFlowConnectorOrderReady()
             ) {
                 // Create invoice
-                if ($this->flowUtil->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED
+                if ($this->configuration->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_SHIPPED
                     && ($orderPayment = $order->getPayment() && $order->canInvoice())
                 ) {
                     // Create invoice
@@ -1145,7 +1153,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
 
                 // Create shipment
-                if ($this->flowUtil->getFlowShipmentEvent($order->getStoreId()) == ShipmentEvent::VALUE_WHEN_SHIPPED
+                if ($this->configuration->getFlowShipmentEvent($order->getStoreId()) == ShipmentEvent::VALUE_WHEN_SHIPPED
                     && $order->canShip()) {
                     $shipment = $this->shipOrder($order);
                     if ($shipment && $shipment->getId()) {
@@ -1442,7 +1450,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             ->addObject($invoice)
             ->addObject($invoice->getOrder());
         $transaction->save();
-        if ($this->flowUtil->sendInvoiceEmail()) {
+        if ($this->configuration->sendInvoiceEmail()) {
             $this->invoiceSender->send($invoice);
         }
         $order->addStatusHistoryComment(sprintf('Invoice #%s created', $invoice->getIncrementId()))
@@ -1529,7 +1537,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $shipment->save();
         $shipment->getOrder()->save();
         // Send shipment email
-        if ($this->flowUtil->sendShipmentEmail()) {
+        if ($this->configuration->sendShipmentEmail()) {
             $this->shipmentNotifier->notify($shipment);
         }
         $shipment->save();

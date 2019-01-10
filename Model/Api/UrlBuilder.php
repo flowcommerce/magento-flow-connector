@@ -41,4 +41,14 @@ class UrlBuilder
     {
         return self::FLOW_API_BASE_ENDPOINT . $this->auth->getFlowOrganizationId($storeId) . $urlStub;
     }
+
+    /**
+     * Returns the Flow API endpoint with the specified url stub but without organization specified.
+     * @param string $urlStub
+     * @return string
+     */
+    public function getFlowApiEndpointWithoutOrganization($urlStub)
+    {
+        return self::FLOW_API_BASE_ENDPOINT . $urlStub;
+    }
 }

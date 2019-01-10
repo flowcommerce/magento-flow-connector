@@ -41,6 +41,12 @@ interface WebhookManagementInterface
     public function registerWebhook($storeId, $endpointStub, $events);
 
     /**
+     * Update webhook settings
+     * @param $storeId
+     */
+    public function updateWebhookSettings($storeId);
+
+    /**
      * Sets Logger
      * @param Logger $logger
      */

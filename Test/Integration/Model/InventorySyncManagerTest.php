@@ -8,7 +8,7 @@ use FlowCommerce\FlowConnector\Model\Api\Inventory\Updates as InventoryUpdatesAp
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateProductsWithCategories;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
 use Magento\TestFramework\Helper\Bootstrap;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\Promise\Promise as HttpPromise;
 use GuzzleHttp\Psr7\Response as HttpResponse;

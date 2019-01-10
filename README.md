@@ -57,6 +57,7 @@ flow:flow-connector:inventory-sync-process        Process inventory sync queue a
 flow:flow-connector:inventory-sync-queue-all      Queue all products for sync to Flow inventory.
 flow:flow-connector:webhook-event-process         Process Flow webhook events.
 flow:flow-connector:webhook-register-webhooks     Register webhooks with Flow.
+flow:flow-connector:webhook-update-settings       Create secret for webhook payload verification
 
 ```
 

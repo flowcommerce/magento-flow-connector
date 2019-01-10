@@ -141,6 +141,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      */
     public function testOrderPlaced()
     {
+
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks();
 

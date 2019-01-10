@@ -8,7 +8,7 @@ use FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface;
 use FlowCommerce\FlowConnector\Api\InventorySyncRepositoryInterface as InventorySyncRepository;
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterfaceFactory as InventorySyncFactory;
 use FlowCommerce\FlowConnector\Model\Api\Inventory\Updates as InventoryUpdatesApiClient;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
+use FlowCommerce\FlowConnector\Model\Configuration as Configuration;
 use GuzzleHttp\Exception\ClientException;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
@@ -97,9 +97,9 @@ class InventorySyncManager implements InventorySyncManagementInterface
     private $storeManager = null;
 
     /**
-     * @var FlowUtil
+     * @var Configuration
      */
-    private $util = null;
+    private $configuration = null;
 
     /** @var ProductRepositoryInterface  */
     private $productRepository;
@@ -117,7 +117,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
      * @param StockItemCriteriaFactory $stockItemCriteriaFactory
      * @param StockItemRepository $stockItemRepository
      * @param StoreManager $storeManager
-     * @param FlowUtil $util
+     * @param Configuration $configuration
      * @param ProductRepositoryInterface $productRepository
      */
     public function __construct(
@@ -132,7 +132,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         StockItemCriteriaFactory $stockItemCriteriaFactory,
         StockItemRepository $stockItemRepository,
         StoreManager $storeManager,
-        FlowUtil $util,
+        Configuration $configuration,
         ProductRepositoryInterface $productRepository
     ) {
         $this->dateTimeFactory = $dateTimeFactory;
@@ -146,7 +146,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         $this->storeManager = $storeManager;
         $this->stockItemCriteriaFactory = $stockItemCriteriaFactory;
         $this->stockItemRepository = $stockItemRepository;
-        $this->util = $util;
+        $this->configuration = $configuration;
         $this->productRepository = $productRepository;
     }
 
@@ -284,7 +284,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         $storeIds = [];
         /** @var Store $store */
         foreach ($this->storeManager->getStores() as $store) {
-            if ($this->util->isFlowEnabled($store->getStoreId())) {
+            if ($this->configuration->isFlowEnabled($store->getStoreId())) {
                 array_push($storeIds, $store->getStoreId());
                 $this->logger->info('Including stock items from store: ' . $store->getName() .
                     ' [id=' . $store->getStoreId() . ']');
@@ -360,7 +360,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
      */
     public function enqueueStockItem(StockItemInterface $stockItem)
     {
-        if (!$this->util->isFlowEnabled()) {
+        if (!$this->configuration->isFlowEnabled()) {
             return;
         }
 
@@ -372,7 +372,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         if ($existingStockItems->getTotalCount() == 0) {
             $inventorySync = $this->inventorySyncFactory->create();
             $inventorySync->setProductId($stockItem->getProductId());
-            $inventorySync->setStoreId($this->util->getCurrentStoreId());
+            $inventorySync->setStoreId($this->getCurrentStoreId());
             $inventorySync->setStatus(InventorySync::STATUS_NEW);
             $this->inventorySyncRepository->save($inventorySync);
         }
@@ -459,7 +459,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
 
                     foreach ($inventorySyncs->getItems() as $inventorySync) {
                         $product = $inventorySync->getProduct();
-                        if (!$this->util->isFlowEnabled($inventorySync->getStoreId())) {
+                        if (!$this->configuration->isFlowEnabled($inventorySync->getStoreId())) {
                             $this->markInventorySyncAsError($inventorySync, 'Flow module is disabled.');
                             continue;
                         }
@@ -531,5 +531,15 @@ class InventorySyncManager implements InventorySyncManagementInterface
             $this->markInventorySyncAsDone($inventorySync);
             unset($this->inventorySyncsToUpdate[$index]);
         }
+    }
+
+    /**
+     * Returns the ID of the current store
+     * @return int
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getCurrentStoreId()
+    {
+        return $this->storeManager->getStore()->getId();
     }
 }

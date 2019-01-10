@@ -2,7 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Console\Command;
 
-use FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand as Subject;
+use FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand as Subject;
 use FlowCommerce\FlowConnector\Model\WebhookManager;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -10,10 +10,10 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * Test class for @see \FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand
+ * Test class for @see \FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand
  * @package FlowCommerce\FlowConnector\Test\Integration\Console\Command
  */
-class WebhookRegisterWebhooksCommandTest extends TestCase
+class WebhookUpdateSettingsCommandTest extends TestCase
 {
     /**
      * @var ObjectManager
@@ -44,7 +44,7 @@ class WebhookRegisterWebhooksCommandTest extends TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->webhookManager = $this->createPartialMock(
             WebhookManager::class,
-            ['registerAllWebhooks', 'setLogger']
+            ['updateWebhookSettings', 'setLogger']
         );
         $this->subject = $this->objectManager->create(Subject::class, [
             'webhookManager' => $this->webhookManager
@@ -63,7 +63,7 @@ class WebhookRegisterWebhooksCommandTest extends TestCase
     {
         $this->webhookManager
             ->expects($this->once())
-            ->method('registerAllWebhooks')
+            ->method('updateWebhookSettings')
             ->with(1)
             ->willReturn(true);
         $this->tester->execute([]);

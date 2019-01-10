@@ -12,11 +12,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
         $controller->execute();
     }
 
-    public function testAllocationUpserteedV2() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AllocationUpsertedV2');
-        $controller->execute();
-    }
-
     public function testAuthorizationDeletedV2() {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
         $controller->execute();
@@ -47,8 +42,8 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
         $controller->execute();
     }
 
-    public function testOrderUpsertedV2() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderUpsertedV2');
+    public function testOrderPlaced() {
+        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced');
         $controller->execute();
     }
 

@@ -5,8 +5,7 @@ namespace FlowCommerce\FlowConnector\Model\Api\Item;
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\SyncSku;
-use FlowCommerce\FlowConnector\Model\Util;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\PoolFactory as HttpPoolFactory;
 use GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
@@ -54,11 +53,6 @@ class Delete
     private $urlBuilder;
 
     /**
-     * @var Util|null
-     */
-    private $util = null;
-
-    /**
      * Delete constructor.
      * @param Auth $auth
      * @param HttpClientFactory $httpClientFactory
@@ -74,8 +68,7 @@ class Delete
         HttpPoolFactory $httpPoolFactory,
         HttpRequestFactory $httpRequestFactory,
         Logger $logger,
-        UrlBuilder $urlBuilder,
-        Util $util
+        UrlBuilder $urlBuilder
     ) {
         $this->auth = $auth;
         $this->httpClientFactory = $httpClientFactory;
@@ -83,7 +76,6 @@ class Delete
         $this->httpRequestFactory = $httpRequestFactory;
         $this->logger = $logger;
         $this->urlBuilder = $urlBuilder;
-        $this->util = $util;
     }
 
     /**

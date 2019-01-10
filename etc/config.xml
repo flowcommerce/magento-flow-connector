@@ -27,6 +27,7 @@
                 <invoice_email>1</invoice_email>
                 <shipment_event>1</shipment_event>
                 <shipment_email>1</shipment_email>
+                <webhook_validation>1</webhook_validation>
             </flowconnector>
         </flowcommerce>
     </default>

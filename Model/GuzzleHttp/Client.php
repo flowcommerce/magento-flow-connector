@@ -114,7 +114,6 @@ class Client extends GuzzleClient
         $this->configuration = $configuration;
         $this->storeManager = $storeManager;
         $this->auth = $auth;
-
         $this->moduleVersion = $this->moduleList
             ->getOne('FlowCommerce_FlowConnector')['setup_version'];
 

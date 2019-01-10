@@ -36,6 +36,9 @@ class Configuration
     // Store configuration key for Flow Invoice Event
     const FLOW_SHIPMENT_SEND_EMAIL = 'flowcommerce/flowconnector/shipment_email';
 
+    // Store configuration key for webhook validation
+    const FLOW_WEBHOOK_VALIDATION = 'flowcommerce/flowconnector/webhook_validation';
+
     // Flow checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
 
@@ -253,5 +256,24 @@ class Configuration
     public function getFlowClientUserAgent()
     {
         return self::HTTP_USERAGENT . '-' . $this->getModuleVersion();
+    }
+
+    /**
+     * Returns true if webhook validation is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isWebhookValidationEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_WEBHOOK_VALIDATION,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 }

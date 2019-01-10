@@ -7,6 +7,7 @@ use FlowCommerce\FlowConnector\Api\InventoryCenterManagementInterface as Invento
 use FlowCommerce\FlowConnector\Api\SyncSkuPriceAttributesManagementInterface as SyncSkuPriceAttributesManager;
 use FlowCommerce\FlowConnector\Api\WebhookManagementInterface as WebhookManager;
 
+
 /**
  * Class IntegrationManager
  * @package FlowCommerce\FlowConnector\Model
@@ -52,6 +53,8 @@ class IntegrationManager implements IntegrationManagementInterface
         $resultInventoryCenterFetchKeys = $this->inventoryCenterManager->fetchInventoryCenterKeys([$storeId]);
         $resultSyncSkuPriceAttributes = $this->syncSkuPriceAttributesManager->createPriceAttributesInFlow($storeId);
         $resultWebhookRegistration = $this->webhookManager->registerAllWebhooks($storeId);
-        return $resultInventoryCenterFetchKeys && $resultSyncSkuPriceAttributes && $resultWebhookRegistration;
+        $resultWebhookSettings = $this->webhookManager->updateWebhookSettings($storeId);
+        return $resultInventoryCenterFetchKeys && $resultSyncSkuPriceAttributes
+            && $resultWebhookRegistration && $resultWebhookSettings;
     }
 }

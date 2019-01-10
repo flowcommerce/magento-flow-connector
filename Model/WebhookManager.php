@@ -6,12 +6,14 @@ use FlowCommerce\FlowConnector\Api\WebhookManagementInterface;
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Delete as WebhookDeleteApiClient;
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Get as WebhookGetApiClient;
 use FlowCommerce\FlowConnector\Model\Api\Webhook\Save as WebhookSaveApiClient;
+use FlowCommerce\FlowConnector\Model\Api\Webhook\Settings as WebhookSettingsApiClient;
 use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
 use FlowCommerce\FlowConnector\Model\WebhookManager\EndpointsConfiguration as WebhookEndpointConfig;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Psr\Log\LoggerInterface as Logger;
+use FlowCommerce\FlowConnector\Model\WebhookManager\PayloadValidator;
 
 /**
  * Class WebhookEventManager
@@ -19,6 +21,20 @@ use Psr\Log\LoggerInterface as Logger;
  */
 class WebhookManager implements WebhookManagementInterface
 {
+    /**
+     * Webhook retry max attempts
+     */
+    const RETRY_MAX_ATTEMPTS = 6;
+
+    /**
+     * Webhook retry sleep time in ms
+     */
+    const RETRY_SLEEP_MS = 6000;
+
+    /**
+     * Webhook sleep time in ms
+     */
+    const SLEEP_MS = 0;
 
     /**
      * @var Logger
@@ -71,7 +87,18 @@ class WebhookManager implements WebhookManagementInterface
     private $configuration;
 
     /**
+     * @var WebhookSettingsApiClient
+     */
+    private $webhookSettingsApiClient;
+
+    /**
+     * @var PayloadValidator
+     */
+    private $payloadValidator;
+
+    /**
      * WebhookEventManager constructor.
+     * WebhookManager constructor.
      * @param Notification $notification
      * @param Logger $logger
      * @param StoreManager $storeManager
@@ -82,6 +109,8 @@ class WebhookManager implements WebhookManagementInterface
      * @param CatalogSync $catalogSync
      * @param InventoryCenterManager $inventoryCenterManager
      * @param Configuration $configuration
+     * @param WebhookSettingsApiClient $webhookSettingsApiClient
+     * @param PayloadValidator $payloadValidator
      */
     public function __construct(
         Notification $notification,
@@ -93,7 +122,9 @@ class WebhookManager implements WebhookManagementInterface
         WebhookSaveApiClient $webhookSaveApiClient,
         CatalogSync $catalogSync,
         InventoryCenterManager $inventoryCenterManager,
-        Configuration $configuration
+        Configuration $configuration,
+        WebhookSettingsApiClient $webhookSettingsApiClient,
+        PayloadValidator $payloadValidator
     ) {
         $this->notification = $notification;
         $this->logger = $logger;
@@ -105,6 +136,8 @@ class WebhookManager implements WebhookManagementInterface
         $this->catalogSync = $catalogSync;
         $this->inventoryCenterManager = $inventoryCenterManager;
         $this->configuration = $configuration;
+        $this->webhookSettingsApiClient = $webhookSettingsApiClient;
+        $this->payloadValidator = $payloadValidator;
     }
 
     /**
@@ -180,6 +213,22 @@ class WebhookManager implements WebhookManagementInterface
         $url = $baseUrl . 'flowconnector/webhooks/' . $endpointStub . '?storeId=' . $storeId;
         $this->logger->info('Registering webhook events ' . var_export($events, true) . ': ' . $url);
         $this->webhookSaveApiClient->execute($storeId, $url, $events);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @throws NoSuchEntityException
+     */
+    public function updateWebhookSettings($storeId)
+    {
+        $this->logger->info(sprintf('Updating webhook settings for store %s', $storeId));
+        return $this->webhookSettingsApiClient->execute(
+            $storeId,
+            $this->payloadValidator->getSecret(),
+            self::RETRY_MAX_ATTEMPTS,
+            self::RETRY_SLEEP_MS,
+            self::SLEEP_MS
+        );
     }
 
     /**

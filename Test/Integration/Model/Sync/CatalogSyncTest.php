@@ -9,9 +9,9 @@ use FlowCommerce\FlowConnector\Model\Sync\CatalogSync as Subject;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save as FlowSaveItemApi;
 use FlowCommerce\FlowConnector\Model\SyncSku;
 use FlowCommerce\FlowConnector\Model\SyncSkuManager;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
+use GuzzleHttp\Client as GuzzleClient;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateProductsWithCategories;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use \GuzzleHttp\Promise\Promise as HttpPromise;
 use \GuzzleHttp\Psr7\Response as HttpResponse;
@@ -23,6 +23,7 @@ use Magento\Framework\Locale\Resolver as LocaleResolver;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\TestFramework\Helper\Bootstrap;
+use FlowCommerce\FlowConnector\Model\Configuration;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\Sync\CatalogSync
@@ -106,14 +107,19 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
     private $syncSkuManager;
 
     /**
-     * @var FlowUtil
+     * @var GuzzleClient
      */
-    private $util;
-    
+    private $guzzleClient;
+
     /**
      * @var UrlBuilder
      */
     private $urlBuilder;
+
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
     /**
      * Sets up for tests
@@ -147,7 +153,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->productMetaData = $this->objectManager->create(ProductMetaData::class);
         $this->localeResolver = $this->objectManager->create(LocaleResolver::class);
-        $this->util = $this->objectManager->create(FlowUtil::class);
+        $this->guzzleClient = $this->objectManager->create(GuzzleClient::class);
         $this->storeManager = $this->objectManager->create(StoreManager::class);
         $this->syncSkuCollection = $this->objectManager->create(SyncSkuCollection::class);
         $this->syncSkuManager = $this->objectManager->create(SyncSkuManager::class);
@@ -155,6 +161,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
             'flowSaveItemApi' => $this->flowSaveItemApi,
         ]);
         $this->urlBuilder = $this->objectManager->create(UrlBuilder::class);
+        $this->configuration = $this->objectManager->create(Configuration::class);
     }
 
     /**
@@ -318,7 +325,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 'Failed asserting that shipment_type matches'
             );
             $this->assertEquals(
-                $this->util->getFlowClientUserAgent(),
+                $this->configuration->getFlowClientUserAgent(),
                 $jsonRequest->attributes->user_agent,
                 'Failed asserting that user_agent matches'
             );

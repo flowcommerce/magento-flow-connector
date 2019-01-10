@@ -7,7 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\State as AppState;
 use Magento\Framework\Registry;
 use FlowCommerce\FlowConnector\Api\WebhookManagementInterface as WebhookManager;
-use Magento\Store\Model\StoreManagerInterface as StoreManager;
+use FlowCommerce\FlowConnector\Model\Configuration;
 
 /**
  * Command to register webhooks with Flow.
@@ -20,26 +20,26 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
     private $webhookManager;
 
     /**
-     * @var StoreManager
+     * @var Configuration
      */
-    private $storeManager;
+    private $configuration;
 
     /**
      * WebhookRegisterWebhooksCommand constructor.
      * @param AppState $appState
      * @param Registry $registry
      * @param WebhookManager $webhookManager
-     * @param StoreManager $storeManager
+     * @param Configuration $configuration
      */
     public function __construct(
         AppState $appState,
         Registry $registry,
         WebhookManager $webhookManager,
-        StoreManager $storeManager
+        Configuration $configuration
     ) {
         parent::__construct($appState, $registry);
         $this->webhookManager = $webhookManager;
-        $this->storeManager = $storeManager;
+        $this->configuration = $configuration;
     }
 
     public function configure()
@@ -60,14 +60,14 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
         $logger = new FlowConsoleLogger($output);
         $this->initCLI();
         $this->webhookManager->setLogger($logger);
-        foreach ($this->storeManager->getStores() as $store) {
+        foreach ($this->configuration->getEnabledStores() as $store) {
             try {
                 $this->webhookManager->registerAllWebhooks($store->getId());
-                $output->writeln(sprintf('Successfully initialized Flow configuration for store %d.', $store->getId()));
+                $output->writeln(sprintf('Successfully registered webhooks for store %d.', $store->getId()));
             } catch (\Exception $e) {
                 $output->writeln(
                     sprintf(
-                        'An error occurred while initializing Flow configuration for store %d: %s.',
+                        'An error occurred while registering webhooks for store %d: %s.',
                         $store->getId(),
                         $e->getMessage()
                     )

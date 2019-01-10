@@ -5,8 +5,7 @@ namespace FlowCommerce\FlowConnector\Model\Api\Attribute;
 use Exception;
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
-use FlowCommerce\FlowConnector\Model\Util;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -135,11 +134,6 @@ class Save
     private $urlBuilder;
 
     /**
-     * @var Util|null
-     */
-    private $util = null;
-
-    /**
      * Delete constructor.
      * @param Auth $auth
      * @param HttpClientFactory $httpClientFactory
@@ -147,7 +141,6 @@ class Save
      * @param JsonSerializer $jsonSerializer
      * @param Logger $logger
      * @param UrlBuilder $urlBuilder
-     * @param Util $util
      */
     public function __construct(
         Auth $auth,
@@ -155,8 +148,7 @@ class Save
         HttpRequestFactory $httpRequestFactory,
         JsonSerializer $jsonSerializer,
         Logger $logger,
-        UrlBuilder $urlBuilder,
-        Util $util
+        UrlBuilder $urlBuilder
     ) {
         $this->auth = $auth;
         $this->httpClientFactory = $httpClientFactory;
@@ -164,7 +156,6 @@ class Save
         $this->jsonSerializer = $jsonSerializer;
         $this->logger = $logger;
         $this->urlBuilder = $urlBuilder;
-        $this->util = $util;
     }
 
     /**

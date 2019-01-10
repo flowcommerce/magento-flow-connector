@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * Test class for FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand
+ * Test class for @see \FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand
  * @package FlowCommerce\FlowConnector\Test\Integration\Console\Command
  */
 class WebhookRegisterWebhooksCommandTest extends TestCase
@@ -54,6 +54,10 @@ class WebhookRegisterWebhooksCommandTest extends TestCase
 
     /**
      * @magentoDbIsolation enabled
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/default_center_key center-1
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/api_token 0123456789
+     * @magentoConfigFixture current_store flowcommerce/flowconnector/organization_id 0123456789
      */
     public function testSuccessfulExecution()
     {

@@ -6,8 +6,7 @@ use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Api\Inventory\Updates\InventoryDataMapper;
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface as InventorySync;
-use FlowCommerce\FlowConnector\Model\Util;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\PoolFactory as HttpPoolFactory;
 use GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
@@ -71,11 +70,6 @@ class Updates
     private $urlBuilder;
 
     /**
-     * @var Util
-     */
-    private $util;
-
-    /**
      * Save constructor.
      * @param Auth $auth
      * @param JsonSerializer $jsonSerializer
@@ -85,7 +79,6 @@ class Updates
      * @param Logger $logger
      * @param InventoryDataMapper $inventoryDataMapper
      * @param UrlBuilder $urlBuilder
-     * @param Util $util
      */
     public function __construct(
         Auth $auth,
@@ -95,8 +88,7 @@ class Updates
         JsonSerializer $jsonSerializer,
         Logger $logger,
         InventoryDataMapper $inventoryDataMapper,
-        UrlBuilder $urlBuilder,
-        Util $util
+        UrlBuilder $urlBuilder
     ) {
         $this->auth = $auth;
         $this->jsonSerializer = $jsonSerializer;
@@ -106,7 +98,6 @@ class Updates
         $this->logger = $logger;
         $this->inventoryDataMapper = $inventoryDataMapper;
         $this->urlBuilder = $urlBuilder;
-        $this->util = $util;
     }
 
     /**

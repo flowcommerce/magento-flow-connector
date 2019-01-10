@@ -7,8 +7,9 @@ use FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterface as SearchR
 use FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface as SyncSkuManager;
 use FlowCommerce\FlowConnector\Model\Api\Item\Delete as FlowDeleteItemApi;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save as FlowSaveItemApi;
+use FlowCommerce\FlowConnector\Model\Configuration;
+use FlowCommerce\FlowConnector\Model\Notification;
 use FlowCommerce\FlowConnector\Model\SyncSku;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use GuzzleHttp\Psr7\Response as HttpResponse;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
@@ -65,28 +66,35 @@ class CatalogSync
     private $syncSkusToUpdate = [];
 
     /**
-     * @var FlowUtil
+     * @var Configuration
      */
-    private $util;
+    private $configuration;
+
+    /**
+     * @var Notification
+     */
+    private $notification;
 
     /**
      * CatalogSync constructor.
      * @param Logger $logger
      * @param JsonSerializer $jsonSerializer
-     * @param FlowUtil $util
+     * @param Configuration $configuration
      * @param EventManager $eventManager
      * @param SyncSkuManager $syncSkuManager
      * @param FlowSaveItemApi $flowSaveItemApi
      * @param FlowDeleteItemApi $flowDeleteItemApi
+     * @param Notification $notification
      */
     public function __construct(
         Logger $logger,
         JsonSerializer $jsonSerializer,
-        FlowUtil $util,
+        Configuration $configuration,
         EventManager $eventManager,
         SyncSkuManager $syncSkuManager,
         FlowSaveItemApi $flowSaveItemApi,
-        FlowDeleteItemApi $flowDeleteItemApi
+        FlowDeleteItemApi $flowDeleteItemApi,
+        Notification $notification
     ) {
         $this->eventManager = $eventManager;
         $this->flowDeleteItemApi = $flowDeleteItemApi;
@@ -94,7 +102,8 @@ class CatalogSync
         $this->jsonSerializer = $jsonSerializer;
         $this->logger = $logger;
         $this->syncSkuManager = $syncSkuManager;
-        $this->util = $util;
+        $this->configuration = $configuration;
+        $this->notification = $notification;
     }
 
     /**
@@ -171,7 +180,7 @@ class CatalogSync
 
                     foreach ($syncSkus->getItems() as $syncSku) {
                         $product = $syncSku->getProduct();
-                        if (!$this->util->isFlowEnabled($syncSku->getStoreId())) {
+                        if (!$this->configuration->isFlowEnabled($syncSku->getStoreId())) {
                             $this->syncSkuManager->markSyncSkuAsError($syncSku, 'Flow module is disabled.');
                             continue;
                         }
@@ -284,6 +293,6 @@ class CatalogSync
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
-        $this->util->setLogger($logger);
+        $this->notification->setLogger($logger);
     }
 }

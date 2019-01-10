@@ -2,85 +2,64 @@
 
 namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
-use FlowCommerce\FlowConnector\Model\Api\Session;
-use FlowCommerce\FlowConnector\Model\Configuration;
+use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
-use FlowCommerce\FlowConnector\Model\WebhookEvent;
+use FlowCommerce\FlowConnector\Model\SessionManager;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Controller class for redirecting to Flow's hosted checkout.
  */
 class RedirectToFlow extends \Magento\Framework\App\Action\Action
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    protected $logger;
-    protected $jsonHelper;
-    protected $flowHelper;
-    protected $cart;
-    protected $storeManager;
-    protected $customerSession;
-    protected $checkoutSession;
-    protected $addressRepository;
-    protected $cookieManager;
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var SessionManager
+     */
+    private $sessionManager;
 
     /**
      * RedirectToFlow constructor.
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
-     * @param \FlowCommerce\FlowConnector\Helper\Data $flowHelper
-     * @param \Magento\Checkout\Model\Cart $cart
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param \Magento\Checkout\Model\Session $checkoutSession
-     * @param \Magento\Customer\Api\AddressRepositoryInterface $addressRepository
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
-     * @param Configuration $configuration
+     * @param Context $context
+     * @param LoggerInterface $logger
+     * @param StoreManagerInterface $storeManager
+     * @param SessionManager $sessionManager
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \FlowCommerce\FlowConnector\Helper\Data $flowHelper,
-        \Magento\Checkout\Model\Cart $cart,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\Checkout\Model\Session $checkoutSession,
-        \Magento\Customer\Api\AddressRepositoryInterface $addressRepository,
-        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
-        Configuration $configuration
+        Context $context,
+        LoggerInterface $logger,
+        StoreManagerInterface $storeManager,
+        SessionManager $sessionManager
     ) {
         $this->logger = $logger;
-        $this->jsonHelper = $jsonHelper;
-        $this->flowHelper = $flowHelper;
-        $this->cart = $cart;
         $this->storeManager = $storeManager;
-        $this->customerSession = $customerSession;
-        $this->checkoutSession = $checkoutSession;
-        $this->addressRepository = $addressRepository;
-        $this->cookieManager = $cookieManager;
-        $this->configuration = $configuration;
+        $this->sessionManager = $sessionManager;
         parent::__construct($context);
     }
 
     /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
      * Redirects to Flow checkout
      * The Flow experience can be set by passing in the "country" URL param.
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface|void
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @return ResultInterface
+     * @throws NoSuchEntityException
+     * @throws LocalizedException
      */
     public function execute()
     {
-        $url = null;
-
-        if ($items = $this->cart->getQuote()->getItems()) {
-            $url = $this->getCheckoutUrlWithCart($items, $this->getRequest()->getParam("country"));
-        } else {
+        if (!($url = $this->sessionManager->getCheckoutUrlWithCart($this->getRequest()->getParam("country")))) {
             $url = $this->storeManager->getStore()->getBaseUrl();
         }
 
@@ -89,84 +68,5 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $result->setUrl($url);
         return $result;
-    }
-
-    /**
-     * Returns the full Flow checkout url with the specified items.
-     * https://docs.flow.io/checkout/checkout
-     * @param $items
-     * @param null $country
-     * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    private function getCheckoutUrlWithCart($items, $country = null)
-    {
-        $url = $this->configuration->getFlowCheckoutUrl($this->storeManager->getStore()->getId()) . '?';
-
-        // Additional custom attributes to pass through hosted checkout
-        $attribs = [];
-        $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
-        $attribs[WebhookEvent::QUOTE_ID] = $this->checkoutSession->getQuote()->getId();
-
-        $params = [];
-
-        if ($country) {
-            $params['country'] = $country;
-        }
-
-        if ($flowSessionId = $this->cookieManager->getCookie(Session::FLOW_SESSION_COOKIE)) {
-            $params['flow_session_id'] = $flowSessionId;
-        }
-
-        if ($customer = $this->customerSession->getCustomer()) {
-            $attribs[WebhookEvent::CUSTOMER_ID] = $customer->getId();
-            $attribs[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
-
-            // Add customer info
-            $params['customer[name][first]'] = $customer->getFirstname();
-            $params['customer[name][last]'] = $customer->getLastname();
-            $params['customer[number]'] = $customer->getId();
-            $params['customer[phone]'] = $customer->getTelephone();
-            $params['customer[email]'] = $customer->getEmail();
-
-            // Add default shipping address
-            if ($shippingAddressId = $customer->getDefaultShipping()) {
-                $shippingAddress = $this->addressRepository->getById($shippingAddressId);
-
-                $ctr = 0;
-                foreach ($shippingAddress->getStreet() as $street) {
-                    $params['destination[streets][' . $ctr . ']'] = $street;
-                    $ctr += 1;
-                }
-                $params['destination[city]'] = $shippingAddress->getCity();
-                $params['destination[province]'] = $shippingAddress->getRegion()->getRegionCode();
-                $params['destination[postal]'] = $shippingAddress->getPostcode();
-                $params['destination[country]'] = $shippingAddress->getCountryId();
-                $params['destination[contact][name][first]'] = $shippingAddress->getFirstname();
-                $params['destination[contact][name][last]'] = $shippingAddress->getLastname();
-                $params['destination[contact][company]'] = $shippingAddress->getCompany();
-                $params['destination[contact][email]'] = $customer->getEmail();
-                $params['destination[contact][phone]'] = $shippingAddress->getTelephone();
-            }
-        }
-
-        // Add cart items
-        $ctr = 0;
-        foreach ($items as $item) {
-            $params['items[' . $ctr . '][number]'] = $item->getSku();
-            $params['items[' . $ctr . '][quantity]'] = $item->getQty();
-            $ctr += 1;
-        }
-
-        // Add custom attributes
-        foreach ($attribs as $k => $v) {
-            $params['attributes[' . $k . ']'] = $v;
-        }
-
-        $this->logger->info('CART: ' . $this->jsonHelper->jsonEncode($params));
-
-        $url = $url . http_build_query($params);
-        return $url;
     }
 }

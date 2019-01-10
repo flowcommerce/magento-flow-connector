@@ -11,7 +11,6 @@ use Magento\Store\Model\StoreManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use Magento\Framework\Session\SessionManagerInterface;
-use Magento\Framework\App\Request\Http as Request;
 
 /**
  * Class Session
@@ -85,11 +84,6 @@ class Session
     private $guzzleClient;
 
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var SessionManagerInterface
      */
     private $sessionManagerInterface;
@@ -116,7 +110,6 @@ class Session
      * @param UrlBuilder $urlBuilder
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param SessionManagerInterface $sessionManagerInterface
-     * @param Request $request
      */
     public function __construct(
         Auth $auth,
@@ -128,8 +121,7 @@ class Session
         StoreManager $storeManager,
         UrlBuilder $urlBuilder,
         CookieMetadataFactory $cookieMetadataFactory,
-        SessionManagerInterface $sessionManagerInterface,
-        Request $request
+        SessionManagerInterface $sessionManagerInterface
 
     ) {
         $this->auth = $auth;
@@ -142,7 +134,6 @@ class Session
         $this->urlBuilder = $urlBuilder;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
         $this->sessionManagerInterface = $sessionManagerInterface;
-        $this->request = $request;
     }
 
     /**

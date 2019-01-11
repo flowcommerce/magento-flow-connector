@@ -51,7 +51,7 @@ flow:flow-connector:catalog-sync-attributes-save  Saves product attributes neede
 flow:flow-connector:catalog-sync-process          Process sync skus queue and send to Flow.
 flow:flow-connector:catalog-sync-queue-all        Queue all products for sync to Flow catalog.
 flow:flow-connector:cron-cleanup                  Clean up Flow cron tasks.
-flow:flow-connector:integration-initialize        Initializes integration with flow.io. This is a wrapper for webhooks registration, attributes creation, inventory center key fetching and creating secret for webhook payload verification..
+flow:flow-connector:integration-initialize        Initializes integration with flow.io. This is a wrapper for webhooks registration, attributes creation, inventory center key fetching and creating secret for webhook payload verification.
 flow:flow-connector:inventory-center-fetch-keys   Fetches inventory center keys for all store views where flowconnector is configured.
 flow:flow-connector:inventory-sync-process        Process inventory sync queue and send to Flow.
 flow:flow-connector:inventory-sync-queue-all      Queue all products for sync to Flow inventory.

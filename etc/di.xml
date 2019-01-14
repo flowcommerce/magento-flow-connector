@@ -125,6 +125,11 @@
         <plugin name="enqueue_products_after_mass_attribute_update" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Model\Product\Action"/>
     </type>
 
+    <!-- Plugin to localize pdp prices -->
+    <type name="Magento\Catalog\Block\Product\View">
+        <plugin name="localize_pdp_prices" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Block\Product\View" sortOrder="1"/>
+    </type>
+
     <type name="Magento\Setup\Model\FixtureGenerator\ProductGenerator">
         <arguments>
             <argument name="customTableMap" xsi:type="array">

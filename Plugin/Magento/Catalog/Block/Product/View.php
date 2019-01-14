@@ -49,7 +49,7 @@ class View
      */
     public function __construct(     
         Auth $auth,
-        Util $sessionManager,
+        SessionManager $sessionManager,
         HttpClientFactory $httpClientFactory,
         UrlBuilder $urlBuilder,
         JsonSerializer $jsonSerializer

@@ -62,7 +62,7 @@ class View extends Template
     public function beautifyJson($jsonString)
     {
         try {
-            $return = '<pre>' . json_encode(json_decode($jsonString), JSON_PRETTY_PRINT) . '</pre>';
+            $return = '<pre>' . $this->escapeHtml(json_encode(json_decode($jsonString), JSON_PRETTY_PRINT)) . '</pre>';
         } catch (Exception $e) {
             $return = $jsonString;
         }

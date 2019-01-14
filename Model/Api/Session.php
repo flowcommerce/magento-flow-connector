@@ -6,7 +6,7 @@ use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as GuzzleHttpFacto
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
 use Magento\Store\Model\StoreManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;

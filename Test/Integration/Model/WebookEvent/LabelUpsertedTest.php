@@ -2,9 +2,8 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
-use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
+use FlowCommerce\FlowConnector\Model\Configuration;
 use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\CollectionFactory as WebhookEventCollectionFactory;
-use FlowCommerce\FlowConnector\Model\Util;
 use FlowCommerce\FlowConnector\Model\WebhookEvent as Subject;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
@@ -37,8 +36,8 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
      */
     private $createWebhookEventsFixture;
 
-    /** @var Util */
-    private $flowUtil;
+    /** @var Configuration */
+    private $configuration;
 
     /**
      * @var ObjectManager
@@ -84,14 +83,14 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->createWebhookEventsFixture = $this->objectManager->create(CreateWebhookEvents::class);
         $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);
-        $this->flowUtil = $this->createPartialMock(Util::class, ['getFlowInvoiceEvent']);
+        $this->configuration = $this->createPartialMock(Configuration::class, ['getFlowInvoiceEvent']);
         $this->mageOrderRepository = $this->objectManager->create(OrderRepository::class);
         $this->orderItemRepository = $this->objectManager->create(OrderItemRepository::class);
         $this->webhookEventManager = $this->objectManager->create(WebhookEventManager::class);
         $this->webhookEventCollectionFactory = $this->objectManager->create(WebhookEventCollectionFactory::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
         $this->subject = $this->objectManager->create(Subject::class, [
-            'flowUtil' => $this->flowUtil,
+            'configuration' => $this->configuration,
         ]);
     }
 

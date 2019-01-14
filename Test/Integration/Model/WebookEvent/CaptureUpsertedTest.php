@@ -2,9 +2,8 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
-use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
+use FlowCommerce\FlowConnector\Model\Configuration;
 use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\CollectionFactory as WebhookEventCollectionFactory;
-use FlowCommerce\FlowConnector\Model\Util as FlowUtil;
 use FlowCommerce\FlowConnector\Model\WebhookEvent as Subject;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
@@ -15,7 +14,6 @@ use Magento\Framework\ObjectManagerInterface as ObjectManager;
 use Magento\Sales\Model\Order;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Sales\Model\OrderRepository;
-use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Sales\Model\Order\ItemRepository as OrderItemRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
@@ -74,9 +72,9 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     private $searchCriteriaBuilder;
 
     /**
-     * @var FlowUtil|\PHPUnit_Framework_MockObject_MockObject
+     * @var Configuration|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $flowUtil;
+    private $configuration;
 
     /**
      * Sets up for tests
@@ -87,14 +85,14 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->createWebhookEventsFixture = $this->objectManager->create(CreateWebhookEvents::class);
         $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);
-        $this->flowUtil = $this->createPartialMock(FlowUtil::class, ['getFlowInvoiceEvent']);
+        $this->configuration = $this->createPartialMock(Configuration::class, ['getFlowInvoiceEvent']);
         $this->mageOrderRepository = $this->objectManager->create(OrderRepository::class);
         $this->orderItemRepository = $this->objectManager->create(OrderItemRepository::class);
         $this->webhookEventManager = $this->objectManager->create(WebhookEventManager::class);
         $this->webhookEventCollectionFactory = $this->objectManager->create(WebhookEventCollectionFactory::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
         $this->subject = $this->objectManager->create(Subject::class, [
-            'flowUtil' => $this->flowUtil,
+            'configuration' => $this->configuration,
         ]);
     }
 

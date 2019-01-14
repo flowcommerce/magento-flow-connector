@@ -155,4 +155,35 @@
             <argument name="storage" xsi:type="object">FlowCommerce\FlowConnector\Model\Session\Storage</argument>
         </arguments>
     </type>
+
+    <!-- Webhook Events and Sync Sku Admin Grids Data Sources -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="flowconnector_webhookevent_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\Grid\Collection</item>
+                <item name="flowconnector_syncsku_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Grid\Collection</item>
+                <item name="sales_order_webhookevent_grid_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\Order\WebhookEvent\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Webhook Events Grid Collection -->
+    <type name="FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">flow_connector_webhook_events</argument>
+            <argument name="eventPrefix" xsi:type="string">flowconnector_webhookevents_collection</argument>
+            <argument name="eventObject" xsi:type="string">webhookevents_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent</argument>
+        </arguments>
+    </type>
+
+    <!-- Sync Sku Grid Collection -->
+    <type name="FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">flow_connector_sync_skus</argument>
+            <argument name="eventPrefix" xsi:type="string">flowconnector_syncskus_collection</argument>
+            <argument name="eventObject" xsi:type="string">syncskus_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku</argument>
+        </arguments>
+    </type>
 </config>

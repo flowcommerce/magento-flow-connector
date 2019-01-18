@@ -20,8 +20,9 @@ define([
 
             reloadPrice: function reDrawPrices() {
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
-                    priceTemplate = mageTemplate(this.options.priceTemplate);
-
+                    priceTemplate = mageTemplate(this.options.priceTemplate),
+                    localizable = false,
+                    flowFormattedPrice = false;
                 _.each(this.cache.displayPrices, function (price, priceCode) {
                     price.final = _.reduce(price.adjustments, function (memo, amount) {
                         return memo + amount;
@@ -38,11 +39,11 @@ define([
                     var currency = flow.session.getCurrency();
                     var localizationKey = experience+country+currency;
                     var productId = this.options.productId;
-                    var flowFormattedPrice = false;
-                    var flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
-                    if (typeof(experience) == "string" &&
-                        flowLocalizedPrices != undefined
-                    ) {
+                    var flowLocalizedPrices = false;
+                    if (typeof(experience) == "string") {
+                        if (this.options.priceConfig.flow_localized_prices != undefined) {
+                            flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
+                        }
                         var price_code = REGULARPRICE;
                         switch (priceCode) {
                             case 'basePrice':
@@ -66,23 +67,34 @@ define([
                                 });
                             }
                         }
-                        if (flowLocalizedPrices[localizationKey][productId][FINALPRICE] != undefined) {
-                            if (flowLocalizedPrices[localizationKey][productId][FINALPRICE].label != undefined) {
-                                flowFormattedPrice = flowLocalizedPrices[localizationKey][productId][FINALPRICE].label;
+                        localizable = true;
+                        if (flowLocalizedPrices != false) {
+                            if (flowLocalizedPrices[localizationKey][productId][FINALPRICE] != undefined) {
+                                if (flowLocalizedPrices[localizationKey][productId][FINALPRICE].label != undefined) {
+                                    flowFormattedPrice = flowLocalizedPrices[localizationKey][productId][FINALPRICE].label;
+                                }
                             }
-                        }
-                        if (flowLocalizedPrices[localizationKey][productId][price_code] != undefined) {
-                            if (flowLocalizedPrices[localizationKey][productId][price_code].label != undefined) {
-                                flowFormattedPrice = flowLocalizedPrices[localizationKey][productId][price_code].label;
+                            if (flowLocalizedPrices[localizationKey][productId][price_code] != undefined) {
+                                if (flowLocalizedPrices[localizationKey][productId][price_code].label != undefined) {
+                                    flowFormattedPrice = flowLocalizedPrices[localizationKey][productId][price_code].label;
+                                }
                             }
                         }
                     } 
                     if (flowFormattedPrice) {
                         template = { data: { formatted: flowFormattedPrice } };
-                    } 
+                        console.log('localize BE');
+                    } else if (localizable) {
+                        priceTemplate = mageTemplate('<span data-flow-item-attribute-key="product_id" data-flow-item-attribute-value="'+productId+'"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>');
+                        console.log('localize FE init');
+                    }
 
                     $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
                 }, this);
+                if (localizable && !flowFormattedPrice) {
+                    flow.cmd('localize');
+                    console.log('localize FE trigger');
+                }
             },
         });
         return $.mage.priceBox;

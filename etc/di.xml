@@ -130,6 +130,11 @@
         <plugin name="localize_pdp_prices" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Block\Product\View" sortOrder="1"/>
     </type>
 
+    <!-- Plugin to localize plp prices -->
+    <type name="Magento\Swatches\Block\Product\Renderer\Listing\Configurable">
+        <plugin name="localize_plp_prices" type="FlowCommerce\FlowConnector\Plugin\Magento\Swatches\Block\Product\Renderer\Listing\Configurable" sortOrder="1"/>
+    </type>
+
     <type name="Magento\Setup\Model\FixtureGenerator\ProductGenerator">
         <arguments>
             <argument name="customTableMap" xsi:type="array">

@@ -15,7 +15,9 @@ define([
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
                 if (typeof(flow.session.getExperience()) == "string") {
-                    flow.optionsIndex = {};
+                    if (flow.optionsIndex == undefined) {
+                        flow.optionsIndex = {};
+                    }
                     var productId = this.options.jsonConfig.productId;
                     var newIndex = [];
                     _.each(this.options.jsonConfig.index, function (option, key) {

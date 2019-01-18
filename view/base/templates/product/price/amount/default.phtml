@@ -1,7 +1,23 @@
 <?php /** @var \Magento\Framework\Pricing\Render\Amount $block */ ?>
 
+<?php
+$priceCode = $block->getPriceType();
+$BASEPRICE = 'base_price';
+$REGULARPRICE = 'regular_price';
+$FINALPRICE = 'final_price';
+$price_code = $REGULARPRICE;
+switch ($priceCode) {
+    case 'basePrice':
+        $price_code = $BASEPRICE; 
+        break;
+
+    case 'finalPrice':
+        $price_code = $FINALPRICE; 
+        break;
+}
+?>
+
 <span class="price-container <?= /* @escapeNotVerified */ $block->getAdjustmentCssClasses() ?>"
-        data-flow-item-number="<?= /* @escapeNotVerified */ $block->getSaleableItem()->getSku() ?>"
         <?= $block->getSchema() ? ' itemprop="offers" itemscope itemtype="http://schema.org/Offer"' : '' ?>>
     <?php if ($block->getDisplayLabel()): ?>
         <span class="price-label"><?= /* @escapeNotVerified */ $block->getDisplayLabel() ?></span>
@@ -10,9 +26,8 @@
         <?= ($block->getPriceDisplayLabel()) ? 'data-label="' . $block->getPriceDisplayLabel() . $block->getPriceDisplayInclExclTaxes() . '"' : '' ?>
         data-price-amount="<?= /* @escapeNotVerified */ $block->getDisplayValue() ?>"
         data-price-type="<?= /* @escapeNotVerified */ $block->getPriceType() ?>"
-        data-flow-localize="item-price"
         class="price-wrapper <?= /* @escapeNotVerified */ $block->getPriceWrapperCss() ?>"
-    ><?= /* @escapeNotVerified */ $block->formatCurrency($block->getDisplayValue(), (bool)$block->getIncludeContainer()) ?></span>
+    ><?= /* @escapeNotVerified */ $block->formatCurrency($block->getDisplayValue(), (bool)$block->getIncludeContainer()) ?></span> 
     <?php if ($block->hasAdjustmentsHtml()): ?>
         <?= $block->getAdjustmentsHtml() ?>
     <?php endif; ?>

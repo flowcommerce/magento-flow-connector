@@ -61,7 +61,7 @@ class Configurable
         $this->jsonSerializer = $jsonSerializer;
     }
 
-    public function getFlowLocalizedPrices(\Magento\Catalog\Block\Product\Renderer\Listing\Configurable $configurable)
+    public function afterGetPricesJson(\Magento\Swatches\Block\Product\Renderer\Listing\Configurable $configurable, $result)
     {
         $ids = [];
         $product = $configurable->getProduct();
@@ -71,12 +71,13 @@ class Configurable
             $ids[] = $simple->getId();
         }
         $session = $this->sessionManager->getFlowSessionData();
-        $labelsKeyedOnExperienceCountryCurrency = false;
+        $config = $this->jsonSerializer->unserialize($result);
         // TODO verify this is the best method to validate "isSessionLocalized"
         if (isset($session['local'])) {
             $labelsKeyedOnExperienceCountryCurrency = $this->localizePrice($ids, $session);
+            $config['flow_localized_prices'] = $labelsKeyedOnExperienceCountryCurrency;
         }
-        return $this->jsonSerializer->serialize($labelsKeyedOnExperienceCountryCurrency);
+        return $this->jsonSerializer->serialize($config);
     }
 
     // TODO likely needs to be refactored into another class

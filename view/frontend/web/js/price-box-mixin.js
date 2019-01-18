@@ -43,6 +43,8 @@ define([
                     if (typeof(experience) == "string") {
                         if (this.options.priceConfig.flow_localized_prices != undefined) {
                             flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
+                        } else if (this.options.priceConfig.prices.flow_localized_prices != undefined) {
+                            flowLocalizedPrices = this.options.priceConfig.prices.flow_localized_prices;
                         }
                         var price_code = REGULARPRICE;
                         switch (priceCode) {

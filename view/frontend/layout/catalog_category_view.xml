@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<page>
-    <body>
-        <referenceBlock name="category.product.type.details.renderers">
-            <block class="FlowCommerce\FlowConnector\Plugin\Magento\Swatches\Block\Product\Renderer\Listing\Configurable" name="category.product.type.details.renderers.configurable" as="configurable" template="FlowCommerce_FlowConnector::product/listing/renderer.phtml" ifconfig="catalog/frontend/show_swatches_in_product_list" />
-        </referenceBlock>
-    </body>
-</page>

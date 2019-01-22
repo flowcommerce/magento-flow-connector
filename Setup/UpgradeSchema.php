@@ -8,6 +8,7 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
+use Magento\Quote\Setup\QuoteSetupFactory;
 use Magento\Sales\Setup\SalesSetupFactory;
 
 class UpgradeSchema implements UpgradeSchemaInterface
@@ -17,14 +18,19 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     private $salesSetupFactory = null;
 
+    /** @var QuoteSetupFactory|null */
+    private $quoteSetupFactory = null;
+
     /**
      * UpgradeSchema constructor.
      * @param SalesSetupFactory $salesSetupFactory
      */
     public function __construct(
-        SalesSetupFactory $salesSetupFactory
+        SalesSetupFactory $salesSetupFactory,
+        QuoteSetupFactory $quoteSetupFactory
     ) {
         $this->salesSetupFactory = $salesSetupFactory;
+        $this->quoteSetupFactory = $quoteSetupFactory;
     }
 
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
@@ -82,6 +88,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.1.0', '<')) {
             $this->addOrderReadyToOrder($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.1.6', '<')) {
+            $this->addFlowOrderIdToQuote($setup);
         }
 
         $installer->endSetup();
@@ -686,6 +696,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         foreach ($attributes as $attributeCode => $attributeParams) {
             $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
+        }
+    }
+
+    /**
+     * Add Flow Order Is to quote.
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    private function addFlowOrderIdToQuote(SchemaSetupInterface $setup)
+    {
+        $quoteSetup = $this->quoteSetupFactory->create();
+
+        $attributes = [
+            'flow_connector_order_number' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false],
+        ];
+
+        foreach ($attributes as $attributeCode => $attributeParams) {
+            $quoteSetup->addAttribute('quote', $attributeCode, $attributeParams);
         }
     }
 }

@@ -118,7 +118,7 @@ class SessionManager implements SessionManagementInterface
             if ($sessionId) {
                 $flowSessionData = $this->sessionApiClient->getFlowSessionData($sessionId);
                 if ($flowSessionData) {
-                    $this->session->setFlowSessionData($flowSessionData);
+                    $this->setFlowSessionData($flowSessionData);
                 }
             }
         }
@@ -249,5 +249,26 @@ class SessionManager implements SessionManagementInterface
         $sessionData = $this->getFlowSessionData();
         $country = isset($sessionData['experience']['country']) ? $sessionData['experience']['country'] : null;
         return $country;
+    }
+
+    /**
+     * Get session experience country
+     * @return string|null $country
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getSessionExperienceKey()
+    {
+        $sessionData = $this->getFlowSessionData();
+        $country = isset($sessionData['experience']['key']) ? $sessionData['experience']['key'] : null;
+        return $country;
+    }
+
+    /**
+     * Set flow session data
+     * @param $data
+     */
+    public function setFlowSessionData($data)
+    {
+        $this->session->setFlowSessionData($data);
     }
 }

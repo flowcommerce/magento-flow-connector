@@ -7,6 +7,7 @@ use \FlowCommerce\FlowConnector\Model\SessionManager;
 use \FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use \FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use \Magento\Catalog\Model\ProductRepository;
 
 class Configurable
 {
@@ -41,24 +42,32 @@ class Configurable
     private $jsonSerializer;
 
     /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
      * @param Auth $auth
      * @param SessionManager $sessionManager
      * @param HttpClientFactory $httpClientFactory
      * @param UrlBuilder $urlBuilder
      * @param JsonSerializer $jsonSerializer
+     * @param ProductRepository $productRepository
      */
     public function __construct(     
         Auth $auth,
         SessionManager $sessionManager,
         HttpClientFactory $httpClientFactory,
         UrlBuilder $urlBuilder,
-        JsonSerializer $jsonSerializer
+        JsonSerializer $jsonSerializer,
+        ProductRepository $productRepository
     ) {
         $this->auth = $auth;
         $this->sessionManager = $sessionManager;
         $this->httpClientFactory = $httpClientFactory;
         $this->urlBuilder = $urlBuilder;
         $this->jsonSerializer = $jsonSerializer;
+        $this->productRepository = $productRepository;
     }
 
     public function afterGetPricesJson(\Magento\Swatches\Block\Product\Renderer\Listing\Configurable $configurable, $result)
@@ -126,11 +135,13 @@ class Configurable
             if (!isset($labels[$localizationKey])) {
                 $labels[$localizationKey] = [];
             }
-            foreach ($contents['responses'] as $product) {
-                if (!isset($labels[$localizationKey][$product['value']])) {
-                    $labels[$localizationKey][$product['value']] = [];
+            foreach ($contents['responses'] as $item) {
+                if (!isset($labels[$localizationKey][$item['value']])) {
+                    $labels[$localizationKey][$item['value']] = [];
                 }
-                $labels[$localizationKey][$product['value']] = $product['items'][0]['local']['price_attributes'];
+                $product = $this->productRepository->getById($item['value']);
+                $item['items'][0]['local']['price_attributes']['sku'] = $product->getSku();
+                $labels[$localizationKey][$item['value']] = $item['items'][0]['local']['price_attributes'];
             } 
         }
         return $labels;

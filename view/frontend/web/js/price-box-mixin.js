@@ -40,6 +40,7 @@ define([
                     var localizationKey = experience+country+currency;
                     var productId = this.options.productId;
                     var flowLocalizedPrices = false;
+                    var sku = false;
                     if (typeof(experience) == "string") {
                         if (this.options.priceConfig.flow_localized_prices != undefined) {
                             flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
@@ -81,13 +82,21 @@ define([
                                     flowFormattedPrice = flowLocalizedPrices[localizationKey][productId][price_code].label;
                                 }
                             }
+                            if (flowLocalizedPrices[localizationKey][productId]['sku'] != undefined) {
+                                sku = flowLocalizedPrices[localizationKey][productId]['sku'];
+                            }
                         }
                     } 
                     if (flowFormattedPrice) {
                         template = { data: { formatted: flowFormattedPrice } };
                         console.log('localize BE');
                     } else if (localizable) {
-                        priceTemplate = mageTemplate('<span data-flow-item-attribute-key="product_id" data-flow-item-attribute-value="'+productId+'"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>');
+                        if (sku) {
+                            priceTemplate = mageTemplate('<span data-flow-item-number="'+sku+'"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="'+price_code+'" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>');
+                        } else {
+                            priceTemplate = mageTemplate('<span data-flow-item-attribute-key="product_id" data-flow-item-attribute-value="'+productId+'"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>');
+                        }
+
                         console.log('localize FE init');
                     }
 

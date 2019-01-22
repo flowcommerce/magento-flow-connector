@@ -96,6 +96,7 @@ class Configurable
     // TODO likely needs to be refactored into another class
     public function localizePrice($ids,$session)
     {
+        $labels = [];
         $experiences = $this->getExperiences();
         $client = $this->httpClientFactory->create();
         foreach ($experiences as $experience) {

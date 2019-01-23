@@ -66,8 +66,9 @@ define([
                         template.data.productId = this.getCurrentProductId(this.options.productId);
                         template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices);
                         template.data.flowLocalized = false;
+                        template.data.flowPriceCode = flowPriceCode;
 
-                        template = this.localizeTemplate(template, flowPriceCode, flowLocalizedPrices);
+                        template = this.localizeTemplate(template, flowLocalizedPrices);
 
                         if (!template.data.flowLocalized) {
                             priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
@@ -75,7 +76,7 @@ define([
                                 priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
                             }
                         }
-                        console.log('localize FE init ' + flowPriceCode);
+                        console.log('localize FE init ' + template.data.flowPriceCode);
                     }
 
                     $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
@@ -107,22 +108,22 @@ define([
 
             getCurrentProductSku: function (productId, flowLocalizedPrices) {
                 if (flowLocalizedPrices) {
-                    if (flowLocalizedPrices[LOCALIZATIONKEY][productId]['sku'] != undefined) {
-                        return flowLocalizedPrices[LOCALIZATIONKEY][productId]['sku'];
+                    if (flowLocalizedPrices[FLOWLOCALIZATIONKEY][productId]['sku'] != undefined) {
+                        return flowLocalizedPrices[FLOWLOCALIZATIONKEY][productId]['sku'];
                     }
                 }
                 return false;
             },
 
-            localizeTemplate: function (template, flowPriceCode, flowLocalizedPrices) {
-                if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY] != undefined) {
-                    if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY].label != undefined) {
-                        this.flowFormattedPrice = flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY].label;
+            localizeTemplate: function (template, flowLocalizedPrices) {
+                if (flowLocalizedPrices[FLOWLOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY] != undefined) {
+                    if (flowLocalizedPrices[FLOWLOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY].label != undefined) {
+                        this.flowFormattedPrice = flowLocalizedPrices[FLOWLOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY].label;
                     }
                 }
-                if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][flowPriceCode] != undefined) {
-                    if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][flowPriceCode].label != undefined) {
-                        this.flowFormattedPrice = flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][flowPriceCode].label;
+                if (flowLocalizedPrices[FLOWLOCALIZATIONKEY][template.data.productId][template.data.flowPriceCode] != undefined) {
+                    if (flowLocalizedPrices[FLOWLOCALIZATIONKEY][template.data.productId][template.data.flowPriceCode].label != undefined) {
+                        this.flowFormattedPrice = flowLocalizedPrices[FLOWLOCALIZATIONKEY][template.data.productId][template.data.flowPriceCode].label;
                     }
                 }
                 if (this.flowFormattedPrice) {

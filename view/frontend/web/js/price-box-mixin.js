@@ -9,20 +9,31 @@ define([
 
     return function (widget) {
         var globalOptions = {
-            productId: null,
-            priceConfig: null,
-            prices: {},
-            priceTemplate: '<span class="price"><%- data.formatted %></span>'
-        };
+                productId: null,
+                priceConfig: null,
+                prices: {},
+                priceTemplate: '<span class="price"><%- data.formatted %></span>',
+                flowPriceTemplateById: '<span data-flow-item-attribute-key="product_id" data-flow-item-attribute-value="<%- data.productId %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
+                flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
+            },
+            MAGENTOBASEPRICEKEY = 'basePrice',
+            MAGENTOFINALPRICEKEY = 'finalPrice', 
+            FLOWBASEPRICEKEY = 'base_price',
+            FLOWREGULARPRICEKEY = 'regular_price',
+            FLOWFINALPRICEKEY = 'final_price',
+            FLOWEXPERIENCE = flow.session.getExperience(),
+            FLOWCOUNTRY = flow.session.getCountry(),
+            FLOWCURRENCY = flow.session.getCurrency(),
+            FLOWLOCALIZATIONKEY = FLOWEXPERIENCE+FLOWCOUNTRY+FLOWCURRENCY;
 
         $.widget('mage.priceBox', widget, {
             options: globalOptions,
 
             reloadPrice: function reDrawPrices() {
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
-                    priceTemplate = mageTemplate(this.options.priceTemplate),
-                    localizable = false,
-                    flowFormattedPrice = false;
+                    priceTemplate = mageTemplate(this.options.priceTemplate);
+                this.hasFlowExperience = false;
+                this.flowFormattedPrice = false;
                 _.each(this.cache.displayPrices, function (price, priceCode) {
                     price.final = _.reduce(price.adjustments, function (memo, amount) {
                         return memo + amount;
@@ -31,81 +42,95 @@ define([
                     price.formatted = utils.formatPrice(price.final, priceFormat);
 
                     var template = { data: price };
-                    var BASEPRICE = 'base_price';
-                    var REGULARPRICE = 'regular_price';
-                    var FINALPRICE = 'final_price';
-                    var experience = flow.session.getExperience();
-                    var country = flow.session.getCountry();
-                    var currency = flow.session.getCurrency();
-                    var localizationKey = experience+country+currency;
-                    var productId = this.options.productId;
-                    var flowLocalizedPrices = false;
-                    var sku = false;
-                    if (typeof(experience) == "string") {
+                    
+                    if (typeof(FLOWEXPERIENCE) == "string") {
+                        this.hasFlowExperience = true;
+                        var flowLocalizedPrices = false,
+                            flowPriceCode = FLOWREGULARPRICEKEY;
+                        switch (priceCode) {
+                            case MAGENTOBASEPRICEKEY:
+                                flowPriceCode = FLOWBASEPRICEKEY; 
+                                break;
+
+                            case MAGENTOFINALPRICEKEY:
+                                flowPriceCode = FLOWFINALPRICEKEY;
+                                break;
+                        }
+
                         if (this.options.priceConfig.flow_localized_prices != undefined) {
                             flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
                         } else if (this.options.priceConfig.prices.flow_localized_prices != undefined) {
                             flowLocalizedPrices = this.options.priceConfig.prices.flow_localized_prices;
                         }
-                        var price_code = REGULARPRICE;
-                        switch (priceCode) {
-                            case 'basePrice':
-                                price_code = BASEPRICE; 
-                                break;
 
-                            case 'finalPrice':
-                                price_code = FINALPRICE; 
-                                break;
-                        } 
-                        if (flow.optionsIndex != undefined) {
-                            var $form = $($('form#product_addtocart_form > input[value="'+productId+'"],[name="product"]')[0].form);
-                            var atts = $form.find('input.super-attribute-select');
-                            var att1 = atts[0].value;
-                            var att2 = atts[1].value;
-                            if (att1 > 0 || att2 > 0) {
-                                _.each(flow.optionsIndex[productId], function(option, key) {
-                                    if (_.contains(option, att1) && _.contains(option, att2)) {
-                                        productId = key;
-                                    }
-                                });
-                            }
-                        }
-                        localizable = true;
-                        if (flowLocalizedPrices != false) {
-                            if (flowLocalizedPrices[localizationKey][productId][FINALPRICE] != undefined) {
-                                if (flowLocalizedPrices[localizationKey][productId][FINALPRICE].label != undefined) {
-                                    flowFormattedPrice = flowLocalizedPrices[localizationKey][productId][FINALPRICE].label;
-                                }
-                            }
-                            if (flowLocalizedPrices[localizationKey][productId][price_code] != undefined) {
-                                if (flowLocalizedPrices[localizationKey][productId][price_code].label != undefined) {
-                                    flowFormattedPrice = flowLocalizedPrices[localizationKey][productId][price_code].label;
-                                }
-                            }
-                            if (flowLocalizedPrices[localizationKey][productId]['sku'] != undefined) {
-                                sku = flowLocalizedPrices[localizationKey][productId]['sku'];
-                            }
-                        }
-                    } 
-                    if (flowFormattedPrice) {
-                        template = { data: { formatted: flowFormattedPrice } };
-                        console.log('localize BE');
-                    } else if (localizable) {
-                        if (sku) {
-                            priceTemplate = mageTemplate('<span data-flow-item-number="'+sku+'"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="'+price_code+'" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>');
-                        } else {
-                            priceTemplate = mageTemplate('<span data-flow-item-attribute-key="product_id" data-flow-item-attribute-value="'+productId+'"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>');
-                        }
+                        template.data.productId = this.getCurrentProductId(this.options.productId);
+                        template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices);
+                        template.data.flowLocalized = false;
 
-                        console.log('localize FE init');
+                        template = this.localizeTemplate(template, flowPriceCode, flowLocalizedPrices);
+
+                        if (!template.data.flowLocalized) {
+                            priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
+                            if (template.data.productSku) {
+                                priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                            }
+                        }
+                        console.log('localize FE init ' + flowPriceCode);
                     }
 
                     $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
                 }, this);
-                if (localizable && !flowFormattedPrice) {
+                if (this.hasFlowExperience && !this.flowFormattedPrice) {
                     flow.cmd('localize');
                     console.log('localize FE trigger');
                 }
+            },
+
+            getCurrentProductId: function (productId) {
+                if (flow.optionsIndex != undefined) {
+                    var $form = $($('form#product_addtocart_form > input[value="'+productId+'"],[name="product"]')[0].form);
+                    var atts = $form.find('input.super-attribute-select');
+                    var att1 = atts[0].value;
+                    var att2 = atts[1].value;
+                    if (atts != undefined) {
+                    }
+                    if (att1 > 0 || att2 > 0) {
+                        _.each(flow.optionsIndex[productId], function(option, key) {
+                            if (_.contains(option, att1) && _.contains(option, att2)) {
+                                productId = key;
+                            }
+                        });
+                    }
+                }
+                return productId;
+            },
+
+            getCurrentProductSku: function (productId, flowLocalizedPrices) {
+                if (flowLocalizedPrices) {
+                    if (flowLocalizedPrices[LOCALIZATIONKEY][productId]['sku'] != undefined) {
+                        return flowLocalizedPrices[LOCALIZATIONKEY][productId]['sku'];
+                    }
+                }
+                return false;
+            },
+
+            localizeTemplate: function (template, flowPriceCode, flowLocalizedPrices) {
+                if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY] != undefined) {
+                    if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY].label != undefined) {
+                        this.flowFormattedPrice = flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][FLOWFINALPRICEKEY].label;
+                    }
+                }
+                if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][flowPriceCode] != undefined) {
+                    if (flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][flowPriceCode].label != undefined) {
+                        this.flowFormattedPrice = flowLocalizedPrices[LOCALIZATIONKEY][template.data.productId][flowPriceCode].label;
+                    }
+                }
+                if (this.flowFormattedPrice) {
+                    template.data.formatted = this.flowFormattedPrice;
+                    template.data.flowLocalized = true;
+                    console.log('localize BE');
+                }
+                return template;
             },
         });
         return $.mage.priceBox;

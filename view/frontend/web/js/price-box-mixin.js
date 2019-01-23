@@ -75,8 +75,8 @@ define([
                             if (template.data.productSku) {
                                 priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
                             }
+                            console.log('localize FE init ' + template.data.flowPriceCode);
                         }
-                        console.log('localize FE init ' + template.data.flowPriceCode);
                     }
 
                     $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
@@ -129,7 +129,7 @@ define([
                 if (this.flowFormattedPrice) {
                     template.data.formatted = this.flowFormattedPrice;
                     template.data.flowLocalized = true;
-                    console.log('localize BE');
+                    console.log('localize BE ' + template.data.flowPriceCode);
                 }
                 return template;
             },

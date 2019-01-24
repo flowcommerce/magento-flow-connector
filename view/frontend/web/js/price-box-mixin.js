@@ -8,6 +8,7 @@ define([
     'use strict';
 
     return function (widget) {
+        var flow = window.flow || {};
         var globalOptions = {
                 productId: null,
                 priceConfig: null,
@@ -44,6 +45,8 @@ define([
                     var template = { data: price };
                     
                     if (typeof(FLOWEXPERIENCE) == "string") {
+                        var flow = window.flow || {};
+                        flow.magento2 = window.flow.magento2 || {};
                         this.hasFlowExperience = true;
                         var flowLocalizedPrices = false,
                             flowPriceCode = FLOWREGULARPRICEKEY;
@@ -75,7 +78,6 @@ define([
                             if (template.data.productSku) {
                                 priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
                             }
-                            console.log('localize FE init ' + template.data.flowPriceCode);
                         }
                     }
 
@@ -83,24 +85,18 @@ define([
                 }, this);
                 if (this.hasFlowExperience && !this.flowFormattedPrice) {
                     flow.cmd('localize');
-                    console.log('localize FE trigger');
                 }
             },
 
             getCurrentProductId: function (productId) {
-                if (flow.optionsIndex != undefined) {
-                    var $form = $($('form#product_addtocart_form > input[value="'+productId+'"],[name="product"]')[0].form);
-                    var atts = $form.find('input.super-attribute-select');
-                    var att1 = atts[0].value;
-                    var att2 = atts[1].value;
-                    if (atts != undefined) {
-                    }
-                    if (att1 > 0 || att2 > 0) {
-                        _.each(flow.optionsIndex[productId], function(option, key) {
-                            if (_.contains(option, att1) && _.contains(option, att2)) {
-                                productId = key;
-                            }
-                        });
+                if (flow.magento2.optionsSelected != undefined) {
+                    if (flow.magento2.optionsSelected[productId] != undefined) {
+                        if (!_.contains(flow.magento2.optionsSelected[productId], false)) {
+                            console.log('complete selection');
+                            // TODO filter down selections to produce productId by complete selection combos
+                        } else {
+                            console.log('incomplete selection');
+                        }
                     }
                 }
                 return productId;
@@ -129,7 +125,6 @@ define([
                 if (this.flowFormattedPrice) {
                     template.data.formatted = this.flowFormattedPrice;
                     template.data.flowLocalized = true;
-                    console.log('localize BE ' + template.data.flowPriceCode);
                 }
                 return template;
             },

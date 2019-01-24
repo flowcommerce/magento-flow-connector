@@ -205,7 +205,8 @@ class SessionManager implements SessionManagementInterface
             if ($shippingAddressId = $customer->getDefaultShipping()) {
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
 
-                if ($shippingAddress->getCountryId() == $country) {
+                // Using strpos since country codes coming from FlowJS will not match M2 country codes directly but will likely be contained within them
+                if (strpos($country, $shippingAddress->getCountryId()) !== FALSE) {
                     $ctr = 0;
                     foreach ($shippingAddress->getStreet() as $street) {
                         $params['destination[streets][' . $ctr . ']'] = $street;

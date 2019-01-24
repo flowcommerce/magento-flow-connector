@@ -1,46 +1,59 @@
-#!/usr/local/bin/groovy
+properties([pipelineTriggers([githubPush()])])
 
-def label = "worker-${UUID.randomUUID().toString()}"
-
-def project = "magento-flow-connector"
-def ecrRepo = "479720515435.dkr.ecr.us-east-1.amazonaws.com"
-def iamRole = "arn:aws:iam::479720515435:role/cicd20181011095611663000000001"
-
-properties([
-  buildDiscarder(logRotator(numToKeepStr: '3')),
-  pipelineTriggers([githubPush()])
-])
-
-phpTemplate(label: label) {
-  def scmVars = checkout scm
-  def imageTag
-  if (env.CHANGE_ID) {
-    imageTag = "${env.CHANGE_BRANCH}-pr-${scmVars.GIT_COMMIT}"
-  } else {
-    imageTag = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+pipeline {
+  options {
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '3'))
+    timeout(time: 30, unit: 'MINUTES')
   }
 
-  if (env.BRANCH_NAME == 'master') {
-    dockerBuild {
-      appName = project
-      vcsRef = scmVars.GIT_COMMIT
-      version = imageTag
-      awsRole = iamRole
-      awsRoleAccount = '479720515435'
-      dockerOrganisation = ecrRepo
-      dockerFile = 'Dockerfile.dev'
+  agent {
+    kubernetes {
+      label 'worker-magento-flow-connector-development'
+      inheritFrom 'default'
+
+      containerTemplates([
+        containerTemplate(name: 'helm', image: "lachlanevenson/k8s-helm:v2.12.0", command: 'cat', ttyEnabled: true),
+        containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true)
+      ])
+    }
+  }
+
+  environment {
+    DOCKER_ORG = 'flowcommerce'
+    APP_NAME   = 'magento-flow-connector-development'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkoutWithTags scm
+        script {
+          IMAGE_TAG = sh(returnStdout: true, script: 'git describe --tags --dirty --always').trim()
+        }
+      }
     }
 
-    stage('Deploy Helm Chart') {
-      container('helm') {
-        sh "helm init --client-only"
-        sh """helm dependency update ./deploy/$project"""
+    stage('Build and push docker image release') {
+      when { branch 'master' }
+      steps {
+        container('docker') {
+          script {
+            docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
+              image = docker.build("$DOCKER_ORG/$APP_NAME:$IMAGE_TAG", '-f Dockerfile.dev .')
+              image.push()
+            }
+          }
+        }
+      }
+    }
 
-        withAWSRole() {
-          sh """helm upgrade --wait \
-                --namespace production \
-                --set deployments.live.version=$imageTag \
-                -i $project ./deploy/$project"""
+    stage('Deploy Helm chart') {
+      when { branch 'master' }
+      steps {
+        container('helm') {
+          sh('helm init --client-only')
+          sh("helm upgrade --wait --namespace production --set deployments.live.version=$IMAGE_TAG -i $APP_NAME ./deploy/$APP_NAME")
         }
       }
     }

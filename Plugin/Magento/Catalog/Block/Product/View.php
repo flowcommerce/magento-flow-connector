@@ -75,9 +75,11 @@ class View
         $ids = [];
         $product = $view->getProduct();
         $ids[] = $product->getId();
-        $relatedSimples = $product->getTypeInstance()->getUsedProducts($product);
-        foreach ($relatedSimples as $simple) {
-            $ids[] = $simple->getId();
+        if ($product->getTypeId() === 'configurable') {
+            $relatedSimples = $product->getTypeInstance()->getUsedProducts($product);
+            foreach ($relatedSimples as $simple) {
+                $ids[] = $simple->getId();
+            }
         }
         $session = $this->sessionManager->getFlowSessionData();
         $config = $this->jsonSerializer->unserialize($result);

@@ -118,6 +118,7 @@ class Updates
                     $this->logger->warning('Product id: ' . $inventorySync->getProductId() . ' does not have an associated product for store id: ' . $storeId . ' and will not be synced.');
                     $this->markInventorySyncAsError($inventorySync, $e->getMessage());
                     continue;
+                }
                 if (!$inventorySync->getStockItem()) {
                     $this->logger->warning('Product Id: ' . $inventorySync->getProductId() . ' does not have stock information available for store id: ' . $storeId . ' and will not be synced.');
                     $this->markInventorySyncAsError($inventorySync, $e->getMessage());

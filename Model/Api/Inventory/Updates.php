@@ -113,12 +113,21 @@ class Updates
         $requests = function ($inventorySyncs) use ($client) {
             /** @var InventorySync $inventorySync */
             foreach ($inventorySyncs as $inventorySync) {
+                $storeId = $inventorySync->getStoreId();
+                if (!$inventorySync->getProduct()) {
+                    $this->logger->warning('Product id: ' . $inventorySync->getProductId() . ' does not have an associated product for store id: ' . $storeId . ' and will not be synced.');
+                    $this->markInventorySyncAsError($inventorySync, $e->getMessage());
+                    continue;
+                if (!$inventorySync->getStockItem()) {
+                    $this->logger->warning('Product Id: ' . $inventorySync->getProductId() . ' does not have stock information available for store id: ' . $storeId . ' and will not be synced.');
+                    $this->markInventorySyncAsError($inventorySync, $e->getMessage());
+                    continue;
+                }
                 try {
                     $ts = microtime(true);
                     $inventoryApiRequest = $this->inventoryDataMapper->map($inventorySync);
                     $this->logger->info('Time to convert stock item to flow data: ' . (microtime(true) - $ts));
                     $serializedInventoryApiRequest = $this->jsonSerializer->serialize($inventoryApiRequest);
-                    $storeId = $inventorySync->getStoreId();
                     $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
                     yield function () use ($client, $url, $storeId, $serializedInventoryApiRequest) {
                         return $client->postAsync($url, [

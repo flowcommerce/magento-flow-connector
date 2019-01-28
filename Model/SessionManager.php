@@ -205,20 +205,23 @@ class SessionManager implements SessionManagementInterface
             if ($shippingAddressId = $customer->getDefaultShipping()) {
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
 
-                $ctr = 0;
-                foreach ($shippingAddress->getStreet() as $street) {
-                    $params['destination[streets][' . $ctr . ']'] = $street;
-                    $ctr += 1;
+                // Using strpos since country codes coming from FlowJS will not match M2 country codes directly but will likely be contained within them
+                if (strpos($country, $shippingAddress->getCountryId()) !== FALSE) {
+                    $ctr = 0;
+                    foreach ($shippingAddress->getStreet() as $street) {
+                        $params['destination[streets][' . $ctr . ']'] = $street;
+                        $ctr += 1;
+                    }
+                    $params['destination[city]'] = $shippingAddress->getCity();
+                    $params['destination[province]'] = $shippingAddress->getRegion()->getRegionCode();
+                    $params['destination[postal]'] = $shippingAddress->getPostcode();
+                    $params['destination[country]'] = $country;
+                    $params['destination[contact][name][first]'] = $shippingAddress->getFirstname();
+                    $params['destination[contact][name][last]'] = $shippingAddress->getLastname();
+                    $params['destination[contact][company]'] = $shippingAddress->getCompany();
+                    $params['destination[contact][email]'] = $customer->getEmail();
+                    $params['destination[contact][phone]'] = $shippingAddress->getTelephone();
                 }
-                $params['destination[city]'] = $shippingAddress->getCity();
-                $params['destination[province]'] = $shippingAddress->getRegion()->getRegionCode();
-                $params['destination[postal]'] = $shippingAddress->getPostcode();
-                $params['destination[country]'] = $shippingAddress->getCountryId();
-                $params['destination[contact][name][first]'] = $shippingAddress->getFirstname();
-                $params['destination[contact][name][last]'] = $shippingAddress->getLastname();
-                $params['destination[contact][company]'] = $shippingAddress->getCompany();
-                $params['destination[contact][email]'] = $customer->getEmail();
-                $params['destination[contact][phone]'] = $shippingAddress->getTelephone();
             }
         }
 

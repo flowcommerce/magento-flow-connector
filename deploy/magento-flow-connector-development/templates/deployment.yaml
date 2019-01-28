@@ -27,6 +27,8 @@ spec:
       annotations:
         iam.amazonaws.com/role: {{ $.Values.iamRole }}
     spec:
+      imagePullSecrets:
+        - name: docker-hub-flowcommerce
       hostAliases:
         - ip: "127.0.0.1"
           hostnames:

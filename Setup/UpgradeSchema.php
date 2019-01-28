@@ -90,7 +90,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addOrderReadyToOrder($setup);
         }
 
-        if (version_compare($context->getVersion(), '1.1.6', '<')) {
+        if (version_compare($context->getVersion(), '2.0.0', '<')) {
             $this->addFlowOrderIdToQuote($setup);
         }
 

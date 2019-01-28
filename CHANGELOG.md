@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.6
+- Fix issue where a customer's default address overrided their selected experience
+- Improved error handling for catalog inventory syncing
+
 ## 1.1.5
 - Refactor functionality then deprecate Util class.
 - Add webhook verification feature (on by default).

@@ -26,16 +26,16 @@ ingress:
     - key: flo-pub
       tld: flo.pub
       hosts:
-        - magento.flo.pub
+        - magento-development.flo.pub
 
 services:
   live:
     hosts:
-      - magento-flow-connector
-      - magento.flo.pub
+      - magento-flow-connector-development
+      - magento-development.flo.pub
     gateways:
       - mesh
-      - magento-flow-connector-flo-pub
+      - magento-flow-connector-development-flo-pub
     stages:
       - deployment: live
         weight: 100
@@ -44,10 +44,10 @@ deployments:
   live:
     replicaCount: 1
     version: master-1
-    host: magento.flo.pub
+    host: magento-development.flo.pub
     env:
       - name: MAGENTO_HOST
-        value: magento.flo.pub
+        value: magento-development.flo.pub
 
 magento:
   mode: developer

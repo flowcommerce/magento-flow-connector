@@ -2,7 +2,7 @@
     "name": "flowcommerce/flowconnector",
     "description": "Flow Connector",
     "type": "magento2-module",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "license": "proprietary",
     "authors": [
         {

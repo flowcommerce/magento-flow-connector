@@ -710,9 +710,13 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         $attributes = [
             'flow_connector_order_number' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false],
+            'flow_connector_order_expiration' => ['type' => Table::TYPE_TIMESTAMP, 'visible' => false, 'required' => false],
+            'flow_conncetor_order_experience' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false],
         ];
 
         foreach ($attributes as $attributeCode => $attributeParams) {
+            $quoteSetup->addAttribute('quote', $attributeCode, $attributeParams);
+            $quoteSetup->addAttribute('quote', $attributeCode, $attributeParams);
             $quoteSetup->addAttribute('quote', $attributeCode, $attributeParams);
         }
     }

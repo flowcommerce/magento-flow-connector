@@ -3,10 +3,8 @@
 namespace FlowCommerce\FlowConnector\Model;
 
 use FlowCommerce\FlowConnector\Api\FlowCartManagementInterface;
-use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteRepository;
-use Magento\Setup\Module\Dependency\Parser\Composer\Json;
 use Psr\Log\LoggerInterface as Logger;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Stdlib\DateTime\DateTime;
@@ -14,7 +12,13 @@ use FlowCommerce\FlowConnector\Model\Api\Order\Save as OrderSave;
 use FlowCommerce\FlowConnector\Model\Api\Order\Get as OrderGet;
 use Magento\Quote\Model\Quote\Item as QuoteItem;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Quote\Model\Quote\Item;
 
+/**
+ * Class FlowCartManager
+ * @package FlowCommerce\FlowConnector\Model
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class FlowCartManager implements FlowCartManagementInterface
 {
 
@@ -38,9 +42,6 @@ class FlowCartManager implements FlowCartManagementInterface
 
     /** @var OrderGet */
     private $orderGet;
-
-    /** @var array */
-    private $cartData;
 
     /** @var JsonSerializer */
     private $jsonSerializer;
@@ -77,57 +78,34 @@ class FlowCartManager implements FlowCartManagementInterface
     }
 
     /**
-     * @param Quote $quote
+     * Sync cart data
+     * Updates session and quote if current flow order data is not valid
      * @return mixed|void
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function syncCartData(Quote $quote)
+    public function syncCartData()
     {
-        $flowOrderNumber = $this->getFlowOrderNumberFromSession();
-        if (!$flowOrderNumber) {
-            //Get number from quote
-            $flowOrderNumber = $quote->getFlowConnectorOrderNumber();
-            if (!$flowOrderNumber) {
-                $orderData = $this->createFlowOrderFromMageCart($quote);
-                $flowOrderNumber = $orderData['number'];
-            } else {
-                $orderData = $this->getFlowOrderDataByOrderNumber($flowOrderNumber);
-            }
-        } else {
-            $orderData = $this->getFlowOrderDataFromSession();
-        }
-
-        if (!$this->isValid($orderData)) {
-            $orderData = $this->createFlowOrderFromMageCart($quote);
-        }
-
-        $this->updateFlowOrderDataOnSession($orderData);
-        $this->updateQuoteOrderNumber($flowOrderNumber);
+        $this->getFlowCartData();
     }
 
     /**
-     * Retrieve VALID data for Flow cart in progress
-     * Session -> Quote -> Create New
-     * @return array|bool|null
+     * Return flow order cart data
+     * @return array|bool|float|int|mixed|string|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getFlowCartData()
     {
-        $flowCartData  = $this->getFlowOrderDataFromSession();
-        $sessionQuote = $this->checkoutSession->getQuote();
-
-        if (!$flowCartData) {
-            //Get flow order from quote
-            $flowOrderNumber = $sessionQuote->getFlowConnectorOrderNumber();
+        $orderData = $this->getFlowOrderDataFromSession();
+        if (!$orderData) {
+            $flowOrderNumber = $this->getFlowOrderNumberFromQuote();
             if (!$flowOrderNumber) {
-                $flowCartData = $this->createFlowOrderFromMageCart($sessionQuote);
+                $orderData = $this->createFlowOrderFromQuote();
+            } else {
+                $orderData = $this->getFlowOrderDataByOrderNumber();
             }
         }
-
-        if (!$this->isValid($flowCartData)) {
-            $flowCartData = $this->createFlowOrderFromMageCart($sessionQuote);
-        }
-        return $flowCartData;
+        $orderData = $this->validateOrderData($orderData);
+        return $orderData;
     }
 
     /**
@@ -158,84 +136,52 @@ class FlowCartManager implements FlowCartManagementInterface
     }
 
     /**
+     *
      * @param $orderData
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function updateQuoteOrderNumber($orderData)
+    public function updateFlowOrderDataOnQuote($orderData)
     {
-        $quoteId = isset($orderData['order']['attributes']['quote_id']) ?
-            $orderData['order']['attributes']['quote_id']: null;
-        $orderNumber = isset($orderData['order']['number']) ? $orderData['order']['number'] : null;
+        $quoteId = isset($orderData['attributes']['quote_id']) ?
+            $orderData['attributes']['quote_id']: null;
+        $orderNumber = isset($orderData['number']) ? $orderData['number'] : null;
+        $orderExperience = isset($orderData['experience']['key']) ? $orderData['experience']['key'] : null;
+        $orderExpiration = isset($orderData['expires_at']) ? $orderData['expires_at'] : null;
         if ($quoteId) {
             try {
                 $quote = $this->quoteRepository->get($quoteId);
                 $quote->setFlowConnectorOrderNumber($orderNumber);
+                $quote->setFlowConnectorOrderExperience($orderExperience);
+                $quote->setFlowConnectorOrderExpiration($orderExpiration);
                 $this->quoteRepository->save($quote);
-            } catch (CouldNotSaveException $exception) {
+            } catch (\Exception $exception) {
                 $this->logger->info('Quote no. '.$quoteId.' was not updated with the new order number '.$orderNumber);
             }
         }
     }
 
     /**
+     * Create new flow order (cart) from quote
+     * @return mixed|void
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function createNewCartData()
+    {
+        $this->createFlowOrderFromQuote();
+    }
+
+    /**
+     * Update session and quote with new flow order data
      * @param $orderData
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function updateOrderData($orderData)
+    private function updateSessionAndQuote($orderData)
     {
-        $this->updateSessionWithOrderData($orderData);
-        $this->updateQuoteOrderNumber(['order']['number']);
+        $this->updateFlowOrderDataOnSession($orderData);
+        $this->updateFlowOrderDataOnQuote($orderData);
     }
 
     /**
-     * Check if order is valid (experience and expiration date)
-     * @return bool
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function isValid($orderData)
-    {
-
-        $isFlowOrderExpired = false;
-        $flowCartData = $this->getFlowCartData();
-        $expirationDate = isset($flowCartData['expires_at']) ? $flowCartData['expires_at'] : null;
-        if ($expirationDate) {
-            if ($expirationDate > $this->dateTime->gmtDate()) {
-                $isFlowOrderExpired = true;
-            }
-        }
-        return $isFlowOrderExpired;
-    }
-
-    /**
-     * @param Quote $quote
-     * @return mixed|void
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function createNewCartData(Quote $quote)
-    {
-        $this->createFlowOrderFromMageCart($quote);
-    }
-
-    /**
-     * @return |null
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    private function getFlowOrderNumberFromSession()
-    {
-        $sessionData = $this->sessionManager->getFlowSessionData();
-        $flowOrderNumber = isset($sessionData['order']['number']) ? $sessionData['order']['number'] : null;
-        return $flowOrderNumber;
-    }
-
-    private function getFlowOrderDataFromSession()
-    {
-        $sessionData = $this->sessionManager->getFlowSessionData();
-        $flowOrderData = isset($sessionData['order']) ? $sessionData['order'] : null;
-        return $flowOrderData;
-    }
-
-    /**
+     * Update order session with order data
      * @param $data
      * @return array|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -243,41 +189,43 @@ class FlowCartManager implements FlowCartManagementInterface
     private function updateFlowOrderDataOnSession($data)
     {
         $session = $this->sessionManager->getFlowSessionData();
-        $session['order'] = $data['order'];
+        $session['order'] = $data;
+        $this->sessionManager->setFlowSessionData($session);
         return $session;
     }
 
     /**
-     * Create order from quote
-     * @param $quote
-     * @return bool
+     * Create order from quote in
+     * @return array|bool|float|int|mixed|string|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function createFlowOrderFromMageCart($quote)
+    private function createFlowOrderFromQuote()
     {
-        $postData = $this->extractPostDataFromQuote($quote);
-        $params = ['experience' => $this->sessionManager->getSessionExperienceKey()];
-        $unserializedOrderData = $this->jsonSerializer->unserialize($this->orderSave->execute($postData, $params));
-        $this->updateQuoteOrderNumber($unserializedOrderData);
-        $this->updateSessionWithOrderData($unserializedOrderData);
-        return $unserializedOrderData;
+        $postData = $this->extractPostDataFromQuote();
+        $query = ['experience' => $this->sessionManager->getSessionExperienceKey()];
+        $orderData = $this->orderSave->execute($postData, $query);
+        if ($orderData) {
+            $orderData = $this->jsonSerializer->unserialize($orderData);
+            $this->updateSessionAndQuote($orderData);
+        }
+        return $orderData;
     }
 
     /**
-     * @param Quote $quote
+     * Extract post data from quote
      * @return array
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function extractPostDataFromQuote(Quote $quote)
+    private function extractPostDataFromQuote()
     {
 
+        $quote = $this->getQuoteFromSession();
         $data = [];
         $attribs = [];
         $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
         $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
 
         // Add cart items
-        if ($items = $quote->getItems()) {
+        if ($items = $quote->getAllVisibleItems()) {
             $data['items'] = [];
             /** @var QuoteItem $item */
             foreach ($items as $item) {
@@ -293,14 +241,152 @@ class FlowCartManager implements FlowCartManagementInterface
     }
 
     /**
-     * @param $flowOrderNumber
+     * @param string|null $flowOrderNumber
      * @return array|bool|float|int|mixed|string|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getFlowOrderDataByOrderNumber($flowOrderNumber)
+    private function getFlowOrderDataByOrderNumber($flowOrderNumber = null)
     {
+        if (!$flowOrderNumber) {
+            $flowOrderNumber = $this->getQuoteFromSession()->getFlowConnectorOrderNumber();
+        }
         $query = ['number' => $flowOrderNumber];
-        $orderData = $this->orderGet->execute($query);
+        $result = $this->orderGet->execute($query);
+        $orderData = reset($result);
+        return $orderData;
+    }
+
+    /**
+     * Validate if order in session is valid
+     * Validates experience and expires_at date
+     * @return bool
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function isFlowOrderFromSessionValid()
+    {
+        $return = false;
+        $orderData = $this->getFlowOrderDataFromSession();
+        if ($orderData) {
+            $orderExperience = isset($orderData['experience']['key']) ? $orderData['experience']['key'] : null;
+            $orderExpiration = isset($orderData['expires_at']) ? $orderData['expires_at'] : null;
+            if ($orderExperience && $orderExpiration) {
+                if ($this->sessionManager->getSessionExperienceKey() == $orderExperience &&
+                    $this->dateTime->gmtDate() < $orderExpiration) {
+                    if (!$this->orderHasChanged($orderData)) {
+                        $return = true;
+                    }
+                }
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Check if flow order is valid using data store on quote
+     * @return bool
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function isFlowOrderFromQuoteValid()
+    {
+        $return = false;
+        $quote = $this->checkoutSession->getQuote();
+        $expiration = $quote->getFlowConnectorOrderExpiration();
+        $experience = $quote->getFlowConnectorOrderExperience();
+
+        if ($this->sessionManager->getSessionExperienceKey() == $experience &&
+            $this->dateTime->gmtDate() < $expiration) {
+            $return = true;
+        }
+        return $return;
+    }
+
+    /**
+     * Get flow order data from session
+     * @return array|null
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getFlowOrderDataFromSession()
+    {
+        $sessionData = $this->sessionManager->getFlowSessionData();
+        $flowOrderData = isset($sessionData['order']) ? $sessionData['order'] : null;
+        return $flowOrderData;
+    }
+
+    /**
+     * Get quote from session
+     * @return Quote
+     */
+    private function getQuoteFromSession()
+    {
+        return $this->checkoutSession->getQuote();
+    }
+
+    /**
+     * Compare items and quantity to check if any change was made in cart
+     * @return bool
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function orderHasChanged($orderData)
+    {
+        $return = false;
+        $cartItems = [];
+        $orderItems = [];
+
+        $sessionExperience = $this->sessionManager->getSessionExperienceKey();
+        $orderExperience = $this->getFlowOrderCartDataExperienceKey();
+
+        $mageCartItems = $this->getQuoteFromSession()->getAllVisibleItems();
+        /** @var Item $item */
+        foreach ($mageCartItems as $item) {
+            $cartItems[$item->getSku()] = $item->getQty();
+        }
+
+        $flowOrderCartItems = isset($orderData['items']) ? $orderData['items'] : null;
+        if ($flowOrderCartItems) {
+            foreach ($flowOrderCartItems as $orderItem) {
+                $orderItems[$orderItem['number']] = $orderItem['quantity'];
+            }
+
+        }
+
+        if ($cartItems != $orderItems || $sessionExperience != $orderExperience) {
+            $return = true;
+        }
+        return $return;
+    }
+
+    /**
+     * Return experience key from flow order
+     * @return string|null
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getFlowOrderCartDataExperienceKey()
+    {
+        $orderData = $this->getFlowOrderDataFromSession();
+        $experienceKey = isset($orderData['experience']['key']) ? $orderData['experience']['key'] : null;
+        return $experienceKey;
+    }
+
+    /**
+     * Return order number from quote
+     * @return string
+     */
+    private function getFlowOrderNumberFromQuote()
+    {
+        $quote = $this->getQuoteFromSession();
+        return $quote->getFlowConnectorOrderNumber();
+    }
+
+    /**
+     * @param $orderData
+     * @return array|bool|float|int|mixed|string|null
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function validateOrderData($orderData)
+    {
+        if ($this->orderHasChanged($orderData) || !$this->isFlowOrderFromSessionValid() || !$this->isFlowOrderFromQuoteValid()) {
+            $orderData = $this->createFlowOrderFromQuote();
+        }
         return $orderData;
     }
 }

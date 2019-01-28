@@ -39,14 +39,11 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
     /**
      * Sync cart
      * @param Observer $observer
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @SuppressWarnings("unused")
      */
     public function execute(Observer $observer)
     {
-        //Update flow cart
-        /** @var Quote $quoteData */
-        $quoteData = $observer->getCart()->getQuote();
-        $this->flowCartManager->syncCartData($quoteData);
+        $this->flowCartManager->syncCartData();
     }
 }

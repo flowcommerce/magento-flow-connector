@@ -14,10 +14,11 @@ interface FlowCartManagementInterface
      */
     public function getFlowCartData();
 
+
     /**
-     * Retrieve experience key from flow cart information
+     * Sync cart data
      * @return mixed
      */
-    public function getFlowCartExperienceKey();
+    public function syncCartData();
 
 }

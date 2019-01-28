@@ -46,14 +46,16 @@ class Save
     /**
      * @var Logger|null
      */
-    private $logger = null;
+    private $logger;
 
     /**
      * @var UrlBuilder
      */
     private $urlBuilder;
 
-    /** @var StoreManager */
+    /**
+     * @var StoreManager
+     */
     private $storeManager;
 
     /**

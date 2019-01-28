@@ -25,6 +25,11 @@ class SessionManager implements SessionManagementInterface
     const FLOW_SESSION_COOKIE = '_f60_session';
 
     /**
+     * Name of Flow session cookie update flag
+     */
+    const FLOW_SESSION_UPDATE_COOKIE_FLAG = 'flow_mage_session_update';
+
+    /**
      * @var SessionManagerInterface
      */
     private $sessionManagerInterface;
@@ -106,19 +111,21 @@ class SessionManager implements SessionManagementInterface
 
     /**
      * Retrieve data for Flow session in progress
-     *
      * @return array|null
+     * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
      */
     public function getFlowSessionData()
     {
         $flowSessionData = $this->session->getFlowSessionData();
-        if (!$flowSessionData) {
+        if (!$flowSessionData || $this->isUpdateSession()) {
             $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
             if ($sessionId) {
                 $flowSessionData = $this->sessionApiClient->getFlowSessionData($sessionId);
                 if ($flowSessionData) {
                     $this->setFlowSessionData($flowSessionData);
+                    $this->cookieManagerInterface->deleteCookie(self::FLOW_SESSION_UPDATE_COOKIE_FLAG);
                 }
             }
         }
@@ -168,7 +175,7 @@ class SessionManager implements SessionManagementInterface
     {
         $quote = $this->checkoutSession->getQuote();
 
-        $items = $quote->getItems();
+        $items = $quote->getAllVisibleItems();
         if (!$items) {
             return null;
         }
@@ -241,8 +248,10 @@ class SessionManager implements SessionManagementInterface
 
     /**
      * Get session experience country
-     * @return string|null $country
+     * @return string|null
+     * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
      */
     public function getSessionExperienceCountry()
     {
@@ -253,8 +262,10 @@ class SessionManager implements SessionManagementInterface
 
     /**
      * Get session experience country
-     * @return string|null $country
+     * @return string|null
+     * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
      */
     public function getSessionExperienceKey()
     {
@@ -270,5 +281,14 @@ class SessionManager implements SessionManagementInterface
     public function setFlowSessionData($data)
     {
         $this->session->setFlowSessionData($data);
+    }
+
+    /**
+     * Return cookie flag if session is to be updated
+     * @return bool
+     */
+    private function isUpdateSession()
+    {
+        return (bool)$this->cookieManagerInterface->getCookie(self::FLOW_SESSION_UPDATE_COOKIE_FLAG);
     }
 }

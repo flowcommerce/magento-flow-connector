@@ -1,0 +1,35 @@
+<?php
+/**
+ * FlowCommerce
+ *
+ * FlowCommerce_FlowConnector
+ * @category    FlowCommerce
+ * @package     FlowCommerce_FlowConnector
+ * @author      FlowCommerce
+ * @copyright   Copyright (c) 2019 FlowCommerce
+ */
+
+/** @var $block \FlowCommerce\FlowConnector\Block\FlowJS */
+?>
+<script type="text/javascript">
+    require([
+        'jquery'
+    ], function ($) {
+
+        !function (f, l, o, w, i, n, g) {
+            f[i] = f[i] || {};
+            f[i].cmd = f[i].cmd || function () {
+                (f[i].q = f[i].q || []).push(arguments);
+            };
+            n = l.createElement(o);
+            n.src = w;
+            g = l.getElementsByTagName(o)[0];
+            g.parentNode.insertBefore(n, g);
+        }(window, document, 'script', 'https://cdn.flow.io/flowjs/latest/flow.js', 'flow');
+
+        flow.cmd('set', 'organization', '<?php echo $block->getFlowOrganizationId();?>');
+        flow.cmd('init');
+        flow.cmd('localize');
+    });
+
+</script>

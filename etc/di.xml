@@ -155,4 +155,9 @@
             <argument name="storage" xsi:type="object">FlowCommerce\FlowConnector\Model\Session\Storage</argument>
         </arguments>
     </type>
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="flowcommerce_flowconnector_checkout_customerdata_cart"
+                type="FlowCommerce\FlowConnector\Plugin\Magento\Checkout\CustomerData\Cart"
+                sortOrder="99"/>
+    </type>
 </config>

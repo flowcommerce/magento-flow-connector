@@ -39,6 +39,9 @@ class Configuration
     // Store configuration key for webhook validation
     const FLOW_WEBHOOK_VALIDATION = 'flowcommerce/flowconnector/webhook_validation';
 
+    // Store configuration key for country picker enabled
+    const FLOW_COUNTRY_PICKER_ENABLED = 'flowcommerce/flowconnector/country_picker_enabled';
+
     // Flow checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
 
@@ -125,7 +128,8 @@ class Configuration
         }
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_REDIRECT_ENABLED,
-            ScopeInterface::SCOPE_STORE, $storeId
+            ScopeInterface::SCOPE_STORE,
+            $storeId
         );
     }
 
@@ -272,6 +276,25 @@ class Configuration
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_WEBHOOK_VALIDATION,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if country picker is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isCountryPickerEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_COUNTRY_PICKER_ENABLED,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

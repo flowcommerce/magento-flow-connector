@@ -132,7 +132,7 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         }
 
         // Add cart items
-        if ($items = $this->cart->getQuote()->getItems()) {
+        if ($items = $this->cart->getQuote()->getAllVisibleItems()) {
             $data['items'] = [];
             foreach ($items as $item) {
                 $lineItem = [

@@ -101,9 +101,9 @@ class Get
             ]
         );
 
-        $orders = $this->jsonSerializer->unserialize($response->getBody()->getContents());
-        foreach ($orders as $order) {
-            array_push($return, $order);
+        $result = (string) $response->getBody();
+        if ($result) {
+            $return = $this->jsonSerializer->unserialize($result);
         }
         return $return;
     }

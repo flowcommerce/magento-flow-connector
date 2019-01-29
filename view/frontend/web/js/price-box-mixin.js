@@ -19,14 +19,28 @@ define([
             FLOWBASEPRICEKEY = 'base_price',
             FLOWREGULARPRICEKEY = 'regular_price',
             FLOWFINALPRICEKEY = 'final_price';
+        flow.magento2 = window.flow.magento2 || {};
 
         $.widget('mage.priceBox', widget, {
             options: globalOptions,
 
             reloadPrice: function reDrawPrices() {
+                var flowLocalizationKey = this.getFlowExperience();
+                if (!flowLocalizationKey) {
+                    return this._super();
+                }
+
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
-                    priceTemplate = mageTemplate(this.options.priceTemplate);
-                this.flowFormattedPrice = false;
+                    priceTemplate = mageTemplate(this.options.priceTemplate),
+                    flowLocalizedPrices = false; 
+                this.flowFormattedPrice = false; 
+
+                if (this.options.priceConfig.flow_localized_prices != undefined) {
+                    flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
+                } else if (this.options.priceConfig.prices.flow_localized_prices != undefined) {
+                    flowLocalizedPrices = this.options.priceConfig.prices.flow_localized_prices;
+                }
+
                 _.each(this.cache.displayPrices, function (price, priceCode) {
                     price.final = _.reduce(price.adjustments, function (memo, amount) {
                         return memo + amount;
@@ -36,45 +50,25 @@ define([
 
                     var template = { data: price };
                     
-                    var flowLocalizationKey = this.getFlowExperience();
-                    if (flowLocalizationKey) {
-                        flow.magento2 = window.flow.magento2 || {};
-                        var flowLocalizedPrices = false,
-                            flowPriceCode = FLOWREGULARPRICEKEY;
-                        switch (priceCode) {
-                            case MAGENTOBASEPRICEKEY:
-                                flowPriceCode = FLOWBASEPRICEKEY; 
-                                break;
+                    template.data.flowLocalized = false;
 
-                            case MAGENTOFINALPRICEKEY:
-                                flowPriceCode = FLOWFINALPRICEKEY;
-                                break;
-                        }
-
-                        if (this.options.priceConfig.flow_localized_prices != undefined) {
-                            flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
-                        } else if (this.options.priceConfig.prices.flow_localized_prices != undefined) {
-                            flowLocalizedPrices = this.options.priceConfig.prices.flow_localized_prices;
-                        }
-
+                    if (flowLocalizedPrices) {
+                        template.data.flowPriceCode = this.getFlowPriceCode(priceCode);
                         template.data.productId = this.getCurrentProductId(this.options.productId);
                         template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
-                        template.data.flowLocalized = false;
-                        template.data.flowPriceCode = flowPriceCode;
-
                         template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
+                    }
 
-                        if (!template.data.flowLocalized) {
-                            priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
-                            if (template.data.productSku) {
-                                priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
-                            }
+                    if (!template.data.flowLocalized) {
+                        priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
+                        if (template.data.productSku) {
+                            priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
                         }
                     }
 
                     $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
                 }, this);
-                if (flowLocalizationKey && !this.flowFormattedPrice) {
+                if (!this.flowFormattedPrice) {
                     flow.cmd('localize');
                 }
             },
@@ -93,6 +87,22 @@ define([
                     }
                 }
                 return flowLocalizationKey;
+            },
+
+            getFlowPriceCode: function (priceCode) {
+                var flowPriceCode = FLOWREGULARPRICEKEY;
+                if (typeof(priceCode) == "string") {
+                    switch (priceCode) {
+                        case MAGENTOBASEPRICEKEY:
+                            flowPriceCode = FLOWBASEPRICEKEY; 
+                            break;
+
+                        case MAGENTOFINALPRICEKEY:
+                            flowPriceCode = FLOWFINALPRICEKEY;
+                            break;
+                    }
+                }
+                return flowPriceCode;
             },
 
             getCurrentProductId: function (productId) {

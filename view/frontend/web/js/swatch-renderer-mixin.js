@@ -13,11 +13,11 @@ define([
 
     return function (widget) {
         var flow = window.flow || {};
+        flow.magento2 = window.flow.magento2 || {};
 
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
-                if (typeof(flow.session.getExperience()) == "string") {
-                    flow.magento2 = window.flow.magento2 || {};
+                if (this.isFlowExperience()) {
                     if (flow.magento2.optionsIndex == undefined) {
                         flow.magento2.optionsIndex = {};
                     }
@@ -39,8 +39,7 @@ define([
             },
 
             _OnClick: function ($this, $widget, eventName) {
-                if (typeof(flow.session.getExperience()) == "string") {
-                    flow.magento2 = window.flow.magento2 || {};
+                if (this.isFlowExperience()) {
                     var productId = $widget.options.jsonConfig.productId,
                         selectedOptionId = $this["context"].attributes["option-id"].value,
                         optionsMap = _.toArray($widget.optionsMap);
@@ -64,6 +63,16 @@ define([
                     });
                 }
                 return this._super($this, $widget, eventName);
+            },
+
+            isFlowExperience: function () {
+                var result = false;
+                if (flow.session != undefined) {
+                    if (typeof(flow.session.getExperience()) == "string") {
+                        result = true;
+                    }
+                }
+                return result;
             },
         });
 

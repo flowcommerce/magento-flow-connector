@@ -39,6 +39,9 @@ class Configuration
     // Store configuration key for webhook validation
     const FLOW_WEBHOOK_VALIDATION = 'flowcommerce/flowconnector/webhook_validation';
 
+    // Store configuration key for catalog price localization
+    const FLOW_CATALOG_PRICE_LOCALIZATION = 'flowcommerce/flowconnector/catalog_price_localization';
+
     // Flow checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
 
@@ -272,6 +275,25 @@ class Configuration
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_WEBHOOK_VALIDATION,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if catalog price localization is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isCatalogPriceLocalizationEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_CATALOG_PRICE_LOCALIZATION,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

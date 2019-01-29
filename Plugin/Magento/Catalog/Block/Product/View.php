@@ -3,10 +3,16 @@
 namespace FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Block\Product;
 
 use \FlowCommerce\FlowConnector\Model\Api\Item\Prices as FlowPrices;
+use \FlowCommerce\FlowConnector\Model\Configuration;
 use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 
 class View
 {
+    /**
+     * @var Configuration
+     */
+    private $configuration;
+
     /**
      * @var FlowPrices
      */
@@ -18,19 +24,27 @@ class View
     private $jsonSerializer;
 
     /**
+     * @param Configuration $configuration
      * @param FlowPrices $flowPrices
      * @param JsonSerializer $jsonSerializer
      */
     public function __construct(     
+        Configuration $configuration,
         FlowPrices $flowPrices,
         JsonSerializer $jsonSerializer
     ) {
+        $this->configuration = $configuration;
         $this->flowPrices = $flowPrices;
         $this->jsonSerializer = $jsonSerializer;
     }
 
     public function afterGetJsonConfig(\Magento\Catalog\Block\Product\View $view, $result)
     {
+        $config = $this->jsonSerializer->unserialize($result);
+        if (!$this->configuration->isCatalogPriceLocalizationEnabled()) {
+            $config['flow_localization_enabled'] = false;
+            return $this->jsonSerializer->serialize($config);
+        }
         $ids = [];
         $product = $view->getProduct();
         $ids[] = $product->getId();
@@ -40,11 +54,7 @@ class View
                 $ids[] = $simple->getId();
             }
         }
-        $config = $this->jsonSerializer->unserialize($result);
-        $labelsKeyedOnExperienceCountryCurrency = $this->flowPrices->localizePrices($ids);
-        if ($labelsKeyedOnExperienceCountryCurrency) {
-            $config['flow_localized_prices'] = $labelsKeyedOnExperienceCountryCurrency;
-        }
+        $config['flow_localized_prices'] = $this->flowPrices->localizePrices($ids);
         return $this->jsonSerializer->serialize($config);
     }
 }

@@ -28,6 +28,7 @@
                 <shipment_event>1</shipment_event>
                 <shipment_email>1</shipment_email>
                 <webhook_validation>1</webhook_validation>
+                <catalog_price_localization>1</catalog_price_localization>
             </flowconnector>
         </flowcommerce>
     </default>

@@ -26,7 +26,10 @@ define([
 
             reloadPrice: function reDrawPrices() {
                 var flowLocalizationKey = this.getFlowExperience();
-                if (!flowLocalizationKey) {
+                if (!flowLocalizationKey ||
+                    this.options.priceConfig.flow_localization_enabled == false ||
+                    this.options.priceConfig.prices.flow_localization_enabled == false
+                ) {
                     return this._super();
                 }
 
@@ -42,31 +45,33 @@ define([
                 }
 
                 _.each(this.cache.displayPrices, function (price, priceCode) {
-                    price.final = _.reduce(price.adjustments, function (memo, amount) {
-                        return memo + amount;
-                    }, price.amount);
+                    if (price.amount != undefined) {
+                        price.final = _.reduce(price.adjustments, function (memo, amount) {
+                            return memo + amount;
+                        }, price.amount);
 
-                    price.formatted = utils.formatPrice(price.final, priceFormat);
+                        price.formatted = utils.formatPrice(price.final, priceFormat);
 
-                    var template = { data: price };
-                    
-                    template.data.flowLocalized = false;
-
-                    if (flowLocalizedPrices) {
+                        var template = { data: price };
+                        
+                        template.data.flowLocalized = false;
                         template.data.flowPriceCode = this.getFlowPriceCode(priceCode);
-                        template.data.productId = this.getCurrentProductId(this.options.productId);
-                        template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
-                        template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
-                    }
+                        template.data.productId = this.getCurrentProductId(this.options.productId); 
 
-                    if (!template.data.flowLocalized) {
-                        priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
-                        if (template.data.productSku) {
-                            priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                        if (flowLocalizedPrices) {
+                            template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
+                            template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
+                        } 
+
+                        if (!template.data.flowLocalized) {
+                            priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
+                            if (template.data.productSku) {
+                                priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                            }
                         }
-                    }
 
-                    $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
+                        $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
+                    }
                 }, this);
                 if (!this.flowFormattedPrice) {
                     flow.cmd('localize');

@@ -2,7 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Model\Api\Item;
 
-use \FlowCommerce\FlowConnector\Model\SessionManager;
 use \FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use \FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use \FlowCommerce\FlowConnector\Model\Api\Experience\GetAllExperiences;
@@ -19,11 +18,6 @@ class Prices
      * Url Stub Prefix of this API endpoint
      */
     const EXPERIENCE_ITEMS_PREFIX = '/experiences/items/filters/'; 
-
-    /**
-     * @var SessionManager
-     */
-    private $sessionManager;
 
     /**
      * @var HttpClientFactory
@@ -61,7 +55,6 @@ class Prices
     private $logger = null;
 
     /**
-     * @param SessionManager $sessionManager
      * @param HttpClientFactory $httpClientFactory
      * @param UrlBuilder $urlBuilder
      * @param GetAllExperiences $getAllExperiences
@@ -71,7 +64,6 @@ class Prices
      * @param Logger $logger
      */
     public function __construct(
-        SessionManager $sessionManager,
         HttpClientFactory $httpClientFactory,
         UrlBuilder $urlBuilder,
         GetAllExperiences $getAllExperiences,
@@ -80,7 +72,6 @@ class Prices
         JsonSerializer $jsonSerializer,
         Logger $logger
     ) {
-        $this->sessionManager = $sessionManager;
         $this->httpClientFactory = $httpClientFactory;
         $this->urlBuilder = $urlBuilder;
         $this->getAllExperiences = $getAllExperiences;
@@ -99,10 +90,6 @@ class Prices
     public function localizePrices($ids)
     {
         $labels = [];
-        $flowSession = $this->sessionManager->getFlowSessionData();
-        if (!isset($flowSession['local'])) {
-            return false;
-        }
         $storeId = $this->storeManager->getStore()->getId();
         $experiences = $this->getAllExperiences->execute($storeId);
         $client = $this->httpClientFactory->create();

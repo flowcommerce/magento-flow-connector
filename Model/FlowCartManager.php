@@ -104,7 +104,11 @@ class FlowCartManager implements FlowCartManagementInterface
                 $orderData = $this->getFlowOrderDataByOrderNumber();
             }
         }
-        $orderData = $this->validateOrderData($orderData);
+
+        if($orderData) {
+            $orderData = $this->validateOrderData($orderData);
+        }
+
         return $orderData;
     }
 
@@ -160,16 +164,6 @@ class FlowCartManager implements FlowCartManagementInterface
     }
 
     /**
-     * Create new flow order (cart) from quote
-     * @return mixed|void
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function createNewCartData()
-    {
-        $this->createFlowOrderFromQuote();
-    }
-
-    /**
      * Update session and quote with new flow order data
      * @param $orderData
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -195,30 +189,37 @@ class FlowCartManager implements FlowCartManagementInterface
     }
 
     /**
-     * Create order from quote in
      * @return array|bool|float|int|mixed|string|null
+     * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
      */
     private function createFlowOrderFromQuote()
     {
         $postData = $this->extractPostDataFromQuote();
-        $query = ['experience' => $this->sessionManager->getSessionExperienceKey()];
-        $orderData = $this->orderSave->execute($postData, $query);
-        if ($orderData) {
-            $orderData = $this->jsonSerializer->unserialize($orderData);
-            $this->updateSessionAndQuote($orderData);
+        if($postData) {
+            $query = ['experience' => $this->sessionManager->getSessionExperienceKey()];
+            $orderData = $this->orderSave->execute($postData, $query);
+            if ($orderData) {
+                $orderData = $this->jsonSerializer->unserialize($orderData);
+                $this->updateSessionAndQuote($orderData);
+            }
+            return $orderData;
         }
-        return $orderData;
+        return false;
     }
 
     /**
      * Extract post data from quote
-     * @return array
+     * @return bool|array
      */
     private function extractPostDataFromQuote()
     {
-
         $quote = $this->getQuoteFromSession();
+        if(!$quote->getId() || !$quote->getAllVisibleItems()) {
+            return false;
+        }
+
         $data = [];
         $attribs = [];
         $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();

@@ -25,6 +25,12 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
     /** @var Logger */
     private $logger;
 
+    /**
+     * SyncFlowCartAfterCartUpdate constructor.
+     * @param FlowCartManager $flowCartManager
+     * @param CheckoutSession $checkoutSession
+     * @param Logger $logger
+     */
     public function __construct(
         FlowCartManager $flowCartManager,
         CheckoutSession $checkoutSession,
@@ -39,11 +45,14 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
     /**
      * Sync cart
      * @param Observer $observer
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @SuppressWarnings("unused")
      */
     public function execute(Observer $observer)
     {
-        $this->flowCartManager->syncCartData();
+        try {
+            $this->flowCartManager->syncCartData();
+        } catch (\Exception $e) {
+            $this->logger->error(sprintf('Unable to sync Magento and Flow carts due to %s', $e->getMessage()));
+        }
     }
 }

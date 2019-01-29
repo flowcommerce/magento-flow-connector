@@ -53,57 +53,62 @@ class Cart
      */
     public function afterGetSectionData(CustomerDataCart $subject, $result)
     {
-        $flowCart = $this->flowCartManager->getFlowCartData();
-        if(!$flowCart) {
-            $this->logger->error('Unable to localize cart item due to inability to fetch Flow cart');
+        try {
+            $flowCart = $this->flowCartManager->getFlowCartData();
+            if(!$flowCart) {
+                $this->logger->info('Unable to localize mini cart because Magento cart is empty');
 
-            return $result;
-        }
-
-        if(!isset($flowCart['prices']) || !is_array($flowCart['prices'])) {
-            $this->logger->error('Unable to localize cart item due to Flow cart being incomplete');
-
-            return $result;
-        }
-
-        $subtotal = null;
-        $currency = null;
-        foreach ($flowCart['prices'] as $price) {
-            if($price['key'] === 'subtotal') {
-                $subtotal = $price['amount'];
-                $currency = $price['currency'];
+                return $result;
             }
-            break;
+
+            if(!isset($flowCart['prices']) || !is_array($flowCart['prices'])) {
+                $this->logger->error('Unable to localize mini cart due to Flow cart being incomplete');
+
+                return $result;
+            }
+
+            $subtotal = null;
+            $currency = null;
+            foreach ($flowCart['prices'] as $price) {
+                if($price['key'] === 'subtotal') {
+                    $subtotal = $price['amount'];
+                    $currency = $price['currency'];
+                }
+                break;
+            }
+
+            if(!$subtotal || !$currency) {
+                $this->logger->error('Unable to localize mini cart due to Flow cart missing subtotal or currency');
+
+                return $result;
+            }
+
+            $result['subtotalAmount'] = $subtotal;
+            $result['subtotal'] = $this->priceCurrency->format(
+                $subtotal,
+                true,
+                PriceCurrencyInterface::DEFAULT_PRECISION,
+                null,
+                $currency
+            );
+            $result['subtotal_incl_tax'] = $this->priceCurrency->format(
+                $subtotal,
+                true,
+                PriceCurrencyInterface::DEFAULT_PRECISION,
+                null,
+                $currency
+            );
+            $result['subtotal_excl_tax'] = $this->priceCurrency->format(
+                $subtotal,
+                true,
+                PriceCurrencyInterface::DEFAULT_PRECISION,
+                null,
+                $currency
+            );
+        } catch (\Exception $e) {
+            $this->logger->error(sprintf('Unable to localize mini cart due to %s', $e->getMessage()));
         }
 
-        if(!$subtotal || !$currency) {
-            $this->logger->error('Unable to localize cart item due to Flow cart missing subtotal or currency');
-
-            return $result;
-        }
-
-        $result['subtotalAmount'] = $subtotal;
-        $result['subtotal'] = $this->priceCurrency->format(
-            $subtotal,
-            true,
-            PriceCurrencyInterface::DEFAULT_PRECISION,
-            null,
-            $currency
-        );
-        $result['subtotal_incl_tax'] = $this->priceCurrency->format(
-            $subtotal,
-            true,
-            PriceCurrencyInterface::DEFAULT_PRECISION,
-            null,
-            $currency
-        );
-        $result['subtotal_excl_tax'] = $this->priceCurrency->format(
-            $subtotal,
-            true,
-            PriceCurrencyInterface::DEFAULT_PRECISION,
-            null,
-            $currency
-        );
         return $result;
     }
 

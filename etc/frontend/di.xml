@@ -1,15 +1,18 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\Tax\Block\Item\Price\Renderer">
-        <!-- Plugin to localize cart product listing. -->
+        <!-- Plugin to localize main cart and mini cart product listing. -->
         <plugin name="flowcommerce_flowconnector_item_price_renderer"
-                type="FlowCommerce\FlowConnector\Plugin\Magento\Tax\Block\Item\Price\Renderer"
-                sortOrder="99"/>
+                type="FlowCommerce\FlowConnector\Plugin\Magento\Tax\Block\Item\Price\Renderer"/>
     </type>
     <type name="Magento\Checkout\Model\DefaultConfigProvider">
-        <!-- Plugin to localize cart sidebar. -->
+        <!-- Plugin to localize main cart totals. -->
         <plugin name="flowcommerce_flowconnector_checkout_config"
-                type="FlowCommerce\FlowConnector\Plugin\Magento\Checkout\Model\DefaultConfigProvider"
-                sortOrder="99"/>
+                type="FlowCommerce\FlowConnector\Plugin\Magento\Checkout\Model\DefaultConfigProvider"/>
+    </type>
+    <!-- Plugin to localize mini cart totals. -->
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="flowcommerce_flowconnector_checkout_customerdata_cart"
+                type="FlowCommerce\FlowConnector\Plugin\Magento\Checkout\CustomerData\Cart"/>
     </type>
 </config>

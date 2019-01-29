@@ -133,17 +133,21 @@ class Renderer
             return $proceed($price);
         }
 
-        $flowCart = $this->flowCartManager->getFlowCartData();
-        if(!$flowCart || !isset($flowCart['total']['currency'])) {
-            return $proceed($price);
-        }
+        try {
+            $flowCart = $this->flowCartManager->getFlowCartData();
+            if(!$flowCart || !isset($flowCart['total']['currency'])) {
+                return $proceed($price);
+            }
 
-        return $this->priceCurrency->format(
-            $price,
-            true,
-            PriceCurrencyInterface::DEFAULT_PRECISION,
-            $item->getStore(),
-            $flowCart['total']['currency']
-        );
+            return $this->priceCurrency->format(
+                $price,
+                true,
+                PriceCurrencyInterface::DEFAULT_PRECISION,
+                $item->getStore(),
+                $flowCart['total']['currency']
+            );
+        } catch (Exception $e) {
+            $this->logger->error(sprintf('Unable to localize cart item currency due to exception %s', $e->getMessage()));
+        }
     }
 }

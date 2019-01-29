@@ -96,7 +96,6 @@ class Save
      */
     public function execute($body, $query = [])
     {
-        $return = [];
         $storeId = $this->getCurrentStoreId();
 
         /** @var HttpClient $client */
@@ -114,10 +113,12 @@ class Save
                 $this->logger->info('Order created: ' . $response->getBody());
                 $return = (string) $response->getBody();
             } else {
-                $this->logger->info('Order creation failed: ' . $response->getBody());
+                throw new Exception(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
             }
         } catch (Exception $e) {
-            $this->logger->info('Order creation failed: ' . $e->getMessage());
+            $this->logger->info(sprintf('Order creation failed due to: %s', $e->getMessage()));
+
+            throw $e;
         }
 
         return $return;

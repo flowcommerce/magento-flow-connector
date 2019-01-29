@@ -10,6 +10,7 @@ use Magento\Sales\Model\Order\Item as OrderItem;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use FlowCommerce\FlowConnector\Model\FlowCartManager;
 use Psr\Log\LoggerInterface as Logger;
+use Magento\Framework\Locale\FormatInterface as LocaleFormat;
 use Exception;
 
 /**
@@ -35,6 +36,8 @@ class Renderer
      */
     private $logger;
 
+    private $localeFormat;
+
     /**
      * Renderer constructor.
      * @param PriceCurrencyInterface $priceCurrency
@@ -42,11 +45,13 @@ class Renderer
     public function __construct(
         PriceCurrencyInterface $priceCurrency,
         FlowCartManager $flowCartManager,
-        Logger $logger
+        Logger $logger,
+        LocaleFormat $localeFormat
     ) {
         $this->priceCurrency = $priceCurrency;
         $this->flowCartManager = $flowCartManager;
         $this->logger = $logger;
+        $this->localeFormat = $localeFormat;
     }
 
     /**
@@ -94,23 +99,21 @@ class Renderer
                 }
 
                 $flowItemRegularAmount = $flowItem['local']['price_attributes']['regular_price']['amount'];
-                $flowItemFinalAmount = $flowItem['local']['price_attributes']['final_price']['amount'];
-                $flowDiscountAmount = $flowItemFinalAmount - $flowItemRegularAmount;
-                $flowDiscountPercent = ($flowItemRegularAmount/$flowItemFinalAmount)*100;
+                $itemPrice = $this->localeFormat->getNumber($flowItemRegularAmount);
+                $discountAmount = $this->localeFormat->getNumber($flowItemRegularAmount * ($item->getDiscountPercent()/100));
 
-                $item->setPrice($flowItemRegularAmount);
-                $item->setBasePrice($flowItemRegularAmount);
-                $item->setPriceInclTax($flowItemRegularAmount);
-                $item->setBasePriceInclTax($flowItemRegularAmount);
-                $item->setDiscountPercent($flowDiscountPercent);
-                $item->setDiscountAmount($flowDiscountAmount);
-                $item->setBaseDiscountAmount($flowDiscountAmount);
-                $item->setRowTotal($flowItemFinalAmount);
-                $item->setBaseRowTotal($flowItemFinalAmount);
-                $item->setRowTotalInclTax($flowItemFinalAmount);
-                $item->setBaseRowTotalInclTax($flowItemFinalAmount);
-                $item->setCalculationPrice($flowItemFinalAmount);
-                $item->setBaseCalculationPrice($flowItemFinalAmount);
+                $item->setPrice($itemPrice);
+                $item->setBasePrice($itemPrice);
+                $item->setPriceInclTax($itemPrice);
+                $item->setBasePriceInclTax($itemPrice);
+                $item->setDiscountAmount($discountAmount);
+                $item->setBaseDiscountAmount($discountAmount);
+                $item->setRowTotal($itemPrice);
+                $item->setBaseRowTotal($itemPrice);
+                $item->setRowTotalInclTax($itemPrice);
+                $item->setBaseRowTotalInclTax($itemPrice);
+                $item->setCalculationPrice($itemPrice);
+                $item->setBaseCalculationPrice($itemPrice);
             } catch (Exception $e) {
                 $this->logger->error(sprintf('Unable to localize cart item due to exception %s', $e->getMessage()));
             }

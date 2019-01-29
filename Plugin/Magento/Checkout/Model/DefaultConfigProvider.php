@@ -82,26 +82,31 @@ class DefaultConfigProvider
                 return $config;
             }
 
+            $discountPct = 0;
+            if(isset($config['totalsData']['discount_amount']) && isset($config['totalsData']['subtotal'])) {
+                $discountPct = $config['totalsData']['discount_amount'] / $config['totalsData']['subtotal'];
+            }
+
             $config['totalsData'] = array_merge(
                 $config['totalsData'],
                 [
-                    'subtotal' => $subtotal,
-                    'base_subtotal' => $subtotal,
-                    'subtotal_with_discount' => $subtotal,
-                    'base_subtotal_with_discount' => $subtotal,
+                    'subtotal' => $this->localeFormat->getNumber($subtotal),
+                    'base_subtotal' => $this->localeFormat->getNumber($subtotal),
+                    'subtotal_with_discount' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
+                    'base_subtotal_with_discount' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
                     'tax_amount' => 0,
                     'base_tax_amount' => 0,
                     'shipping_amount' => 0,
                     'base_shipping_amount' => 0,
                     'shipping_tax_amount' => 0,
                     'base_shipping_tax_amount' => 0,
-                    'discount_amount' => 0,
-                    'base_discount_amount' => 0,
-                    'grand_total' => $subtotal,
-                    'base_grand_total' => $subtotal,
+                    'discount_amount' => $this->localeFormat->getNumber($subtotal * $discountPct),
+                    'base_discount_amount' => $this->localeFormat->getNumber($subtotal * $discountPct),
+                    'grand_total' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
+                    'base_grand_total' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
                     'shipping_discount_amount' => 0,
-                    'base_shipping_discount_amount' => 0.0000,
-                    'subtotal_incl_tax' => $subtotal,
+                    'base_shipping_discount_amount' => 0,
+                    'subtotal_incl_tax' => $this->localeFormat->getNumber($subtotal),
                     'shipping_incl_tax' => 0,
                     'base_shipping_incl_tax' => 0,
                     'base_currency_code' => $currency,
@@ -119,13 +124,13 @@ class DefaultConfigProvider
                             $segment['value'] = 0;
                             break;
                         case 'discount':
-                            $segment['value'] = 0;
+                            $segment['value'] = $this->localeFormat->getNumber($subtotal * $discountPct);
                             break;
                         case 'tax':
                             $segment['value'] = 0;
                             break;
                         case 'grand_total':
-                            $segment['value'] = $subtotal;
+                            $segment['value'] = $this->localeFormat->getNumber($subtotal * (1 + $discountPct));
                             break;
                     }
                 }

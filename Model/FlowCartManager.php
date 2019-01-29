@@ -254,6 +254,9 @@ class FlowCartManager implements FlowCartManagementInterface
         $query = ['number' => $flowOrderNumber];
         $result = $this->orderGet->execute($query);
         $orderData = reset($result);
+        if($orderData) {
+            $this->updateSessionAndQuote($orderData);
+        }
         return $orderData;
     }
 

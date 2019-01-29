@@ -91,12 +91,13 @@ define([
             getCurrentProductId: function (productId) {
                 if (flow.magento2.optionsSelected != undefined) {
                     if (flow.magento2.optionsSelected[productId] != undefined) {
-                        if (!_.contains(flow.magento2.optionsSelected[productId], false)) {
-                            console.log('complete selection');
-                            // TODO filter down selections to produce productId by complete selection combos
-                        } else {
-                            console.log('incomplete selection');
-                        }
+                        if (!_.contains(flow.magento2.optionsSelected[productId], false) && flow.magento2.optionsIndex[productId] != undefined) {
+                            _.each(flow.magento2.optionsIndex[productId], function (optionData) {
+                                if (_.difference(optionData.optionIds, flow.magento2.optionsSelected[productId]).length == 0) {
+                                    productId = optionData.productId;
+                                }
+                            });
+                        } 
                     }
                 }
                 return productId;

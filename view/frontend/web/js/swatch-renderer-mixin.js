@@ -22,14 +22,18 @@ define([
                         flow.magento2.optionsIndex = {};
                     }
                     var productId = this.options.jsonConfig.productId;
-                    var newIndex = [];
+                    var optionIndex = [];
                     _.each(this.options.jsonConfig.index, function (option, key) {
-                        newIndex[key] = [];
+                        var optionData = {
+                            productId: key,
+                            optionIds: []
+                        };
                         _.each(option, function(value) {
-                            newIndex[key].push(value);
+                            optionData.optionIds.push(value);
                         });
+                        optionIndex.push(optionData);
                     });
-                    flow.magento2.optionsIndex[productId] = newIndex;
+                    flow.magento2.optionsIndex[productId] = optionIndex;
                 }
                 return this._super();
             },

@@ -26,9 +26,13 @@ define([
 
             reloadPrice: function reDrawPrices() {
                 var flowLocalizationKey = this.getFlowExperience();
+                if (this.options.priceConfig.prices != undefined) {
+                    if (this.options.priceConfig.prices.flow_localization_enabled == false) {
+                        return this._super();
+                    }
+                }
                 if (!flowLocalizationKey ||
-                    this.options.priceConfig.flow_localization_enabled == false ||
-                    this.options.priceConfig.prices.flow_localization_enabled == false
+                    this.options.priceConfig.flow_localization_enabled == false
                 ) {
                     return this._super();
                 }
@@ -40,8 +44,10 @@ define([
 
                 if (this.options.priceConfig.flow_localized_prices != undefined) {
                     flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
-                } else if (this.options.priceConfig.prices.flow_localized_prices != undefined) {
-                    flowLocalizedPrices = this.options.priceConfig.prices.flow_localized_prices;
+                } else if (this.options.priceConfig.prices != undefined) {
+                    if (this.options.priceConfig.prices.flow_localized_prices != undefined) {
+                        flowLocalizedPrices = this.options.priceConfig.prices.flow_localized_prices;
+                    }
                 }
 
                 _.each(this.cache.displayPrices, function (price, priceCode) {

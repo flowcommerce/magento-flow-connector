@@ -41,7 +41,7 @@ class View
     public function afterGetJsonConfig(\Magento\Catalog\Block\Product\View $view, $result)
     {
         $config = $this->jsonSerializer->unserialize($result);
-        if (!$this->configuration->isCatalogPriceLocalizationEnabled()) {
+        if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled()) {
             $config['flow_localization_enabled'] = false;
             return $this->jsonSerializer->serialize($config);
         }

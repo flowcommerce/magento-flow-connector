@@ -9,11 +9,13 @@ define([
 
     return function (widget) {
         var globalOptions = {
-                priceTemplate: '<span class="price"><%- data.formatted %></span>',
+                priceTemplate: '<span data-flow-localize="item-price" class="price"><%- data.formatted %></span>',
                 flowPriceTemplateById: '<span data-flow-item-attribute-key="product_id" data-flow-item-attribute-value="<%- data.productId %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
+                flowPriceTemplateBySku: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
                 flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
             },
             flow = window.flow || {},
+            MAGENTOREGULARPRICEKEY = 'regularPrice',
             MAGENTOBASEPRICEKEY = 'basePrice',
             MAGENTOFINALPRICEKEY = 'finalPrice', 
             FLOWBASEPRICEKEY = 'base_price',
@@ -72,7 +74,11 @@ define([
                         if (!template.data.flowLocalized) {
                             priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
                             if (template.data.productSku) {
-                                priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                                if (template.data.flowPriceCode == FLOWFINALPRICEKEY) {
+                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySku);
+                                } else {
+                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                                }
                             }
                         }
 
@@ -101,9 +107,13 @@ define([
             },
 
             getFlowPriceCode: function (priceCode) {
-                var flowPriceCode = FLOWREGULARPRICEKEY;
+                var flowPriceCode = false;
                 if (typeof(priceCode) == "string") {
                     switch (priceCode) {
+                        case MAGENTOREGULARPRICEKEY:
+                            flowPriceCode = FLOWREGULARPRICEKEY;
+                            break;
+
                         case MAGENTOBASEPRICEKEY:
                             flowPriceCode = FLOWBASEPRICEKEY; 
                             break;
@@ -141,6 +151,11 @@ define([
             },
 
             localizeTemplate: function (template, flowLocalizedPrices, flowLocalizationKey) {
+                if (_.toArray(flowLocalizedPrices[flowLocalizationKey][template.data.productId])[0] != undefined) {
+                    if (_.toArray(flowLocalizedPrices[flowLocalizationKey][template.data.productId])[0].label != undefined) {
+                        this.flowFormattedPrice = _.toArray(flowLocalizedPrices[flowLocalizationKey][template.data.productId])[0].label;
+                    }
+                }
                 if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY] != undefined) {
                     if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY].label != undefined) {
                         this.flowFormattedPrice = flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY].label;

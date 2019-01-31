@@ -15,13 +15,16 @@ define([
                 flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
             },
             flow = window.flow || {},
+            MAGENTOMINPRICEKEY = 'minPrice',
             MAGENTOREGULARPRICEKEY = 'regularPrice',
             MAGENTOBASEPRICEKEY = 'basePrice',
             MAGENTOFINALPRICEKEY = 'finalPrice', 
-            FLOWBASEPRICEKEY = 'base_price',
+            FLOWMINPRICEKEY = 'minimal_price',
             FLOWREGULARPRICEKEY = 'regular_price',
+            FLOWBASEPRICEKEY = 'base_price',
             FLOWFINALPRICEKEY = 'final_price';
         flow.magento2 = window.flow.magento2 || {};
+        flow.localizationAttempted = window.flow.localizationAttempted || false;
 
         $.widget('mage.priceBox', widget, {
             options: globalOptions,
@@ -87,6 +90,7 @@ define([
                 }, this);
                 if (!this.flowFormattedPrice) {
                     flow.cmd('localize');
+                    flow.localizationAttempted = true;
                 }
             },
 
@@ -110,6 +114,10 @@ define([
                 var flowPriceCode = false;
                 if (typeof(priceCode) == "string") {
                     switch (priceCode) {
+                        case MAGENTOMINPRICEKEY:
+                            flowPriceCode = FLOWMINPRICEKEY;
+                            break;
+
                         case MAGENTOREGULARPRICEKEY:
                             flowPriceCode = FLOWREGULARPRICEKEY;
                             break;

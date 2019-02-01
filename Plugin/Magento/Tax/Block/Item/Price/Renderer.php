@@ -80,7 +80,7 @@ class Renderer
 
                 $flowItem = null;
                 foreach ($flowCart['items'] as $i) {
-                    if($item->getSku() === $i['name']) {
+                    if($item->getSku() === $i['number']) {
                         $flowItem = $i;
                         break;
                     }
@@ -90,7 +90,7 @@ class Renderer
                     || !isset($flowItem['local']['price_attributes']['regular_price']['amount'])
                     || !$flowItem['local']['price_attributes']['final_price']['amount']) {
                     $this->logger->error(sprintf(
-                        'Unable to localize cart item %s because Flow cart does not contain that item,'.
+                        'Unable to localize cart item %s because Flow cart does not contain that item, '.
                         'or the Flow cart item is incomplete',
                         $item->getSku()
                     ));

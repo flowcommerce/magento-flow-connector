@@ -77,8 +77,15 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="country_picker_enabled" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="1">
-                    <label>Country Picker Enabled</label>
+                <field id="country_picker" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Enable Country Picker</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="catalog_price_localization" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Enable Catalog Price Localization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>

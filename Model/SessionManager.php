@@ -3,7 +3,7 @@
 namespace FlowCommerce\FlowConnector\Model;
 
 use FlowCommerce\FlowConnector\Api\SessionManagementInterface;
-use Magento\Checkout\Model\Session;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
@@ -11,6 +11,8 @@ use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use FlowCommerce\FlowConnector\Model\Api\Session as ApiSession;
 use Magento\Quote\Model\Quote;
+use FlowCommerce\FlowConnector\Model\Api\Order\Get as OrderGet;
+use Psr\Log\LoggerInterface;
 
 class SessionManager implements SessionManagementInterface
 {
@@ -50,11 +52,6 @@ class SessionManager implements SessionManagementInterface
     private $sessionApiClient;
 
     /**
-     * @var Session
-     */
-    private $session;
-
-    /**
      * @var Configuration
      */
     private $configuration;
@@ -65,7 +62,7 @@ class SessionManager implements SessionManagementInterface
     private $customerSession;
 
     /**
-     * @var Session
+     * @var CheckoutSession
      */
     private $checkoutSession;
 
@@ -75,38 +72,56 @@ class SessionManager implements SessionManagementInterface
     private $addressRepository;
 
     /**
+     * @var FlowCartManager
+     */
+    private $flowCartManager;
+
+    /*
+     * @var OrderGet
+     */
+    private $orderGet;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * SessionManager constructor.
      * @param CookieManagerInterface $cookieManagerInterface
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param SessionManagerInterface $sessionManagerInterface
      * @param ApiSession $sessionApiClient
-     * @param Session $session
      * @param \FlowCommerce\FlowConnector\Model\Configuration $configuration
      * @param CustomerSession $customerSession
-     * @param Session $checkoutSession
+     * @param CheckoutSession $checkoutSession
      * @param AddressRepositoryInterface $addressRepository
+     * @param OrderGet $orderGet
+     * @param LoggerInterface $logger
      */
     public function __construct(
         CookieManagerInterface $cookieManagerInterface,
         CookieMetadataFactory $cookieMetadataFactory,
         SessionManagerInterface $sessionManagerInterface,
         ApiSession $sessionApiClient,
-        Session $session,
         Configuration $configuration,
         CustomerSession $customerSession,
-        Session $checkoutSession,
-        AddressRepositoryInterface $addressRepository
+        CheckoutSession $checkoutSession,
+        AddressRepositoryInterface $addressRepository,
+        OrderGet $orderGet,
+        LoggerInterface $logger
     ) {
 
         $this->cookieManagerInterface = $cookieManagerInterface;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
         $this->sessionManagerInterface = $sessionManagerInterface;
         $this->sessionApiClient = $sessionApiClient;
-        $this->session = $session;
         $this->configuration = $configuration;
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
         $this->addressRepository = $addressRepository;
+        $this->orderGet = $orderGet;
+        $this->logger = $logger;
     }
 
     /**
@@ -118,7 +133,7 @@ class SessionManager implements SessionManagementInterface
      */
     public function getFlowSessionData()
     {
-        $flowSessionData = $this->session->getFlowSessionData();
+        $flowSessionData = $this->checkoutSession->getFlowSessionData();
         if (!$flowSessionData || $this->isUpdateSession()) {
             $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
             if ($sessionId) {
@@ -159,7 +174,7 @@ class SessionManager implements SessionManagementInterface
                 $cookieMeta
             );
 
-            $this->session->setFlowSessionData($flowSessionData);
+            $this->checkoutSession->setFlowSessionData($flowSessionData);
         }
     }
 
@@ -193,6 +208,23 @@ class SessionManager implements SessionManagementInterface
             $params['country'] = $country;
         }
 
+        $flowOrderNumber = $quote->getFlowConnectorOrderNumber();
+        $query = ['number' => $flowOrderNumber];
+        $result = $this->orderGet->execute($query);
+        $flowOrderData = reset($result);
+        $quoteData = $quote->getData();
+        $quoteSubtotal = $quote->getSubtotal();
+        $quoteSubtotalWithDiscount = $quote->getSubtotalWithDiscount();
+        $quoteDiscountPercentage = $quoteSubtotalWithDiscount / $quoteSubtotal;
+        if ($quoteDiscountPercentage < 1 && $quoteDiscountPercentage > 0) {
+            foreach ($flowOrderData['prices'] as $pricingDatum) {
+                if ($pricingDatum['key'] == 'subtotal') {
+                    $params['discount[amount]'] = $pricingDatum['amount'] * (1 - $quoteDiscountPercentage);
+                    $params['discount[currency]'] = $pricingDatum['currency'];
+                }
+            }
+        }
+        
         if ($flowSessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE)) {
             $params['flow_session_id'] = $flowSessionId;
         }
@@ -283,7 +315,7 @@ class SessionManager implements SessionManagementInterface
      */
     public function setFlowSessionData($data)
     {
-        $this->session->setFlowSessionData($data);
+        $this->checkoutSession->setFlowSessionData($data);
     }
 
     /**

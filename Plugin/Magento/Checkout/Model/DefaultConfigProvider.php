@@ -73,7 +73,10 @@ class DefaultConfigProvider
                     $subtotal = $price['amount'];
                     $currency = $price['currency'];
                 }
-                break;
+                // TODO Implement shipping
+                /* if($price['key'] === 'shipping') { */
+                /*     $shippingSubtotal = $price['amount']; */
+                /* } */
             }
 
             if(!$subtotal || !$currency) {
@@ -118,7 +121,7 @@ class DefaultConfigProvider
                 if(isset($segment['code'])) {
                     switch ($segment['code']) {
                         case 'subtotal':
-                            $segment['value'] = $subtotal;
+                            $segment['value'] = $this->localeFormat->getNumber($subtotal);
                             break;
                         case 'shipping':
                             $segment['value'] = 0;

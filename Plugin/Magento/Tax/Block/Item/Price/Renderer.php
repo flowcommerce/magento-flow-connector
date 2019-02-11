@@ -99,21 +99,11 @@ class Renderer
                 }
 
                 $flowItemRegularAmount = $flowItem['local']['price_attributes']['regular_price']['amount'];
+                $flowItemRegularLabel = $flowItem['local']['price_attributes']['regular_price']['label'];
                 $itemPrice = $this->localeFormat->getNumber($flowItemRegularAmount);
                 $discountAmount = $this->localeFormat->getNumber($flowItemRegularAmount * ($item->getDiscountPercent()/100));
 
-                $item->setPrice($itemPrice);
-                $item->setBasePrice($itemPrice);
-                $item->setPriceInclTax($itemPrice);
-                $item->setBasePriceInclTax($itemPrice);
-                $item->setDiscountAmount($discountAmount);
-                $item->setBaseDiscountAmount($discountAmount);
-                $item->setRowTotal($itemPrice);
-                $item->setBaseRowTotal($itemPrice);
-                $item->setRowTotalInclTax($itemPrice);
-                $item->setBaseRowTotalInclTax($itemPrice);
-                $item->setCalculationPrice($itemPrice);
-                $item->setBaseCalculationPrice($itemPrice);
+                $item->setPriceFlowLabel($flowItemRegularLabel);
             } catch (Exception $e) {
                 $this->logger->error(sprintf('Unable to localize cart item due to exception %s', $e->getMessage()));
             }
@@ -142,6 +132,9 @@ class Renderer
                 return $proceed($price);
             }
 
+            if ($item->getPriceFlowLabel()) {
+                return '<span class="price">'.$item->getPriceFlowLabel().'</span>'; 
+            }
             return $this->priceCurrency->format(
                 $price,
                 true,

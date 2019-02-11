@@ -26,6 +26,10 @@ var config = {
             'Magento_Swatches/js/swatch-renderer': {
                 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
             }
+
+            'Magento_Checkout/js/minicart': {
+                'FlowCommerce_FlowConnector/js/minicart-mixin': true
+            }
         }
     }
 };

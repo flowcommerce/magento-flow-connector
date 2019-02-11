@@ -95,6 +95,9 @@ class FlowCartManager implements FlowCartManagementInterface
      */
     public function getFlowCartData()
     {
+        if (!$this->sessionManager->getSessionExperienceKey()) {
+            return null;
+        }
         $orderData = $this->getFlowOrderDataFromSession();
         if (!$orderData) {
             $flowOrderNumber = $this->getFlowOrderNumberFromQuote();
@@ -261,21 +264,6 @@ class FlowCartManager implements FlowCartManagementInterface
     }
 
     /**
-     * Validates experience
-     * @return bool
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    private function isFlowExperience()
-    {
-        $return = false;
-        if ($this->sessionManager->getSessionExperienceKey()) {
-            $this->logger->info('Flow Experience validation true');
-            $return = true;
-        }
-        return $return;
-    }
-
-    /**
      * Validate if order in session is valid
      * Validates experience and expires_at date
      * @return bool
@@ -409,7 +397,7 @@ class FlowCartManager implements FlowCartManagementInterface
                 !$this->isFlowOrderFromSessionValid() ||
                 !$this->isFlowOrderFromQuoteValid()
             )
-            && $this->isFlowExperience()
+            && $this->sessionManager->getSessionExperienceKey()
         ) {
             $orderData = $this->createFlowOrderFromQuote();
         }

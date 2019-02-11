@@ -305,7 +305,9 @@ class SessionManager implements SessionManagementInterface
     public function getSessionExperienceKey()
     {
         $sessionData = $this->getFlowSessionData();
-        $country = isset($sessionData['experience']['key']) ? $sessionData['experience']['key'] : null;
+        if ($country = isset($sessionData['experience']['key']) ? $sessionData['experience']['key'] : null) {
+            $this->logger->info('Current Experience Key: '.$country);
+        }
         return $country;
     }
 

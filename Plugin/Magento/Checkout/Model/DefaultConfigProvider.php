@@ -90,64 +90,52 @@ class DefaultConfigProvider
                 $discountPct = $config['totalsData']['discount_amount'] / $config['totalsData']['subtotal'];
             }
 
-            $config['totalsData'] = array_merge(
-                $config['totalsData'],
-                [
-                    'subtotal' => $this->localeFormat->getNumber($subtotal),
-                    'base_subtotal' => $this->localeFormat->getNumber($subtotal),
-                    'subtotal_with_discount' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
-                    'base_subtotal_with_discount' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
-                    'tax_amount' => 0,
-                    'base_tax_amount' => 0,
-                    'shipping_amount' => 0,
-                    'base_shipping_amount' => 0,
-                    'shipping_tax_amount' => 0,
-                    'base_shipping_tax_amount' => 0,
-                    'discount_amount' => $this->localeFormat->getNumber($subtotal * $discountPct),
-                    'base_discount_amount' => $this->localeFormat->getNumber($subtotal * $discountPct),
-                    'grand_total' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
-                    'base_grand_total' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
-                    'shipping_discount_amount' => 0,
-                    'base_shipping_discount_amount' => 0,
-                    'subtotal_incl_tax' => $this->localeFormat->getNumber($subtotal),
-                    'shipping_incl_tax' => 0,
-                    'base_shipping_incl_tax' => 0,
-                    'base_currency_code' => $currency,
-                    'quote_currency_code' => $currency
-                ]
-            );
-
-            foreach ($config['totalsData']['total_segments'] as &$segment) {
-                if(isset($segment['code'])) {
-                    switch ($segment['code']) {
-                        case 'subtotal':
-                            $segment['value'] = $this->localeFormat->getNumber($subtotal);
-                            break;
-                        case 'shipping':
-                            $segment['value'] = 0;
-                            break;
-                        case 'discount':
-                            $segment['value'] = $this->localeFormat->getNumber($subtotal * $discountPct);
-                            break;
-                        case 'tax':
-                            $segment['value'] = 0;
-                            break;
-                        case 'grand_total':
-                            $segment['value'] = $this->localeFormat->getNumber($subtotal * (1 + $discountPct));
-                            break;
-                    }
-                }
-            }
-
-            $config['priceFormat'] = $this->localeFormat->getPriceFormat(
-                null,
-                $currency
-            );
-
-            $config['basePriceFormat'] = $this->localeFormat->getPriceFormat(
-                null,
-                $currency
-            );
+            $config['totalsData']['totals_flow'] = [
+                'total_segments' => [
+                    [
+                        'code' => 'subtotal',
+                        'value' => $this->localeFormat->getNumber($subtotal),
+                    ],
+                    [
+                        'code' => 'shipping',
+                        'value' => 0,
+                    ],
+                    [
+                        'code' => 'discount',
+                        'value' => $this->localeFormat->getNumber($subtotal * $discountPct),
+                    ],
+                    [
+                        'code' => 'tax',
+                        'value' => 0,
+                    ],
+                    [
+                        'code' => 'grand_total',
+                        'value' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
+                    ],
+                ],
+                'subtotal' => $this->localeFormat->getNumber($subtotal),
+                'base_subtotal' => $this->localeFormat->getNumber($subtotal),
+                'subtotal_with_discount' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
+                'base_subtotal_with_discount' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
+                'tax_amount' => 0,
+                'base_tax_amount' => 0,
+                'shipping_amount' => 0,
+                'base_shipping_amount' => 0,
+                'shipping_tax_amount' => 0,
+                'base_shipping_tax_amount' => 0,
+                'discount_amount' => $this->localeFormat->getNumber($subtotal * $discountPct),
+                'base_discount_amount' => $this->localeFormat->getNumber($subtotal * $discountPct),
+                'grand_total' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
+                'base_grand_total' => $this->localeFormat->getNumber($subtotal * (1 + $discountPct)),
+                'shipping_discount_amount' => 0,
+                'base_shipping_discount_amount' => 0,
+                'subtotal_incl_tax' => $this->localeFormat->getNumber($subtotal),
+                'shipping_incl_tax' => 0,
+                'base_shipping_incl_tax' => 0,
+                'base_currency_code' => $currency,
+                'quote_currency_code' => $currency
+            ];
+            $this->logger->info(json_encode($config));
         } catch (Exception $e) {
             $this->logger->error(sprintf('Unable to localize cart totals due to exception %s', $e->getMessage()));
         }

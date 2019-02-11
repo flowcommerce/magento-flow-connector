@@ -151,8 +151,12 @@ define([
 
             getCurrentProductSku: function (productId, flowLocalizedPrices, flowLocalizationKey) {
                 if (flowLocalizedPrices) {
-                    if (flowLocalizedPrices[flowLocalizationKey][productId]['sku'] != undefined) {
-                        return flowLocalizedPrices[flowLocalizationKey][productId]['sku'];
+                    if (flowLocalizedPrices[flowLocalizationKey] != undefined) {
+                        if (flowLocalizedPrices[flowLocalizationKey][productId] != undefined) {
+                            if (flowLocalizedPrices[flowLocalizationKey][productId]['sku'] != undefined) {
+                                return flowLocalizedPrices[flowLocalizationKey][productId]['sku'];
+                            }
+                        }
                     }
                 }
                 return false;
@@ -164,14 +168,16 @@ define([
                         this.flowFormattedPrice = _.toArray(flowLocalizedPrices[flowLocalizationKey][template.data.productId])[0].label;
                     }
                 }
-                if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY] != undefined) {
-                    if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY].label != undefined) {
-                        this.flowFormattedPrice = flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY].label;
+                if (flowLocalizedPrices[flowLocalizationKey][template.data.productId] != undefined) {
+                    if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY] != undefined) {
+                        if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY].label != undefined) {
+                            this.flowFormattedPrice = flowLocalizedPrices[flowLocalizationKey][template.data.productId][FLOWFINALPRICEKEY].label;
+                        }
                     }
-                }
-                if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][template.data.flowPriceCode] != undefined) {
-                    if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][template.data.flowPriceCode].label != undefined) {
-                        this.flowFormattedPrice = flowLocalizedPrices[flowLocalizationKey][template.data.productId][template.data.flowPriceCode].label;
+                    if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][template.data.flowPriceCode] != undefined) {
+                        if (flowLocalizedPrices[flowLocalizationKey][template.data.productId][template.data.flowPriceCode].label != undefined) {
+                            this.flowFormattedPrice = flowLocalizedPrices[flowLocalizationKey][template.data.productId][template.data.flowPriceCode].label;
+                        }
                     }
                 }
                 if (this.flowFormattedPrice) {

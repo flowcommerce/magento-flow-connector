@@ -1,5 +1,5 @@
 var config = {
     'paths': {
-        'es6-collections': 'FlowCommerce_FlowConnector/core-js'
+        'es6-collections': 'FlowCommerce_FlowConnector/core'
     }
 };

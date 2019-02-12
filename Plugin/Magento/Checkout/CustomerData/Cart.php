@@ -65,76 +65,33 @@ class Cart
     public function afterGetSectionData(CustomerDataCart $subject, $result)
     {
         try {
-            $flowCart = $this->flowCartManager->getFlowCartData();
-            if(!$flowCart) {
-                $this->logger->info('Unable to localize mini cart because Magento cart is empty');
+            $this->logger->info('Pre-processing: '.json_encode($result));
+            $subtotalFields = [
+                'subtotal' => $result['subtotal'],
+                'subtotal_incl_tax' => $result['subtotal_incl_tax'],
+                'subtotal_excl_tax' => $result['subtotal_excl_tax'],
+            ];
 
-                return $result;
+            foreach ($subtotalFields as $subtotalKey => $subtotalHtml) {
+                $position = strpos($subtotalHtml, 'class="price"');
+                $result[$subtotalKey] = substr_replace($subtotalHtml, ' data-flow-localize="cart-subtotal" ', $position, 0);
             }
 
-            if(!isset($flowCart['prices']) || !is_array($flowCart['prices'])) {
-                $this->logger->error('Unable to localize mini cart due to Flow cart being incomplete');
-
-                return $result;
-            }
-
-            $subtotalLabel = null;
-            $subtotal = null;
-            $currency = null;
-            foreach ($flowCart['prices'] as $price) {
-                if($price['key'] === 'subtotal') {
-                    $subtotalLabel = $price['label'];
-                    $subtotal = $price['amount'];
-                    $currency = $price['currency'];
-                }
-                break;
-            }
-
-            if(!$subtotal || !$currency || !$subtotalLabel) {
-                $this->logger->error('Unable to localize mini cart due to Flow cart missing subtotal or currency');
-
-                return $result;
-            }
-
-            $result['subtotalFlow'] = '<span class="price">'.$subtotalLabel.'</span>'; 
-
-            $this->logger->info(json_encode($result));
-            if ($quote = $this->checkoutSession->getQuote()) {
-                $items = $quote->getAllVisibleItems();
-                $this->logger->info(json_encode([$result['items'], $items]));
-                if (is_array($result['items'])) {
-                    foreach ($result['items'] as $key => $itemAsArray) {
-                        if ($item = $this->findItemById($itemAsArray['item_id'], $items)) {
-                            $this->logger->info(json_encode($item->getPrice()));
-                            $result['items'][$key]['product_price_flow']= '<span class="price-including-tax" data-label="Incl. Tax"><span class="minicart-price"><span class="price">'.$item->getPriceFlowLabel().'</span></span></span>'; 
-                        }
-                    }
+            if (is_array($result['items'])) {
+                foreach ($result['items'] as $key => $itemAsArray) {
+                    $sku = $result['items'][$key]['product_sku'];
+                    $qty = $result['items'][$key]['qty'];
+                    $productPrice = $result['items'][$key]['product_price'];
+                    $position = strpos($productPrice, 'class="price"');
+                    $productPrice = substr_replace($productPrice, ' data-flow-localize="cart-item-price" ', $position, 0);
+                    $result['items'][$key]['product_price'] = '<span data-flow-cart-item-number="'.$sku.'" data-flow-cart-item-quantity="'.$qty.'">'.$productPrice.'</span>';
                 }
             }
+            $this->logger->info('Post-processing: '.json_encode($result));
         } catch (\Exception $e) {
             $this->logger->error(sprintf('Unable to localize mini cart due to %s', $e->getMessage()));
         }
 
         return $result;
-    }
-
-    /**
-     * Find item by id in items haystack
-     *
-     * @param int $id
-     * @param array $itemsHaystack
-     * @return \Magento\Quote\Model\Quote\Item | bool
-     */
-    protected function findItemById($id, $itemsHaystack)
-    {
-        if (is_array($itemsHaystack)) {
-            foreach ($itemsHaystack as $item) {
-                /** @var $item \Magento\Quote\Model\Quote\Item */
-                if ((int)$item->getItemId() == $id) {
-                    return $item;
-                }
-            }
-        }
-        return false;
     }
 }

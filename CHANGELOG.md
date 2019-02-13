@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.7
+- Replace M2 core es6-collections with core-js for full FlowJS compatability
+
 ## 1.1.6
 - Fix issue where a customer's default address overrided their selected experience
 - Improved error handling for catalog inventory syncing

@@ -11,9 +11,7 @@ use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFacto
 use GuzzleHttp\Psr7\RequestFactory as HttpRequestFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
-use Magento\Sales\Test\Block\Adminhtml\Order\Create\Store;
 use Magento\Store\Model\StoreManager;
-use Magento\TestFramework\TestCase\Webapi\Adapter\Soap;
 use Psr\Log\LoggerInterface as Logger;
 
 class Save

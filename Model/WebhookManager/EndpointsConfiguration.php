@@ -31,14 +31,16 @@ class EndpointsConfiguration
     public function getEndpointsConfiguration()
     {
         return [
-            $this->getRouteStub(AllocationDeletedV2::class) => [AllocationDeletedV2::EVENT_TYPE],
+            # Temporarily disabling allocation_deleted_v2, as it was breaking the cron
+            /* $this->getRouteStub(AllocationDeletedV2::class) => [AllocationDeletedV2::EVENT_TYPE], */
             $this->getRouteStub(AuthorizationDeletedV2::class) => [AuthorizationDeletedV2::EVENT_TYPE],
             $this->getRouteStub(CaptureUpsertedV2::class) => [CaptureUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(CardAuthorizationUpsertedV2::class) => [CardAuthorizationUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(FraudStatusChanged::class) => [FraudStatusChanged::EVENT_TYPE],
             $this->getRouteStub(LabelUpserted::class) => [LabelUpserted::EVENT_TYPE],
             $this->getRouteStub(OnlineAuthorizationUpsertedV2::class) => [OnlineAuthorizationUpsertedV2::EVENT_TYPE],
-            $this->getRouteStub(OrderDeletedV2::class) => [OrderDeletedV2::EVENT_TYPE],
+            # Temporarily disabling order_deleted_v2, as it was breaking the cron
+            /* $this->getRouteStub(OrderDeletedV2::class) => [OrderDeletedV2::EVENT_TYPE], */
             $this->getRouteStub(RefundCaptureUpsertedV2::class) => [RefundCaptureUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(RefundUpsertedV2::class) => [RefundUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(TrackingLabelEventUpserted::class) => [TrackingLabelEventUpserted::EVENT_TYPE],

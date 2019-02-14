@@ -822,7 +822,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      */
     private function processOrderDeletedV2()
     {
-        # Temporarily disabling order_deleted, as it was breaking the cron
+        # Temporarily disabling order_deleted_2, as it was breaking the cron
         $this->webhookEventManager->markWebhookEventAsDone($this, '');
         return;
 

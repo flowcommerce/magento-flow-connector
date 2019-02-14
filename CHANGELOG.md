@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.8
+- Fix inventory sync error marking
+
 ## 1.1.7
 - Replace M2 core es6-collections with core-js for full FlowJS compatability
 

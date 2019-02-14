@@ -400,6 +400,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         $this->inventorySyncRepository->save($inventorySync);
     }
 
+    // Duplicated in Model\Api\Inventory\Updates.php due to circular dependency and class scoping problem. TODO refactor hotfix
     /**
      * {@inheritdoc}
      */

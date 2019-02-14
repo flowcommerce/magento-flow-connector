@@ -1277,6 +1277,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
+     * Returns a list with all available status and labels
+     * @return string[]
+     */
+    public function getAvailableStatuses()
+    {
+        return [
+            self::STATUS_NEW => 'New',
+            self::STATUS_PROCESSING => 'Processing',
+            self::STATUS_DONE => 'Done',
+            self::STATUS_ERROR => 'Error'
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getStoreId()
@@ -1672,22 +1686,22 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         if (isset($destination['streets'])) {
             $shippingAddress->setStreet($destination['streets']);
         }
-    
+
         if (isset($destination['city'])) {
             $shippingAddress->setCity($destination['city']);
         }
-    
+
         if (isset($destination['province'])) {
             $shippingAddress->setRegion($destination['province']);
         } else {
             $shippingAddress->unsRegion();
             $shippingAddress->unsRegionId();
         }
-    
+
         if (isset($destination['postal'])) {
             $shippingAddress->setPostcode($destination['postal']);
         }
-    
+
         if (isset($destination['country'])) {
             $shippingAddress->setCountryCode($destination['country']);
 
@@ -1701,7 +1715,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $shippingAddress->setRegionId($region->getId());
             }
         }
-    
+
         if (isset($destination['contact'])) {
             $contact = $destination['contact'];
             if (array_key_exists('name', $contact)) {
@@ -1768,9 +1782,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // are additional billing addresses, they must be added to the order
             // later since Magento quotes only supports 1 billing address.
             foreach ($receivedOrder['payments'] as $flowPayment) {
-        
+
                 $this->logger->info('Adding billing address');
-        
+
                 // Paypal orders have no billing address on the payments entity
                 // If payment has no address use shipping address
                 // In case shipping addres is empty, use customer address
@@ -1785,48 +1799,48 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $paymentAddress = $flowPayment['address'];
                 }
                 $billingAddress = $quote->getBillingAddress();
-        
+
                 if (isset($paymentAddress['streets'])) {
                     $billingAddress->setStreet($paymentAddress['streets']);
                 }
-    
+
                 if (isset($paymentAddress['city'])) {
                     $billingAddress->setCity($paymentAddress['city']);
                 }
-    
+
                 if (isset($paymentAddress['province'])) {
                     $billingAddress->setRegion($paymentAddress['province']);
                 } else {
                     $billingAddress->unsRegion();
                     $billingAddress->unsRegionId();
                 }
-    
+
                 if (isset($paymentAddress['postal'])) {
                     $billingAddress->setPostcode($paymentAddress['postal']);
                 }
-    
+
                 if (isset($paymentAddress['country'])) {
                     $billingAddress->setCountryCode($paymentAddress['country']);
-            
+
                     // set country id
                     $country = $this->countryFactory->create()->loadByCode($paymentAddress['country']);
                     $billingAddress->setCountryId($country->getId());
-            
+
                     // set region
                     if (isset($paymentAddress['province'])) {
                         $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
                         $billingAddress->setRegionId($region->getId());
                     }
                 }
-        
+
                 $billingAddress->setFirstname($receivedOrder['customer']['name']['first']);
                 $billingAddress->setLastname($receivedOrder['customer']['name']['last']);
                 $billingAddress->setTelephone($receivedOrder['customer']['phone']);
-        
+
                 break;
             }
         }
-        
+
 
         ////////////////////////////////////////////////////////////
         // Discounts

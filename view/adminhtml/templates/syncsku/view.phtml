@@ -1,0 +1,101 @@
+<?php
+/** @var \FlowCommerce\FlowConnector\Block\Adminhtml\SyncSku\View $block */
+$syncSku = $block->getSyncSku();
+?>
+<div class="fieldset-wrapper webhookevent-information">
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Catalog Sync Data')) ?></span>
+    </div>
+    <table class="admin__table-secondary">
+        <tbody>
+            <tr>
+                <th><?= $block->escapeHtml(__('ID:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getId()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Store ID:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getStoreId()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('SKU:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getSku()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Status:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getStatus()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('State:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getState()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Should Sync Children:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->isShouldSyncChildren() ? 'Yes' : 'No') ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Priority:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getPriority()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Message:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getMessage()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Created At:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getCreatedAt()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Updated At:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getUpdatedAt()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Deleted At:')) ?></th>
+                <td><?= $block->escapeHtml($syncSku->getDeletedAt()) ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<?php if ($requestUrls = $syncSku->getRequestUrl()): ?>
+    <br />
+    <div>
+        <div class="fieldset-wrapper-title">
+            <span class="title"><?= $block->escapeHtml(__('Request Url(s)')) ?></span>
+        </div>
+        <div>
+            <?= $block->beautifyJson($requestUrls) ?>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if ($requestBody = $syncSku->getRequestBody()): ?>
+<br />
+<div>
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Request Body')) ?></span>
+    </div>
+    <div>
+        <?= $block->beautifyJson($requestBody) ?>
+    </div>
+</div>
+<?php endif; ?>
+<?php if ($responseHeaders = $syncSku->getResponseHeaders()): ?>
+<br />
+<div>
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Response Headers')) ?></span>
+    </div>
+    <div>
+        <?= $block->beautifyJson($responseHeaders) ?>
+    </div>
+</div>
+<?php endif; ?>
+<?php if ($responseBody = $syncSku->getResponseBody()): ?>
+<br />
+<div>
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Response Body')) ?></span>
+    </div>
+    <div>
+        <?= $block->beautifyJson($responseBody) ?>
+    </div>
+</div>
+<?php endif; ?>

@@ -5,8 +5,7 @@ namespace FlowCommerce\FlowConnector\Model\Api\Webhook;
 use Exception;
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
-use FlowCommerce\FlowConnector\Model\Util;
-use FlowCommerce\FlowConnector\Model\GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
@@ -51,8 +50,6 @@ class Settings
      * @param JsonSerializer $jsonSerializer
      * @param Logger $logger
      * @param UrlBuilder $urlBuilder
-     * @param Util $util
-
      */
     public function __construct(
         Auth $auth,

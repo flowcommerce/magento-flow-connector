@@ -6,6 +6,7 @@ use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Api\Inventory\Updates\InventoryDataMapper;
 use FlowCommerce\FlowConnector\Api\Data\InventorySyncInterface as InventorySync;
+use FlowCommerce\FlowConnector\Api\InventorySyncRepositoryInterface as InventorySyncRepository;
 use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\PoolFactory as HttpPoolFactory;
@@ -65,6 +66,11 @@ class Updates
     private $inventoryDataMapper;
 
     /**
+     * @var InventorySyncRepository
+     */
+    private $inventorySyncRepository;
+
+    /**
      * @var UrlBuilder
      */
     private $urlBuilder;
@@ -78,6 +84,7 @@ class Updates
      * @param HttpRequestFactory $httpRequestFactory
      * @param Logger $logger
      * @param InventoryDataMapper $inventoryDataMapper
+     * @param InventorySyncRepository $inventorySyncRepository
      * @param UrlBuilder $urlBuilder
      */
     public function __construct(
@@ -88,6 +95,7 @@ class Updates
         JsonSerializer $jsonSerializer,
         Logger $logger,
         InventoryDataMapper $inventoryDataMapper,
+        InventorySyncRepository $inventorySyncRepository,
         UrlBuilder $urlBuilder
     ) {
         $this->auth = $auth;
@@ -97,6 +105,7 @@ class Updates
         $this->httpRequestFactory = $httpRequestFactory;
         $this->logger = $logger;
         $this->inventoryDataMapper = $inventoryDataMapper;
+        $this->inventorySyncRepository = $inventorySyncRepository;
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -159,5 +168,16 @@ class Updates
 
         // Force the pool of requests to complete.
         $promise->wait();
+    }
+
+    // Duplicated from Model\InventorySyncManager.php due to circular dependency and class scoping problem. TODO refactor hotfix
+    /**
+     * {@inheritdoc}
+     */
+    public function markInventorySyncAsError(InventorySync $inventorySync, $errorMessage = null)
+    {
+        $inventorySync->setStatus(InventorySync::STATUS_ERROR);
+        $inventorySync->setMessage($errorMessage);
+        $this->inventorySyncRepository->save($inventorySync);
     }
 }

@@ -10,6 +10,7 @@ require([
         onSessionUpdate: function (status, session) {
             $.cookie('flow_mage_session_update', 1,  {domain: null});
             window.location.reload();
-        }
+        },
+        isDestination: true
     });
 });

@@ -27,7 +27,7 @@ var config = {
                 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
             },
 
-            'Magento_Checkout/js/minicart': {
+            'Magento_Checkout/js/view/minicart': {
                 'FlowCommerce_FlowConnector/js/minicart-mixin': true
             }
         }

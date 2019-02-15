@@ -13,6 +13,7 @@
         <css src="FlowCommerce_FlowConnector::css/country_picker.css" />
     </head>
     <body>
+        <referenceBlock name="minicart" template="FlowCommerce_FlowConnector::cart/minicart.phtml"/>
         <referenceContainer name="before.body.end">
             <block class="FlowCommerce\FlowConnector\Block\FlowCountryPicker" name="flowcommerce.flowconnector.country.picker"
                    template="FlowCommerce_FlowConnector::flow-country-picker.phtml" after="-"/>

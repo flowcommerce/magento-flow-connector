@@ -2,11 +2,8 @@
 
 namespace FlowCommerce\FlowConnector\Plugin\Magento\Checkout\CustomerData;
 
-use Magento\Customer\Model\Session;
 use Magento\Checkout\CustomerData\Cart as CustomerDataCart;
-use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Psr\Log\LoggerInterface as Logger;
-use FlowCommerce\FlowConnector\Model\FlowCartManager;
 
 /**
  * Class Cart
@@ -15,42 +12,18 @@ use FlowCommerce\FlowConnector\Model\FlowCartManager;
 class Cart
 {
     /**
-     * @var Session
-     */
-    protected $checkoutSession;
-
-    /**
-     * @var PriceCurrencyInterface
-     */
-    private $priceCurrency;
-
-    /**
      * @var Logger
      */
     private $logger;
 
     /**
-     * @var FlowCartManager
-     */
-    private $flowCartManager;
-
-    /**
      * Renderer constructor.
-     * @param Session $checkoutSession
-     * @param PriceCurrencyInterface $priceCurrency
      * @param Logger $logger
-     * @param FlowCartManager $flowCartManager
      */
     public function __construct(
-        Session $checkoutSession,
-        PriceCurrencyInterface $priceCurrency,
-        Logger $logger,
-        FlowCartManager $flowCartManager
+        Logger $logger
     ) {
-        $this->checkoutSession = $checkoutSession;
-        $this->priceCurrency = $priceCurrency;
         $this->logger = $logger;
-        $this->flowCartManager = $flowCartManager;
     }
 
     /**
@@ -65,7 +38,6 @@ class Cart
     public function afterGetSectionData(CustomerDataCart $subject, $result)
     {
         try {
-            $this->logger->info('Pre-processing: '.json_encode($result));
             $subtotalFields = [
                 'subtotal' => $result['subtotal'],
                 'subtotal_incl_tax' => $result['subtotal_incl_tax'],
@@ -87,7 +59,6 @@ class Cart
                     $result['items'][$key]['product_price'] = '<span data-flow-cart-item-number="'.$sku.'" data-flow-cart-item-quantity="'.$qty.'">'.$productPrice.'</span>';
                 }
             }
-            $this->logger->info('Post-processing: '.json_encode($result));
         } catch (\Exception $e) {
             $this->logger->error(sprintf('Unable to localize mini cart due to %s', $e->getMessage()));
         }

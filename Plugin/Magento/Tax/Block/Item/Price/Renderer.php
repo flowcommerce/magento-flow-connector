@@ -63,11 +63,6 @@ class Renderer
      */
     public function afterGetItem(ItemRenderer $subject, $item)
     {
-        // TODO remove for TESTING ONLY
-        if (true) {
-            return $item;
-        }
-
         if($item instanceof QuoteItem) {
             try {
                 $flowCart = $this->flowCartManager->getFlowCartData();

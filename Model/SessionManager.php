@@ -191,7 +191,7 @@ class SessionManager implements SessionManagementInterface
         $quote = $this->checkoutSession->getQuote();
 
         $items = $quote->getAllVisibleItems();
-        if (!$items) {
+        if (!$items || !$country) {
             return null;
         }
 

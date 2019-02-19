@@ -38,11 +38,15 @@ class Cart
     public function afterGetSectionData(CustomerDataCart $subject, $result)
     {
         try {
-            $subtotalFields = [
-                'subtotal' => $result['subtotal'],
-                'subtotal_incl_tax' => $result['subtotal_incl_tax'],
-                'subtotal_excl_tax' => $result['subtotal_excl_tax'],
-            ];
+            if (isset($result['subtotal'])) {
+                $subtotalFields['subtotal'] = $result['subtotal'];
+            }
+            if (isset($result['subtotal_incl_tax'])) {
+                $subtotalFields['subtotal_incl_tax'] = $result['subtotal_incl_tax'];
+            }
+            if (isset($result['subtotal_excl_tax'])) {
+                $subtotalFields['subtotal_excl_tax'] = $result['subtotal_excl_tax'];
+            }
 
             foreach ($subtotalFields as $subtotalKey => $subtotalHtml) {
                 $position = strpos($subtotalHtml, 'class="price"');

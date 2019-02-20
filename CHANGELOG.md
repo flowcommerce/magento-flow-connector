@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.9
+- Persist webhook ids if urls match
+- No longer removes old webhooks automatically
+- Webhooks default to use secure base urls
+
 ## 1.1.8
 - Fix inventory sync error marking
 

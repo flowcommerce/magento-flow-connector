@@ -292,10 +292,6 @@ class WebhookManagerTest extends TestCase
             $this->subject->registerAllWebhooks($store->getId());
 
             $this->assertEmpty($this->stubsVsEvents, 'Not all of the available webhooks were registered');
-            $this->assertEmpty(
-                $this->getWebhooksMockedResponse,
-                'Not all of the previously existent webhooks were deleted'
-            );
         }
     }
 

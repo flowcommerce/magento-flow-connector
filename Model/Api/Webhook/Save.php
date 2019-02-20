@@ -107,11 +107,11 @@ class Save
                 // Create
                 $response = $client->post($url, $payload);
             }
-
-            if ((int) $response->getStatusCode() === 201) {
+            $statusCode = (int) $response->getStatusCode();
+            if ($statusCode === 201) {
                 $this->logger->info('Webhook registered: ' . $response->getBody());
                 $return = true;
-            } elseif ((int) $response->getStatusCode() === 200) {
+            } elseif ($statusCode === 200) {
                 $this->logger->info('Webhook updated: ' . $response->getBody());
                 $return = true;
             } else {

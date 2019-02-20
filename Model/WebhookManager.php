@@ -213,13 +213,7 @@ class WebhookManager implements WebhookManagementInterface
         $url = $baseUrl . 'flowconnector/webhooks/' . $endpointStub . '?storeId=' . $storeId;
         if (count($existingWebhooks) > 0) {
             foreach ($existingWebhooks as $webhook) {
-                if ($webhook['url'] == $url && count(array_diff($webhook['events'], $events)) > 0) {
-                    // Already exists
-                    $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id']);
-                    return false;
-                }
-                if ($webhook['url'] == $url || count(array_diff($webhook['events'], $events)) > 0) {
-                    // Requires update
+                if ($webhook['url'] == $url) {
                     $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id'] . ' but must be updated');
                     $this->webhookSaveApiClient->execute($storeId, $url, $events, $webhook['id']);
                     return true;

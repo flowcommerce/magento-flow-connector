@@ -180,7 +180,6 @@ class WebhookManager implements WebhookManagementInterface
 
         if ($enabled) {
             try {
-                $this->deleteAllWebhooks($storeId);
                 foreach ($this->webhookEndpointConfig->getEndpointsConfiguration() as $stub => $events) {
                     $this->registerWebhook($storeId, $stub, $events);
                 }
@@ -209,10 +208,27 @@ class WebhookManager implements WebhookManagementInterface
      */
     public function registerWebhook($storeId, $endpointStub, $events)
     {
-        $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB);
+        $webhooks = $this->getRegisteredWebhooks($storeId);
+        $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB, true);
         $url = $baseUrl . 'flowconnector/webhooks/' . $endpointStub . '?storeId=' . $storeId;
+        foreach ($webhooks as $webhook) {
+            if ($webhook['url'] == $url && count(array_diff($webhook['events'], $events)) > 0) {
+                // Already exists
+                $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id']);
+                return false;
+            }
+            if ($webhook['url'] == $url || count(array_diff($webhook['events'], $events)) > 0) {
+                // Requires update
+                $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id'] . ' but must be updated');
+                $this->webhookSaveApiClient->execute($storeId, $url, $events, $webhook['id']);
+                return true;
+            }
+        }
+        // Must be created new
         $this->logger->info('Registering webhook events ' . var_export($events, true) . ': ' . $url);
+
         $this->webhookSaveApiClient->execute($storeId, $url, $events);
+        return true;
     }
 
     /**

@@ -75,14 +75,14 @@ class Save
     }
 
     /**
-     * Retrieves all webhooks registered with flow
+     * Updates/creates webhooks in flow
      * @param int $storeId
      * @param string $webhookUrl
      * @param string[] $events
      * @return bool
      * @throws NoSuchEntityException
      */
-    public function execute($storeId, $webhookUrl, $events)
+    public function execute($storeId, $webhookUrl, $events, $id = null)
     {
         $return = false;
 
@@ -96,10 +96,20 @@ class Save
         ];
 
         try {
-            $response = $client->post($url, [
-                'auth' => $this->auth->getAuthHeader($storeId),
-                'body' => $this->jsonSerializer->serialize($body)
-            ]);
+            if ($id) {
+                // Update
+                $url . '/' . $id;
+                $response = $client->put($url, [
+                    'auth' => $this->auth->getAuthHeader($storeId),
+                    'body' => $this->jsonSerializer->serialize($body)
+                ]);
+            } else {
+                // Create
+                $response = $client->post($url, [
+                    'auth' => $this->auth->getAuthHeader($storeId),
+                    'body' => $this->jsonSerializer->serialize($body)
+                ]);
+            }
 
             if ((int) $response->getStatusCode() === 201) {
                 $this->logger->info('Webhook registered: ' . $response->getBody());

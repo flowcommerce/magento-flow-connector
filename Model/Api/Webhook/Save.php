@@ -75,14 +75,14 @@ class Save
     }
 
     /**
-     * Retrieves all webhooks registered with flow
+     * Updates/creates webhooks in flow
      * @param int $storeId
      * @param string $webhookUrl
      * @param string[] $events
      * @return bool
      * @throws NoSuchEntityException
      */
-    public function execute($storeId, $webhookUrl, $events)
+    public function execute($storeId, $webhookUrl, $events, $id = null)
     {
         $return = false;
 
@@ -90,19 +90,29 @@ class Save
         $client = $this->httpClientFactory->create();
         $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
 
-        $body = [
+        $webhookForm = [
             'url' => $webhookUrl,
             'events' => $events,
         ];
+        $payload = [
+            'auth' => $this->auth->getAuthHeader($storeId),
+            'body' => $this->jsonSerializer->serialize($webhookForm)
+        ];
 
         try {
-            $response = $client->post($url, [
-                'auth' => $this->auth->getAuthHeader($storeId),
-                'body' => $this->jsonSerializer->serialize($body)
-            ]);
-
-            if ((int) $response->getStatusCode() === 201) {
+            if ($id) {
+                // Update
+                $response = $client->put($url . '/' . $id, $payload);
+            } else {
+                // Create
+                $response = $client->post($url, $payload);
+            }
+            $statusCode = (int) $response->getStatusCode();
+            if ($statusCode === 201) {
                 $this->logger->info('Webhook registered: ' . $response->getBody());
+                $return = true;
+            } elseif ($statusCode === 200) {
+                $this->logger->info('Webhook updated: ' . $response->getBody());
                 $return = true;
             } else {
                 $this->logger->info('Webhook registration failed: ' . $response->getBody());

@@ -180,8 +180,8 @@ class WebhookManager implements WebhookManagementInterface
 
         if ($enabled) {
             try {
+                $webhooks = $this->getRegisteredWebhooks($storeId);
                 foreach ($this->webhookEndpointConfig->getEndpointsConfiguration() as $stub => $events) {
-                    $webhooks = $this->getRegisteredWebhooks($storeId);
                     $this->registerWebhook($storeId, $stub, $events, $webhooks);
                 }
                 $this->logger->info(sprintf('Successfully registered webhooks for store %d.', $storeId));

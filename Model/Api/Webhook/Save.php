@@ -90,29 +90,29 @@ class Save
         $client = $this->httpClientFactory->create();
         $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
 
-        $body = [
+        $webhookForm = [
             'url' => $webhookUrl,
             'events' => $events,
+        ];
+        $payload = [
+            'auth' => $this->auth->getAuthHeader($storeId),
+            'body' => $this->jsonSerializer->serialize($webhookForm)
         ];
 
         try {
             if ($id) {
                 // Update
-                $url . '/' . $id;
-                $response = $client->put($url, [
-                    'auth' => $this->auth->getAuthHeader($storeId),
-                    'body' => $this->jsonSerializer->serialize($body)
-                ]);
+                $response = $client->put($url . '/' . $id, $payload);
             } else {
                 // Create
-                $response = $client->post($url, [
-                    'auth' => $this->auth->getAuthHeader($storeId),
-                    'body' => $this->jsonSerializer->serialize($body)
-                ]);
+                $response = $client->post($url, $payload);
             }
 
             if ((int) $response->getStatusCode() === 201) {
                 $this->logger->info('Webhook registered: ' . $response->getBody());
+                $return = true;
+            } elseif ((int) $response->getStatusCode() === 200) {
+                $this->logger->info('Webhook updated: ' . $response->getBody());
                 $return = true;
             } else {
                 $this->logger->info('Webhook registration failed: ' . $response->getBody());

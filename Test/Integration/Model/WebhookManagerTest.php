@@ -247,6 +247,9 @@ class WebhookManagerTest extends TestCase
         foreach ($this->storeManager->getStores() as $store) {
             $getResponseBody = $this->objectManager->create(DataObject::class);
             $getResponseBody->setContents($this->getWebhooksMockResponse());
+            $this->httpClientDelete
+                ->expects($this->never())
+                ->method('request');
             $this->httpResponseGet
                 ->expects($this->once())
                 ->method('getBody')
@@ -260,20 +263,6 @@ class WebhookManagerTest extends TestCase
                     $this->equalto(['auth' => $this->auth->getAuthHeader(self::STORE_ID)])
                 )
                 ->willReturn($this->httpResponseGet);
-
-            $this->httpResponseDelete
-                ->expects($this->exactly(count($this->webhookEndpointsConfig->getEndpointsConfiguration())))
-                ->method('getStatusCode')
-                ->willReturn(204);
-            $this->httpClientDelete
-                ->expects($this->exactly(count($this->webhookEndpointsConfig->getEndpointsConfiguration())))
-                ->method('request')
-                ->with(
-                    $this->equalTo('delete'),
-                    $this->callback([$this, 'validateWebhookDeleteUrl']),
-                    $this->equalto(['auth' => $this->auth->getAuthHeader(self::STORE_ID)])
-                )
-                ->willReturn($this->httpResponseDelete);
 
             $this->httpResponseSave
                 ->expects($this->exactly(count($this->webhookEndpointsConfig->getEndpointsConfiguration())))
@@ -292,10 +281,6 @@ class WebhookManagerTest extends TestCase
             $this->subject->registerAllWebhooks($store->getId());
 
             $this->assertEmpty($this->stubsVsEvents, 'Not all of the available webhooks were registered');
-            $this->assertEmpty(
-                $this->getWebhooksMockedResponse,
-                'Not all of the previously existent webhooks were deleted'
-            );
         }
     }
 

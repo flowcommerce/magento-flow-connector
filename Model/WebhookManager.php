@@ -181,7 +181,8 @@ class WebhookManager implements WebhookManagementInterface
         if ($enabled) {
             try {
                 foreach ($this->webhookEndpointConfig->getEndpointsConfiguration() as $stub => $events) {
-                    $this->registerWebhook($storeId, $stub, $events);
+                    $webhooks = $this->getRegisteredWebhooks($storeId);
+                    $this->registerWebhook($storeId, $stub, $events, $webhooks);
                 }
                 $this->logger->info(sprintf('Successfully registered webhooks for store %d.', $storeId));
                 $return = true;
@@ -206,22 +207,23 @@ class WebhookManager implements WebhookManagementInterface
      * {@inheritdoc}
      * @throws NoSuchEntityException
      */
-    public function registerWebhook($storeId, $endpointStub, $events)
+    public function registerWebhook($storeId, $endpointStub, $events, $existingWebhooks = null)
     {
-        $webhooks = $this->getRegisteredWebhooks($storeId);
         $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB, true);
         $url = $baseUrl . 'flowconnector/webhooks/' . $endpointStub . '?storeId=' . $storeId;
-        foreach ($webhooks as $webhook) {
-            if ($webhook['url'] == $url && count(array_diff($webhook['events'], $events)) > 0) {
-                // Already exists
-                $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id']);
-                return false;
-            }
-            if ($webhook['url'] == $url || count(array_diff($webhook['events'], $events)) > 0) {
-                // Requires update
-                $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id'] . ' but must be updated');
-                $this->webhookSaveApiClient->execute($storeId, $url, $events, $webhook['id']);
-                return true;
+        if (count($existingWebhooks) > 0) {
+            foreach ($existingWebhooks as $webhook) {
+                if ($webhook['url'] == $url && count(array_diff($webhook['events'], $events)) > 0) {
+                    // Already exists
+                    $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id']);
+                    return false;
+                }
+                if ($webhook['url'] == $url || count(array_diff($webhook['events'], $events)) > 0) {
+                    // Requires update
+                    $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id'] . ' but must be updated');
+                    $this->webhookSaveApiClient->execute($storeId, $url, $events, $webhook['id']);
+                    return true;
+                }
             }
         }
         // Must be created new

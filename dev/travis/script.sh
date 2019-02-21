@@ -18,5 +18,4 @@ elif [ "$TEST_SUITE" = "integration_flow" ]; then
     cp $HOME/magento/vendor/flowcommerce/flowconnector/phpunit.xml.dist $HOME/magento/dev/tests/integration/phpunit.xml
     echo '==> Run Flow Connector integration tests.'
     php bin/magento dev:tests:run integration -vvv
-    php bin/magento dev:tests:run js -vvv
 fi;

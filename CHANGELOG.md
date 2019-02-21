@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 1.1.10
+- Upgrade core-js to version 2.6.5 for JS bundling compatibility
+
 ## 1.1.9
 - Persist webhook ids if urls match
 - No longer removes old webhooks automatically

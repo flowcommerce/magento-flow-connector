@@ -22,13 +22,14 @@ var config = {
             'Magento_Catalog/js/price-box': {
                 'FlowCommerce_FlowConnector/js/price-box-mixin': true
             },
-
             'Magento_Swatches/js/swatch-renderer': {
                 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
             },
-
             'Magento_Checkout/js/view/minicart': {
                 'FlowCommerce_FlowConnector/js/minicart-mixin': true
+            },
+            'Magento_Checkout/js/shopping-cart': {
+                'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
             }
         }
     }

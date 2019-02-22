@@ -48,4 +48,14 @@ class FlowJS extends Template
     {
         return $this->auth->getFlowOrganizationId();
     }
+
+    /**
+     * Return flowjs version
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getFlowJsUrl()
+    {
+        return 'https://cdn.flow.io/flowjs/latest/flow.js';
+    }
 }

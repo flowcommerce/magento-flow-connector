@@ -5,28 +5,35 @@ define([
 
     return function (Component) {
         var flow = window.flow || {},
-            miniCart;
+            miniCart,
+            body,
+            flowMiniCartLocalize;
+            flow.session = window.flow.session || {};
+            flow.cart = window.flow.cart || {};
+            flow.magento2 = window.flow.magento2 || {};
 
-        flow.cart = window.flow.cart || {};
-        miniCart = $('[data-block=\'minicart\']');
-        miniCart.attr('data-flow-cart-container', '');
+        if (typeof(flow.session.getExperience()) == 'string') {
+            miniCart = $('[data-block=\'minicart\']');
+            body = $('[data-container=\'body\']');
+            flow.magento2.miniCartAvailable = false;
+            flowMiniCartLocalize = function (flag) {
+                flow.cart.localize();
+                console.log('Flow localizing cart: ' + flag);
+            };
 
-        var flowLocalize = function (flag) {
-            flow.cart.localize();
-            console.log('Flow localizing cart: ' + flag);
-        };
+            if (body.hasClass('checkout-cart-index')) {
+                // Is Cart page
+                body.addClass('flow-cart');
+                miniCart.remove();
+            } else {
+                // Is not Cart page
+                flow.magento2.miniCartAvailable = true;
+                miniCart.attr('data-flow-cart-container', '');
+                miniCart.on('dropdowndialogopen', function(){flowMiniCartLocalize('open')});
+                miniCart.on('contentUpdated', function(){flowMiniCartLocalize('minicart.contentUpdated')});
+            }
+        }
 
-        miniCart.on('dropdowndialogopen', function(){flowLocalize('open')});
-        miniCart.on('contentUpdated', function(){flowLocalize('minicart.contentUpdated')});
-
-        return Component.extend({ 
-
-            update: function (updatedCart) {
-                var result = this._super(updatedCart);
-                flowLocalize('update cart');
-                return result;
-            },
-
-        });
+        return Component.extend();
     }
 });

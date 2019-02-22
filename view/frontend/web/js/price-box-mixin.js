@@ -24,6 +24,7 @@ define([
             FLOWBASEPRICEKEY = 'base_price',
             FLOWFINALPRICEKEY = 'final_price';
         flow.magento2 = window.flow.magento2 || {};
+        flow.session = window.flow.session || {};
         flow.localizationAttempted = window.flow.localizationAttempted || false;
 
         $.widget('mage.priceBox', widget, {
@@ -95,17 +96,15 @@ define([
             },
 
             getFlowExperience: function () {
-                var flowLocalizationKey = false;
-                if (flow.session != undefined) {
-                    var flowExperience = flow.session.getExperience(),
-                        flowCountry = flow.session.getCountry(),
-                        flowCurrency = flow.session.getCurrency();
-                    if (typeof(flowExperience) == "string" &&
-                        typeof(flowCountry) == "string" &&
-                        typeof(flowCurrency) == "string"
-                    ) {
-                        flowLocalizationKey = flowExperience+flowCountry+flowCurrency;
-                    }
+                var flowLocalizationKey = false,
+                    flowExperience = flow.session.getExperience(),
+                    flowCountry = flow.session.getCountry(),
+                    flowCurrency = flow.session.getCurrency();
+                if (typeof(flowExperience) == "string" &&
+                    typeof(flowCountry) == "string" &&
+                    typeof(flowCurrency) == "string"
+                ) {
+                    flowLocalizationKey = flowExperience+flowCountry+flowCurrency;
                 }
                 return flowLocalizationKey;
             },

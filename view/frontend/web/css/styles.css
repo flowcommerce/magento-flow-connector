@@ -1,4 +1,4 @@
 
-body.checkout-cart-index #block-shipping {
+body.checkout-cart-index.flow-cart #block-shipping {
     display: none;
 }

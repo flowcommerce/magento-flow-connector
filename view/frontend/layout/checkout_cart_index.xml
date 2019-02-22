@@ -4,20 +4,4 @@
     <head>
         <css src="FlowCommerce_FlowConnector::css/styles.css"/>
     </head>
-    <body>
-        <referenceBlock name="checkout.cart.shipping">
-            <arguments>
-                <argument name="jsLayout" xsi:type="array">
-                    <item name="components" xsi:type="array">
-                        <item name="block-summary" xsi:type="array">
-                            <!-- Disable shipping estimation component -->
-                            <item name="config" xsi:type="array">
-                                <item name="componentDisabled" xsi:type="boolean">true</item>
-                            </item>
-                        </item>
-                    </item>
-                </argument>
-            </arguments>
-        </referenceBlock>
-    </body>
 </page>

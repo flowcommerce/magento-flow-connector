@@ -1,7 +1,6 @@
 define([
-    'jquery',
-    'Magento_Checkout/js/model/totals'
-], function ($, totalsService) {
+    'jquery'
+], function ($) {
     'use strict';
 
     return function (widget) {
@@ -14,16 +13,21 @@ define([
         $.widget('mage.shoppingCart', widget, {
             _create: function () {
                 var result = this._super(),
-                    items,
-                    i,
-                    cartContainer,
-                    totals,
-                    subtotal,
-                    grandtotal,
-                    discount;
+                    items, i, cartContainer;
                 if (typeof(flow.session.getExperience()) == 'string') {
                     cartContainer = $('.cart-container').first();
                     cartContainer.attr('data-flow-cart-container', '');
+                    if (checkoutConfig != undefined) {
+                        if (checkoutConfig.totalsData != undefined) {
+
+                            if (checkoutConfig.totalsData.base_currency_code &&
+                                checkoutConfig.totalsData.base_discount_amount)
+                            {
+                                cartContainer.attr('data-flow-cart-discount-currency', checkoutConfig.totalsData.base_currency_code);
+                                cartContainer.attr('data-flow-cart-discount-amount', checkoutConfig.totalsData.base_discount_amount);
+                            }
+                        }
+                    }
 
                     items = cartContainer.find('[data-role="cart-item-qty"]');
                     for (i = 0; i < items.length; i++) {
@@ -36,22 +40,6 @@ define([
                         itemContainer.find('.price .cart-price > span.price').first().attr('data-flow-localize','cart-item-price');
                         itemContainer.find('.subtotal .cart-price > span.price').first().attr('data-flow-localize','cart-item-line-total');
                     }
-
-                    totalsService.totals.subscribe(function () {
-                        console.log('totals updated');
-
-                        totals = cartContainer.find('#cart-totals');
-                        subtotal = totals.find('[data-th=\'Subtotal\'] span.price').first();
-                        grandtotal = totals.find('[data-th=\'Order Total\'] span.price').first();
-                        discount = totals.find('[data-th=\'Discount\'] span.price').first();
-
-                        subtotal.attr('data-flow-localize','cart-subtotal'); 
-                        grandtotal.attr('data-flow-localize','cart-total'); 
-                        discount.attr('data-flow-localize','cart-discount'); 
-
-                        flow.cart.localize();
-                        console.log('totals localized');
-                    });
 
                     console.log('cart localize init');
                     flow.cart.localize();

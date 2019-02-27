@@ -19,18 +19,21 @@ var config = {
     },
     config: {
         mixins: {
+            'Magento_Customer/js/customer-data': {
+                'FlowCommerce_FlowConnector/js/customer-data-mixin': true
+            },
             'Magento_Catalog/js/price-box': {
                 'FlowCommerce_FlowConnector/js/price-box-mixin': true
             },
             'Magento_Swatches/js/swatch-renderer': {
                 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
             },
-            'Magento_Checkout/js/view/minicart': {
-                'FlowCommerce_FlowConnector/js/minicart-mixin': true
-            },
             'Magento_Checkout/js/shopping-cart': {
                 'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
-            }
+            },
+            'Magento_Checkout/js/view/minicart': {
+                'FlowCommerce_FlowConnector/js/view/minicart-mixin': true
+            },
         }
     }
 };

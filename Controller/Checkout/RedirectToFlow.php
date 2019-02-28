@@ -103,7 +103,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         JsonHelper $jsonHelper,
         LoggerInterface $logger,
         Session $checkoutSession,
-        SessionManager $sessionManager
+        SessionManager $sessionManager,
         StoreManagerInterface $storeManager,
         UrlBuilder $urlBuilder,
         Util $util,

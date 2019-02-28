@@ -559,6 +559,181 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
+     * Process allocation_upserted_v2 webhook event data.
+     *
+     * https://docs.flow.io/type/allocation-upserted-v-2
+     */
+    private function processAllocationUpsertedV2() {
+        $this->logger->info('Processing allocation_upserted_v2 data');
+        $data = $this->getPayloadData();
+
+        $receivedOrder = $data['allocation']['order'];
+
+        // Do not process allocations until their order has submitted_at date
+        if (!array_key_exists('submitted_at', $receivedOrder)) {
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order data incomplete, skipping');
+            return;
+        }
+
+        if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
+            if ($order->getFlowConnectorOrderReady()) {
+                $this->logger->info('Order ready, duplicate submission ignored');
+                return;
+            }
+
+            foreach ($data['allocation']['details'] as $detail) {
+
+                // allocation_detail is a union model. If there is a "number",
+                // then the detail refers to a line item, otherwise the detail
+                // is for the order.
+                $item = null;
+                if (array_key_exists('number', $detail)) {
+                    $item = $this->getOrderItem($order, $detail['number']);
+                }
+
+                switch ($detail['key']) {
+                    case 'adjustment':
+                        if ($item) {
+                            // noop, adjustment only applies to order
+                        }
+                        break;
+
+                    case 'subtotal':
+                        if ($item) {
+                            $rawItemPrice = 0.0;
+                            $baseRawItemPrice = 0.0;
+
+                            $vatPct = 0.0;
+
+                            $vatPrice = 0.0;
+                            $baseVatPrice = 0.0;
+
+                            $dutyPct = 0.0;
+
+                            $dutyPrice = 0.0;
+                            $baseDutyPrice = 0.0;
+
+                            $roundingPrice = 0.0;
+                            $baseRoundingPrice = 0.0;
+
+                            $itemPriceInclTax = 0.0;
+                            $baseItemPriceInclTax = 0.0;
+
+                            $itemPrice = 0.0;
+                            $baseItemPrice = 0.0;
+                            foreach ($detail['included'] as $included) {
+                                if ($included['key'] == "item_price") {
+                                    $rawItemPrice += $included['price']['amount'];
+                                    $baseRawItemPrice += $included['price']['base']['amount'];
+
+                                    $itemPrice += $included['price']['amount'];
+                                    $baseItemPrice += $included['price']['base']['amount'];
+
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'rounding') {
+                                    $itemPrice += $included['price']['amount'];
+                                    $baseItemPrice += $included['price']['base']['amount'];
+
+                                    // add rounding to line total
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $roundingPrice += $included['price']['amount'];
+                                    $baseRoundingPrice += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'vat_item_price') {
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $vatPct += $included['rate'];
+                                    $vatPrice += $included['price']['amount'];
+                                    $baseVatPrice += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'duties_item_price') {
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $dutyPct += $included['rate'];
+                                    $dutyPrice += $included['price']['amount'];
+                                    $baseDutyPrice += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'item_discount') {
+                                    $item->setDiscountAmount($included['price']['amount']);
+                                    $item->setBaseDiscountAmount($included['price']['base']['amount']);
+                                }
+                            }
+
+                            $item->setOriginalPrice($itemPrice);
+                            $item->setBaseOriginalPrice($baseItemPrice);
+                            $item->setPrice($itemPrice);
+                            $item->setBasePrice($baseItemPrice);
+                            $item->setRowTotal($itemPrice * $detail['quantity']);
+                            $item->setBaseRowTotal($baseItemPrice * $detail['quantity']);
+                            $item->setTaxPercent(($vatPct * 100)+($dutyPct*100));
+                            $item->setTaxAmount(($vatPrice+$dutyPrice) * $detail['quantity']);
+                            $item->setBaseTaxAmount(($baseVatPrice+$baseDutyPrice) * $detail['quantity']);
+                            $item->setPriceInclTax($itemPriceInclTax);
+                            $item->setBasePriceInclTax($baseItemPriceInclTax);
+                            $item->setRowTotalInclTax($itemPriceInclTax * $detail['quantity']);
+                            $item->setBaseRowTotalInclTax($baseItemPriceInclTax * $detail['quantity']);
+                            $item->setFlowConnectorItemPrice($rawItemPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseItemPrice($baseRawItemPrice * $detail['quantity']);
+                            $item->setFlowConnectorVat($vatPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseVat($baseVatPrice * $detail['quantity']);
+                            $item->setFlowConnectorDuty($dutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
+                            $item->save();
+                        }
+                        break;
+
+                    case 'vat':
+                        if ($item) {
+                            // noop, this is included in the subtotal for line items
+                        }
+                        break;
+
+                    case 'duty':
+                        if ($item) {
+                            // noop, duty only applies to order
+                        }
+                        break;
+
+                    case 'shipping':
+                        if ($item) {
+                            // noop, shipping only applies to order
+                        }
+                        break;
+
+                    case 'insurance':
+                        // noop, this is a placeholder and not implemented by Flow.
+                        break;
+
+                    case 'discount':
+                        if ($item) {
+                            // noop, this is included in the subtotal for line items
+                        }
+                        break;
+
+                    default:
+                        throw new WebhookException('Unrecognized allocation detail key: ' . $detail['key']);
+                }
+            }
+
+            $order->setFlowConnectorOrderReady(1);
+
+            $this->orderSender->send($order);
+
+            // Save order after sending order confirmation email
+            $order->save();
+
+            $this->webhookEventManager->markWebhookEventAsDone($this, '');
+
+        } else {
+            $this->requeue('Unable to find order right now, reprocess.');
+        }
+    }
+
+    /**
      * Process authorization_deleted_v2 webhook event data.
      *
      * https://docs.flow.io/type/authorization-deleted-v-2

@@ -1,0 +1,448 @@
+{
+  "event_id": "evt-01f1681ca07946d4a8add8b83b9e5dd7",
+  "timestamp": "2018-12-11T12:42:06.358Z",
+  "organization": "magento-integration-sandbox",
+  "allocation": {
+    "id": "alc-82b48be5b4e043c4b08be96c6420066c",
+    "order": {
+      "id": "ord-6e099ae69a1843069fbc82cc9df636d3",
+      "number": "ord-c8647c2e01d24d0cae8254a87956de94",
+      "submitted_at": "2018-12-11T12:42:06.358Z"
+    },
+    "details": [
+      {
+        "number": "simple_2",
+        "quantity": 1,
+        "key": "subtotal",
+        "price": {
+          "currency": "EUR",
+          "amount": 11.04,
+          "label": "11,04 €",
+          "base": {
+            "amount": 12.07,
+            "currency": "USD",
+            "label": "US$12.07"
+          }
+        },
+        "total": {
+          "currency": "EUR",
+          "amount": 11.04,
+          "label": "11,04 €",
+          "base": {
+            "amount": 12.07,
+            "currency": "USD",
+            "label": "US$12.07"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "EUR",
+              "amount": 9.15,
+              "label": "9,15 €",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": 9.15,
+              "label": "9,15 €",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "EUR",
+              "amount": 0.81,
+              "label": "0,81 €",
+              "base": {
+                "amount": 0.89,
+                "currency": "USD",
+                "label": "US$0.89"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": 0.81,
+              "label": "0,81 €",
+              "base": {
+                "amount": 0.89,
+                "currency": "USD",
+                "label": "US$0.89"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "item_discount",
+            "total": {
+              "currency": "EUR",
+              "amount": -0.91,
+              "label": "-0,91 €",
+              "base": {
+                "amount": -0.99,
+                "currency": "USD",
+                "label": "-US$0.99"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": -0.91,
+              "label": "-0,91 €",
+              "base": {
+                "amount": -0.99,
+                "currency": "USD",
+                "label": "-US$0.99"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "vat_item_price",
+            "total": {
+              "currency": "EUR",
+              "amount": 1.99,
+              "label": "1,99 €",
+              "base": {
+                "amount": 2.17,
+                "currency": "USD",
+                "label": "US$2.17"
+              }
+            },
+            "rate": 0.2,
+            "name": "VAT",
+            "price": {
+              "currency": "EUR",
+              "amount": 1.99,
+              "label": "1,99 €",
+              "base": {
+                "amount": 2.17,
+                "currency": "USD",
+                "label": "US$2.17"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "number": "simple_3",
+        "quantity": 1,
+        "key": "subtotal",
+        "price": {
+          "currency": "EUR",
+          "amount": 11.04,
+          "label": "11,04 €",
+          "base": {
+            "amount": 12.07,
+            "currency": "USD",
+            "label": "US$12.07"
+          }
+        },
+        "total": {
+          "currency": "EUR",
+          "amount": 11.04,
+          "label": "11,04 €",
+          "base": {
+            "amount": 12.07,
+            "currency": "USD",
+            "label": "US$12.07"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "EUR",
+              "amount": 9.15,
+              "label": "9,15 €",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": 9.15,
+              "label": "9,15 €",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "EUR",
+              "amount": 0.81,
+              "label": "0,81 €",
+              "base": {
+                "amount": 0.89,
+                "currency": "USD",
+                "label": "US$0.89"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": 0.81,
+              "label": "0,81 €",
+              "base": {
+                "amount": 0.89,
+                "currency": "USD",
+                "label": "US$0.89"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "item_discount",
+            "total": {
+              "currency": "EUR",
+              "amount": -0.91,
+              "label": "-0,91 €",
+              "base": {
+                "amount": -0.99,
+                "currency": "USD",
+                "label": "-US$0.99"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": -0.91,
+              "label": "-0,91 €",
+              "base": {
+                "amount": -0.99,
+                "currency": "USD",
+                "label": "-US$0.99"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "vat_item_price",
+            "total": {
+              "currency": "EUR",
+              "amount": 1.99,
+              "label": "1,99 €",
+              "base": {
+                "amount": 2.17,
+                "currency": "USD",
+                "label": "US$2.17"
+              }
+            },
+            "rate": 0.2,
+            "name": "VAT",
+            "price": {
+              "currency": "EUR",
+              "amount": 1.99,
+              "label": "1,99 €",
+              "base": {
+                "amount": 2.17,
+                "currency": "USD",
+                "label": "US$2.17"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "number": "simple_1",
+        "quantity": 1,
+        "key": "subtotal",
+        "price": {
+          "currency": "EUR",
+          "amount": 11.04,
+          "label": "11,04 €",
+          "base": {
+            "amount": 12.07,
+            "currency": "USD",
+            "label": "US$12.07"
+          }
+        },
+        "total": {
+          "currency": "EUR",
+          "amount": 11.04,
+          "label": "11,04 €",
+          "base": {
+            "amount": 12.07,
+            "currency": "USD",
+            "label": "US$12.07"
+          }
+        },
+        "included": [
+          {
+            "key": "item_price",
+            "total": {
+              "currency": "EUR",
+              "amount": 9.15,
+              "label": "9,15 €",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": 9.15,
+              "label": "9,15 €",
+              "base": {
+                "amount": 10,
+                "currency": "USD",
+                "label": "US$10.00"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "rounding",
+            "total": {
+              "currency": "EUR",
+              "amount": 0.81,
+              "label": "0,81 €",
+              "base": {
+                "amount": 0.89,
+                "currency": "USD",
+                "label": "US$0.89"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": 0.81,
+              "label": "0,81 €",
+              "base": {
+                "amount": 0.89,
+                "currency": "USD",
+                "label": "US$0.89"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "item_discount",
+            "total": {
+              "currency": "EUR",
+              "amount": -0.91,
+              "label": "-0,91 €",
+              "base": {
+                "amount": -0.99,
+                "currency": "USD",
+                "label": "-US$0.99"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": -0.91,
+              "label": "-0,91 €",
+              "base": {
+                "amount": -0.99,
+                "currency": "USD",
+                "label": "-US$0.99"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "key": "vat_item_price",
+            "total": {
+              "currency": "EUR",
+              "amount": 1.99,
+              "label": "1,99 €",
+              "base": {
+                "amount": 2.17,
+                "currency": "USD",
+                "label": "US$2.17"
+              }
+            },
+            "rate": 0.2,
+            "name": "VAT",
+            "price": {
+              "currency": "EUR",
+              "amount": 1.99,
+              "label": "1,99 €",
+              "base": {
+                "amount": 2.17,
+                "currency": "USD",
+                "label": "US$2.17"
+              }
+            },
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "key": "shipping",
+        "total": {
+          "currency": "EUR",
+          "amount": 10,
+          "label": "10,00 €",
+          "base": {
+            "amount": 10.93,
+            "currency": "USD",
+            "label": "US$10.93"
+          }
+        },
+        "included": [
+          {
+            "key": "shipping",
+            "total": {
+              "currency": "EUR",
+              "amount": 10,
+              "label": "10,00 €",
+              "base": {
+                "amount": 10.93,
+                "currency": "USD",
+                "label": "US$10.93"
+              }
+            },
+            "price": {
+              "currency": "EUR",
+              "amount": 10,
+              "label": "10,00 €",
+              "base": {
+                "amount": 10.93,
+                "currency": "USD",
+                "label": "US$10.93"
+              }
+            },
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "not_included": [],
+        "discriminator": "allocation_order_detail"
+      }
+    ],
+    "total": {
+      "currency": "EUR",
+      "amount": 43.12,
+      "label": "43,12 €",
+      "base": {
+        "amount": 47.14,
+        "currency": "USD",
+        "label": "US$47.14"
+      }
+    }
+  },
+  "discriminator": "allocation_upserted_v2"
+}

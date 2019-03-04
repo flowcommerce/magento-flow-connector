@@ -18,11 +18,6 @@ use Psr\Log\LoggerInterface;
  */
 class BaseTest extends \PHPUnit\Framework\TestCase {
 
-    public function testAllocationDeletedV2() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AllocationDeletedV2');
-        $controller->execute();
-    }
-
     public function testAuthorizationDeletedV2() {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
         $controller->execute();
@@ -45,11 +40,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
 
     public function testOnlineAuthorizationUpsertedV2() {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2');
-        $controller->execute();
-    }
-
-    public function testOrderDeletedV2() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeletedV2');
         $controller->execute();
     }
 

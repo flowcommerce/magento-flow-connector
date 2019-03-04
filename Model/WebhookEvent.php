@@ -460,9 +460,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->webhookEventManager->markWebhookEventAsProcessing($this);
 
             switch ($this->getType()) {
-                case 'allocation_deleted_v2':
-                    $this->processAllocationDeletedV2();
-                    break;
                 case 'authorization_deleted_v2':
                     $this->processAuthorizationDeletedV2();
                     break;
@@ -474,9 +471,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     break;
                 case 'online_authorization_upserted_v2':
                     $this->processOnlineAuthorizationUpsertedV2();
-                    break;
-                case 'order_deleted_v2':
-                    $this->processOrderDeletedV2();
                     break;
                 case 'refund_capture_upserted_v2':
                     $this->processRefundCaptureUpsertedV2();
@@ -517,44 +511,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             } catch (\Exception $e) {
                 $this->logger->warn('Error saving webhook error: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
             }
-        }
-    }
-
-    /**
-     * Process allocation_deleted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/allocation-deleted-v-2
-     */
-    private function processAllocationDeletedV2()
-    {
-        # Temporarily disabling allocation_deleted_v2, as it was breaking the cron
-        $this->webhookEventManager->markWebhookEventAsDone($this, '');
-        return;
-
-        $this->logger->info('Processing allocation_deleted_v2 data');
-        $data = $this->getPayloadData();
-
-        $urlStub = '/orders/allocations/' . $data['id'];
-        $client = $this->guzzleClient->getFlowClient($urlStub, $this->getStoreId());
-        $response = $client->send();
-
-        if ($response->isSuccess()) {
-            $allocation = $this->jsonSerializer->unserialize($response->getBody());
-
-            if ($order = $this->getOrderByFlowOrderNumber($allocation['order']['number'])) {
-                $order->setTotalCanceled($allocation['total']['amount']);
-                $order->setBaseTotalCanceled($allocation['total']['base']['amount']);
-                $order->setState(OrderModel::STATE_HOLDED);
-                $order->save();
-
-                $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
-            } else {
-                $this->requeue('Unable to find order right now, reprocess.');
-            }
-
-        } else {
-            throw new WebhookException('Failed to retrieve Flow allocation: ' . $data['id']);
         }
     }
 
@@ -988,42 +944,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
         } else {
             throw new WebhookException('Unable to find corresponding payment.');
-        }
-    }
-
-    /**
-     * Process order_deleted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/order-deleted-v-2
-     */
-    private function processOrderDeletedV2()
-    {
-        # Temporarily disabling order_deleted_2, as it was breaking the cron
-        $this->webhookEventManager->markWebhookEventAsDone($this, '');
-        return;
-
-        $this->logger->info('Processing order_deleted_v2 data');
-        $data = $this->getPayloadData();
-
-        if (array_key_exists('order', $data)) {
-            /** @var Order $order */
-            if ($order = $this->getOrderByFlowOrderNumber($data['order']['number'])) {
-                if ($order->canCancel()) {
-                    $order->cancel();
-                    $order->addStatusHistoryComment('This order has been deleted on flow.io');
-                    $order->save();
-                } else {
-                    $order->hold();
-                    $order->addStatusHistoryComment('This order has been deleted on flow.io');
-                    $order->save();
-                }
-
-                $this->webhookEventManager->markWebhookEventAsDone($this, '');
-            } else {
-                throw new WebhookException('Order to be deleted does not exist.');
-            }
-        } else {
-            throw new WebhookException('No order information found in payload data.');
         }
     }
 

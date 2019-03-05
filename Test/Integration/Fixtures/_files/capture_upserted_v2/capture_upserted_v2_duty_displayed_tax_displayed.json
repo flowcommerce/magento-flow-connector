@@ -1,6 +1,6 @@
 {
   "event_id": "evt-f11225acf3364e4e8045b282299af995",
-  "timestamp": "2018-12-12T20:15:06.176Z",
+  "timestamp": "2018-12-12T19:41:56.260Z",
   "organization": "magento-integration-sandbox",
   "id": "cap-2e577bcd608745598bf6eb96d7f1aa1d",
   "capture": {
@@ -13,17 +13,17 @@
         "number": "ord-78219a4797ff467f9dc214e9972e84fe"
       }
     },
-    "amount": 1438.65,
-    "currency": "ARS",
-    "created_at": "2018-12-12T20:15:06.176Z",
+    "amount": 4382,
+    "currency": "JPY",
+    "created_at": "2018-12-12T19:41:56.260Z",
     "status": "succeeded",
     "requested": {
-      "amount": 1438.65,
-      "currency": "ARS"
+       "amount": 4382,
+       "currency": "JPY"
     },
     "attributes": {},
     "base": {
-      "amount": 36.78,
+      "amount": 37.17,
       "currency": "USD"
     }
   },

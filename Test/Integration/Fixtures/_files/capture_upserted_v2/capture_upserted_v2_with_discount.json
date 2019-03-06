@@ -1,31 +1,26 @@
 {
-  "event_id": "evt-bbe6ab9bb82e4b429bdae1d64aa72714",
-  "timestamp": "2018-12-11T12:42:13.692Z",
-  "organization": "magento-integration-sandbox",
-  "id": "cap-bb6e297ab88d48288fd235b0c7b55db7",
-  "capture": {
-    "id": "cap-bb6e297ab88d48288fd235b0c7b55db7",
-    "key": "cap-bb6e297ab88d48288fd235b0c7b55db7",
-    "authorization": {
-      "id": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
-      "key": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
-      "order": {
-        "number": "ord-c8647c2e01d24d0cae8254a87956de94"
-      }
+    "event_id": "Test 609088cd 326a 43c2 b5af 3d99736f1b75",
+    "organization": "magento-dev-sandbox",
+    "capture": {
+        "authorization": {
+            "id": "Test afbd0da4 b906 42c5 bd6b d4b400e8cc56",
+            "key": "Test 73b8fb27 4d76 48db a25e f1f8bd417a1a",
+            "order": {
+                "number": "ord-1776"
+            }
+        },
+        "amount": 42.12,
+        "requested": {
+            "amount": 42.12,
+            "currency": "EUR"
+        },
+        "created_at": "2019-03-06T16:33:37.751-05:00",
+        "currency": "Test 4fa869d2 2fd8 4ef6 a901 be4b1715d944",
+        "id": "Test 2da4d7e3 f700 4fa3 8603 67ae70b5e0a3",
+        "key": "Test 4483762d c160 4d48 b8bd 716c8b4c13ea",
+        "status": "succeeded"
     },
-    "amount": 43.12,
-    "currency": "EUR",
-    "created_at": "2018-12-11T12:42:13.692Z",
-    "status": "succeeded",
-    "requested": {
-      "amount": 43.12,
-      "currency": "EUR"
-    },
-    "attributes": {},
-    "base": {
-      "amount": 47.14,
-      "currency": "USD"
-    }
-  },
-  "discriminator": "capture_upserted_v2"
+    "id": "Test e1a87092 1615 4e32 bf22 ef2ac3b28753",
+    "timestamp": "2019-03-06T16:33:37.736-05:00",
+    "discriminator": "capture_upserted_v2"
 }

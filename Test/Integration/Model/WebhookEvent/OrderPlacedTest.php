@@ -440,30 +440,4 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             }
         }
     }
-
-    /**
-     * @magentoDbIsolation enabled
-     * @throws \Exception
-     * @throws LocalizedException
-     */
-    public function testOrderPlacedMalformedAddress()
-    {
-        $orderPlacedEvents = $this->createWebhookEventsFixture
-            ->createOrderPlacedWebhooks(['order_placed_duty_included_tax_included_malformed_address.json']);
-
-        //Process
-        $this->webhookEventManager->process(1000, 1);
-
-        //Test values in magento orders
-        foreach ($orderPlacedEvents as $orderPlacedEvent) {
-            $payload = $orderPlacedEvent->getPayloadData();
-            $flowOrderId = $payload['order']['number'];
-            $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
-                ->create();
-            /** @var OrderCollection $orders */
-            $orders = $this->mageOrderRepository->getList($searchCriteria);
-            $this->assertEquals(1, $orders->count());
-        }
-    }
 }

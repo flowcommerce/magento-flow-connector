@@ -36,7 +36,7 @@
       },
       "discriminator": "card"
     },
-    "amount": 43.12,
+    "amount": 42.12,
     "currency": "EUR",
     "customer": {
       "name": {
@@ -77,7 +77,7 @@
       ]
     },
     "requested": {
-      "amount": 43.12,
+      "amount": 42.12,
       "currency": "EUR"
     },
     "destination": {
@@ -104,7 +104,7 @@
       "number": "ord-c8647c2e01d24d0cae8254a87956de94"
     },
     "base": {
-      "amount": 47.14,
+      "amount": 46,
       "currency": "USD"
     }
   },

@@ -1,52 +1,90 @@
 {
-    "event_id": "Test 761f7a30 a296 4278 8a65 4f4aa3ab50dc",
+    "allocation": {
+        "id": "Test 6a751efc ec81 4874 bfd0 db839ffd2b94",
+        "order": {
+            "number": "Test b862e639 c915 4915 9f98 94dc3b59100a",
+            "id": "Test a687f989 1c67 4424 80d6 69e2baa788a9"
+        },
+        "details": [],
+        "total": {
+            "currency": "Test e6da12dd 0a9d 4ef4 b658 d406db5bafbe",
+            "amount": 1,
+            "label": "Test d5be2b69 9416 4639 bef8 c076b5f8d21a",
+            "base": {
+                "amount": 1,
+                "currency": "Test 592d3cbf 15c1 4bcd bccd d1527714dbc5",
+                "label": "Test d7e3f995 3719 4ae6 97fc 6444235fa494"
+            }
+        }
+    },
+    "event_id": "Test f8060ce8 15fc 4650 a336 ab525729610d",
     "organization": "magento-integration-sandbox",
-    "order_number": "ord-c8647c2e01d24d0cae8254a87956de94",
-    "timestamp": "2019-03-06T16:33:37.393-05:00",
+    "order_number": "ord-1776",
+    "timestamp": "2019-03-07T15:59:35.821-05:00",
     "order": {
         "delivered_duty": "paid",
+        "payments": [
+            {
+                "reference": "ref-1234567890",
+                "total": {
+                    "amount": 42.12,
+                    "currency": "EUR",
+                    "label": "Test 9f7b3141 1e42 4142 a889 d74dfec374ad",
+                    "base": {
+                        "amount": 46,
+                        "currency": "USD",
+                        "label": "Test 5475c9cf 8498 477e 9fda ce1667d91d56"
+                    }
+                },
+                "merchant_of_record": "flow",
+                "description": "Test 2bac4dcd cbf6 4da7 ac70 618e6fe13c3f",
+                "attributes": {},
+                "id": "Test f587a2d5 9347 4d98 9456 d0b218a4abad",
+                "type": "card"
+            }
+        ],
         "destination": {},
         "deliveries": [],
-        "number": "ord-c8647c2e01d24d0cae8254a87956de94",
+        "number": "ord-1776",
         "selections": [],
         "total": {
             "currency": "EUR",
             "amount": 42.12,
-            "label": "Test 90d731cd 2561 417e 9d9c 25995af80bca",
+            "label": "Test acc5b6b0 2b8b 42be 8017 710b33dc1786",
             "base": {
                 "amount": 46,
                 "currency": "USD",
-                "label": "Test 0544bc9b 3a0b 47f0 ae17 4be0ca4cbf56"
+                "label": "Test a70416ef d0c4 4d94 9f17 a79633b9d9e3"
             }
         },
-        "expires_at": "2019-03-06T16:33:37.509-05:00",
+        "expires_at": "2019-03-07T15:59:35.902-05:00",
         "attributes": {},
-        "id": "Test 3fd7a5dc 19c7 4d34 818c 2018b05cd65c",
+        "id": "Test e4e352f1 3bea 43f1 9e66 38fc65bb4c68",
         "prices": [],
         "lines": [
             {
                 "total": {
                     "amount": 42.12,
                     "currency": "EUR",
-                    "label": "Test f0b7a104 7989 4ea8 be5d 3b9947da938c",
+                    "label": "Test c4c45490 a058 41e9 a535 4c11b117cafd",
                     "base": {
                         "amount": 46,
                         "currency": "USD",
-                        "label": "Test 0c91c3a1 2a37 4fd2 820c fa01ba09db4c"
+                        "label": "Test c6e6935f 1e1f 4834 932b e2ce1910bfbf"
                     }
                 },
                 "quantity": 1,
                 "price": {
                     "amount": 42.12,
                     "currency": "EUR",
-                    "label": "Test 0f9cc365 da7b 416d 800b a6c50f9e32ac",
+                    "label": "Test 8e86ded6 e996 4833 8650 ce74953a81bb",
                     "base": {
                         "amount": 46,
                         "currency": "USD",
-                        "label": "Test 03c935fe 9dfe 43b9 b657 3f48f465f29e"
+                        "label": "Test c06a5f6f 3864 4d74 a004 a99015082457"
                     }
                 },
-                "item_number": "Test 1f605d0b cda6 4f43 97de 58c4a5239673"
+                "item_number": "Test 64a008e7 ca43 43e4 a6af 9172eb450519"
             }
         ],
         "items": [
@@ -57,7 +95,7 @@
                     "amount": 43.12,
                     "currency": "EUR"
                 },
-                "name": "Test 4fc04c92 c9d3 407b 92fb 864eeeae1b0e",
+                "name": "Test 7019d2a1 b010 4ed2 9b62 38922feb82f6",
                 "discount": {
                     "amount": 1,
                     "requested": {
@@ -70,44 +108,13 @@
                     "spot_rates": [],
                     "rates": [],
                     "experience": {
-                        "name": "Test f4d07035 dba8 4b19 be6a 299bfde0154d",
-                        "id": "Test 69b5f361 38fe 4166 9f68 b257d7740730",
-                        "key": "Test 8064afc5 8ac4 4f65 b459 0f044b313b9f"
+                        "name": "Test 4d35dbda 1cc9 485a b5d6 80aa9503432d",
+                        "id": "Test e0283739 db37 43ef 8346 68a0d969cec1",
+                        "key": "Test f327478e 6bfe 4e4f 8345 b040e8ab1656"
                     },
                     "prices": [],
                     "status": "excluded"
                 }
-            }
-        ],
-        "payments": [
-            {
-                "id": "opm-4e8e86b7213245d1891048b757d95e93-2",
-                "type": "card",
-                "merchant_of_record": "flow",
-                "reference": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
-                "description": "VISA ending with 1111",
-                "total": {
-                    "currency": "EUR",
-                    "amount": 42.12,
-                    "base": {
-                        "amount": 46,
-                        "currency": "USD"
-                    }
-                },
-                "attributes": {},
-                "address": {
-                    "name": {
-                        "first": "Testing",
-                        "last": "Test"
-                    },
-                    "streets": [
-                        "25  rue Ernest Renan"
-                    ],
-                    "city": "CHELLES",
-                    "postal": "77500",
-                    "country": "FRA"
-                },
-                "date": "2018-12-12T11:57:27.498Z"
             }
         ],
         "customer": {

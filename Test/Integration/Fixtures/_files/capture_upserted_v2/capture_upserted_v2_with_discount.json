@@ -1,6 +1,6 @@
 {
     "event_id": "Test 609088cd 326a 43c2 b5af 3d99736f1b75",
-    "organization": "magento-dev-sandbox",
+    "organization": "magento-integration-sandbox",
     "capture": {
         "authorization": {
             "id": "Test afbd0da4 b906 42c5 bd6b d4b400e8cc56",

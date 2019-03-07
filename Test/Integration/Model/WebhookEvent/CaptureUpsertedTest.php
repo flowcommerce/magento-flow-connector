@@ -107,18 +107,54 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         $this->createProductsFixture->execute();
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
+        $this->assertEquals(
+            count($orderPlacedEvents),
+            11
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($orderPlacedEvents),
+            $webhookCollection->count()
+        );
         $this->webhookEventManager->process(1000, 1);
         
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            10
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
         $this->webhookEventManager->process(1000, 1);
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createOnlineAuthorizationUpsertedWebhooks(
             ['online_authorization_upserted_v2_paypal.json']
         );
-
+        $this->assertEquals(
+            count($onlineAuthorizationUpsertedEvents),
+            1
+        ); 
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($onlineAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
         $this->webhookEventManager->process(1000, 1);
 
         $captureEvents = $this->createWebhookEventsFixture->createCaptureUpsertedWebhooks();
+        $this->assertEquals(
+            count($captureEvents),
+            11
+        ); 
 
         $webhookCollection = $this->webhookEventCollectionFactory->create();
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);

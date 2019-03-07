@@ -99,10 +99,10 @@
         ],
         "payments": [
             {
-                "id": "opm-4e8e86b7213245d1891048b757d95e93",
+                "id": "opm-4e8e86b7213245d1891048b757d95e93-2",
                 "type": "card",
                 "merchant_of_record": "flow",
-                "reference": "aut-lD3KjtA7hKzwXvsi8EpDAuO7xlhMRypH",
+                "reference": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
                 "description": "VISA ending with 1111",
                 "total": {
                     "currency": "EUR",

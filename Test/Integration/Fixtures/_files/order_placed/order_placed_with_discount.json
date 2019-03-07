@@ -97,6 +97,37 @@
                 }
             }
         ],
+        "payments": [
+            {
+                "id": "opm-4e8e86b7213245d1891048b757d95e93",
+                "type": "card",
+                "merchant_of_record": "flow",
+                "reference": "aut-lD3KjtA7hKzwXvsi8EpDAuO7xlhMRypH",
+                "description": "VISA ending with 1111",
+                "total": {
+                    "currency": "EUR",
+                    "amount": 42.12,
+                    "base": {
+                        "amount": 46,
+                        "currency": "USD"
+                    }
+                },
+                "attributes": {},
+                "address": {
+                    "name": {
+                        "first": "Testing",
+                        "last": "Test"
+                    },
+                    "streets": [
+                        "25  rue Ernest Renan"
+                    ],
+                    "city": "CHELLES",
+                    "postal": "77500",
+                    "country": "FRA"
+                },
+                "date": "2018-12-12T11:57:27.498Z"
+            }
+        ],
         "customer": {
             "name": {}
         }

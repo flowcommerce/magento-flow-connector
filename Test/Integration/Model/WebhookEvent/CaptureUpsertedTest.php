@@ -120,10 +120,141 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         );
         $this->webhookEventManager->process(1000, 1);
         
-        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
+        /* $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(); */
+        /* $this->assertEquals( */
+        /*     count($cardAuthorizationUpsertedEvents), */
+        /*     10 */
+        /* ); */
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_checkout_tax_checkout.json']);
         $this->assertEquals(
             count($cardAuthorizationUpsertedEvents),
-            10
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_displayed_tax_included.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_checkout_tax_displayed.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_included_tax_checkout.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_checkout_tax_included.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_included_tax_displayed.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_displayed_tax_checkout.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_included_tax_included.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_duty_displayed_tax_displayed.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
+        );
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
+        $webhookCollection->load();
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            $webhookCollection->count()
+        );
+        $this->webhookEventManager->process(1000, 1);
+
+        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_with_discount.json']);
+        $this->assertEquals(
+            count($cardAuthorizationUpsertedEvents),
+            1
         );
         $webhookCollection = $this->webhookEventCollectionFactory->create();
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);

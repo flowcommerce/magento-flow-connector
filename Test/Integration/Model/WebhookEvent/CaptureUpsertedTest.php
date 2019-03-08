@@ -281,6 +281,22 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         );
         $this->webhookEventManager->process(1000, 1);
 
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_ERROR);
+        $webhookCollection->load();
+        $this->assertEquals(
+            $webhookCollection->count(),
+            0
+        );
+
+        $webhookCollection = $this->webhookEventCollectionFactory->create();
+        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_PROCESSING);
+        $webhookCollection->load();
+        $this->assertEquals(
+            $webhookCollection->count(),
+            0
+        );
+
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createOnlineAuthorizationUpsertedWebhooks(
             ['online_authorization_upserted_v2_paypal.json']
         );

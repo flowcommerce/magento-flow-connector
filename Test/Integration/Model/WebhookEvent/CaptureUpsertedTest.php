@@ -411,19 +411,19 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             0
         );
 
-        $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_with_discount.json']);
-        $this->assertEquals(
-            count($cardAuthorizationUpsertedEvents),
-            1
-        );
-        $webhookCollection = $this->webhookEventCollectionFactory->create();
-        $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
-        $webhookCollection->load();
-        $this->assertEquals(
-            count($cardAuthorizationUpsertedEvents),
-            $webhookCollection->count()
-        );
-        $this->webhookEventManager->process(1000, 1);
+        /* $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks(['card_authorization_upserted_v2_with_discount.json']); */
+        /* $this->assertEquals( */
+        /*     count($cardAuthorizationUpsertedEvents), */
+        /*     1 */
+        /* ); */
+        /* $webhookCollection = $this->webhookEventCollectionFactory->create(); */
+        /* $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW); */
+        /* $webhookCollection->load(); */
+        /* $this->assertEquals( */
+        /*     count($cardAuthorizationUpsertedEvents), */
+        /*     $webhookCollection->count() */
+        /* ); */
+        /* $this->webhookEventManager->process(1000, 1); */
 
         $webhookCollection = $this->webhookEventCollectionFactory->create();
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_ERROR);

@@ -1,125 +1,193 @@
 {
-    "allocation": {
-        "id": "Test 6a751efc ec81 4874 bfd0 db839ffd2b94",
-        "order": {
-            "number": "Test b862e639 c915 4915 9f98 94dc3b59100a",
-            "id": "Test a687f989 1c67 4424 80d6 69e2baa788a9"
-        },
-        "details": [],
-        "total": {
-            "currency": "Test e6da12dd 0a9d 4ef4 b658 d406db5bafbe",
-            "amount": 1,
-            "label": "Test d5be2b69 9416 4639 bef8 c076b5f8d21a",
-            "base": {
-                "amount": 1,
-                "currency": "Test 592d3cbf 15c1 4bcd bccd d1527714dbc5",
-                "label": "Test d7e3f995 3719 4ae6 97fc 6444235fa494"
-            }
-        }
-    },
-    "event_id": "Test f8060ce8 15fc 4650 a336 ab525729610d",
-    "organization": "magento-integration-sandbox",
-    "order_number": "ord-1776",
-    "timestamp": "2019-03-07T15:59:35.821-05:00",
+  "allocation": {
+    "id": "Test 178852f4 45f5 48d4 854e 29b7a14332d1",
     "order": {
-        "delivered_duty": "paid",
-        "payments": [
-            {
-                "reference": "ref-1234567890",
-                "total": {
-                    "amount": 42.12,
-                    "currency": "EUR",
-                    "label": "Test 9f7b3141 1e42 4142 a889 d74dfec374ad",
-                    "base": {
-                        "amount": 46,
-                        "currency": "USD",
-                        "label": "Test 5475c9cf 8498 477e 9fda ce1667d91d56"
-                    }
-                },
-                "merchant_of_record": "flow",
-                "description": "Test 2bac4dcd cbf6 4da7 ac70 618e6fe13c3f",
-                "attributes": {},
-                "id": "Test f587a2d5 9347 4d98 9456 d0b218a4abad",
-                "type": "card"
-            }
-        ],
-        "destination": {},
-        "deliveries": [],
-        "number": "ord-1776",
-        "selections": [],
+      "number": "ord-c8647c2e01d24d0cae8254a87956de94",
+      "id": "Test b81d668f 9367 4093 9d0c 1da9c7a37069"
+    },
+    "details": [
+      {
+        "number": "ord-c8647c2e01d24d0cae8254a87956de94",
         "total": {
-            "currency": "EUR",
-            "amount": 42.12,
-            "label": "Test acc5b6b0 2b8b 42be 8017 710b33dc1786",
-            "base": {
+          "amount": 1,
+          "currency": "Test cb5735b2 7218 49c3 82b9 65e2f603ff51",
+          "label": "Test 0a73019c b3c2 4e6d 921e 8d3aaf7ff5c0"
+        },
+        "quantity": 1,
+        "not_included": [],
+        "price": {
+          "amount": 1,
+          "currency": "Test e0de4c6a 3eec 4c4a 8b71 8579297910d1",
+          "label": "Test e54de091 a1f0 4946 8a8b fb91236a7791"
+        },
+        "included": [
+          {
+            "total": {
+              "amount": 42.12,
+              "currency": "EUR",
+              "label": "Test 5ad1ce31 08c9 4fb4 9dcc f92f40a06377",
+              "base": {
                 "amount": 46,
                 "currency": "USD",
-                "label": "Test a70416ef d0c4 4d94 9f17 a79633b9d9e3"
-            }
+                "label": "Test 3e96df4b cece 49d6 9558 5b01e0a802e6"
+              }
+            },
+            "price": {
+              "amount": 43.12,
+              "currency": "EUR",
+              "label": "Test 877f56e3 b9e9 4172 95ad c720ccd3795a",
+              "base": {
+                "amount": 47.14,
+                "currency": "USD",
+                "label": "Test bf08be5d 7355 4870 9d51 a8892b848b80"
+              }
+            },
+            "key": "item_price",
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "total": {
+              "amount": 1,
+              "currency": "EUR",
+              "label": "Test 042f4f9d 8c77 40fc bc40 de384141a6ee",
+              "base": {
+                "amount": 1.14,
+                "currency": "USD",
+                "label": "Test 0c1dc5b4 bb00 4804 a739 680e12abb74e"
+              }
+            },
+            "price": {
+              "amount": 1,
+              "currency": "EUR",
+              "label": "Test d1c9b6ac 3eae 4b64 9ec3 1333d0c8145d",
+              "base": {
+                "amount": 1.14,
+                "currency": "USD",
+                "label": "Test a0865aad decb 4061 b6bd d85672fa64e7"
+              }
+            },
+            "key": "item_discount",
+            "discriminator": "allocation_detail_component"
+          }
+        ],
+        "key": "subtotal",
+        "discriminator": "allocation_line_detail"
+      }
+    ],
+    "total": {
+      "currency": "EUR",
+      "amount": 42.12,
+      "label": "Test 898e8ce2 7c12 49d9 9bd2 88900654e6ee",
+      "base": {
+        "amount": 46,
+        "currency": "USD",
+        "label": "Test a80f31b0 52b0 4212 83ad 3e7efec88ce9"
+      }
+    }
+  },
+  "event_id": "Test 12b0fa00 ff60 4a78 9ca1 d58adb53e25a",
+  "organization": "magento-integration-sandbox",
+  "order_number": "ord-c8647c2e01d24d0cae8254a87956de94",
+  "timestamp": "2019-03-08T10:46:26.667-05:00",
+  "order": {
+    "delivered_duty": "paid",
+    "payments": [
+      {
+        "reference": "aut-JXfw1eaFOqvhvkLvH0eP24GO0VHqyaUr",
+        "total": {
+          "amount": 42.12,
+          "currency": "EUR",
+          "label": "Test 5399fea8 5fc3 4eb3 b9d1 2bc3baf72685",
+          "base": {
+            "amount": 46,
+            "currency": "USD",
+            "label": "Test f5851804 2f1b 4f31 a538 cea805829a18"
+          }
         },
-        "expires_at": "2019-03-07T15:59:35.902-05:00",
+        "merchant_of_record": "flow",
+        "description": "Test 25eeb365 94ab 4fe9 8bd7 39ebb66c4b5b",
         "attributes": {},
-        "id": "Test e4e352f1 3bea 43f1 9e66 38fc65bb4c68",
-        "prices": [],
-        "lines": [
-            {
-                "total": {
-                    "amount": 42.12,
-                    "currency": "EUR",
-                    "label": "Test c4c45490 a058 41e9 a535 4c11b117cafd",
-                    "base": {
-                        "amount": 46,
-                        "currency": "USD",
-                        "label": "Test c6e6935f 1e1f 4834 932b e2ce1910bfbf"
-                    }
-                },
-                "quantity": 1,
-                "price": {
-                    "amount": 42.12,
-                    "currency": "EUR",
-                    "label": "Test 8e86ded6 e996 4833 8650 ce74953a81bb",
-                    "base": {
-                        "amount": 46,
-                        "currency": "USD",
-                        "label": "Test c06a5f6f 3864 4d74 a004 a99015082457"
-                    }
-                },
-                "item_number": "Test 64a008e7 ca43 43e4 a6af 9172eb450519"
-            }
-        ],
-        "items": [
-            {
-                "number": "Test-SKU-42",
-                "quantity": 1,
-                "price": {
-                    "amount": 43.12,
-                    "currency": "EUR"
-                },
-                "name": "Test 7019d2a1 b010 4ed2 9b62 38922feb82f6",
-                "discount": {
-                    "amount": 1,
-                    "requested": {
-                        "amount": 1,
-                        "currency": "EUR"
-                    },
-                    "currency": "EUR"
-                },
-                "local": {
-                    "spot_rates": [],
-                    "rates": [],
-                    "experience": {
-                        "name": "Test 4d35dbda 1cc9 485a b5d6 80aa9503432d",
-                        "id": "Test e0283739 db37 43ef 8346 68a0d969cec1",
-                        "key": "Test f327478e 6bfe 4e4f 8345 b040e8ab1656"
-                    },
-                    "prices": [],
-                    "status": "excluded"
-                }
-            }
-        ],
-        "customer": {
-            "name": {}
-        }
+        "id": "Test c75324bb 3e82 49b5 8943 883f7a56e49b",
+        "type": "card"
+      }
+    ],
+    "destination": {},
+    "deliveries": [],
+    "number": "ord-c8647c2e01d24d0cae8254a87956de94",
+    "selections": [],
+    "total": {
+      "currency": "EUR",
+      "amount": 42.12,
+      "label": "Test 9823aea7 e533 4b13 bd02 074dc9fb211e",
+      "base": {
+        "amount": 46,
+        "currency": "USD",
+        "label": "Test f1fa8bd0 bdd2 4791 90db 1b9a6d5c9838"
+      }
     },
-    "discriminator": "order_placed"
+    "expires_at": "2019-03-08T10:46:26.771-05:00",
+    "attributes": {},
+    "id": "Test 5a90b1e6 d4c7 4161 930e 9fa0aa5dea34",
+    "prices": [],
+    "lines": [
+      {
+        "total": {
+          "amount": 42.12,
+          "currency": "EUR",
+          "label": "Test 46345430 b884 4620 9ab3 4dcfe30f9035",
+          "base": {
+            "amount": 46,
+            "currency": "USD",
+            "label": "Test db4335cc 726c 4b93 a35c c8a584d7801e"
+          }
+        },
+        "quantity": 1,
+        "price": {
+          "amount": 42.12,
+          "currency": "EUR",
+          "label": "Test 0c2d042f f447 476e 993f 7b02455cb650",
+          "base": {
+            "amount": 46,
+            "currency": "USD",
+            "label": "Test 621b871f 895d 4c08 88b0 c7e1b17e6e64"
+          }
+        },
+        "item_number": "Test 443a095c 4967 4763 864c 2bad1bede07b"
+      }
+    ],
+    "items": [
+      {
+        "number": "Test-SKU-42",
+        "quantity": 1,
+        "price": {
+          "amount": 43.12,
+          "currency": "EUR"
+        },
+        "name": "Test eba7182c 9249 41f0 84f9 f3b3486caf84",
+        "discount": {
+          "amount": 1,
+          "requested": {
+            "amount": 1,
+            "currency": "EUR"
+          },
+          "currency": "EUR"
+        },
+        "local": {
+          "spot_rates": [],
+          "rates": [],
+          "experience": {
+            "name": "Test 9f8659ec 69e3 4626 b3a4 a5bae604d473",
+            "id": "Test e849d67a bae7 4316 a3bf 2e06fe5acf7d",
+            "key": "Test ce393246 9daa 441c b1d3 794bdbc8ba25"
+          },
+          "prices": [],
+          "status": "excluded"
+        }
+      }
+    ],
+    "customer": {
+      "name": {}
+    }
+  },
+  "discriminator": "order_placed"
 }

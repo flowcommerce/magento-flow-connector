@@ -1763,7 +1763,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         foreach ($receivedOrder['lines'] as $line) {
             $this->logger->info('Looking up product: ' . $line['item_number']);
-            $product = $this->productRepository->get($line['item_number']);
+            if ($product = $this->productRepository->get($line['item_number'])) {
+                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $line['item_number']);
+                continue;
+            }
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
 
@@ -1947,10 +1950,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $prices = $receivedOrder['prices'];
             foreach ($prices as $price) {
                 if ($price['key'] == 'discount') {
-                    $discountAmount = $price['amount'];
-                    $baseDiscountAmount = $price['base']['amount'];
-                    $quote->setDiscountAmount($discountAmount);
-                    $quote->setBaseDiscountAmount($baseDiscountAmount);
+                    $quote->setDiscountAmount($price['amount']);
+                    $quote->setBaseDiscountAmount($price['base']['amount']);
                 }
             }
         }

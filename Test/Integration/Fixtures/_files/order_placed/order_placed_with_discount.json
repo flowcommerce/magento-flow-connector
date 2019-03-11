@@ -1,7 +1,7 @@
 {
     "event_id": "evt-ca86ef717918452fa9d7d760bd1f6f94",
     "timestamp": "2019-03-08T18:07:10.822Z",
-    "organization": "magento-dev-sandbox",
+    "organization": "magento-integration-sandbox",
     "order_number": "ord-2a12e176b3e440289a0320600abe2c93",
     "order": {
         "id": "ior-73682602420448e0ab3f69ae5dcab428",

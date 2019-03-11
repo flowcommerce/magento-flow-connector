@@ -1,6 +1,6 @@
 {
     "event_id": "evt-0df476eae80e406b8d0bc2823a35270f",
-    "organization": "magento-dev-sandbox",
+    "organization": "magento-integration-sandbox",
     "capture": {
         "authorization": {
             "id": "aut-Irsfkunc0rlG8ryX5yGPb7dlBiJAYVWV",

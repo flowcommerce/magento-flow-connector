@@ -109,7 +109,7 @@
         }
     },
     "event_id": "evt-822f11a370574db5bce9340ad2592d86",
-    "organization": "magento-dev-sandbox",
+    "organization": "magento-integration-sandbox",
     "id": "aut-Irsfkunc0rlG8ryX5yGPb7dlBiJAYVWV",
     "timestamp": "2019-03-08T18:06:46.518Z",
     "discriminator": "card_authorization_upserted_v2"

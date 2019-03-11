@@ -1,7 +1,7 @@
 {
     "event_id": "evt-3f1a581beb4245049111939d6e6bc23c",
     "timestamp": "2019-03-08T18:06:22.030Z",
-    "organization": "magento-dev-sandbox",
+    "organization": "magento-integration-sandbox",
     "label_id": "lab-5fca38bee9984ad1b4b66f8a13152fe9",
     "carrier_tracking_number": "2578786276",
     "commercial_invoice": "https://io-flow-labels-production.s3.amazonaws.com/LQlnIUtqBso4FnOrVkAe5ciOoKfOQDM3rWrUqjoT.pdf",
@@ -45,7 +45,7 @@
             "country": "USA"
         },
         "center_reference": {
-            "organization_id": "magento-dev-sandbox",
+            "organization_id": "magento-integration-sandbox",
             "center_key": ":center-1"
         }
     },

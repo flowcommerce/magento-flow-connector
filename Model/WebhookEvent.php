@@ -1763,7 +1763,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         foreach ($receivedOrder['lines'] as $line) {
             $this->logger->info('Looking up product: ' . $line['item_number']);
-            if ($product = $this->productRepository->get($line['item_number'])) {
+            if (!$product = $this->productRepository->get($line['item_number'])) {
                 throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $line['item_number']);
                 continue;
             }

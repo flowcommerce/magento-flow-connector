@@ -1,0 +1,838 @@
+{
+    "event_id": "evt-ca86ef717918452fa9d7d760bd1f6f94",
+    "timestamp": "2019-03-08T18:07:10.822Z",
+    "organization": "magento-dev-sandbox",
+    "order_number": "ord-2a12e176b3e440289a0320600abe2c93",
+    "order": {
+        "id": "ior-73682602420448e0ab3f69ae5dcab428",
+        "number": "ord-2a12e176b3e440289a0320600abe2c93",
+        "customer": {
+            "name": {
+                "first": "David",
+                "last": "Mancuso"
+            },
+            "phone": "5555555555",
+            "email": "david@flow.io",
+            "address": {
+                "name": {
+                    "first": "David",
+                    "last": "Mancuso"
+                },
+                "streets": [
+                    "1 Yonge St"
+                ],
+                "city": "Toronto",
+                "province": "Ontario",
+                "postal": "M5E 2A3",
+                "country": "CAN"
+            }
+        },
+        "delivered_duty": "paid",
+        "destination": {
+            "streets": [
+                "1 Yonge St"
+            ],
+            "city": "Toronto",
+            "province": "Ontario",
+            "postal": "M5E 2A3",
+            "country": "CAN",
+            "contact": {
+                "name": {
+                    "first": "David",
+                    "last": "Mancuso"
+                },
+                "email": "david@flow.io",
+                "phone": "5555555555"
+            }
+        },
+        "expires_at": "2019-03-08T19:06:10.602Z",
+        "items": [
+            {
+                "number": "WS05-XL-Yellow",
+                "name": "Desiree Fitness Tee-XL-Yellow",
+                "quantity": 4,
+                "local": {
+                    "experience": {
+                        "id": "exp-88750520a77144289d4729fb02171ddf",
+                        "key": "canada",
+                        "name": "Canada"
+                    },
+                    "prices": [
+                        {
+                            "currency": "CAD",
+                            "amount": 34.2,
+                            "label": "CA$34.20",
+                            "base": {
+                                "amount": 24.45,
+                                "currency": "USD",
+                                "label": "US$24.45"
+                            },
+                            "includes": {
+                                "key": "none",
+                                "label": "HST and duty not included"
+                            },
+                            "key": "localized_item_price"
+                        }
+                    ],
+                    "rates": [],
+                    "spot_rates": [],
+                    "status": "included",
+                    "attributes": {
+                        "eco_collection": "No",
+                        "weight": "1.0000",
+                        "name": "Desiree Fitness Tee-XL-Yellow",
+                        "small_image": "/w/s/ws05-yellow_main.jpg",
+                        "sku": "WS05-XL-Yellow",
+                        "quantity_and_stock_status": "In Stock",
+                        "magento_version": "2.2.6",
+                        "size": "XL",
+                        "country_of_manufacture": " ",
+                        "image": "/w/s/ws05-yellow_main.jpg",
+                        "description": "<p>When you're too far to turn back, thank yourself for choosing the Desiree Fitness Tee. Its ultra-lightweight, ultra-breathable fabric wicks sweat away from your body and helps keeps you cool for the distance.</p>\n<p>&bull; Short-Sleeves.<br />&bull; Performance fabric.<br />&bull; Machine wash/line dry.</p>",
+                        "sale": "No",
+                        "price": "24.0000",
+                        "options_container": "Block after Info Column",
+                        "regular_price": "34.2",
+                        "parent_entity_id": "1593",
+                        "color": "Yellow",
+                        "user_agent": "Flow-M2-2.0.0",
+                        "minimal_price": "24.0000",
+                        "thumbnail": "/w/s/ws05-yellow_main.jpg",
+                        "attribute_set_id": "9",
+                        "final_price": "34.2",
+                        "page_layout": "No layout updates",
+                        "performance_fabric": "No",
+                        "entity_id": "1592",
+                        "gift_message_available": "No",
+                        "custom_design": "-- Please Select --",
+                        "status": "Enabled",
+                        "new": "No",
+                        "url_key": "desiree-fitness-tee-xl-yellow",
+                        "tax_class_id": "Taxable Goods",
+                        "product_id": "1592",
+                        "shipment_type": "Together",
+                        "type_id": "simple",
+                        "created_at": "2018-10-15 19:03:06",
+                        "custom_layout": "No layout updates",
+                        "erin_recommends": "No",
+                        "msrp_display_actual_price_type": "Use config",
+                        "updated_at": "2018-10-15 19:03:06",
+                        "visibility": "Not Visible Individually",
+                        "price_view": "Price Range",
+                        "parent_sku": "WS05"
+                    },
+                    "price_attributes": {
+                        "regular_price": {
+                            "currency": "CAD",
+                            "amount": 34.2,
+                            "label": "CA$34.20",
+                            "base": {
+                                "amount": 24.45,
+                                "currency": "USD",
+                                "label": "US$24.45"
+                            }
+                        },
+                        "final_price": {
+                            "currency": "CAD",
+                            "amount": 34.2,
+                            "label": "CA$34.20",
+                            "base": {
+                                "amount": 24.45,
+                                "currency": "USD",
+                                "label": "US$24.45"
+                            }
+                        }
+                    }
+                }
+            }
+        ],
+        "deliveries": [
+            {
+                "id": "del-1d3c21f911f74a7ea0dfb47cca0f3200",
+                "items": [
+                    {
+                        "number": "WS05-XL-Yellow",
+                        "quantity": 4,
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 34.2,
+                            "base": {
+                                "amount": 24.45,
+                                "currency": "USD"
+                            }
+                        },
+                        "attributes": {
+                            "base_amount": "24.45",
+                            "base_currency": "USD"
+                        }
+                    }
+                ],
+                "options": [
+                    {
+                        "id": "opt-7076692903d946e0ad8a592f92a12f6d",
+                        "cost": {
+                            "currency": "CAD",
+                            "amount": 18.32,
+                            "label": "CA$18.32",
+                            "base": {
+                                "amount": 13.1,
+                                "currency": "USD",
+                                "label": "US$13.10"
+                            },
+                            "details": [
+                                {
+                                    "source": "ratecard",
+                                    "currency": "CAD",
+                                    "amount": 18.32,
+                                    "label": "CA$18.32",
+                                    "components": [
+                                        {
+                                            "key": "ratecard_base_cost",
+                                            "currency": "CAD",
+                                            "amount": 18.32,
+                                            "label": "CA$18.32",
+                                            "base": {
+                                                "amount": 13.1,
+                                                "currency": "USD",
+                                                "label": "US$13.10"
+                                            }
+                                        }
+                                    ],
+                                    "base": {
+                                        "amount": 13.1,
+                                        "currency": "USD",
+                                        "label": "US$13.10"
+                                    }
+                                }
+                            ]
+                        },
+                        "delivered_duty": "unpaid",
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 18.32,
+                            "label": "CA$18.32",
+                            "base": {
+                                "amount": 13.1,
+                                "currency": "USD",
+                                "label": "US$13.10"
+                            }
+                        },
+                        "service": {
+                            "id": "dhl-express-worldwide",
+                            "carrier": {
+                                "id": "dhl"
+                            },
+                            "name": "Express Worldwide"
+                        },
+                        "tier": {
+                            "id": "tie-ce061f8886424a0fb231bf216c4b4784",
+                            "integration": "information",
+                            "name": "Standard Shipping",
+                            "services": [
+                                "dhl-express-worldwide"
+                            ],
+                            "strategy": "fastest",
+                            "visibility": "public",
+                            "currency": "EUR",
+                            "display": {
+                                "estimate": {
+                                    "type": "calculated",
+                                    "label": "1 Business Day"
+                                }
+                            }
+                        },
+                        "window": {
+                            "from": "2019-03-11T00:00:00.000Z",
+                            "to": "2019-03-11T00:00:00.000Z",
+                            "timezone": "America/Toronto",
+                            "label": "1 Business Day"
+                        },
+                        "rule_outcome": {
+                            "discriminator": "at_cost"
+                        },
+                        "weight": {
+                            "gravitational": {
+                                "value": "3.5",
+                                "units": "pound"
+                            },
+                            "dimensional": {
+                                "value": "2.12",
+                                "units": "inch"
+                            }
+                        }
+                    },
+                    {
+                        "id": "opt-719fd1530b11400e99ad687c92cbe5c1",
+                        "cost": {
+                            "currency": "CAD",
+                            "amount": 18.32,
+                            "label": "CA$18.32",
+                            "base": {
+                                "amount": 13.1,
+                                "currency": "USD",
+                                "label": "US$13.10"
+                            },
+                            "details": [
+                                {
+                                    "source": "ratecard",
+                                    "currency": "CAD",
+                                    "amount": 18.32,
+                                    "label": "CA$18.32",
+                                    "components": [
+                                        {
+                                            "key": "ratecard_base_cost",
+                                            "currency": "CAD",
+                                            "amount": 18.32,
+                                            "label": "CA$18.32",
+                                            "base": {
+                                                "amount": 13.1,
+                                                "currency": "USD",
+                                                "label": "US$13.10"
+                                            }
+                                        }
+                                    ],
+                                    "base": {
+                                        "amount": 13.1,
+                                        "currency": "USD",
+                                        "label": "US$13.10"
+                                    }
+                                }
+                            ]
+                        },
+                        "delivered_duty": "paid",
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 18.32,
+                            "label": "CA$18.32",
+                            "base": {
+                                "amount": 13.1,
+                                "currency": "USD",
+                                "label": "US$13.10"
+                            }
+                        },
+                        "service": {
+                            "id": "dhl-express-worldwide",
+                            "carrier": {
+                                "id": "dhl"
+                            },
+                            "name": "Express Worldwide"
+                        },
+                        "tier": {
+                            "id": "tie-ce061f8886424a0fb231bf216c4b4784",
+                            "integration": "information",
+                            "name": "Standard Shipping",
+                            "services": [
+                                "dhl-express-worldwide"
+                            ],
+                            "strategy": "fastest",
+                            "visibility": "public",
+                            "currency": "EUR",
+                            "display": {
+                                "estimate": {
+                                    "type": "calculated",
+                                    "label": "1 Business Day"
+                                }
+                            }
+                        },
+                        "window": {
+                            "from": "2019-03-11T00:00:00.000Z",
+                            "to": "2019-03-11T00:00:00.000Z",
+                            "timezone": "America/Toronto",
+                            "label": "1 Business Day"
+                        },
+                        "rule_outcome": {
+                            "discriminator": "at_cost"
+                        },
+                        "weight": {
+                            "gravitational": {
+                                "value": "3.5",
+                                "units": "pound"
+                            },
+                            "dimensional": {
+                                "value": "2.12",
+                                "units": "inch"
+                            }
+                        }
+                    }
+                ],
+                "center": {
+                    "id": "cen-5d4d44c3ad034b149ada074781c8d56f",
+                    "key": ":center-1"
+                },
+                "discriminator": "physical_delivery"
+            }
+        ],
+        "selections": [
+            "opt-719fd1530b11400e99ad687c92cbe5c1"
+        ],
+        "prices": [
+            {
+                "key": "subtotal",
+                "currency": "CAD",
+                "amount": 136.8,
+                "label": "CA$136.80",
+                "base": {
+                    "amount": 97.8,
+                    "currency": "USD",
+                    "label": "US$97.80"
+                },
+                "components": [
+                    {
+                        "key": "item_price",
+                        "currency": "CAD",
+                        "amount": 134.28,
+                        "label": "CA$134.28",
+                        "base": {
+                            "amount": 96,
+                            "currency": "USD",
+                            "label": "US$96.00"
+                        },
+                        "name": "Item price"
+                    },
+                    {
+                        "key": "rounding",
+                        "currency": "CAD",
+                        "amount": 2.52,
+                        "label": "CA$2.52",
+                        "base": {
+                            "amount": 1.8,
+                            "currency": "USD",
+                            "label": "US$1.80"
+                        },
+                        "name": "Rounding"
+                    }
+                ],
+                "name": "Item subtotal"
+            },
+            {
+                "key": "vat",
+                "currency": "CAD",
+                "amount": 20.96,
+                "label": "CA$20.96",
+                "base": {
+                    "amount": 15,
+                    "currency": "USD",
+                    "label": "US$15.00"
+                },
+                "components": [
+                    {
+                        "key": "vat_item_price",
+                        "currency": "CAD",
+                        "amount": 17.76,
+                        "label": "CA$17.76",
+                        "base": {
+                            "amount": 12.72,
+                            "currency": "USD",
+                            "label": "US$12.72"
+                        },
+                        "name": "HST on item price"
+                    },
+                    {
+                        "key": "vat_duties_item_price",
+                        "currency": "CAD",
+                        "amount": 3.2,
+                        "label": "CA$3.20",
+                        "base": {
+                            "amount": 2.28,
+                            "currency": "USD",
+                            "label": "US$2.28"
+                        },
+                        "name": "HST on duties on item price"
+                    }
+                ],
+                "name": "HST"
+            },
+            {
+                "key": "duty",
+                "currency": "CAD",
+                "amount": 24.6,
+                "label": "CA$24.60",
+                "base": {
+                    "amount": 17.6,
+                    "currency": "USD",
+                    "label": "US$17.60"
+                },
+                "components": [
+                    {
+                        "key": "duties_item_price",
+                        "currency": "CAD",
+                        "amount": 24.6,
+                        "label": "CA$24.60",
+                        "base": {
+                            "amount": 17.6,
+                            "currency": "USD",
+                            "label": "US$17.60"
+                        },
+                        "name": "Duties on item price"
+                    }
+                ],
+                "name": "Duties"
+            },
+            {
+                "key": "shipping",
+                "currency": "CAD",
+                "amount": 18.32,
+                "label": "CA$18.32",
+                "base": {
+                    "amount": 13.1,
+                    "currency": "USD",
+                    "label": "US$13.10"
+                },
+                "components": [
+                    {
+                        "key": "shipping",
+                        "currency": "CAD",
+                        "amount": 18.32,
+                        "label": "CA$18.32",
+                        "base": {
+                            "amount": 13.1,
+                            "currency": "USD",
+                            "label": "US$13.10"
+                        },
+                        "name": "Shipping"
+                    }
+                ],
+                "name": "Shipping"
+            },
+            {
+                "key": "discount",
+                "currency": "CAD",
+                "amount": -34.2,
+                "label": "-CA$34.20",
+                "base": {
+                    "amount": -24.45,
+                    "currency": "USD",
+                    "label": "-US$24.45"
+                },
+                "components": [
+                    {
+                        "key": "order_discount",
+                        "currency": "CAD",
+                        "amount": -34.2,
+                        "label": "-CA$34.20",
+                        "base": {
+                            "amount": -24.45,
+                            "currency": "USD",
+                            "label": "-US$24.45"
+                        },
+                        "name": "Order discount"
+                    }
+                ],
+                "name": "Discount"
+            }
+        ],
+        "total": {
+            "currency": "CAD",
+            "amount": 166.48,
+            "label": "CA$166.48",
+            "base": {
+                "amount": 119.05,
+                "currency": "USD",
+                "label": "US$119.05"
+            }
+        },
+        "attributes": {
+            "checkout_session_id": "31411bfb456b4e56f00d5d91d275730e",
+            "customer_session_id": "31411bfb456b4e56f00d5d91d275730e",
+            "quote_id": "511"
+        },
+        "experience": {
+            "key": "canada",
+            "discriminator": "experience_reference"
+        },
+        "submitted_at": "2019-03-08T18:06:11.405Z",
+        "lines": [
+            {
+                "item_number": "WS05-XL-Yellow",
+                "quantity": 4,
+                "price": {
+                    "currency": "CAD",
+                    "amount": 34.2,
+                    "label": "CA$34.20",
+                    "base": {
+                        "amount": 24.45,
+                        "currency": "USD",
+                        "label": "US$24.45"
+                    }
+                },
+                "total": {
+                    "currency": "CAD",
+                    "amount": 136.8,
+                    "label": "CA$136.80",
+                    "base": {
+                        "amount": 97.8,
+                        "currency": "USD",
+                        "label": "US$97.80"
+                    }
+                }
+            }
+        ],
+        "payments": [
+            {
+                "id": "opm-5e647d70e0584a6c8850bf3d5fcb3908",
+                "type": "card",
+                "merchant_of_record": "flow",
+                "reference": "aut-Irsfkunc0rlG8ryX5yGPb7dlBiJAYVWV",
+                "description": "VISA ending with 1111",
+                "total": {
+                    "currency": "CAD",
+                    "amount": 166.48,
+                    "label": "CA$166.48",
+                    "base": {
+                        "amount": 119.05,
+                        "currency": "USD",
+                        "label": "US$119.05"
+                    }
+                },
+                "attributes": {},
+                "address": {
+                    "name": {
+                        "first": "David",
+                        "last": "Mancuso"
+                    },
+                    "streets": [
+                        "1 Yonge St"
+                    ],
+                    "city": "Toronto",
+                    "province": "Ontario",
+                    "postal": "M5E 2A3",
+                    "country": "CAN"
+                },
+                "date": "2019-03-08T18:06:11.282Z"
+            }
+        ]
+    },
+    "allocation": {
+        "id": "evt-24094266ef8c43a687af2261b8c1b810",
+        "order": {
+            "id": "ior-73682602420448e0ab3f69ae5dcab428",
+            "number": "ord-2a12e176b3e440289a0320600abe2c93",
+            "submitted_at": "2019-03-08T18:06:11.405Z"
+        },
+        "details": [
+            {
+                "number": "WS05-XL-Yellow",
+                "quantity": 4,
+                "key": "subtotal",
+                "price": {
+                    "currency": "CAD",
+                    "amount": 34.2,
+                    "label": "CA$34.20",
+                    "base": {
+                        "amount": 24.45,
+                        "currency": "USD",
+                        "label": "US$24.45"
+                    }
+                },
+                "total": {
+                    "currency": "CAD",
+                    "amount": 136.8,
+                    "label": "CA$136.80",
+                    "base": {
+                        "amount": 97.8,
+                        "currency": "USD",
+                        "label": "US$97.80"
+                    }
+                },
+                "included": [
+                    {
+                        "key": "item_price",
+                        "total": {
+                            "currency": "CAD",
+                            "amount": 134.28,
+                            "label": "CA$134.28",
+                            "base": {
+                                "amount": 96,
+                                "currency": "USD",
+                                "label": "US$96.00"
+                            }
+                        },
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 33.57,
+                            "label": "CA$33.57",
+                            "base": {
+                                "amount": 24,
+                                "currency": "USD",
+                                "label": "US$24.00"
+                            }
+                        },
+                        "discriminator": "allocation_detail_component"
+                    },
+                    {
+                        "key": "rounding",
+                        "total": {
+                            "currency": "CAD",
+                            "amount": 2.52,
+                            "label": "CA$2.52",
+                            "base": {
+                                "amount": 1.8,
+                                "currency": "USD",
+                                "label": "US$1.80"
+                            }
+                        },
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 0.63,
+                            "label": "CA$0.63",
+                            "base": {
+                                "amount": 0.45,
+                                "currency": "USD",
+                                "label": "US$0.45"
+                            }
+                        },
+                        "discriminator": "allocation_detail_component"
+                    }
+                ],
+                "not_included": [
+                    {
+                        "key": "vat_item_price",
+                        "total": {
+                            "currency": "CAD",
+                            "amount": 20.96,
+                            "label": "CA$20.96",
+                            "base": {
+                                "amount": 15,
+                                "currency": "USD",
+                                "label": "US$15.00"
+                            }
+                        },
+                        "rate": 0.13,
+                        "name": "HST",
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 5.24,
+                            "label": "CA$5.24",
+                            "base": {
+                                "amount": 3.75,
+                                "currency": "USD",
+                                "label": "US$3.75"
+                            }
+                        },
+                        "discriminator": "allocation_levy_component"
+                    },
+                    {
+                        "key": "duties_item_price",
+                        "total": {
+                            "currency": "CAD",
+                            "amount": 24.6,
+                            "label": "CA$24.60",
+                            "base": {
+                                "amount": 17.6,
+                                "currency": "USD",
+                                "label": "US$17.60"
+                            }
+                        },
+                        "rate": 0.18,
+                        "name": "Duty",
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 6.15,
+                            "label": "CA$6.15",
+                            "base": {
+                                "amount": 4.4,
+                                "currency": "USD",
+                                "label": "US$4.40"
+                            }
+                        },
+                        "discriminator": "allocation_levy_component"
+                    }
+                ],
+                "discriminator": "allocation_line_detail"
+            },
+            {
+                "key": "shipping",
+                "total": {
+                    "currency": "CAD",
+                    "amount": 18.32,
+                    "label": "CA$18.32",
+                    "base": {
+                        "amount": 13.1,
+                        "currency": "USD",
+                        "label": "US$13.10"
+                    }
+                },
+                "included": [
+                    {
+                        "key": "shipping",
+                        "total": {
+                            "currency": "CAD",
+                            "amount": 18.32,
+                            "label": "CA$18.32",
+                            "base": {
+                                "amount": 13.1,
+                                "currency": "USD",
+                                "label": "US$13.10"
+                            }
+                        },
+                        "price": {
+                            "currency": "CAD",
+                            "amount": 18.32,
+                            "label": "CA$18.32",
+                            "base": {
+                                "amount": 13.1,
+                                "currency": "USD",
+                                "label": "US$13.10"
+                            }
+                        },
+                        "discriminator": "allocation_detail_component"
+                    }
+                ],
+                "not_included": [],
+                "discriminator": "allocation_order_detail"
+            },
+            {
+                "key": "discount",
+                "total": {
+                    "currency": "CAD",
+                    "amount": -34.2,
+                    "label": "-CA$34.20",
+                    "base": {
+                        "amount": -24.45,
+                        "currency": "USD",
+                        "label": "-US$24.45"
+                    }
+                },
+                "included": [
+                    {
+                        "key": "order_discount",
+                        "total": {
+                            "currency": "CAD",
+                            "amount": -34.2,
+                            "label": "-CA$34.20",
+                            "base": {
+                                "amount": -24.45,
+                                "currency": "USD",
+                                "label": "-US$24.45"
+                            }
+                        },
+                        "price": {
+                            "currency": "CAD",
+                            "amount": -34.2,
+                            "label": "-CA$34.20",
+                            "base": {
+                                "amount": -24.45,
+                                "currency": "USD",
+                                "label": "-US$24.45"
+                            }
+                        },
+                        "discriminator": "allocation_detail_component"
+                    }
+                ],
+                "not_included": [],
+                "discriminator": "allocation_order_detail"
+            }
+        ],
+        "total": {
+            "currency": "CAD",
+            "amount": 166.48,
+            "label": "CA$166.48",
+            "base": {
+                "amount": 119.05,
+                "currency": "USD",
+                "label": "US$119.05"
+            }
+        }
+    },
+    "discriminator": "order_placed"
+}

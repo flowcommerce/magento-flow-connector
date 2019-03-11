@@ -1949,10 +1949,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 if ($price['key'] == 'discount') {
                     $discountAmount = $price['amount'];
                     $baseDiscountAmount = $price['base']['amount'];
-                    $quote->setCustomDiscount($discountAmount);
-                    $quote->setBaseCustomDiscount($baseDiscountAmount);
-                    /* $quote->setDiscountAmount($discountAmount); */
-                    /* $quote->setBaseDiscountAmount($baseDiscountAmount); */
+                    $quote->setDiscountAmount($discountAmount);
+                    $quote->setBaseDiscountAmount($baseDiscountAmount);
                 }
             }
         }

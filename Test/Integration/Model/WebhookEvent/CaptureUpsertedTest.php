@@ -115,6 +115,22 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $webhookCollection->count()
         );
         $this->webhookEventManager->process(1000, 1);
+        foreach ($orderPlacedEvents as $orderPlacedEvent) {
+            $payload = $orderPlacedEvent->getPayloadData();
+            $flowOrderId = $payload['order']['number'];
+
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->create();
+            /** @var OrderCollection $orders */
+            $orders = $this->mageOrderRepository->getList($searchCriteria);
+
+            /** @var Order $order */
+            $order = $orders->getFirstItem();
+
+            $this->assertEquals($flowOrderId, $order->getExtOrderId()));
+            $this->assertEquals(1, $orders->count());
+        }
         
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $webhookCollection = $this->webhookEventCollectionFactory->create();

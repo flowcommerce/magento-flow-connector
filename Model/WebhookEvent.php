@@ -1943,11 +1943,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // https://docs.flow.io/type/money
         ////////////////////////////////////////////////////////////
 
-        if (array_key_exists('discount', $receivedOrder)) {
-            $discountAmount = $receivedOrder['discount']['amount'];
-            $baseDiscountAmount = $receivedOrder['discount']['base']['amount'];
-            $quote->setCustomDiscount(-$discountAmount);
-            $quote->setBaseCustomDiscount(-$baseDiscountAmount);
+        if (array_key_exists('prices', $receivedOrder)) {
+            $prices = $receivedOrder['prices'];
+            foreach ($prices as $price) {
+                if ($price['key'] == 'discount') {
+                    $discountAmount = $price['amount'];
+                    $baseDiscountAmount = $price['base']['amount'];
+                    $quote->setCustomDiscount($discountAmount);
+                    $quote->setBaseCustomDiscount($baseDiscountAmount);
+                    /* $quote->setDiscountAmount($discountAmount); */
+                    /* $quote->setBaseDiscountAmount($baseDiscountAmount); */
+                }
+            }
         }
 
         ////////////////////////////////////////////////////////////

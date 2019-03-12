@@ -191,6 +191,7 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         // Add custom attributes
         $data['attributes'] = $attribs;
 
+        $this->logger->info('CART: ' . $this->jsonHelper->jsonEncode($data));
         return $data;
     }
 }

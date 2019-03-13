@@ -10,7 +10,7 @@
             <tab>flowcommerce</tab>
             <resource>FlowCommerce_FlowConnector::connector_config</resource>
             <group id="flowconnector" translate="label" type="text" showInDefault="0" showInWebsite="0" showInStore="1">
-                <label>Flow Credentials</label>
+                <label>Flow Connector Settings</label>
                 <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

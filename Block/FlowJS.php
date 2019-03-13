@@ -56,6 +56,6 @@ class FlowJS extends Template
      */
     public function getFlowJsUrl()
     {
-        return 'https://cdn.flow.io/flowjs/latest/flow.js';
+        return 'https://cdn.flow.io/flowjs/' . $this->configuration->getFlowJsVersion() . '/flow.js';
     }
 }

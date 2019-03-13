@@ -292,7 +292,7 @@ class SessionManager implements SessionManagementInterface
             $params['attributes[' . $k . ']'] = $v;
         }
 
-        /* $this->logger->info('CART: ' . $this->jsonHelper->jsonEncode($data)); */
+        $this->logger->info('CART: ' . json_encode($params));
         $url = $url . http_build_query($params);
         return $url;
     }

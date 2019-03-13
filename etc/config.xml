@@ -22,6 +22,7 @@
         <flowcommerce>
             <flowconnector>
                 <enabled>0</enabled>
+                <flowjs_version>latest</flowjs_version>
                 <redirect_enabled>0</redirect_enabled>
                 <invoice_event>1</invoice_event>
                 <invoice_email>1</invoice_email>

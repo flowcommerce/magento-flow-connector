@@ -14,17 +14,19 @@ define([
             _create: function () {
                 var result = this._super(),
                     items, i, cartContainer;
+                var totalDiscount = 0.0;
                 if (typeof(flow.session.getExperience()) == 'string') {
                     cartContainer = $('.cart-container').first();
                     cartContainer.attr('data-flow-cart-container', '');
                     if (checkoutConfig != undefined) {
-                        if (checkoutConfig.totalsData != undefined) {
+                        if (checkoutConfig.quoteItemData != undefined) {
+                            for (i = 0; i < checkoutConfig.quoteItemData.length; i++) {
+                                totalDiscount += checkoutConfig.quoteItemData[i].base_discount_amount;
+                            }
 
-                            if (checkoutConfig.totalsData.base_currency_code &&
-                                checkoutConfig.totalsData.base_discount_amount)
-                            {
+                            if (totalDiscount > 0) {
+                                cartContainer.attr('data-flow-cart-discount-amount', totalDiscount);
                                 cartContainer.attr('data-flow-cart-discount-currency', checkoutConfig.totalsData.base_currency_code);
-                                cartContainer.attr('data-flow-cart-discount-amount', checkoutConfig.totalsData.base_discount_amount);
                             }
                         }
                     }

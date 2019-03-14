@@ -31,7 +31,7 @@ define([
                         <tr class="totals duty">
                             <th data-bind="i18n: title" class="mark" scope="row">Duty</th>
                             <td class="amount">
-                                <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Duty" data-flow-localize="cart-duty">CA$18.48</span>
+                                <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Duty" data-flow-localize="cart-duty"></span>
                             </td>
                         </tr>
                         <tr class="totals shipping">

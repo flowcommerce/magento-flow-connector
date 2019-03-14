@@ -3,6 +3,7 @@
 namespace FlowCommerce\FlowConnector\Plugin\Magento\Framework\Pricing\Render;
 
 use \FlowCommerce\FlowConnector\Model\Configuration;
+use Psr\Log\LoggerInterface as Logger;
 
 class PriceBox
 {
@@ -12,12 +13,20 @@ class PriceBox
     private $configuration;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param Configuration $configuration
+     * @param Logger $logger
      */
     public function __construct(     
-        Configuration $configuration
+        Configuration $configuration,
+        Logger $logger
     ) {
         $this->configuration = $configuration;
+        $this->logger = $logger;
     }
 
     public function afterRenderAmount(\Magento\Framework\Pricing\Render\PriceBox $priceBox, $result)

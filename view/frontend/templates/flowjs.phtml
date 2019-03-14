@@ -12,7 +12,6 @@
 /** @var $block \FlowCommerce\FlowConnector\Block\FlowJS */
 ?>
 <?php if ($block->isFlowJsEnabled()): ?>
-<?php $flowJsUrl = $block->getFlowJsUrl(); ?>
 <script type="text/javascript">
 !function (f, l, o, w, i, n, g) {
     f[i] = f[i] || {};
@@ -23,7 +22,7 @@
     n.src = w;
     g = l.getElementsByTagName(o)[0];
     g.parentNode.insertBefore(n, g);
-}(window, document, 'script', '<?php echo $flowJsUrl; ?>', 'flow');
+}(window, document, 'script', '<?php echo $block->getFlowJsUrl(); ?>', 'flow');
 
 flow.cmd('set', 'organization', '<?php echo $block->getFlowOrganizationId();?>');
 flow.cmd('init');

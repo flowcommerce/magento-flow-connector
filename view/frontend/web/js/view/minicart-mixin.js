@@ -15,10 +15,13 @@ define([
             body = $('[data-container=\'body\']');
             flow.magento2.miniCartAvailable = false;
             flowMiniCartLocalize = function (source, waitTimeMs = 0) {
-                setTimeout(function(){
-                    flow.cart.localize()
-                    console.log('Flow localizing cart: ' + source + ', waited: ' + waitTimeMs + 'ms');
-                }, waitTimeMs);
+                flow.cart.localize()
+                if (waitTimeMs > 0) {
+                    setTimeout(function(){
+                        flow.cart.localize()
+                        console.log('Flow localizing cart: ' + source + ', waited: ' + waitTimeMs + 'ms');
+                    }, waitTimeMs);
+                }
             };
 
             if (body.hasClass('checkout-cart-index')) {
@@ -30,7 +33,7 @@ define([
                 flow.magento2.miniCartAvailable = true;
                 miniCart.attr('data-flow-cart-container', '');
                 miniCart.on('dropdowndialogopen', function(){flowMiniCartLocalize('open')});
-                miniCart.on('contentUpdated', function(){flowMiniCartLocalize('minicart.contentUpdated', 50)});
+                miniCart.on('contentUpdated', function(){flowMiniCartLocalize('minicart.contentUpdated', 300)});
             }
         }
 

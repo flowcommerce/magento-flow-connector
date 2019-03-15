@@ -1,14 +1,12 @@
 define([
-    'jquery'
+    'jquery',
+    'flow'
 ], function ($) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (widget) {
-        var flow = window.flow || {},
-            body;
-            flow.magento2 = window.flow.magento2 || {};
-            flow.cart = window.flow.cart || {};
-            flow.session = window.flow.session || {};
+        var body;
 
         $.widget('mage.shoppingCart', widget, {
             _create: function () {

@@ -46,7 +46,7 @@ class FlowJS extends Template
 
     public function isFlowJsEnabled()
     {
-        return $this->auth->getFlowOrganizationId();
+        return $this->auth->getFlowOrganizationId() && $this->configuration->getFlowJsVersion();
     }
 
     /**

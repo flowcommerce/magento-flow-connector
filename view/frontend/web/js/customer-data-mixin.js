@@ -1,15 +1,12 @@
 define([
     'jquery',
-    'mage/utils/wrapper'
+    'mage/utils/wrapper',
+    'flow'
 ], function ($, wrapper) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (customerData) {
-        var flow = window.flow || {};
-        flow.magento2 = window.flow.magento2 || {};
-        flow.cart = window.flow.cart || {};
-        flow.session = window.flow.session || {};
-
         function reloadFlowCart() {
             if (typeof(flow.session.getExperience()) == 'string') {
                 var totals, subtotal, grandtotal, discount, flowFields;

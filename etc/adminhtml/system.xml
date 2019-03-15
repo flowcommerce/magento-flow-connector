@@ -35,12 +35,10 @@
                 </field>
                 <field id="flowjs_version" translate="label" type="text" sortOrder="4" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Flow.js Version</label>
-                    <validate>required-entry</validate>
                     <comment>Recommended version: "latest"</comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
-                    <frontend_class>required-entry</frontend_class>
                 </field>
                 <field id="redirect_enabled" translate="label" type="select" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Redirect to Flow Checkout</label>

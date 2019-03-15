@@ -7,14 +7,13 @@ define([
     'priceUtils',
     'jquery/ui',
     'jquery/jquery.parsequery',
-    'mage/validation/validation'
+    'mage/validation/validation',
+    'flow'
 ], function ($, _, mageTemplate, keyboardHandler, $t, priceUtils) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (widget) {
-        var flow = window.flow || {};
-        flow.magento2 = window.flow.magento2 || {};
-
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
                 if (this.isFlowExperience()) {

@@ -9,13 +9,15 @@
  */
 var config = {
     paths: {
-        'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker'
+        'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker',
+        'flow': 'FlowCommerce_FlowConnector/js/flow-js-companion'
     },
     deps: [
-        'flowCountryPicker'
+        'flowCountryPicker',
+        'flow'
     ],
     shim: {
-        'flowCountryPicker': ['jquery', 'jquery/ui'],
+        'flowCountryPicker': ['jquery', 'jquery/ui', 'flow']
     },
     config: {
         mixins: {

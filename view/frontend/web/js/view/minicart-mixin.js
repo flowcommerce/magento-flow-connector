@@ -1,16 +1,14 @@
 define([
     'jquery',
-], function ($) {
+    'flow'
+], function ($, flow) {
     'use strict';
 
     return function (Component) {
-        var flow = window.flow || {},
+        var flow = window.flow,
             miniCart,
             body,
             flowMiniCartLocalize;
-            flow.session = window.flow.session || {};
-            flow.cart = window.flow.cart || {};
-            flow.magento2 = window.flow.magento2 || {};
 
         if (typeof(flow.session.getExperience()) == 'string') {
             miniCart = $('[data-block=\'minicart\']');

@@ -3,9 +3,11 @@ define([
     'Magento_Catalog/js/price-utils',
     'underscore',
     'mage/template',
+    'flow',
     'jquery/ui'
 ], function ($, utils, _, mageTemplate) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (widget) {
         var globalOptions = {
@@ -14,7 +16,6 @@ define([
                 flowPriceTemplateBySku: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
                 flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
             },
-            flow = window.flow || {},
             MAGENTOMINPRICEKEY = 'minPrice',
             MAGENTOREGULARPRICEKEY = 'regularPrice',
             MAGENTOBASEPRICEKEY = 'basePrice',
@@ -23,9 +24,7 @@ define([
             FLOWREGULARPRICEKEY = 'regular_price',
             FLOWBASEPRICEKEY = 'base_price',
             FLOWFINALPRICEKEY = 'final_price';
-        flow.magento2 = window.flow.magento2 || {};
-        flow.session = window.flow.session || {};
-        flow.localizationAttempted = window.flow.localizationAttempted || false;
+        flow.localizationAttempted = flow.localizationAttempted || false;
 
         $.widget('mage.priceBox', widget, {
             options: globalOptions,

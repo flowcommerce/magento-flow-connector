@@ -1,11 +1,11 @@
 define([
     'jquery',
     'flow'
-], function ($, flow) {
+], function ($) {
     'use strict';
 
     return function (Component) {
-        var flow = window.flow,
+        var flow = window.flow || {},
             miniCart,
             body,
             flowMiniCartLocalize;

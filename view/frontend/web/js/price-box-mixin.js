@@ -32,12 +32,12 @@ define([
             reloadPrice: function reDrawPrices() {
                 var flowLocalizationKey = this.getFlowExperience();
                 if (this.options.priceConfig.prices != undefined) {
-                    if (this.options.priceConfig.prices.flow_localization_enabled == false) {
+                    if (flow.magento2.catalog_localize == false) {
                         return this._super();
                     }
                 }
                 if (!flowLocalizationKey ||
-                    this.options.priceConfig.flow_localization_enabled == false
+                    flow.magento2.catalog_localize == false
                 ) {
                     return this._super();
                 }

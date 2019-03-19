@@ -8,6 +8,9 @@ define([
 
     return function (customerData) {
         function reloadFlowCart() {
+            if (!flow.magento2.cart_localize) {
+                return false;
+            }
             if (typeof(flow.session.getExperience()) == 'string') {
                 var totals, subtotal, grandtotal, discount, flowFields;
                 totals = $('#cart-totals');

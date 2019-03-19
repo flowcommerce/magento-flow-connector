@@ -42,7 +42,6 @@ class View
     {
         $config = $this->jsonSerializer->unserialize($result);
         if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled()) {
-            $config['flow_localization_enabled'] = false;
             return $this->jsonSerializer->serialize($config);
         }
         $ids = [];

@@ -18,5 +18,7 @@ define([
         flow.session = flow.session || {};
         flow.cart = flow.cart || {};
         flow.magento2 = flow.magento2 || {};
+        flow.magento2.cart_localize = window.flow_cart_localize;
+        flow.magento2.catalog_localize = window.flow_catalog_localize;
     }
 });

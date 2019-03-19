@@ -10,7 +10,7 @@ define([
             body,
             flowMiniCartLocalize;
 
-        if (typeof(flow.session.getExperience()) == 'string') {
+        if (typeof(flow.session.getExperience()) == 'string' && flow.magento2.cart_localize) {
             miniCart = $('[data-block=\'minicart\']');
             body = $('[data-container=\'body\']');
             flow.magento2.miniCartAvailable = false;

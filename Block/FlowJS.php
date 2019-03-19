@@ -58,4 +58,24 @@ class FlowJS extends Template
     {
         return 'https://cdn.flow.io/flowjs/' . $this->configuration->getFlowJsVersion() . '/flow.js';
     }
+
+    /**
+     * Return flow cart localization toggle
+     * @return boolean
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isFlowCartLocalize()
+    {
+        return $this->configuration->isCartLocalizationEnabled();
+    }
+
+    /**
+     * Return flow catalog localization toggle
+     * @return boolean
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isFlowCatalogLocalize()
+    {
+        return $this->configuration->isCatalogPriceLocalizationEnabled();
+    }
 }

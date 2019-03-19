@@ -47,6 +47,9 @@ class Configuration
 
     // Store configuration key for catalog price localization
     const FLOW_CATALOG_PRICE_LOCALIZATION = 'flowcommerce/flowconnector/catalog_price_localization';
+    
+    // Store configuration key for catalog price localization
+    const FLOW_CART_LOCALIZATION = 'flowcommerce/flowconnector/cart_localization';
 
     // Flow checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
@@ -334,6 +337,25 @@ class Configuration
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_CATALOG_PRICE_LOCALIZATION,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if cart localization is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isCartLocalizationEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_CART_LOCALIZATION,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

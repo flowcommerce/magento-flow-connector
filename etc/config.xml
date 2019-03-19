@@ -26,11 +26,12 @@
                 <redirect_enabled>0</redirect_enabled>
                 <invoice_event>1</invoice_event>
                 <invoice_email>1</invoice_email>
-                <shipment_event>1</shipment_event>
-                <shipment_email>1</shipment_email>
+                <shipment_event>0</shipment_event>
+                <shipment_email>0</shipment_email>
                 <webhook_validation>1</webhook_validation>
                 <country_picker>1</country_picker>
                 <catalog_price_localization>1</catalog_price_localization>
+                <cart_localization>1</cart_localization>
             </flowconnector>
         </flowcommerce>
     </default>

@@ -13,7 +13,7 @@ define([
                 var result = this._super(),
                     items, i, cartContainer;
                 var totalDiscount = 0.0;
-                if (typeof(flow.session.getExperience()) == 'string' && flow.magento2.cart_localize) {
+                if (flow.magento2.shouldLocalizeCart) {
                     cartContainer = $('.cart-container').first();
                     cartContainer.attr('data-flow-cart-container', '');
                     if (checkoutConfig != undefined) {

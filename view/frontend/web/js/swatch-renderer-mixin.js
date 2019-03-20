@@ -16,7 +16,7 @@ define([
     return function (widget) {
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
-                if (this.shouldLocalize()) {
+                if (flow.magento2.shouldLocalizeCatalog) {
                     if (flow.magento2.optionsIndex == undefined) {
                         flow.magento2.optionsIndex = {};
                     }
@@ -38,7 +38,7 @@ define([
             },
 
             _OnClick: function ($this, $widget, eventName) {
-                if (this.shouldLocalize()) {
+                if (flow.magento2.shouldLocalizeCatalog) {
                     var productId = $widget.options.jsonConfig.productId,
                         selectedOptionId = $this["context"].attributes["option-id"].value,
                         optionsMap = _.toArray($widget.optionsMap);
@@ -64,15 +64,6 @@ define([
                 return this._super($this, $widget, eventName);
             },
 
-            shouldLocalize: function () {
-                var result = false;
-                if (flow.session != undefined && flow.magento2.catalog_localize) {
-                    if (typeof(flow.session.getExperience()) == "string") {
-                        result = true;
-                    }
-                }
-                return result;
-            },
         });
 
         return $.mage.SwatchRenderer;

@@ -5,6 +5,7 @@ require([
     'mage/cookies'
 ], function ($) {
     var flow = window.flow || {};
+
     flow.magento2.countryPickerOptions = flow.magento2.countryPickerOptions || {};
     flow.magento2.countryPickerOptions.containerId = 'flow-country-picker';
     flow.magento2.countryPickerOptions.type = 'dropdown';

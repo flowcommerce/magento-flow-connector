@@ -13,9 +13,45 @@
 ?>
 <?php if ($block->isFlowJsEnabled()): ?>
 <script type="text/javascript">
+window.flow_enabled = true;
 window.flow_flowjs_url = "<?php echo $block->getFlowJsUrl(); ?>";
 window.flow_organization_id = "<?php echo $block->getFlowOrganizationId(); ?>";
 window.flow_cart_localize = "<?php echo $block->isFlowCartLocalize(); ?>";
 window.flow_catalog_localize = "<?php echo $block->isFlowCatalogLocalize(); ?>";
+window.flow_pricing_timeout = 5000;
+window.flow_cart_timeout = 5000;
+setTimeout(function(){
+    if (window.flow.magento2 != undefined) {
+        return false;
+    }
+    if (!window.flow.magento2.hasLocalizedCatalog) {
+        document.getElementsByTagName('body')[0].classList.add('flow-catalog-localized');
+        console.log('Showing prices after timeout '+window.flow_pricing_timeout+'ms');
+    }
+}, window.flow_pricing_timeout);
+setTimeout(function(){
+    if (window.flow.magento2 != undefined) {
+        return false;
+    }
+    if (!window.flow.magento2.hasLocalizedCart) {
+        document.getElementsByTagName('body')[0].classList.add('flow-cart-localized');
+        document.getElementsByTagName('body')[0].classList.add('flow-cart-totals-localized');
+        console.log('Showing cart after timeout '+window.flow_cart_timeout+'ms');
+    }
+}, window.flow_cart_timeout);
 </script>
+<style>
+[data-role="priceBox"] span.price,
+body.checkout-cart-index .cart-container,
+body.checkout-cart-index #cart-totals,
+#minicart-content-wrapper {
+    opacity: 0;
+} 
+body.flow-catalog-localized [data-role="priceBox"] span.price,
+body.flow-cart-localized.checkout-cart-index .cart-container,
+body.flow-cart-totals-localized.checkout-cart-index #cart-totals,
+body.flow-cart-localized #minicart-content-wrapper {
+    opacity: 1;
+}
+</style>
 <?php endif; ?>

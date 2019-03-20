@@ -24,21 +24,17 @@ define([
             FLOWREGULARPRICEKEY = 'regular_price',
             FLOWBASEPRICEKEY = 'base_price',
             FLOWFINALPRICEKEY = 'final_price';
-        flow.localizationAttempted = flow.localizationAttempted || false;
 
         $.widget('mage.priceBox', widget, {
             options: globalOptions,
 
             reloadPrice: function reDrawPrices() {
-                var flowLocalizationKey = this.getFlowExperience();
-                if (this.options.priceConfig.prices != undefined) {
-                    if (flow.magento2.catalog_localize == false) {
-                        return this._super();
-                    }
+                var flowLocalizationKey = this.getFlowLocalizationKey();
+                if (!flow.magento2.shouldLocalizeCatalog) {
+                    return this._super();
                 }
-                if (!flowLocalizationKey ||
-                    flow.magento2.catalog_localize == false
-                ) {
+
+                if (!flowLocalizationKey) {
                     return this._super();
                 }
 
@@ -90,11 +86,10 @@ define([
                 }, this);
                 if (!this.flowFormattedPrice) {
                     flow.cmd('localize');
-                    flow.localizationAttempted = true;
                 }
             },
 
-            getFlowExperience: function () {
+            getFlowLocalizationKey: function () {
                 var flowLocalizationKey = false,
                     flowExperience = flow.session.getExperience(),
                     flowCountry = flow.session.getCountry(),

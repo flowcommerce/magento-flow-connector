@@ -31,7 +31,9 @@
                 <webhook_validation>1</webhook_validation>
                 <country_picker>1</country_picker>
                 <catalog_price_localization>1</catalog_price_localization>
+                <max_catalog_hide_ms>0</max_catalog_hide_ms>
                 <cart_localization>1</cart_localization>
+                <max_cart_hide_ms>0</max_cart_hide_ms>
             </flowconnector>
         </flowcommerce>
     </default>

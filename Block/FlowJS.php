@@ -70,6 +70,16 @@ class FlowJS extends Template
     }
 
     /**
+     * Return max catalog hide in ms
+     * @return int
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getFlowMaxCatalogHideMs()
+    {
+        return $this->configuration->getMaxCatalogHideMs();
+    }
+
+    /**
      * Return flow catalog localization toggle
      * @return boolean
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -77,5 +87,15 @@ class FlowJS extends Template
     public function isFlowCatalogLocalize()
     {
         return $this->configuration->isCatalogPriceLocalizationEnabled();
+    }
+
+    /**
+     * Return max catalog hide in ms
+     * @return int
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getFlowMaxCartHideMs()
+    {
+        return $this->configuration->getMaxCartHideMs();
     }
 }

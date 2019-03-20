@@ -51,6 +51,13 @@ define([
             }
         }
 
+        flow.magento2.hideCart = function () {
+            if (flow.magento2.hasLocalizedCart) {
+                flow.magento2.hasLocalizedCart = false;
+                document.getElementsByTagName('body')[0].classList.remove('flow-cart-localized');
+            }
+        }
+
         flow.magento2.showCartTotals = function () {
             if (!flow.magento2.hasLocalizedCartTotals) {
                 flow.magento2.hasLocalizedCartTotals = true;
@@ -59,16 +66,9 @@ define([
         }
 
         flow.magento2.hideCartTotals = function () {
-            if (flow.magento2.hasLocalizedCart) {
-                flow.magento2.hasLocalizedCart = false;
+            if (flow.magento2.hasLocalizedCartTotals) {
+                flow.magento2.hasLocalizedCartTotals = false;
                 document.getElementsByTagName('body')[0].classList.remove('flow-cart-totals-localized');
-            }
-        }
-
-        flow.magento2.hideCart = function () {
-            if (flow.magento2.hasLocalizedCart) {
-                flow.magento2.hasLocalizedCart = false;
-                document.getElementsByTagName('body')[0].classList.remove('flow-cart-localized');
             }
         }
 

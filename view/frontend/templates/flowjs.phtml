@@ -64,14 +64,14 @@ body.flow-catalog-localized [data-role="priceBox"] span.price {
 <?php endif; ?>
 <?php if($block->getFlowMaxCartHideMs() > 0): ?>
 <style>
-body.checkout-cart-index .cart-container,
-body.checkout-cart-index #cart-totals,
-#minicart-content-wrapper {
+body.checkout-cart-index .cart-container span.price,
+body.checkout-cart-index #cart-totals span.price,
+#minicart-content-wrapper span.price {
     opacity: 0;
 } 
-body.flow-cart-localized.checkout-cart-index .cart-container,
-body.flow-cart-totals-localized.checkout-cart-index #cart-totals,
-body.flow-cart-localized #minicart-content-wrapper {
+body.flow-cart-localized.checkout-cart-index .cart-container span.price,
+body.flow-cart-totals-localized.checkout-cart-index #cart-totals span.price,
+body.flow-cart-localized #minicart-content-wrapper span.price {
     opacity: 1;
 }
 </style>

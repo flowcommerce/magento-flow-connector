@@ -1,6 +1,6 @@
 define([
     'jquery',
-    'flow'
+    'flowCompanion'
 ], function ($) {
     'use strict';
     var flow = window.flow || {};

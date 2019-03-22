@@ -8,7 +8,7 @@ define([
     'jquery/ui',
     'jquery/jquery.parsequery',
     'mage/validation/validation',
-    'flow'
+    'flowCompanion'
 ], function ($, _, mageTemplate, keyboardHandler, $t, priceUtils) {
     'use strict';
     var flow = window.flow || {};

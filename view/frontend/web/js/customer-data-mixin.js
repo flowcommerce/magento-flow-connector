@@ -1,7 +1,7 @@
 define([
     'jquery',
     'mage/utils/wrapper',
-    'flow'
+    'flowCompanion'
 ], function ($, wrapper) {
     'use strict';
     var flow = window.flow || {};

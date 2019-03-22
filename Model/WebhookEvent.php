@@ -2315,16 +2315,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                                 $dutyPrice += $included['price']['amount'];
                                 $baseDutyPrice += $included['price']['base']['amount'];
                             } elseif ($included['key'] == 'item_discount') {
-                                $item->setDiscountAmount($included['price']['amount']);
-                                $item->setBaseDiscountAmount($included['price']['base']['amount']);
+                                $itemDiscountAmount -= $included['price']['amount'];
+                                $itemBaseDiscountAmount -= $included['price']['base']['amount'];
                             }
                         }
-
-                        // Split order discount among order items. Note: Order's/Flow's subtotal includes tax.
-                        $itemDiscountAmount += -((($rawItemPrice * $detail['quantity']) /
-                                ($order->getFlowConnectorItemPrice())) * $order->getDiscountAmount());
-                        $itemBaseDiscountAmount += -((($baseRawItemPrice * $detail['quantity']) /
-                                ($order->getFlowConnectorBaseItemPrice())) * $order->getBaseDiscountAmount());
 
                         $item->setOriginalPrice($itemPrice);
                         $item->setBaseOriginalPrice($baseItemPrice);
@@ -2347,8 +2341,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
                         $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
                         $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
-                        $item->setDiscountAmount($itemDiscountAmount);
-                        $item->setBaseDiscountAmount($itemBaseDiscountAmount);
+                        $item->setDiscountAmount($itemDiscountAmount * $detail['quantity']);
+                        $item->setBaseDiscountAmount($itemBaseDiscountAmount * $detail['quantity']);
                         $item->save();
                     }
                     break;

@@ -8,7 +8,7 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
   find . -type f -print0 | xargs -0 chmod 664 && \
   chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \
   composer config repositories.flowconnector path /opt/flowcommerce/flowconnector && \
-  composer config repositories.composer { "type": "composer", "url": "https://repo.magento.com/" } && \
+  composer config repositories.composer '{ "type": "composer", "url": "https://repo.magento.com/" }' && \
   composer config repo.0 false && \
   composer require --no-interaction flowcommerce/flowconnector @dev && \
   composer require --no-interaction magento/module-bundle-sample-data:100.2.* && \

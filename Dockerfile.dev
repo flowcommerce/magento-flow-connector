@@ -32,7 +32,7 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
   composer require magento/sample-data-media:100.2.* && \
   echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini && \
   php bin/magento module:enable --all && \
-  php bin/magento setup:di:compile
+  php bin/magento setup:di:compile && \
   php bin/magento sampledata:deploy
 
 EXPOSE 80 443

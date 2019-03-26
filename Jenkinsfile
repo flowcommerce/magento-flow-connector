@@ -35,7 +35,7 @@ pipeline {
     }
 
     stage('Build and push docker image release') {
-      when { branch 'master' }
+      when { anyOf { branch 'master'; changeRequest target: 'master' } }
       steps {
         container('docker') {
           script {
@@ -49,7 +49,7 @@ pipeline {
     }
 
     stage('Deploy Helm chart') {
-      when { branch 'master' }
+      when { anyOf { branch 'master'; changeRequest target: 'master' } }
       steps {
         container('helm') {
           sh('helm init --client-only')

@@ -10,26 +10,26 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
   composer config repositories.flowconnector path /opt/flowcommerce/flowconnector && \
   composer config repo.0 false && \
   composer require --no-interaction flowcommerce/flowconnector @dev && \
-  composer require magento/module-bundle-sample-data:100.2.* && \
-  composer require magento/module-sales-sample-data:100.2.* && \
-  composer require magento/module-customer-sample-data:100.2.* && \
-  composer require magento/module-catalog-sample-data:100.2.* && \
-  composer require magento/module-theme-sample-data:100.2.* && \
-  composer require magento/module-cms-sample-data:100.2.* && \
-  composer require magento/module-widget-sample-data:100.2.* && \
-  composer require magento/module-catalog-rule-sample-data:100.2.* && \
-  composer require magento/module-sales-rule-sample-data:100.2.* && \
-  composer require magento/module-review-sample-data:100.2.* && \
-  composer require magento/module-tax-sample-data:100.2.* && \
-  composer require magento/module-downloadable-sample-data:100.2.* && \
-  composer require magento/module-msrp-sample-data:100.2.* && \
-  composer require magento/module-wishlist-sample-data:100.2.* && \
-  composer require magento/module-configurable-sample-data:100.2.* && \
-  composer require magento/module-product-links-sample-data:100.2.* && \
-  composer require magento/module-grouped-product-sample-data:100.2.* && \
-  composer require magento/module-offline-shipping-sample-data:100.2.* && \
-  composer require magento/module-swatches-sample-data:100.2.* && \
-  composer require magento/sample-data-media:100.2.* && \
+  composer require --no-interaction magento/module-bundle-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-sales-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-customer-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-catalog-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-theme-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-cms-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-widget-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-catalog-rule-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-sales-rule-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-review-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-tax-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-downloadable-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-msrp-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-wishlist-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-configurable-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-product-links-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-grouped-product-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-offline-shipping-sample-data:100.2.* && \
+  composer require --no-interaction magento/module-swatches-sample-data:100.2.* && \
+  composer require --no-interaction magento/sample-data-media:100.2.* && \
   echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini && \
   php bin/magento module:enable --all && \
   php bin/magento setup:di:compile && \

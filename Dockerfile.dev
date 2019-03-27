@@ -9,7 +9,7 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
   chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \
   composer config repositories.flowconnector path /opt/flowcommerce/flowconnector && \
   composer config repositories.composer '{ "type": "composer", "url": "https://repo.magento.com/" }' && \
-  composer config http-basic.repo.magento.com ${MAGENTO2_REPO_PUBLIC_KEY} ${MAGENTO2_REPO_PRIVATE_KEY} && \
+  composer config http-basic.repo.magento.com ${MAGENTO2_REPO_PUBLIC_KEY} ${magento2_repo_private_key} && \
   composer config repo.0 false && \
   composer require --no-interaction flowcommerce/flowconnector @dev && \
   composer require --no-interaction magento/module-bundle-sample-data:100.2.* && \

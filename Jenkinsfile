@@ -19,8 +19,8 @@ pipeline {
     }
   }
 
-  environment {
-    withCredentials([string(credentialsId: 'magento2-repo-keys', variable: 'magento2_repo_private_key')]) {
+  withCredentials([string(credentialsId: 'magento2-repo-keys', variable: 'magento2_repo_private_key')]) {
+    environment {
       DOCKER_ORG = 'flowcommerce'
       APP_NAME   = 'magento-flow-connector-development'
       MAGENTO2_REPO_PUBLIC_KEY = 'e09972697200676346ab7a6981ac63fa'

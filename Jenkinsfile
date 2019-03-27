@@ -46,7 +46,7 @@ pipeline {
           withCredentials([string(credentialsId: 'magento2-repo-keys', variable: 'MAGENTO2_REPO_PRIVATE_KEY')]) {
             script {
               docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                image = docker.build( "$DOCKER_ORG/$APP_NAME:$IMAGE_TAG", '-f Dockerfile.dev .', '--build-arg MAGENTO2_REPO_PRIVATE_KEY=$MAGENTO2_REPO_PRIVATE_KEY .' )
+                image = docker.build( "$DOCKER_ORG/$APP_NAME:$IMAGE_TAG", '-f Dockerfile.dev .', '--build-arg MAGENTO2_REPO_PRIVATE_KEY=TESTINGBUILDARG .' )
                 image.push()
               }
             }

@@ -65,7 +65,7 @@ pipeline {
       steps {
         container('helm') {
           sh('helm init --client-only')
-          sh("helm upgrade --wait --install --debug --namespace production --set deployments.live.version=$IMAGE_TAG -i $APP_NAME ./deploy/$APP_NAME")
+          sh("helm upgrade --wait --install --debug --timeout 1500 --namespace production --set deployments.live.version=$IMAGE_TAG -i $APP_NAME ./deploy/$APP_NAME")
         }
       }
     }

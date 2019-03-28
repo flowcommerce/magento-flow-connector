@@ -7,8 +7,9 @@ WORKDIR /opt/bitnami/magento/htdocs
 RUN return -n "${MAGENTO2_REPO_PRIVATE_KEY}" | wc -c
 
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
-  find . -type f -print0 | xargs -0 chmod 664 && \
-  chown -R bitnami:daemon /opt/bitnami/magento/htdocs
+    find . -type f -print0 | xargs -0 chmod 664 && \
+    chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \
+    echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini
 RUN composer config repositories.flowconnector path /opt/flowcommerce/flowconnector
 RUN composer config repo.0 false
 RUN composer config repositories.magento '{ "type": "composer", "url": "https://repo.magento.com" }'
@@ -34,7 +35,6 @@ RUN composer require --no-interaction magento/module-grouped-product-sample-data
 RUN composer require --no-interaction magento/module-offline-shipping-sample-data:100.2.*
 RUN composer require --no-interaction magento/module-swatches-sample-data:100.2.*
 RUN composer require --no-interaction magento/sample-data-media:100.2.*
-RUN echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini
 RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile
 RUN php bin/magento sampledata:deploy

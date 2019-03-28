@@ -4,7 +4,7 @@ ADD . /opt/flowcommerce/flowconnector
 
 WORKDIR /opt/bitnami/magento/htdocs
 
-RUN return $(-n "$MAGENTO2_REPO_PRIVATE_KEY" | wc -c)
+RUN return $(echo -n "$MAGENTO2_REPO_PRIVATE_KEY" | wc -c)
 
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \

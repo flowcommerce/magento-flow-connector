@@ -6,8 +6,6 @@ WORKDIR /opt/bitnami/magento/htdocs
 
 ARG MAGENTO2_REPO_PRIVATE_KEY
 
-RUN return $(echo -n "$MAGENTO2_REPO_PRIVATE_KEY" | wc -c)
-
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \
     chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \

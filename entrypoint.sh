@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+usermod -aG sudo bitnami
+
 . /opt/bitnami/base/functions
 . /opt/bitnami/base/helpers
 
@@ -10,7 +12,6 @@ echo "NAMI_DEBUG=$NAMI_DEBUG"
 echo "NAMI_LOG_LEVEL=$NAMI_LOG_LEVEL"
 
 . /init.sh
-usermod -aG sudo bitnami
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/var
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/generated
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/app/etc

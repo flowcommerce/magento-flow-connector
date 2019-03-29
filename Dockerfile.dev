@@ -4,17 +4,19 @@ ADD . /opt/flowcommerce/flowconnector
 
 WORKDIR /opt/bitnami/magento/htdocs
 
+USER bitnami
+
 ARG MAGENTO2_REPO_PRIVATE_KEY
 
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \
-    echo '{ "http-basic": { "repo.magento.com": { "username": "e09972697200676346ab7a6981ac63fa", "password": "$MAGENTO2_REPO_PRIVATE_KEY" } } }' > /opt/bitnami/magento/htdocs/auth.json && \
     chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \
     echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini
 
 RUN composer config repositories.flowconnector path /opt/flowcommerce/flowconnector && \
     composer config repo.0 false && \
-    composer config repositories.magento '{ "type": "composer", "url": "https://repo.magento.com" }'
+    composer config repositories.magento '{ "type": "composer", "url": "https://repo.magento.com" }' && \
+    composer config http-basic.magento.com e09972697200676346ab7a6981ac63fa $MAGENTO2_REPO_PRIVATE_KEY
 
 RUN composer require --no-interaction flowcommerce/flowconnector @dev \
     magento/module-bundle-sample-data:100.2.* \

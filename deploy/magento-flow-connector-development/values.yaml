@@ -88,5 +88,3 @@ mariadb:
       enabled: false
       # accessMode: ReadWriteOnce
       # size: 8Gi
-
-

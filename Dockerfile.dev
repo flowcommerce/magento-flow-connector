@@ -4,14 +4,14 @@ ADD . /opt/flowcommerce/flowconnector
 
 WORKDIR /opt/bitnami/magento/htdocs
 
-USER bitnami
-
 ARG MAGENTO2_REPO_PRIVATE_KEY
 
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \
     chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \
     echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini
+
+USER bitnami
 
 RUN composer config repositories.flowconnector path /opt/flowcommerce/flowconnector && \
     composer config repo.0 false && \

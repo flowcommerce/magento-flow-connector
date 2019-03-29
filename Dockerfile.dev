@@ -44,6 +44,8 @@ RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile
 RUN php bin/magento sampledata:deploy
 
+USER root
+
 EXPOSE 80 443
 
 ENTRYPOINT ["/opt/flowcommerce/flowconnector/entrypoint.sh"]

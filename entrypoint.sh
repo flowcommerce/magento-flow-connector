@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-usermod -aG sudo bitnami
-
 . /opt/bitnami/base/functions
 . /opt/bitnami/base/helpers
 
@@ -10,6 +8,8 @@ print_welcome_page
 echo "Initilizing magento..."
 echo "NAMI_DEBUG=$NAMI_DEBUG"
 echo "NAMI_LOG_LEVEL=$NAMI_LOG_LEVEL"
+
+usermod -aG sudo bitnami
 
 . /init.sh
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/var

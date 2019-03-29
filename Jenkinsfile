@@ -46,7 +46,7 @@ pipeline {
           withCredentials([string(credentialsId: 'magento2-repo-keys', variable: 'magento2_repo_private_key')]) {
             script {
               docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                image = docker.build( "$DOCKER_ORG/$APP_NAME:$IMAGE_TAG", '--build-arg MAGENTO2_REPO_PRIVATE_KEY=$magento2_repo_private_key -f Dockerfile.dev .' )
+                image = docker.build( "$DOCKER_ORG/$APP_NAME:$IMAGE_TAG", '--build-arg MAGENTO2_REPO_PRIVATE_KEY=$magento2_repo_private_key --build-arg MAGENTO2_BASE_URL_SECURE=magento-development.flo.pub -f Dockerfile.dev .' )
                 image.push()
               }
             }
@@ -65,7 +65,7 @@ pipeline {
       steps {
         container('helm') {
           sh('helm init --client-only')
-          sh("helm upgrade --wait --install --debug --namespace production --set deployments.live.version=$IMAGE_TAG -i $APP_NAME ./deploy/$APP_NAME")
+          sh("helm upgrade --wait --install --debug --timeout 900 --namespace production --set deployments.live.version=$IMAGE_TAG -i $APP_NAME ./deploy/$APP_NAME")
         }
       }
     }

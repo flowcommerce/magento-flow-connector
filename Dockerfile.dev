@@ -5,7 +5,6 @@ ADD . /opt/flowcommerce/flowconnector
 WORKDIR /opt/bitnami/magento/htdocs
 
 ARG MAGENTO2_REPO_PRIVATE_KEY
-ARG MAGENTO2_BASE_URL_SECURE
 
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \
@@ -44,8 +43,6 @@ RUN composer require --no-interaction flowcommerce/flowconnector @dev \
 RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile
 RUN php bin/magento sampledata:deploy
-RUN php bin/magento setup:store-config:set --base-url-secure="https://$MAGENTO2_BASE_URL_SECURE/"
-RUN php bin/magento cache:flush
 
 USER root
 

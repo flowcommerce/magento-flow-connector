@@ -85,6 +85,6 @@ mariadb:
 
   master:
     persistence:
-      enabled: false
-      # accessMode: ReadWriteOnce
-      # size: 8Gi
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 8Gi

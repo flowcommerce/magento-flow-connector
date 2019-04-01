@@ -40,6 +40,7 @@ RUN composer require --no-interaction flowcommerce/flowconnector @dev \
     magento/module-swatches-sample-data:100.2.* \
     magento/sample-data-media:100.2.*
 
+RUN php bin/magento app:config:dump
 RUN php bin/magento setup:static-content:deploy -f
 RUN php bin/magento maintenance:enable
 RUN php bin/magento module:enable --all

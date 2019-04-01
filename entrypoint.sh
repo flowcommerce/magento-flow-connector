@@ -9,8 +9,9 @@ echo "Initilizing magento..."
 echo "NAMI_DEBUG=$NAMI_DEBUG"
 echo "NAMI_LOG_LEVEL=$NAMI_LOG_LEVEL"
 
-. /init.sh
 usermod -aG sudo bitnami
+
+. /init.sh
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/var
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/generated
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/app/etc

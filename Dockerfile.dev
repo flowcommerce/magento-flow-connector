@@ -43,6 +43,8 @@ RUN composer require --no-interaction flowcommerce/flowconnector @dev \
 RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile
 RUN php bin/magento sampledata:deploy
+RUN php bin/magento config:set web/secure/use_in_adminhtml 1
+RUN php bin/magento cache:clean
 
 USER root
 

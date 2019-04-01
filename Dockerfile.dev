@@ -39,6 +39,19 @@ RUN composer require --no-interaction flowcommerce/flowconnector @dev \
     magento/module-swatches-sample-data:100.2.* \
     magento/sample-data-media:100.2.*
 
+RUN php bin/magento maintenance:enable
+RUN php bin/magento setup:static-content:deploy -f
+RUN php bin/magento module:enable --all
+RUN php bin/magento setup:upgrade
+RUN php bin/magento setup:di:compile
+RUN php bin/magento cache:flush
+RUN php bin/magento sampledata:deploy
+RUN php bin/magento maintenance:disable
+
+RUN find . -type d -print0 | xargs -0 chmod 775 && \
+    find . -type f -print0 | xargs -0 chmod 664 && \
+    chown -R bitnami:daemon /opt/bitnami/magento/htdocs
+
 EXPOSE 80 443
 
 ENTRYPOINT ["/opt/flowcommerce/flowconnector/entrypoint.sh"]

@@ -11,9 +11,9 @@ define([
     'flowCompanion'
 ], function ($, _, mageTemplate, keyboardHandler, $t, priceUtils) {
     'use strict';
-    var flow = window.flow || {};
 
     return function (widget) {
+        var flow = window.flow || {};
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
                 if (flow.magento2.shouldLocalizeCatalog) {

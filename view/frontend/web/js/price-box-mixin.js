@@ -7,7 +7,6 @@ define([
     'flowCompanion'
 ], function ($, utils, _, mageTemplate) {
     'use strict';
-    var flow = window.flow || {};
 
     return function (widget) {
         var globalOptions = {
@@ -24,6 +23,7 @@ define([
             FLOWREGULARPRICEKEY = 'regular_price',
             FLOWBASEPRICEKEY = 'base_price',
             FLOWFINALPRICEKEY = 'final_price';
+        var flow = window.flow || {};
 
         $.widget('mage.priceBox', widget, {
             options: globalOptions,

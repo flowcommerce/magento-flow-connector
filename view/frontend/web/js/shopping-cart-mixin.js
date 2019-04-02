@@ -3,10 +3,10 @@ define([
     'flowCompanion'
 ], function ($) {
     'use strict';
-    var flow = window.flow || {};
 
     return function (widget) {
-        var body;
+        var body,
+            flow = window.flow || {};
 
         $.widget('mage.shoppingCart', widget, {
             _create: function () {

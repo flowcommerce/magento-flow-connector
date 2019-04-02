@@ -83,11 +83,11 @@ class Prices
 
     /**
      * Gets all localizable prices from Flow
-     * @param int[]
+     * @param string[]
      * @return []
      * @throws NoSuchEntityException
      */
-    public function localizePrices($ids)
+    public function localizePrices($skus)
     {
         $labels = [];
         $storeId = $this->storeManager->getStore()->getId();
@@ -98,12 +98,12 @@ class Prices
             $currency = $experience['currency'];
             $country = $experience['country'];
             $localizationKey = $key . $country . $currency;
-            $filter = "attributes.product_id";
+            $filter = "number";
             $urlParams  = "?experience=" . $key . "&country=" . $country . "&currency=" . $currency;
             $url = $this->urlBuilder->getFlowApiEndpoint(self::EXPERIENCE_ITEMS_PREFIX.$filter.$urlParams);
             $serializedBody = $this->jsonSerializer->serialize((object)[
                 "filter" => $filter,
-                "values" => $ids
+                "values" => $skus
             ]);
             $response = $client->post($url, ['body' => $serializedBody]);
             $contents = $this->jsonSerializer->unserialize($response->getBody()->getContents());

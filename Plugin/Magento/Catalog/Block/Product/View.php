@@ -44,16 +44,16 @@ class View
         if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled()) {
             return $this->jsonSerializer->serialize($config);
         }
-        $ids = [];
+        $skus = [];
         $product = $view->getProduct();
-        $ids[] = $product->getId();
+        $skus[] = $product->getSku();
         if ($product->getTypeId() === 'configurable') {
             $relatedSimples = $product->getTypeInstance()->getUsedProducts($product);
             foreach ($relatedSimples as $simple) {
-                $ids[] = $simple->getId();
+                $skus[] = $simple->getSku();
             }
         }
-        $config['flow_localized_prices'] = $this->flowPrices->localizePrices($ids);
+        $config['flow_localized_prices'] = $this->flowPrices->localizePrices($skus);
         return $this->jsonSerializer->serialize($config);
     }
 }

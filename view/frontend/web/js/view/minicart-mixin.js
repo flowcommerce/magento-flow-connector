@@ -3,10 +3,10 @@ define([
     'flowCompanion'
 ], function ($) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (Component) {
-        var flow = window.flow || {},
-            miniCart,
+        var miniCart,
             body,
             flowMiniCartLocalize;
 

@@ -4,10 +4,10 @@ define([
     'flowCompanion'
 ], function ($, wrapper) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (customerData) {
         function reloadFlowCart() {
-            var flow = window.flow || {};
             if (!flow.magento2.shouldLocalizeCart) {
                 console.log('skipping totals localize');
                 return false;

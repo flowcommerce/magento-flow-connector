@@ -7,6 +7,7 @@ define([
     'flowCompanion'
 ], function ($, utils, _, mageTemplate) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (widget) {
         var globalOptions = {
@@ -29,7 +30,6 @@ define([
 
             reloadPrice: function reDrawPrices() {
                 var flowLocalizationKey = this.getFlowLocalizationKey();
-                var flow = window.flow || {};
                 if (!flow.magento2.shouldLocalizeCatalog) {
                     return this._super();
                 }
@@ -90,7 +90,12 @@ define([
             },
 
             getFlowLocalizationKey: function () {
-                var flow = window.flow || {};
+                if (typeof(flow.session.getExperience) != 'function' ||
+                    typeof(flow.session.getCountry) != 'function' ||
+                    typeof(flow.session.getCurrency) != 'function' 
+                ) {
+                    return false;
+                }
                 var flowLocalizationKey = false,
                     flowExperience = flow.session.getExperience(),
                     flowCountry = flow.session.getCountry(),
@@ -129,7 +134,6 @@ define([
             },
 
             getCurrentProductId: function (productId) {
-                var flow = window.flow || {};
                 if (flow.magento2.optionsSelected != undefined) {
                     if (flow.magento2.optionsSelected[productId] != undefined) {
                         if (!_.contains(flow.magento2.optionsSelected[productId], false) && flow.magento2.optionsIndex[productId] != undefined) {

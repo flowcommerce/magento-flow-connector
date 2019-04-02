@@ -3,13 +3,13 @@ define([
     'flowCompanion'
 ], function ($) {
     'use strict';
+    var flow = window.flow || {};
 
     return function (widget) {
         var body;
 
         $.widget('mage.shoppingCart', widget, {
             _create: function () {
-                var flow = window.flow || {};
                 var result = this._super(),
                     items, i, cartContainer;
                 var totalDiscount = 0.0;

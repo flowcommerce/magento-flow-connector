@@ -14,8 +14,7 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
 RUN composer config repositories.magento '{ "type": "composer", "url": "https://repo.magento.com" }' && \
     composer config http-basic.repo.magento.com e09972697200676346ab7a6981ac63fa $MAGENTO2_REPO_PRIVATE_KEY
 
-RUN composer require --no-interaction flowcommerce/flowconnector @dev \
-    magento/module-bundle-sample-data:100.2.* \
+RUN composer require --no-interaction magento/module-bundle-sample-data:100.2.* \
     magento/module-sales-sample-data:100.2.* \
     magento/module-customer-sample-data:100.2.* \
     magento/module-catalog-sample-data:100.2.* \

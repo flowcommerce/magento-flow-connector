@@ -6,8 +6,8 @@ define([
     'use strict';
 
     return function (customerData) {
-        var flow = window.flow || {};
         function reloadFlowCart() {
+            var flow = window.flow || {};
             if (!flow.magento2.shouldLocalizeCart) {
                 console.log('skipping totals localize');
                 return false;

@@ -5,11 +5,11 @@ define([
     'use strict';
 
     return function (widget) {
-        var body,
-            flow = window.flow || {};
+        var body;
 
         $.widget('mage.shoppingCart', widget, {
             _create: function () {
+                var flow = window.flow || {};
                 var result = this._super(),
                     items, i, cartContainer;
                 var totalDiscount = 0.0;

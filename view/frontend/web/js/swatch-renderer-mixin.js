@@ -13,9 +13,9 @@ define([
     'use strict';
 
     return function (widget) {
-        var flow = window.flow || {};
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
+                var flow = window.flow || {};
                 if (flow.magento2.shouldLocalizeCatalog) {
                     if (flow.magento2.optionsIndex == undefined) {
                         flow.magento2.optionsIndex = {};
@@ -38,6 +38,7 @@ define([
             },
 
             _OnClick: function ($this, $widget, eventName) {
+                var flow = window.flow || {};
                 if (flow.magento2.shouldLocalizeCatalog) {
                     var productId = $widget.options.jsonConfig.productId,
                         selectedOptionId = $this["context"].attributes["option-id"].value,

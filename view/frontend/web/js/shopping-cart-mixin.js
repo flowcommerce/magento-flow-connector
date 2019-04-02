@@ -3,7 +3,6 @@ define([
     'flowCompanion'
 ], function ($) {
     'use strict';
-    var flow = window.flow || {};
 
     return function (widget) {
         var body;
@@ -13,7 +12,7 @@ define([
                 var result = this._super(),
                     items, i, cartContainer;
                 var totalDiscount = 0.0;
-                if (flow.magento2.shouldLocalizeCart) {
+                if (window.flow.magento2.shouldLocalizeCart) {
                     cartContainer = $('.cart-container').first();
                     cartContainer.attr('data-flow-cart-container', '');
                     if (checkoutConfig != undefined) {
@@ -42,7 +41,7 @@ define([
                     }
 
                     console.log('cart localize init');
-                    flow.cart.localize();
+                    window.flow.cart.localize();
                 }
 
                 return result;

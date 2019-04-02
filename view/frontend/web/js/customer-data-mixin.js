@@ -4,11 +4,10 @@ define([
     'flowCompanion'
 ], function ($, wrapper) {
     'use strict';
-    var flow = window.flow || {};
 
     return function (customerData) {
         function reloadFlowCart() {
-            if (!flow.magento2.shouldLocalizeCart) {
+            if (!window.flow.magento2.shouldLocalizeCart) {
                 console.log('skipping totals localize');
                 return false;
             }
@@ -22,7 +21,7 @@ define([
             subtotal.attr('data-flow-localize','cart-subtotal'); 
             grandtotal.attr('data-flow-localize','cart-total'); 
             discount.attr('data-flow-localize','cart-discount'); 
-            if (totals.find('[data-th="Flow Tax"]').length <= 0 && !flow.magento2.miniCartAvailable) {
+            if (totals.find('[data-th="Flow Tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
                 flowFields = $(`<tr class="totals vat">
                     <th data-bind="i18n: title" class="mark" scope="row" data-flow-localize="cart-tax-name">Tax</th>
                     <td class="amount">
@@ -44,10 +43,10 @@ define([
                     `);
                 totals.find('.totals.sub').after(flowFields);
                 console.log('installed flow fields');
-                flow.magento2.installedFlowTotalsFields = true;
+                window.flow.magento2.installedFlowTotalsFields = true;
             }
 
-            flow.cart.localize();
+            window.flow.cart.localize();
             console.log('totals localized');
             return true;
         }

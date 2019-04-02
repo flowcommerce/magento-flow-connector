@@ -50,7 +50,7 @@ deployments:
         value: magento-development.flo.pub
 
 magento:
-  mode: default
+  mode: production
   adminUri: admin
   firstName: Magento
   lastName: User

@@ -17,9 +17,6 @@ chown -R bitnami:daemon /opt/bitnami/magento/htdocs/generated
 chown -R bitnami:daemon /opt/bitnami/magento/htdocs/app/etc
 echo -e '\nSetEnvIf X-Forwarded-Proto https HTTPS=on' >> .htaccess
 
-nami_initialize apache php mysql-client libphp magento
-info "Starting magento... "
-
 /opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/base_url "https://$MAGENTO_BASE_URL/"
 /opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/unsecure/base_url "https://$MAGENTO_BASE_URL/"
 /opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/use_in_frontend 1
@@ -27,5 +24,8 @@ info "Starting magento... "
 # runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento indexer:reindex"
 /opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento cache:flush
 # info "Configuring magento... "
+
+nami_initialize apache php mysql-client libphp magento
+info "Starting magento... "
 
 exec tini -- "$@"

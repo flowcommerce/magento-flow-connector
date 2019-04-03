@@ -11,6 +11,8 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
     chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \
     echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini
 
+USER bitnami
+
 RUN composer config repositories.flowconnector '{ "type": "path", "url": "/opt/flowcommerce/flowconnector", "options" : { "symlink": false } }' && \
     composer config repo.0 false && \
     composer config repositories.magento '{ "type": "composer", "url": "https://repo.magento.com" }' && \
@@ -42,6 +44,8 @@ RUN composer self-update
 RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile
 RUN php bin/magento sampledata:deploy
+
+USER root
 
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \

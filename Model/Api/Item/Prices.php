@@ -114,7 +114,7 @@ class Prices
                 if (!isset($labels[$localizationKey][$item['value']])) {
                     $labels[$localizationKey][$item['value']] = [];
                 }
-                $product = $this->productRepository->getById($item['value']);
+                $product = $this->productRepository->get($item['value']);
                 $item['items'][0]['local']['price_attributes']['sku'] = $product->getSku();
                 $labels[$localizationKey][$item['value']] = $item['items'][0]['local']['price_attributes'];
             } 

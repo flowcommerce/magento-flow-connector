@@ -20,13 +20,12 @@ echo -e '\nSetEnvIf X-Forwarded-Proto https HTTPS=on' >> .htaccess
 nami_initialize apache php mysql-client libphp magento
 info "Starting magento... "
 
-# runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento cache:flush"
-# runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/base_url \"https://$MAGENTO_BASE_URL/\""
-# runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/unsecure/base_url \"https://$MAGENTO_BASE_URL/\""
-# runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/use_in_frontend 1"
-# runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/use_in_adminhtml 1"
+/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/base_url "https://$MAGENTO_BASE_URL/"
+/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/unsecure/base_url "https://$MAGENTO_BASE_URL/"
+/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/use_in_frontend 1
+/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento config:set web/secure/use_in_adminhtml 1
 # runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento indexer:reindex"
-# runuser -l bitnami -c "/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento cache:flush"
+/opt/bitnami/php/bin/php /opt/bitnami/magento/htdocs/bin/magento cache:flush
 # info "Configuring magento... "
 
 exec tini -- "$@"

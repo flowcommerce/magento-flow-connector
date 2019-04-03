@@ -20,8 +20,8 @@ echo -e '\nSetEnvIf X-Forwarded-Proto https HTTPS=on' >> .htaccess
 nami_initialize apache php mysql-client libphp magento
 info "Starting magento... "
 
-php bin/magento config:set web/secure/base_url $MAGENTO_BASE_URL
-php bin/magento config:set web/unsecure/base_url $MAGENTO_BASE_URL
+php bin/magento config:set web/secure/base_url "https://$MAGENTO_BASE_URL/"
+php bin/magento config:set web/unsecure/base_url "https://$MAGENTO_BASE_URL/"
 php bin/magento config:set web/secure/use_in_frontend 1
 php bin/magento config:set web/secure/use_in_adminhtml 1
 php bin/magento indexer:reindex

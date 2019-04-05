@@ -111,12 +111,13 @@ class Prices
                 $labels[$localizationKey] = [];
             }
             foreach ($contents['responses'] as $item) {
-                if (!isset($labels[$localizationKey][$item['value']])) {
-                    $labels[$localizationKey][$item['value']] = [];
-                }
                 $product = $this->productRepository->get($item['value']);
-                $item['items'][0]['local']['price_attributes']['sku'] = $product->getSku();
-                $labels[$localizationKey][$item['value']] = $item['items'][0]['local']['price_attributes'];
+                $productId = $product->getId();
+                if (!isset($labels[$localizationKey][$productId])) {
+                    $labels[$localizationKey][$productId] = [];
+                }
+                $item['items'][0]['local']['price_attributes']['sku'] = $item['value'];
+                $labels[$localizationKey][$productId] = $item['items'][0]['local']['price_attributes'];
             } 
         }
         return $labels;

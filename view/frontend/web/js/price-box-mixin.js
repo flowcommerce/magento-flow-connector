@@ -11,7 +11,6 @@ define([
     return function (widget) {
         var globalOptions = {
                 priceTemplate: '<span data-flow-localize="item-price" class="price"><%- data.formatted %></span>',
-                flowPriceTemplateById: '<span data-flow-item-attribute-key="product_id" data-flow-item-attribute-value="<%- data.productId %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
                 flowPriceTemplateBySku: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
                 flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
             },
@@ -28,10 +27,11 @@ define([
             options: globalOptions,
 
             reloadPrice: function reDrawPrices() {
-                var flowLocalizationKey = this.getFlowLocalizationKey();
                 if (!window.flow.magento2.shouldLocalizeCatalog) {
                     return this._super();
                 }
+
+                var flowLocalizationKey = this.getFlowLocalizationKey();
 
                 if (!flowLocalizationKey) {
                     return this._super();
@@ -70,7 +70,6 @@ define([
                         } 
 
                         if (!template.data.flowLocalized) {
-                            priceTemplate = mageTemplate(this.options.flowPriceTemplateById);
                             if (template.data.productSku) {
                                 if (template.data.flowPriceCode == FLOWFINALPRICEKEY) {
                                     priceTemplate = mageTemplate(this.options.flowPriceTemplateBySku);
@@ -89,21 +88,17 @@ define([
             },
 
             getFlowLocalizationKey: function () {
-                if (typeof(window.flow.session.getExperience) != 'function' ||
-                    typeof(window.flow.session.getCountry) != 'function' ||
-                    typeof(window.flow.session.getCurrency) != 'function'
-                ) {
-                    return false;
-                }
-                var flowLocalizationKey = false,
-                    flowExperience = window.flow.session.getExperience(),
-                    flowCountry = window.flow.session.getCountry(),
-                    flowCurrency = window.flow.session.getCurrency();
-                if (typeof(flowExperience) == "string" &&
-                    typeof(flowCountry) == "string" &&
-                    typeof(flowCurrency) == "string"
-                ) {
-                    flowLocalizationKey = flowExperience+flowCountry+flowCurrency;
+                var flowLocalizationKey = false;
+                try {
+                    var flowExperience = window.flow.session.getExperience(),
+                        flowCountry = window.flow.session.getCountry(),
+                        flowCurrency = window.flow.session.getCurrency();
+
+                    if (flowExperience && flowCountry && flowCurrency) {
+                        flowLocalizationKey = flowExperience+flowCountry+flowCurrency;
+                    }
+                } catch (e) {
+                    // No viable flow experience was found at this time, acceptable
                 }
                 return flowLocalizationKey;
             },
@@ -133,58 +128,59 @@ define([
             },
 
             getCurrentProductId: function (productId) {
-                if (window.flow.magento2.optionsSelected != undefined) {
-                    if (window.flow.magento2.optionsSelected[productId] != undefined) {
-                        if (!_.contains(window.flow.magento2.optionsSelected[productId], false) && window.flow.magento2.optionsIndex[productId] != undefined) {
-                            _.each(window.flow.magento2.optionsIndex[productId], function (optionData) {
-                                if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[productId]).length == 0) {
-                                    productId = optionData.productId;
-                                }
-                            });
-                        } 
-                    }
+                try {
+                    if (!_.contains(window.flow.magento2.optionsSelected[productId], false) && window.flow.magento2.optionsIndex[productId] != undefined) {
+                        _.each(window.flow.magento2.optionsIndex[productId], function (optionData) {
+                            if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[productId]).length == 0) {
+                                productId = optionData.productId;
+                            }
+                        });
+                    } 
+                } catch (e) {
+                    // Options index either malformed or not available, use original product id instead as fallback
                 }
                 return productId;
             },
 
             getCurrentProductSku: function (productId, flowLocalizedPrices, flowLocalizationKey) {
-                if (flowLocalizedPrices) {
-                    if (flowLocalizedPrices[flowLocalizationKey] != undefined) {
-                        if (flowLocalizedPrices[flowLocalizationKey][productId] != undefined) {
-                            if (flowLocalizedPrices[flowLocalizationKey][productId]['sku'] != undefined) {
-                                return flowLocalizedPrices[flowLocalizationKey][productId]['sku'];
-                            }
-                        }
-                    }
+                try {
+                    return flowLocalizedPrices[flowLocalizationKey][productId]['sku'];
+                } catch (e) {
+                    return false;
                 }
-                return false;
             },
 
             localizeTemplate: function (template, flowLocalizedPrices, flowLocalizationKey) {
-                if (flowLocalizedPrices[flowLocalizationKey] != undefined) {
+                try {
                     var localizedPricingKeyedOnProductId = flowLocalizedPrices[flowLocalizationKey];
-                    if (_.toArray(localizedPricingKeyedOnProductId[template.data.productId])[0] != undefined) {
-                        if (_.toArray(localizedPricingKeyedOnProductId[template.data.productId])[0].label != undefined) {
-                            this.flowFormattedPrice = _.toArray(localizedPricingKeyedOnProductId[template.data.productId])[0].label;
-                        }
-                    }
-                    if (localizedPricingKeyedOnProductId[template.data.productId] != undefined) {
-                        if (localizedPricingKeyedOnProductId[template.data.productId][FLOWFINALPRICEKEY] != undefined) {
-                            if (localizedPricingKeyedOnProductId[template.data.productId][FLOWFINALPRICEKEY].label != undefined) {
-                                this.flowFormattedPrice = localizedPricingKeyedOnProductId[template.data.productId][FLOWFINALPRICEKEY].label;
-                            }
-                        }
-                        if (localizedPricingKeyedOnProductId[template.data.productId][template.data.flowPriceCode] != undefined) {
-                            if (localizedPricingKeyedOnProductId[template.data.productId][template.data.flowPriceCode].label != undefined) {
-                                this.flowFormattedPrice = localizedPricingKeyedOnProductId[template.data.productId][template.data.flowPriceCode].label;
-                            }
-                        }
-                    }
+                } catch (e) {
+                    // BE localization is not available for this item, default to existing 
+                    return template;
                 }
+
+                try {
+                    this.flowFormattedPrice = _.toArray(localizedPricingKeyedOnProductId[template.data.productId])[0].label;
+                } catch (e) {
+                    // No price labels are localized for this item, do nothing
+                }
+
+                try {
+                    this.flowFormattedPrice = localizedPricingKeyedOnProductId[template.data.productId][FLOWFINALPRICEKEY].label;
+                } catch (e) {
+                    // Final price label is not localized for this item, do nothing
+                }
+
+                try {
+                    this.flowFormattedPrice = localizedPricingKeyedOnProductId[template.data.productId][template.data.flowPriceCode].label;
+                } catch (e) {
+                    // Flow price code either could not be found or its respective label is not localized for this item, do nothing
+                }
+
                 if (this.flowFormattedPrice) {
                     template.data.formatted = this.flowFormattedPrice;
                     template.data.flowLocalized = true;
                 }
+
                 return template;
             },
         });

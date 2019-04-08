@@ -8,7 +8,6 @@ define([
     return function (customerData) {
         function reloadFlowCart() {
             if (!window.flow.magento2.shouldLocalizeCart) {
-                console.log('skipping totals localize');
                 return false;
             }
 
@@ -42,24 +41,20 @@ define([
                     </tr>
                     `);
                 totals.find('.totals.sub').after(flowFields);
-                console.log('installed flow fields');
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
             window.flow.cart.localize();
-            console.log('totals localized');
             return true;
         }
 
         customerData.set = wrapper.wrap(customerData.set, function (_super, sectionName, sectionData) {
-            console.log('setting totals');
             var result = _super(sectionName, sectionData);
             reloadFlowCart();
             return result;
         });
 
         customerData.reload = wrapper.wrap(customerData.reload, function (_super, sectionNames, updateSectionId) {
-            console.log('reload totals');
             var result = _super(sectionNames, updateSectionId);
             reloadFlowCart();
             return result;

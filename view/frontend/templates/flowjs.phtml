@@ -31,7 +31,6 @@ setTimeout(function(){
     }
     if (!window.flow.magento2.hasLocalizedCatalog) {
         document.getElementsByTagName('body')[0].classList.add('flow-catalog-localized');
-        console.log('Showing prices after timeout '+window.flow_pricing_timeout+'ms');
     }
 }, window.flow_pricing_timeout);
 setTimeout(function(){
@@ -48,7 +47,6 @@ setTimeout(function(){
     if (!window.flow.magento2.hasLocalizedCart || !window.flow.magento2.hasLocalizedCartTotals) {
         document.getElementsByTagName('body')[0].classList.add('flow-cart-localized');
         document.getElementsByTagName('body')[0].classList.add('flow-cart-totals-localized');
-        console.log('Showing cart after timeout '+window.flow_cart_timeout+'ms');
     }
 }, window.flow_cart_timeout);
 </script>

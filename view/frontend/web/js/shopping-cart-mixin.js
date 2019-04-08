@@ -40,7 +40,6 @@ define([
                         itemContainer.find('.subtotal .cart-price > span.price').first().attr('data-flow-localize','cart-item-line-total');
                     }
 
-                    console.log('cart localize init');
                     window.flow.cart.localize();
                 }
 

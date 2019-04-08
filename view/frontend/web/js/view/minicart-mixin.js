@@ -24,7 +24,6 @@ define([
                     window.flow.magento2.hideCartTotals();
                     setTimeout(function(){
                         window.flow.cart.localize()
-                        console.log('Flow localizing cart: ' + source + ', waited: ' + waitTimeMs + 'ms');
                     }, waitTimeMs);
                 };
 

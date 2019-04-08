@@ -78,7 +78,6 @@ define([
 
         window.flow.events.on('catalogLocalized', function() {
             window.flow.magento2.showPrices();
-            console.log('Showing prices due to localization successful');
         });
 
         window.flow.events.on('cartLocalized', function() {
@@ -86,16 +85,12 @@ define([
             if (window.flow.magento2.installedFlowTotalsFields) {
                 window.flow.magento2.showCartTotals();
             }
-            console.log('Showing cart due to localization successful');
         });
 
         if (!window.flow.magento2.hasExperience) {
             window.flow.magento2.showPrices();
-            console.log('Showing prices due to no Flow experience found');
             window.flow.magento2.showCart();
-            console.log('Showing cart due to no Flow experience found');
             window.flow.magento2.showCartTotals();
-            console.log('Showing cart totals due to no Flow experience found');
         }
 
         if (window.flow_country_picker_enabled) {

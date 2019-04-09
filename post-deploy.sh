@@ -11,8 +11,8 @@ rm -rf \
     ${M2_ROOT}var/composer_home/cache/*
 
 php ${M2_ROOT}bin/magento config:set web/secure/base_url "https://$MAGENTO_BASE_URL/"
-php ${M2_ROOT}bin/magento indexer:reindex
 php ${M2_ROOT}bin/magento sampledata:deploy
+php ${M2_ROOT}bin/magento indexer:reindex
 php ${M2_ROOT}bin/magento setup:di:compile
 php ${M2_ROOT}bin/magento setup:static-content:deploy -f
 php ${M2_ROOT}bin/magento cache:clean

@@ -10,6 +10,8 @@ rm -rf \
     ${M2_ROOT}var/view_preprocessed/* \
     ${M2_ROOT}var/composer_home/cache/*
 
+cp ${M2_ROOT}vendor/magento/module-cms-sample-data/fixtures/styles.css ${M2_ROOT}pub/media/styles.css
+
 php ${M2_ROOT}bin/magento config:set web/unsecure/base_url "https://$MAGENTO_BASE_URL/"
 php ${M2_ROOT}bin/magento sampledata:deploy
 php ${M2_ROOT}bin/magento indexer:reindex

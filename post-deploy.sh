@@ -10,7 +10,7 @@ rm -rf \
     ${M2_ROOT}var/view_preprocessed/* \
     ${M2_ROOT}var/composer_home/cache/*
 
-php ${M2_ROOT}bin/magento config:set web/secure/base_url "https://$MAGENTO_BASE_URL/"
+php ${M2_ROOT}bin/magento config:set web/unsecure/base_url "https://$MAGENTO_BASE_URL/"
 php ${M2_ROOT}bin/magento sampledata:deploy
 php ${M2_ROOT}bin/magento indexer:reindex
 php ${M2_ROOT}bin/magento setup:di:compile

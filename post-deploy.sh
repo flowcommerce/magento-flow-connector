@@ -11,6 +11,8 @@ M2_ROOT="/opt/bitnami/magento/htdocs/"
 #     ${M2_ROOT}var/composer_home/cache/*
 
 cp ${M2_ROOT}vendor/magento/module-cms-sample-data/fixtures/styles.css ${M2_ROOT}pub/media/styles.css
+chmod 775 ${M2_ROOT}pub/media/styles.css
+chown bitnami:daemon ${M2_ROOT}pub/media/styles.css
 
 php ${M2_ROOT}bin/magento config:set web/unsecure/base_url "https://$MAGENTO_BASE_URL/"
 php ${M2_ROOT}bin/magento indexer:reindex
@@ -19,6 +21,6 @@ php ${M2_ROOT}bin/magento indexer:reindex
 php ${M2_ROOT}bin/magento cache:clean
 php ${M2_ROOT}bin/magento cache:flush
 
-find . -type d -print0 | xargs -0 chmod 775
-find . -type f -print0 | xargs -0 chmod 664
-chown -R bitnami:daemon .
+# find . -type d -print0 | xargs -0 chmod 775
+# find . -type f -print0 | xargs -0 chmod 664
+# chown -R bitnami:daemon .

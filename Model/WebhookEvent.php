@@ -788,7 +788,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $this->logger->info(
                         sprintf('Unable to find payment for order ID #%s', $order->getEntityId())
                     );
-                    throw new WebhookException('Unable to find payment for order ID #%s', $orderPayment->getId());
+                    throw new WebhookException(__(sprintf('Unable to find payment for order ID #%s', $orderPayment->getId())));
                 }
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
@@ -1042,7 +1042,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+                throw new WebhookException(__(sprintf('Unable to find payment by Flow authorization ID #%s', $authorizationId)));
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
@@ -1109,7 +1109,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+                throw new WebhookException(__(sprintf('Unable to find payment by Flow authorization ID #%s', $authorizationId)));
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');

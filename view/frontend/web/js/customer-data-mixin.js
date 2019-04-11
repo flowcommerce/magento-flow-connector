@@ -13,10 +13,10 @@ define([
 
             var totals, subtotal, grandtotal, discount, flowFields;
             totals = $('#cart-totals');
+            shippingEstimator = $('#block-shipping');
             subtotal = totals.find('[data-th=\'Subtotal\']').first();
             grandtotal = totals.find('[data-th=\'Order Total\'] span.price').first();
             discount = totals.find('[data-th=\'Discount\'] span.price').first();
-            shippingEstimator = totals.find('#block-shipping');
 
             subtotal.attr('data-flow-localize','cart-subtotal'); 
             grandtotal.attr('data-flow-localize','cart-total'); 

@@ -11,7 +11,7 @@ define([
                 return false;
             }
 
-            var totals, subtotal, grandtotal, discount, flowFields;
+            var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator;
             totals = $('#cart-totals');
             shippingEstimator = $('#block-shipping');
             subtotal = totals.find('[data-th=\'Subtotal\']').first();

@@ -40,7 +40,6 @@ RUN composer require --no-interaction flowcommerce/flowconnector *@dev \
 
 RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile
-#RUN php bin/magento sampledata:deploy
 
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \

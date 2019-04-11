@@ -10,38 +10,46 @@ define([
         $.widget('mage.shoppingCart', widget, {
             _create: function () {
                 var result = this._super(),
-                    items, i, cartContainer;
-                var totalDiscount = 0.0;
-                if (window.flow.magento2.shouldLocalizeCart) {
-                    cartContainer = $('.cart-container').first();
-                    cartContainer.attr('data-flow-cart-container', '');
-                    if (checkoutConfig != undefined) {
-                        if (checkoutConfig.quoteItemData != undefined) {
-                            for (i = 0; i < checkoutConfig.quoteItemData.length; i++) {
-                                totalDiscount += checkoutConfig.quoteItemData[i].base_discount_amount;
-                            }
+                    items, i, cartContainer, baseCurrency,
+                    lineItemDiscount = {};
+                if (!window.flow.magento2.shouldLocalizeCart) {
+                    return result;
+                }
 
-                            if (totalDiscount > 0) {
-                                cartContainer.attr('data-flow-cart-discount-amount', totalDiscount);
-                                cartContainer.attr('data-flow-cart-discount-currency', checkoutConfig.totalsData.base_currency_code);
-                            }
+                cartContainer = $('.cart-container').first();
+                cartContainer.attr('data-flow-cart-container', '');
+                try {
+                    for (i = 0; i < checkoutConfig.quoteItemData.length; i++) {
+                        lineItemDiscount[checkoutConfig.quoteItemData[i].sku] = {
+                            amount: checkoutConfig.quoteItemData[i].base_discount_amount,
+                            currency: checkoutConfig.quoteItemData.base_currency_code
                         }
                     }
-
-                    items = cartContainer.find('[data-role="cart-item-qty"]');
-                    for (i = 0; i < items.length; i++) {
-                        var qty, number, itemContainer;
-                        qty = $(items[i]).attr('value');
-                        number = $(items[i]).data('cart-item-id');
-                        itemContainer = $(items[i]).closest('.cart.item');
-                        itemContainer.attr('data-flow-cart-item-number', number);
-                        itemContainer.attr('data-flow-cart-item-quantity', qty);
-                        itemContainer.find('.price .cart-price > span.price').first().attr('data-flow-localize','cart-item-price');
-                        itemContainer.find('.subtotal .cart-price > span.price').first().attr('data-flow-localize','cart-item-line-total');
-                    }
-
-                    window.flow.cart.localize();
+                } catch (e) {
+                    // Can not calculate discounts do to insufficient data at this time
                 }
+
+                items = cartContainer.find('[data-role="cart-item-qty"]');
+                for (i = 0; i < items.length; i++) {
+                    var qty, number, itemContainer;
+                    qty = $(items[i]).attr('value');
+                    number = $(items[i]).data('cart-item-id');
+                    itemContainer = $(items[i]).closest('.cart.item');
+                    itemContainer.attr('data-flow-cart-item-number', number);
+                    itemContainer.attr('data-flow-cart-item-quantity', qty);
+                    itemContainer.find('.price .cart-price > span.price').first().attr('data-flow-localize','cart-item-price');
+                    itemContainer.find('.subtotal .cart-price > span.price').first().attr('data-flow-localize','cart-item-line-total');
+                    try {
+                        if (lineItemDiscount[number].amount > 0 && lineItemDiscount[number].currency) {
+                            itemContainer.attr('data-flow-cart-item-discount-amount', lineItemDiscount[number].amount);
+                            itemContainer.attr('data-flow-cart-item-discount-currency', lineItemDiscount[number].currency);
+                        }
+                    } catch (e) {
+                        // Can not calculate discounts do to insufficient data at this time
+                    }
+                }
+
+                window.flow.cart.localize();
 
                 return result;
             },

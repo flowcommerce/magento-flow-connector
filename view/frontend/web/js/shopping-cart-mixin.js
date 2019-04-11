@@ -26,7 +26,7 @@ define([
                         }
                     }
                 } catch (e) {
-                    // Can not calculate discounts do to insufficient data at this time
+                    // Can not calculate line item discount due to insufficient data at this time
                 }
 
                 items = cartContainer.find('[data-role="cart-item-qty"]');
@@ -45,7 +45,7 @@ define([
                             itemContainer.attr('data-flow-cart-item-discount-currency', lineItemDiscount[number].currency);
                         }
                     } catch (e) {
-                        // Can not calculate discounts do to insufficient data at this time
+                        // Can not calculate line item discount due to insufficient data at this time
                     }
                 }
 

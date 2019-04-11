@@ -21,8 +21,8 @@ define([
                 try {
                     for (i = 0; i < checkoutConfig.quoteItemData.length; i++) {
                         lineItemDiscount[checkoutConfig.quoteItemData[i].sku] = {
-                            amount: checkoutConfig.quoteItemData[i].base_discount_amount,
-                            currency: checkoutConfig.quoteItemData.base_currency_code
+                            amount: parseFloat(checkoutConfig.quoteItemData[i].base_discount_amount),
+                            currency: checkoutConfig.quoteData.base_currency_code
                         }
                     }
                 } catch (e) {

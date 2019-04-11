@@ -21,7 +21,7 @@ define([
                 try {
                     for (i = 0; i < checkoutConfig.quoteItemData.length; i++) {
                         lineItemDiscount[checkoutConfig.quoteItemData[i].sku] = {
-                            percent: parseFloat(checkoutConfig.quoteItemData[i].base_discount_amount) / parseFloat(checkoutConfig.quoteItemData[1].base_row_total) * 100,
+                            percent: parseFloat(checkoutConfig.quoteItemData[i].base_discount_amount) / parseFloat(checkoutConfig.quoteItemData[i].base_row_total) * 100,
                             amount: parseFloat(checkoutConfig.quoteItemData[i].base_discount_amount),
                             currency: checkoutConfig.quoteData.base_currency_code
                         }

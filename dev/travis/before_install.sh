@@ -7,3 +7,5 @@ echo 'memory_limit = -1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d
 echo '==> Disabling xdebug'
 phpenv config-rm xdebug.ini
 phpenv rehash;
+echo '==> Install RabbitMQ Server'
+apt install -y rabbitmq-server;

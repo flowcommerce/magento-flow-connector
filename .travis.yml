@@ -10,6 +10,8 @@ addons:
     - postfix
   hosts:
   - travis.flow.io
+services:
+  - rabbitmq
 language: php
 git:
   depth: 5

@@ -93,6 +93,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const CUSTOMER_ID = 'customer_id';
     const CUSTOMER_SESSION_ID = 'customer_session_id';
     const QUOTE_ID = 'quote_id';
+    const QUOTE_APPLIED_RULE_IDS = 'applied_rule_ids';
 
     /**
      * Constants for event dispatching
@@ -459,9 +460,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->webhookEventManager->markWebhookEventAsProcessing($this);
 
             switch ($this->getType()) {
-                case 'allocation_deleted_v2':
-                    $this->processAllocationDeletedV2();
-                    break;
                 case 'authorization_deleted_v2':
                     $this->processAuthorizationDeletedV2();
                     break;
@@ -473,9 +471,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     break;
                 case 'online_authorization_upserted_v2':
                     $this->processOnlineAuthorizationUpsertedV2();
-                    break;
-                case 'order_deleted_v2':
-                    $this->processOrderDeletedV2();
                     break;
                 case 'refund_capture_upserted_v2':
                     $this->processRefundCaptureUpsertedV2();
@@ -520,40 +515,177 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-     * Process allocation_deleted_v2 webhook event data.
+     * Process allocation_upserted_v2 webhook event data.
      *
-     * https://docs.flow.io/type/allocation-deleted-v-2
+     * https://docs.flow.io/type/allocation-upserted-v-2
      */
-    private function processAllocationDeletedV2()
-    {
-        # Temporarily disabling allocation_deleted_v2, as it was breaking the cron
-        $this->webhookEventManager->markWebhookEventAsDone($this, '');
-        return;
-
-        $this->logger->info('Processing allocation_deleted_v2 data');
+    private function processAllocationUpsertedV2() {
+        $this->logger->info('Processing allocation_upserted_v2 data');
         $data = $this->getPayloadData();
 
-        $urlStub = '/orders/allocations/' . $data['id'];
-        $client = $this->guzzleClient->getFlowClient($urlStub, $this->getStoreId());
-        $response = $client->send();
+        $receivedOrder = $data['allocation']['order'];
 
-        if ($response->isSuccess()) {
-            $allocation = $this->jsonSerializer->unserialize($response->getBody());
+        // Do not process allocations until their order has submitted_at date
+        if (!array_key_exists('submitted_at', $receivedOrder)) {
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order data incomplete, skipping');
+            return;
+        }
 
-            if ($order = $this->getOrderByFlowOrderNumber($allocation['order']['number'])) {
-                $order->setTotalCanceled($allocation['total']['amount']);
-                $order->setBaseTotalCanceled($allocation['total']['base']['amount']);
-                $order->setState(OrderModel::STATE_HOLDED);
-                $order->save();
-
-                $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
-            } else {
-                $this->requeue('Unable to find order right now, reprocess.');
+        if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
+            if ($order->getFlowConnectorOrderReady()) {
+                $this->logger->info('Order ready, duplicate submission ignored');
+                return;
             }
 
+            foreach ($data['allocation']['details'] as $detail) {
+
+                // allocation_detail is a union model. If there is a "number",
+                // then the detail refers to a line item, otherwise the detail
+                // is for the order.
+                $item = null;
+                if (array_key_exists('number', $detail)) {
+                    $item = $this->getOrderItem($order, $detail['number']);
+                }
+
+                switch ($detail['key']) {
+                    case 'adjustment':
+                        if ($item) {
+                            // noop, adjustment only applies to order
+                        }
+                        break;
+
+                    case 'subtotal':
+                        if ($item) {
+                            $rawItemPrice = 0.0;
+                            $baseRawItemPrice = 0.0;
+
+                            $vatPct = 0.0;
+
+                            $vatPrice = 0.0;
+                            $baseVatPrice = 0.0;
+
+                            $dutyPct = 0.0;
+
+                            $dutyPrice = 0.0;
+                            $baseDutyPrice = 0.0;
+
+                            $roundingPrice = 0.0;
+                            $baseRoundingPrice = 0.0;
+
+                            $itemPriceInclTax = 0.0;
+                            $baseItemPriceInclTax = 0.0;
+
+                            $itemPrice = 0.0;
+                            $baseItemPrice = 0.0;
+                            foreach ($detail['included'] as $included) {
+                                if ($included['key'] == "item_price") {
+                                    $rawItemPrice += $included['price']['amount'];
+                                    $baseRawItemPrice += $included['price']['base']['amount'];
+
+                                    $itemPrice += $included['price']['amount'];
+                                    $baseItemPrice += $included['price']['base']['amount'];
+
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'rounding') {
+                                    $itemPrice += $included['price']['amount'];
+                                    $baseItemPrice += $included['price']['base']['amount'];
+
+                                    // add rounding to line total
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $roundingPrice += $included['price']['amount'];
+                                    $baseRoundingPrice += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'vat_item_price') {
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $vatPct += $included['rate'];
+                                    $vatPrice += $included['price']['amount'];
+                                    $baseVatPrice += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'duties_item_price') {
+                                    $itemPriceInclTax += $included['price']['amount'];
+                                    $baseItemPriceInclTax += $included['price']['base']['amount'];
+
+                                    $dutyPct += $included['rate'];
+                                    $dutyPrice += $included['price']['amount'];
+                                    $baseDutyPrice += $included['price']['base']['amount'];
+                                } elseif ($included['key'] == 'item_discount') {
+                                    $item->setDiscountAmount($included['price']['amount']);
+                                    $item->setBaseDiscountAmount($included['price']['base']['amount']);
+                                }
+                            }
+
+                            $item->setOriginalPrice($itemPrice);
+                            $item->setBaseOriginalPrice($baseItemPrice);
+                            $item->setPrice($itemPrice);
+                            $item->setBasePrice($baseItemPrice);
+                            $item->setRowTotal($itemPrice * $detail['quantity']);
+                            $item->setBaseRowTotal($baseItemPrice * $detail['quantity']);
+                            $item->setTaxPercent(($vatPct * 100)+($dutyPct*100));
+                            $item->setTaxAmount(($vatPrice+$dutyPrice) * $detail['quantity']);
+                            $item->setBaseTaxAmount(($baseVatPrice+$baseDutyPrice) * $detail['quantity']);
+                            $item->setPriceInclTax($itemPriceInclTax);
+                            $item->setBasePriceInclTax($baseItemPriceInclTax);
+                            $item->setRowTotalInclTax($itemPriceInclTax * $detail['quantity']);
+                            $item->setBaseRowTotalInclTax($baseItemPriceInclTax * $detail['quantity']);
+                            $item->setFlowConnectorItemPrice($rawItemPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseItemPrice($baseRawItemPrice * $detail['quantity']);
+                            $item->setFlowConnectorVat($vatPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseVat($baseVatPrice * $detail['quantity']);
+                            $item->setFlowConnectorDuty($dutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
+                            $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
+                            $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
+                            $item->save();
+                        }
+                        break;
+
+                    case 'vat':
+                        if ($item) {
+                            // noop, this is included in the subtotal for line items
+                        }
+                        break;
+
+                    case 'duty':
+                        if ($item) {
+                            // noop, duty only applies to order
+                        }
+                        break;
+
+                    case 'shipping':
+                        if ($item) {
+                            // noop, shipping only applies to order
+                        }
+                        break;
+
+                    case 'insurance':
+                        // noop, this is a placeholder and not implemented by Flow.
+                        break;
+
+                    case 'discount':
+                        if ($item) {
+                            // noop, this is included in the subtotal for line items
+                        }
+                        break;
+
+                    default:
+                        throw new WebhookException('Unrecognized allocation detail key: ' . $detail['key']);
+                }
+            }
+
+            $order->setFlowConnectorOrderReady(1);
+
+            $this->orderSender->send($order);
+
+            // Save order after sending order confirmation email
+            $order->save();
+
+            $this->webhookEventManager->markWebhookEventAsDone($this, '');
+
         } else {
-            throw new WebhookException('Failed to retrieve Flow allocation: ' . $data['id']);
+            $this->requeue('Unable to find order right now, reprocess.');
         }
     }
 
@@ -656,7 +788,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $this->logger->info(
                         sprintf('Unable to find payment for order ID #%s', $order->getEntityId())
                     );
-                    throw new WebhookException('Unable to find payment for order ID #%s', $orderPayment->getId());
+                    throw new WebhookException(__(sprintf('Unable to find payment for order ID #%s', $orderPayment->getId())));
                 }
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
@@ -816,42 +948,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-     * Process order_deleted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/order-deleted-v-2
-     */
-    private function processOrderDeletedV2()
-    {
-        # Temporarily disabling order_deleted, as it was breaking the cron
-        $this->webhookEventManager->markWebhookEventAsDone($this, '');
-        return;
-
-        $this->logger->info('Processing order_deleted_v2 data');
-        $data = $this->getPayloadData();
-
-        if (array_key_exists('order', $data)) {
-            /** @var Order $order */
-            if ($order = $this->getOrderByFlowOrderNumber($data['order']['number'])) {
-                if ($order->canCancel()) {
-                    $order->cancel();
-                    $order->addStatusHistoryComment('This order has been deleted on flow.io');
-                    $order->save();
-                } else {
-                    $order->hold();
-                    $order->addStatusHistoryComment('This order has been deleted on flow.io');
-                    $order->save();
-                }
-
-                $this->webhookEventManager->markWebhookEventAsDone($this, '');
-            } else {
-                throw new WebhookException('Order to be deleted does not exist.');
-            }
-        } else {
-            throw new WebhookException('No order information found in payload data.');
-        }
-    }
-
-    /**
      * Process order_upserted_v2 webhook event data.
      *
      * https://docs.flow.io/type/order-upserted-v-2
@@ -946,7 +1042,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+                throw new WebhookException(__(sprintf('Unable to find payment by Flow authorization ID #%s', $authorizationId)));
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
@@ -1013,7 +1109,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 $this->webhookEventManager->markWebhookEventAsDone($this);
             } else {
-                throw new WebhookException('Unable to find payment by Flow authorization ID.', $authorizationId);
+                throw new WebhookException(__(sprintf('Unable to find payment by Flow authorization ID #%s', $authorizationId)));
             }
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
@@ -1274,6 +1370,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private function requeue($message)
     {
         $this->webhookEventManager->requeue($this, $message);
+    }
+
+    /**
+     * Returns a list with all available status and labels
+     * @return string[]
+     */
+    public function getAvailableStatuses()
+    {
+        return [
+            self::STATUS_NEW => 'New',
+            self::STATUS_PROCESSING => 'Processing',
+            self::STATUS_DONE => 'Done',
+            self::STATUS_ERROR => 'Error'
+        ];
     }
 
     /**
@@ -1653,7 +1763,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         foreach ($receivedOrder['lines'] as $line) {
             $this->logger->info('Looking up product: ' . $line['item_number']);
-            $product = $this->productRepository->get($line['item_number']);
+            if (!$product = $this->productRepository->get($line['item_number'])) {
+                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $line['item_number']);
+                continue;
+            }
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
 
@@ -1672,22 +1785,22 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         if (isset($destination['streets'])) {
             $shippingAddress->setStreet($destination['streets']);
         }
-    
+
         if (isset($destination['city'])) {
             $shippingAddress->setCity($destination['city']);
         }
-    
+
         if (isset($destination['province'])) {
             $shippingAddress->setRegion($destination['province']);
         } else {
             $shippingAddress->unsRegion();
             $shippingAddress->unsRegionId();
         }
-    
+
         if (isset($destination['postal'])) {
             $shippingAddress->setPostcode($destination['postal']);
         }
-    
+
         if (isset($destination['country'])) {
             $shippingAddress->setCountryCode($destination['country']);
 
@@ -1701,7 +1814,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $shippingAddress->setRegionId($region->getId());
             }
         }
-    
+
         if (isset($destination['contact'])) {
             $contact = $destination['contact'];
             if (array_key_exists('name', $contact)) {
@@ -1768,9 +1881,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // are additional billing addresses, they must be added to the order
             // later since Magento quotes only supports 1 billing address.
             foreach ($receivedOrder['payments'] as $flowPayment) {
-        
+
                 $this->logger->info('Adding billing address');
-        
+
                 // Paypal orders have no billing address on the payments entity
                 // If payment has no address use shipping address
                 // In case shipping addres is empty, use customer address
@@ -1785,59 +1898,62 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $paymentAddress = $flowPayment['address'];
                 }
                 $billingAddress = $quote->getBillingAddress();
-        
+
                 if (isset($paymentAddress['streets'])) {
                     $billingAddress->setStreet($paymentAddress['streets']);
                 }
-    
+
                 if (isset($paymentAddress['city'])) {
                     $billingAddress->setCity($paymentAddress['city']);
                 }
-    
+
                 if (isset($paymentAddress['province'])) {
                     $billingAddress->setRegion($paymentAddress['province']);
                 } else {
                     $billingAddress->unsRegion();
                     $billingAddress->unsRegionId();
                 }
-    
+
                 if (isset($paymentAddress['postal'])) {
                     $billingAddress->setPostcode($paymentAddress['postal']);
                 }
-    
+
                 if (isset($paymentAddress['country'])) {
                     $billingAddress->setCountryCode($paymentAddress['country']);
-            
+
                     // set country id
                     $country = $this->countryFactory->create()->loadByCode($paymentAddress['country']);
                     $billingAddress->setCountryId($country->getId());
-            
+
                     // set region
                     if (isset($paymentAddress['province'])) {
                         $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
                         $billingAddress->setRegionId($region->getId());
                     }
                 }
-        
+
                 $billingAddress->setFirstname($receivedOrder['customer']['name']['first']);
                 $billingAddress->setLastname($receivedOrder['customer']['name']['last']);
                 $billingAddress->setTelephone($receivedOrder['customer']['phone']);
-        
+
                 break;
             }
         }
-        
+
 
         ////////////////////////////////////////////////////////////
         // Discounts
         // https://docs.flow.io/type/money
         ////////////////////////////////////////////////////////////
 
-        if (array_key_exists('discount', $receivedOrder)) {
-            $discountAmount = $receivedOrder['discount']['amount'];
-            $baseDiscountAmount = $receivedOrder['discount']['base']['amount'];
-            $quote->setCustomDiscount(-$discountAmount);
-            $quote->setBaseCustomDiscount(-$baseDiscountAmount);
+        if (array_key_exists('prices', $receivedOrder)) {
+            $prices = $receivedOrder['prices'];
+            foreach ($prices as $price) {
+                if ($price['key'] == 'discount') {
+                    $quote->setDiscountAmount($price['amount']);
+                    $quote->setBaseDiscountAmount($price['base']['amount']);
+                }
+            }
         }
 
         ////////////////////////////////////////////////////////////
@@ -2199,16 +2315,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                                 $dutyPrice += $included['price']['amount'];
                                 $baseDutyPrice += $included['price']['base']['amount'];
                             } elseif ($included['key'] == 'item_discount') {
-                                $item->setDiscountAmount($included['price']['amount']);
-                                $item->setBaseDiscountAmount($included['price']['base']['amount']);
+                                $itemDiscountAmount -= $included['price']['amount'];
+                                $itemBaseDiscountAmount -= $included['price']['base']['amount'];
                             }
                         }
-
-                        // Split order discount among order items. Note: Order's/Flow's subtotal includes tax.
-                        $itemDiscountAmount += -((($rawItemPrice * $detail['quantity']) /
-                                ($order->getFlowConnectorItemPrice())) * $order->getDiscountAmount());
-                        $itemBaseDiscountAmount += -((($baseRawItemPrice * $detail['quantity']) /
-                                ($order->getFlowConnectorBaseItemPrice())) * $order->getBaseDiscountAmount());
 
                         $item->setOriginalPrice($itemPrice);
                         $item->setBaseOriginalPrice($baseItemPrice);
@@ -2231,8 +2341,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
                         $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
                         $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
-                        $item->setDiscountAmount($itemDiscountAmount);
-                        $item->setBaseDiscountAmount($itemBaseDiscountAmount);
+                        $item->setDiscountAmount($itemDiscountAmount * $detail['quantity']);
+                        $item->setBaseDiscountAmount($itemBaseDiscountAmount * $detail['quantity']);
                         $item->save();
                     }
                     break;

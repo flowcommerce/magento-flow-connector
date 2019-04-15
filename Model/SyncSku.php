@@ -116,6 +116,33 @@ class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterfa
     }
 
     /**
+     * Returns a list with all available status and labels
+     * @return string[]
+     */
+    public function getAvailableStatuses()
+    {
+        return [
+            self::STATUS_NEW => 'New',
+            self::STATUS_PROCESSING => 'Processing',
+            self::STATUS_DONE => 'Done',
+            self::STATUS_ERROR => 'Error'
+        ];
+    }
+
+    /**
+     * Returns a list with all available states and labels
+     * @return string[]
+     */
+    public function getAvailableStates()
+    {
+        return [
+            self::STATE_NEW => 'New',
+            self::STATUS_DONE => 'Done',
+            self::STATUS_ERROR => 'Error'
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getStoreId()

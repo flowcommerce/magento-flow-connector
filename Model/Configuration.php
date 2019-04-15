@@ -20,6 +20,9 @@ class Configuration
 {
     // Store configuration key for Flow Enabled
     const FLOW_ENABLED = 'flowcommerce/flowconnector/enabled';
+    
+    // Store configuration key for Flow.js Version
+    const FLOW_JS_VERSION = 'flowcommerce/flowconnector/flowjs_version';
 
     // Store configuration key for Redirect to Flow Checkout
     const FLOW_REDIRECT_ENABLED = 'flowcommerce/flowconnector/redirect_enabled';
@@ -38,6 +41,21 @@ class Configuration
 
     // Store configuration key for webhook validation
     const FLOW_WEBHOOK_VALIDATION = 'flowcommerce/flowconnector/webhook_validation';
+
+    // Store configuration key for country picker enabled
+    const FLOW_COUNTRY_PICKER = 'flowcommerce/flowconnector/country_picker';
+
+    // Store configuration key for catalog price localization
+    const FLOW_CATALOG_PRICE_LOCALIZATION = 'flowcommerce/flowconnector/catalog_price_localization';
+    
+    // Store configuration key for max catalog price hide ms
+    const FLOW_MAX_CATALOG_HIDE_MS = 'flowcommerce/flowconnector/max_catalog_hide_ms';
+    
+    // Store configuration key for catalog price localization
+    const FLOW_CART_LOCALIZATION = 'flowcommerce/flowconnector/cart_localization';
+    
+    // Store configuration key for max cart hide ms
+    const FLOW_MAX_CART_HIDE_MS = 'flowcommerce/flowconnector/max_cart_hide_ms';
 
     // Flow checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
@@ -113,6 +131,20 @@ class Configuration
     }
 
     /**
+     * Returns true if Flow is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function getFlowJsVersion($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+        return (string) $this->scopeConfig->getValue(self::FLOW_JS_VERSION, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
      * Returns true if Redirect to Flow Checkout is enabled in the Admin Store Configuration.
      * @param int|null $storeId
      * @return bool
@@ -125,7 +157,8 @@ class Configuration
         }
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_REDIRECT_ENABLED,
-            ScopeInterface::SCOPE_STORE, $storeId
+            ScopeInterface::SCOPE_STORE,
+            $storeId
         );
     }
 
@@ -272,6 +305,101 @@ class Configuration
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_WEBHOOK_VALIDATION,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if country picker is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isCountryPickerEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_COUNTRY_PICKER,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if catalog price localization is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isCatalogPriceLocalizationEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_CATALOG_PRICE_LOCALIZATION,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns number of milliseconds to hide catalog prices as set in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return int
+     * @throws NoSuchEntityException
+     */
+    public function getMaxCatalogHideMs($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (int) $this->scopeConfig->getValue(
+            self::FLOW_MAX_CATALOG_HIDE_MS,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if cart localization is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isCartLocalizationEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_CART_LOCALIZATION,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns number of milliseconds to hide carts as set in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return int
+     * @throws NoSuchEntityException
+     */
+    public function getMaxCartHideMs($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (int) $this->scopeConfig->getValue(
+            self::FLOW_MAX_CART_HIDE_MS,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

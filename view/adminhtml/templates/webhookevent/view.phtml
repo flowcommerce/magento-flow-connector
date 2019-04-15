@@ -1,0 +1,60 @@
+<?php
+/** @var \FlowCommerce\FlowConnector\Block\Adminhtml\WebhookEvent\View $block */
+$webhookEvent = $block->getWebhookEvent();
+?>
+<div class="fieldset-wrapper webhookevent-information">
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Webhook Event Data')) ?></span>
+    </div>
+    <table class="admin__table-secondary">
+        <tbody>
+            <tr>
+                <th><?= $block->escapeHtml(__('ID:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getId()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Store ID:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getStoreId()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Type:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getType()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Status:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getStatus()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Message:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getMessage()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Triggered At:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getTriggeredAt()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Created At:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getCreatedAt()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Updated At:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getUpdatedAt()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Deleted At:')) ?></th>
+                <td><?= $block->escapeHtml($webhookEvent->getDeletedAt()) ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<?php if ($payload = $webhookEvent->getPayload()): ?>
+    <br />
+    <div>
+        <div class="fieldset-wrapper-title">
+            <span class="title"><?= $block->escapeHtml(__('$payload')) ?></span>
+        </div>
+        <div>
+            <?= $block->beautifyJson($payload) ?>
+        </div>
+    </div>
+<?php endif; ?>

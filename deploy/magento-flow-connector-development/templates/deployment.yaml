@@ -68,6 +68,8 @@ spec:
               value: "1"
             - name: NAMI_LOG_LEVEL
               value: "trace8"
+            - name: MAGENTO_BASE_URL
+              value: {{ $deployment.host | quote }} 
 {{ toYaml $deployment.env | indent 12 }}
           ports:
             - name: http

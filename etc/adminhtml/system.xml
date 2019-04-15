@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="flowcommerce" translate="label" sortOrder="10">
+        <tab id="flowcommerce" translate="label">
             <label>Flow Commerce</label>
         </tab>
         <section id="flowcommerce" translate="label" showInDefault="0" showInWebsite="0" showInStore="1">
@@ -9,8 +9,8 @@
             <label>Connector Settings</label>
             <tab>flowcommerce</tab>
             <resource>FlowCommerce_FlowConnector::connector_config</resource>
-            <group id="flowconnector" translate="label" type="text" sortOrder="1" showInDefault="0" showInWebsite="0" showInStore="1">
-                <label>Flow Credentials</label>
+            <group id="flowconnector" translate="label" type="text" showInDefault="0" showInWebsite="0" showInStore="1">
+                <label>Flow Connector Settings</label>
                 <field id="enabled" translate="label" type="select" sortOrder="1" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -33,21 +33,28 @@
                     </depends>
                     <frontend_class>required-entry</frontend_class>
                 </field>
-                <field id="redirect_enabled" translate="label" type="select" sortOrder="4" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="flowjs_version" translate="label" type="text" sortOrder="4" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Flow.js Version</label>
+                    <comment>Recommended version: "latest"</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="redirect_enabled" translate="label" type="select" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Redirect to Flow Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="invoice_event" translate="label" type="select" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="invoice_event" translate="label" type="select" sortOrder="6" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Create Invoice</label>
                     <source_model>FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="invoice_email" translate="label" type="select" sortOrder="6" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="invoice_email" translate="label" type="select" sortOrder="7" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Send invoice email</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
@@ -55,14 +62,14 @@
                         <field id="invoice_event" separator=",">1,2</field>
                     </depends>
                 </field>
-                <field id="shipment_event" translate="label" type="select" sortOrder="7" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="shipment_event" translate="label" type="select" sortOrder="8" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Create Shipment</label>
                     <source_model>FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="shipment_email" translate="label" type="select" sortOrder="8" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="shipment_email" translate="label" type="select" sortOrder="9" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Send shipment email</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
@@ -70,11 +77,48 @@
                         <field id="shipment_event">1</field>
                     </depends>
                 </field>
-                <field id="webhook_validation" translate="label" type="select" sortOrder="8" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="webhook_validation" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enable Webhook Validation</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="country_picker" translate="label" type="select" sortOrder="11" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Enable Country Picker</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="catalog_price_localization" translate="label" type="select" sortOrder="12" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Enable Catalog Price Localization</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="max_catalog_hide_ms" translate="label" type="text" sortOrder="13" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Maximum Time to Hide Catalog Prices</label>
+                    <comment>After this amount of milliseconds, catalog prices will display regardless of Flow's localization results</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="catalog_price_localization">1</field>
+                    </depends>
+                </field>
+                <field id="cart_localization" translate="label" type="select" sortOrder="14" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Enable Cart Localization</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="max_cart_hide_ms" translate="label" type="text" sortOrder="15" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Maximum Time to Hide Carts</label>
+                    <comment>After this amount of milliseconds, carts will display regardless of Flow's localization results</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="cart_localization">1</field>
                     </depends>
                 </field>
             </group>

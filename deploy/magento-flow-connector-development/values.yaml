@@ -13,9 +13,9 @@ resources:
     memory: "500Mi"
     cpu: .3
 
-tolerations:
-  - key: node-role.kubernetes.io/spot-worker
-    value: "true"
+# tolerations:
+#   - key: node-role.kubernetes.io/spot-worker
+#     value: "true"
 
 nodeSelector: {}
 affinity: {}
@@ -85,8 +85,6 @@ mariadb:
 
   master:
     persistence:
-      enabled: true
-      accessMode: ReadWriteOnce
-      size: 8Gi
-
-
+      enabled: false
+      # accessMode: ReadWriteOnce
+      # size: 8Gi

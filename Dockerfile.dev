@@ -4,15 +4,46 @@ ADD . /opt/flowcommerce/flowconnector
 
 WORKDIR /opt/bitnami/magento/htdocs
 
+ARG MAGENTO2_REPO_PRIVATE_KEY
+
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
-  find . -type f -print0 | xargs -0 chmod 664 && \
-  chown -R bitnami:daemon /opt/bitnami/magento/htdocs && \
-  composer config repositories.flowconnector path /opt/flowcommerce/flowconnector && \
-  composer config repo.0 false && \
-  composer require --no-interaction flowcommerce/flowconnector @dev && \
-  echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini && \
-  php bin/magento module:enable --all && \
-  php bin/magento setup:di:compile
+    find . -type f -print0 | xargs -0 chmod 664 && \
+    chown -R bitnami:daemon . && \
+    echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini
+
+RUN composer config repositories.flowconnector '{ "type": "path", "url": "/opt/flowcommerce/flowconnector", "options" : { "symlink": false } }' && \
+    composer config repo.0 false && \
+    composer config repositories.magento '{ "type": "composer", "url": "https://repo.magento.com" }' && \
+    composer config http-basic.repo.magento.com e09972697200676346ab7a6981ac63fa $MAGENTO2_REPO_PRIVATE_KEY
+
+RUN composer require --no-interaction flowcommerce/flowconnector *@dev \
+    magento/module-bundle-sample-data:100.2.* \
+    magento/module-sales-sample-data:100.2.* \
+    magento/module-customer-sample-data:100.2.* \
+    magento/module-catalog-sample-data:100.2.* \
+    magento/module-theme-sample-data:100.2.* \
+    magento/module-cms-sample-data:100.2.* \
+    magento/module-widget-sample-data:100.2.* \
+    magento/module-catalog-rule-sample-data:100.2.* \
+    magento/module-sales-rule-sample-data:100.2.* \
+    magento/module-review-sample-data:100.2.* \
+    magento/module-tax-sample-data:100.2.* \
+    magento/module-downloadable-sample-data:100.2.* \
+    magento/module-msrp-sample-data:100.2.* \
+    magento/module-wishlist-sample-data:100.2.* \
+    magento/module-configurable-sample-data:100.2.* \
+    magento/module-product-links-sample-data:100.2.* \
+    magento/module-grouped-product-sample-data:100.2.* \
+    magento/module-offline-shipping-sample-data:100.2.* \
+    magento/module-swatches-sample-data:100.2.* \
+    magento/sample-data-media:100.2.*
+
+RUN php bin/magento module:enable --all
+RUN php bin/magento setup:di:compile
+
+RUN find . -type d -print0 | xargs -0 chmod 775 && \
+    find . -type f -print0 | xargs -0 chmod 664 && \
+    chown -R bitnami:daemon .
 
 EXPOSE 80 443
 

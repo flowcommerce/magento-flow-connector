@@ -8,4 +8,4 @@ echo '==> Disabling xdebug'
 phpenv config-rm xdebug.ini
 phpenv rehash;
 echo '==> Install RabbitMQ Server'
-apt install -y rabbitmq-server;
+sudo apt install -y rabbitmq-server;

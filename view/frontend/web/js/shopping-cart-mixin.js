@@ -22,8 +22,6 @@ define([
                     for (i = 0; i < checkoutConfig.quoteItemData.length; i++) {
                         lineItemDiscount[checkoutConfig.quoteItemData[i].sku] = {
                             percent: parseFloat(checkoutConfig.quoteItemData[i].base_discount_amount) / parseFloat(checkoutConfig.quoteItemData[i].base_row_total) * 100,
-                            amount: parseFloat(checkoutConfig.quoteItemData[i].base_discount_amount),
-                            currency: checkoutConfig.quoteData.base_currency_code
                         }
                     }
                 } catch (e) {
@@ -43,8 +41,6 @@ define([
                     try {
                         if (lineItemDiscount[number].amount > 0 && lineItemDiscount[number].currency) {
                             itemContainer.attr('data-flow-cart-item-discount-percent', lineItemDiscount[number].percent);
-                            itemContainer.attr('data-flow-cart-item-discount-amount', lineItemDiscount[number].amount);
-                            itemContainer.attr('data-flow-cart-item-discount-currency', lineItemDiscount[number].currency);
                         }
                     } catch (e) {
                         // Can not calculate line item discount due to insufficient data at this time

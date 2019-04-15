@@ -39,7 +39,7 @@ define([
                     itemContainer.find('.price .cart-price > span.price').first().attr('data-flow-localize','cart-item-price');
                     itemContainer.find('.subtotal .cart-price > span.price').first().attr('data-flow-localize','cart-item-line-total');
                     try {
-                        if (lineItemDiscount[number].amount > 0 && lineItemDiscount[number].currency) {
+                        if (lineItemDiscount[number].percent > 0) {
                             itemContainer.attr('data-flow-cart-item-discount-percent', lineItemDiscount[number].percent);
                         }
                     } catch (e) {

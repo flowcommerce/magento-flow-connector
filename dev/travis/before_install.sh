@@ -8,11 +8,9 @@ echo '==> Disabling xdebug'
 phpenv config-rm xdebug.ini
 phpenv rehash;
 echo '==> Install RabbitMQ Server'
-echo "deb http://www.rabbitmq.com/debian/ testing main"  | sudo tee  /etc/apt/sources.list.d/rabbitmq.list > /dev/null
-wget https://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-sudo apt-key add rabbitmq-signing-key-public.asc
+wget http://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc
+sudo apt-key add erlang_solutions.asc
 sudo apt-get update
-sudo apt-get install rabbitmq-server -y
-sudo service rabbitmq-server start
-sudo rabbitmq-plugins enable rabbitmq_management
-sudo service rabbitmq-server restart
+sudo apt-get install erlang
+sudo apt-get install erlang-nox
+sudo dpkg -i rabbitmq-server_3.2.1-1_all.deb

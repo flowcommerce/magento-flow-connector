@@ -195,7 +195,6 @@ class SessionManager implements SessionManagementInterface
             return null;
         }
 
-        $url = $this->configuration->getFlowCheckoutUrl() . '?';
 
         // Additional custom attributes to pass through hosted checkout
         $attribs = [];
@@ -261,12 +260,13 @@ class SessionManager implements SessionManagementInterface
             $itemDiscountAmount = $item->getDiscountAmount();
             $itemDiscountPercentage = 0.0;
             if ($itemRowTotal > 0 && $itemDiscountAmount > 0) {
-                $itemDiscountPercentage = $itemDiscountAmount / $itemRowTotal;
+                $itemDiscountPercentage = (float)(($itemDiscountAmount / $itemRowTotal) * 100);
             }
 
             $params['items[' . $ctr . '][quantity]'] = $item->getQty();
             if ($itemDiscountPercentage > 0) {
-                $params['items[' . $ctr . '][discount][percent]'] = $itemDiscountPercentage;
+                $params['items[' . $ctr . '][discounts][discounts][0][offer][discriminator]'] = 'discount_offer_percent';
+                $params['items[' . $ctr . '][discounts][discounts][0][offer][percent]'] = $itemDiscountPercentage;
             }
             $ctr += 1;
         }
@@ -277,8 +277,8 @@ class SessionManager implements SessionManagementInterface
         }
 
         $this->logger->info('CART: ' . json_encode($params));
-        $url = $url . http_build_query($params);
-        return $url;
+        $this->logger->info('REDIRECT: ' . $this->configuration->getFlowCheckoutUrl() . '?' . http_build_query($params));
+        return $this->configuration->getFlowCheckoutUrl() . '?' . http_build_query($params);
     }
 
     /**

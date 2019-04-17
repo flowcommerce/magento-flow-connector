@@ -267,6 +267,7 @@ class SessionManager implements SessionManagementInterface
             if ($itemDiscountPercentage > 0) {
                 $params['items[' . $ctr . '][discounts][discounts][0][offer][discriminator]'] = 'discount_offer_percent';
                 $params['items[' . $ctr . '][discounts][discounts][0][offer][percent]'] = $itemDiscountPercentage;
+                $params['items[' . $ctr . '][discounts][discounts][0][label]'] = 'Discount';
             }
             $ctr += 1;
         }
@@ -277,7 +278,6 @@ class SessionManager implements SessionManagementInterface
         }
 
         $this->logger->info('CART: ' . json_encode($params));
-        $this->logger->info('REDIRECT: ' . $this->configuration->getFlowCheckoutUrl() . '?' . http_build_query($params));
         return $this->configuration->getFlowCheckoutUrl() . '?' . http_build_query($params);
     }
 

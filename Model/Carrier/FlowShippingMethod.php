@@ -99,10 +99,9 @@ class FlowShippingMethod extends AbstractCarrier implements CarrierInterface
      */
     public function collectRates(RateRequest $request)
     {
-        // Causing bugs temporarily removed
-        /* if ($this->isFrontendOrder()) { */
-        /*     return null; */
-        /* } */
+        if ($this->isFrontendOrder()) {
+            return null;
+        }
 
         /** @var RateResult $result */
         $result = $this->rateResultFactory->create();

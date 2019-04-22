@@ -195,7 +195,6 @@ class SessionManager implements SessionManagementInterface
             return null;
         }
 
-        $url = $this->configuration->getFlowCheckoutUrl() . '?';
 
         // Additional custom attributes to pass through hosted checkout
         $attribs = [];
@@ -208,10 +207,11 @@ class SessionManager implements SessionManagementInterface
             $params['country'] = $country;
         }
 
-        $flowOrderNumber = $quote->getFlowConnectorOrderNumber();
-        $query = ['number' => $flowOrderNumber];
-        $result = $this->orderGet->execute($query);
-        $flowOrderData = reset($result);
+        // Removed, unnecessary for now
+        /* $flowOrderNumber = $quote->getFlowConnectorOrderNumber(); */
+        /* $query = ['number' => $flowOrderNumber]; */
+        /* $result = $this->orderGet->execute($query); */
+        /* $flowOrderData = reset($result); */
         
         if ($flowSessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE)) {
             $params['flow_session_id'] = $flowSessionId;
@@ -258,31 +258,16 @@ class SessionManager implements SessionManagementInterface
             $params['items[' . $ctr . '][number]'] = $item->getSku();
             $itemRowTotal = $item->getRowTotal();
             $itemDiscountAmount = $item->getDiscountAmount();
-            $itemDiscountAmountLocalized = 0.0;
             $itemDiscountPercentage = 0.0;
-            $itemDiscountCurrency = "";
             if ($itemRowTotal > 0 && $itemDiscountAmount > 0) {
-                $itemDiscountPercentage = $itemDiscountAmount / $itemRowTotal;
+                $itemDiscountPercentage = (float)(($itemDiscountAmount / $itemRowTotal) * 100);
             }
-            if ($itemDiscountPercentage > 0) {
-                if (array_key_exists('items',$flowOrderData)) {
-                    foreach ($flowOrderData['items'] as $flowItem) {
-                        if ($flowItem['number'] == $item->getSku()) {
-                            if (array_key_exists('local', $flowItem)) {
-                                if (array_key_exists('prices', $flowItem['local'])) {
-                                    $itemDiscountCurrency = $flowItem['local']['prices'][0]['currency'];
-                                    $itemLocalizedAmount = $flowItem['local']['prices'][0]['amount'];
-                                    $itemDiscountAmountLocalized = $itemLocalizedAmount * $item->getQty() * $itemDiscountPercentage;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+
             $params['items[' . $ctr . '][quantity]'] = $item->getQty();
-            if ($itemDiscountAmountLocalized > 0 && $itemDiscountCurrency !== '') {
-                $params['items[' . $ctr . '][discount][amount]'] = $itemDiscountAmountLocalized;
-                $params['items[' . $ctr . '][discount][currency]'] = $itemDiscountCurrency;
+            if ($itemDiscountPercentage > 0) {
+                $params['items[' . $ctr . '][discounts][discounts][0][offer][discriminator]'] = 'discount_offer_percent';
+                $params['items[' . $ctr . '][discounts][discounts][0][offer][percent]'] = $itemDiscountPercentage;
+                $params['items[' . $ctr . '][discounts][discounts][0][label]'] = 'Discount';
             }
             $ctr += 1;
         }
@@ -293,8 +278,7 @@ class SessionManager implements SessionManagementInterface
         }
 
         $this->logger->info('CART: ' . json_encode($params));
-        $url = $url . http_build_query($params);
-        return $url;
+        return $this->configuration->getFlowCheckoutUrl() . '?' . http_build_query($params);
     }
 
     /**

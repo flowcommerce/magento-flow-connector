@@ -1,5 +1,17 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.0.0
+- FlowJS and Flow's Country Picker JS now included by default
+- FlowJS version option in back office
+- Optional country picker installation
+- Optional catalog price localization installation
+- Optional cart localization installation
+- Optional price flicker removal
+- Optional cart flicker removal
+- Discounts handled and imported per order line item according to Magento 2's pricing rules
+- Catalog Sync status back office view with manual requeue option
+- Webhook Event status back office view with manual requeue option
+
 ## 1.1.10
 - Upgrade core-js to version 2.6.5 for JS bundling compatibility
 

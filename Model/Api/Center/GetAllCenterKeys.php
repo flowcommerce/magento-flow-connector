@@ -49,7 +49,6 @@ class GetAllCenterKeys
     private $urlBuilder;
 
     /**
-     * Delete constructor.
      * @param Auth $auth
      * @param HttpClientFactory $httpClientFactory
      * @param HttpRequestFactory $httpRequestFactory
@@ -74,7 +73,7 @@ class GetAllCenterKeys
     }
 
     /**
-     * Deletes the sku from Flow.
+     * Gets all center keys from Flow.
      * @param int $storeId
      * @return string[]
      * @throws NoSuchEntityException

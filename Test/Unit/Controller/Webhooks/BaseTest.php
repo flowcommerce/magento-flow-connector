@@ -2,15 +2,21 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Controller;
 
+use FlowCommerce\FlowConnector\Model\Configuration;
+use FlowCommerce\FlowConnector\Model\WebhookEventManager;
+use FlowCommerce\FlowConnector\Model\WebhookManager\PayloadValidator;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Json;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\ResponseInterface;
+use Psr\Log\LoggerInterface;
+
 /**
  * Test class for webhook controllers.
  */
 class BaseTest extends \PHPUnit\Framework\TestCase {
-
-    public function testAllocationDeletedV2() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AllocationDeletedV2');
-        $controller->execute();
-    }
 
     public function testAuthorizationDeletedV2() {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
@@ -37,11 +43,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
         $controller->execute();
     }
 
-    public function testOrderDeletedV2() {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeletedV2');
-        $controller->execute();
-    }
-
     public function testOrderPlaced() {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced');
         $controller->execute();
@@ -65,37 +66,49 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
     private function getController($className) {
         $reflection = new \ReflectionClass($className);
 
-        $logger = $this->createMock(\Psr\Log\LoggerInterface::class);
-        $response = $this->createMock(\Magento\Framework\App\ResponseInterface::class);
+        $logger = $this->createMock(LoggerInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
 
-        $request = $this->getMockBuilder(\Magento\Framework\App\RequestInterface::class)
+        $request = $this->getMockBuilder(RequestInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getParams', 'getParam', 'isAjax', 'getPostValue', 'getContent'])
+            ->setMethods(['getParams', 'getParam', 'isAjax', 'getPostValue', 'getContent', 'getHeader'])
             ->getMockForAbstractClass();
 
-        $resultJson = $this->createMock(\Magento\Framework\Controller\Result\Json::class);
+        $resultJson = $this->createMock(Json::class);
 
-        $resultFactory = $this->createMock(\Magento\Framework\Controller\ResultFactory::class);
+        $resultFactory = $this->createMock(ResultFactory::class);
         $resultFactory->method('create')->willReturn($resultJson);
 
-        $context = $this->createMock(\Magento\Framework\App\Action\Context::class);
+        $context = $this->createMock(Context::class);
         $context->method('getRequest')->willReturn($request);
         $context->method('getResultFactory')->willReturn($resultFactory);
 
-        $eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $eventManager = $this->createMock(ManagerInterface::class);
         $eventManager->expects($this->once())->method('dispatch');
 
-        $webhookEventManager = $this->createMock(\FlowCommerce\FlowConnector\Model\WebhookEventManager::class);
+        $webhookEventManager = $this->createMock(WebhookEventManager::class);
         $webhookEventManager->expects($this->once())
             ->method('queue')
             ->with($this->equalTo($reflection->getConstants()['EVENT_TYPE']));
+
+        $payloadValidator = $this->createMock(PayloadValidator::class);
+        $payloadValidator->expects($this->once())
+            ->method('validate')
+            ->willReturn(true);
+
+        $configuration = $this->createMock(Configuration::class);
+        $configuration->expects($this->once())
+            ->method('isWebhookValidationEnabled')
+            ->willReturn(true);
 
         $controller = $reflection->newInstanceArgs([
             $context,
             $logger,
             $response,
             $eventManager,
-            $webhookEventManager
+            $webhookEventManager,
+            $payloadValidator,
+            $configuration
         ]);
 
         return $controller;

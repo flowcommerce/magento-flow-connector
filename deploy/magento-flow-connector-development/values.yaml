@@ -13,9 +13,9 @@ resources:
     memory: "500Mi"
     cpu: .3
 
-tolerations:
-  - key: node-role.kubernetes.io/spot-worker
-    value: "true"
+# tolerations:
+#   - key: node-role.kubernetes.io/spot-worker
+#     value: "true"
 
 nodeSelector: {}
 affinity: {}
@@ -26,16 +26,16 @@ ingress:
     - key: flo-pub
       tld: flo.pub
       hosts:
-        - magento-development.flo.pub
+        - magento.flo.pub
 
 services:
   live:
     hosts:
-      - magento-flow-connector-development
-      - magento-development.flo.pub
+      - magento-flow-connector
+      - magento.flo.pub
     gateways:
       - mesh
-      - magento-flow-connector-development-flo-pub
+      - magento-flow-connector-flo-pub
     stages:
       - deployment: live
         weight: 100
@@ -44,10 +44,10 @@ deployments:
   live:
     replicaCount: 1
     version: master-1
-    host: magento-development.flo.pub
+    host: magento.flo.pub
     env:
       - name: MAGENTO_HOST
-        value: magento-development.flo.pub
+        value: magento.flo.pub
 
 magento:
   mode: developer
@@ -85,8 +85,6 @@ mariadb:
 
   master:
     persistence:
-      enabled: true
-      accessMode: ReadWriteOnce
-      size: 8Gi
-
-
+      enabled: false
+      # accessMode: ReadWriteOnce
+      # size: 8Gi

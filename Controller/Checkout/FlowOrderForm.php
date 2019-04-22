@@ -2,18 +2,19 @@
 
 namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
-use Magento\Framework\Controller\ResultFactory;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
-use Magento\Framework\App\Action\Context;
-use Magento\Framework\Exception\LocalizedException;
-use Psr\Log\LoggerInterface;
-use Magento\Framework\Json\Helper\Data;
 use Magento\Checkout\Model\Cart;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Quote\Model\Quote\Item;
+use Magento\Store\Model\StoreManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Controller class that returns a Flow order_form object for use with Flow.js.
@@ -21,52 +22,86 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
  * https://docs.flow.io/type/order-form
  */
 class FlowOrderForm extends \Magento\Framework\App\Action\Action {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    protected $logger;
-    protected $jsonHelper;
-    protected $cart;
-    protected $storeManager;
-    protected $customerSession;
-    protected $checkoutSession;
-    protected $addressRepository;
-    protected $cookieManager;
+    /**
+     * @var Data
+     */
+    private $jsonHelper;
+
+    /**
+     * @var Util
+     */
+    private $util;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var CustomerSession
+     */
+    private $customerSession;
+
+    /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
+
+    /**
+     * @var AddressRepositoryInterface
+     */
+    private $addressRepository;
+
+    /**
+     * @var CookieManagerInterface
+     */
+    private $cookieManager;
 
     /**
      * FlowOrderForm constructor.
-     * @param Context $context
-     * @param LoggerInterface $logger
-     * @param Data $jsonHelper
-     * @param Cart $cart
-     * @param StoreManagerInterface $storeManager
-     * @param CustomerSession $customerSession
-     * @param CheckoutSession $checkoutSession
      * @param AddressRepositoryInterface $addressRepository
+     * @param Cart $cart
+     * @param CheckoutSession $checkoutSession
      * @param CookieManagerInterface $cookieManager
+     * @param CustomerSession $customerSession
+     * @param Data $jsonHelper
+     * @param LoggerInterface $logger
+     * @param StoreManagerInterface $storeManager
+     * @param Util $util
+     * @param Context $context
      */
     public function __construct(
-        Context $context,
-        LoggerInterface $logger,
-        Data $jsonHelper,
-        Cart $cart,
-        StoreManagerInterface $storeManager,
-        CustomerSession $customerSession,
-        CheckoutSession $checkoutSession,
         AddressRepositoryInterface $addressRepository,
-        CookieManagerInterface $cookieManager
+        Cart $cart,
+        CheckoutSession $checkoutSession,
+        CookieManagerInterface $cookieManager,
+        CustomerSession $customerSession,
+        Data $jsonHelper,
+        LoggerInterface $logger,
+        StoreManagerInterface $storeManager,
+        \FlowCommerce\FlowConnector\Model\Util $util,
+        Context $context
     ) {
-        $this->logger = $logger;
-        $this->jsonHelper = $jsonHelper;
-        $this->cart = $cart;
-        $this->storeManager = $storeManager;
-        $this->customerSession = $customerSession;
-        $this->checkoutSession = $checkoutSession;
         $this->addressRepository = $addressRepository;
+        $this->cart = $cart;
+        $this->checkoutSession = $checkoutSession;
         $this->cookieManager = $cookieManager;
+        $this->customerSession = $customerSession;
+        $this->jsonHelper = $jsonHelper;
+        $this->logger = $logger;
+        $this->storeManager = $storeManager;
+        $this->util = $util;
         parent::__construct($context);
     }
 
     /**
      * Returns a JSON response for a Flow order_form object.
+     *
      * @return string https://docs.flow.io/type/order-form
      * @throws LocalizedException
      */
@@ -79,22 +114,24 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
 
     /**
      * Returns a Flow order_form object for use with Flow.js.
+     *
      * @return string https://docs.flow.io/type/order-form
      * @throws LocalizedException
      */
     private function getFlowOrderForm()
     {
-
+        $quote = $this->checkoutSession->getQuote();
         $data = [];
 
         // Additional custom attributes to pass through hosted checkout
         $attribs = [];
         $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
-        $attribs[WebhookEvent::QUOTE_ID] = $this->checkoutSession->getQuote()->getId();
+        $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
 
         if ($customer = $this->customerSession->getCustomer()) {
             $attribs[WebhookEvent::CUSTOMER_ID] = $this->customerSession->getId();
             $attribs[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
+            $attribs[WebhookEvent::QUOTE_APPLIED_RULE_IDS] = $quote->getAppliedRuleIds();
 
             // Add customer info
             $data['customer'] = [
@@ -132,13 +169,21 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         }
 
         // Add cart items
-        if ($items = $this->cart->getQuote()->getItems()) {
+        /** @var Item[] $items */
+        if ($items = $quote->getItems()) {
+            $currencyCode = $quote->getBaseCurrencyCode();
             $data['items'] = [];
             foreach ($items as $item) {
                 $lineItem = [
                     'number' => $item->getSku(),
                     'quantity' => $item->getQty()
                 ];
+
+                $lineItem['discount'] = [
+                    'amount' => $item->getBaseDiscountAmount(),
+                    'currency' => $currencyCode
+                ];
+
                 array_push($data['items'], $lineItem);
             }
         }
@@ -146,6 +191,7 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         // Add custom attributes
         $data['attributes'] = $attribs;
 
+        $this->logger->info('CART: ' . $this->jsonHelper->jsonEncode($data));
         return $data;
     }
 }

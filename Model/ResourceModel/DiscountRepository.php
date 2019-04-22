@@ -176,7 +176,6 @@ class DiscountRepository implements DiscountRepositoryInterface
 
         $this->discount->addSubtotalDiscount($orderDiscountAmount, $orderCurrency);
 
-        $this->logger->info(json_encode($this->discount));
         return $this->discount;
     }
 

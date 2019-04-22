@@ -27,14 +27,12 @@ $this->createWebhookEventsFixture->createOnlineAuthorizationUpsertedWebhooks(
 ```
 
 #### Available Methods
-*createAllocationDeletedWebhooks*
 *createAuthorizationDeletedWebhooks*
 *createCaptureUpsertedWebhooks*
 *createCardAuthorizationUpsertedWebhooks*
 *createFraudStatusChangeWebhooks*
 *createLabelUpsertedWebhooks*
 *createOnlineAuthorizationUpsertedWebhooks*
-*createOrderDeletedWebhooks*
 *createOrderPlacedWebhooks*
 *createRefundCaptureUpsertedWebhooks*
 *createRefundUpsertedWebhooks*

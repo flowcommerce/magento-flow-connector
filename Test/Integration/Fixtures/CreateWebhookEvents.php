@@ -2,14 +2,12 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Fixtures;
 
-use FlowCommerce\FlowConnector\Controller\Webhooks\AllocationDeletedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\CaptureUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\CardAuthorizationUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged;
 use FlowCommerce\FlowConnector\Controller\Webhooks\LabelUpserted;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2;
-use FlowCommerce\FlowConnector\Controller\Webhooks\OrderDeletedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2;
@@ -87,16 +85,6 @@ class CreateWebhookEvents
         $this->webhookEventManager = $this->objectManager->create(WebhookEventManager::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
     }
-
-    /**
-     * Create and process webhook event
-     * @param string[] $filenames
-     * @return WebhookEvent[]
-     */
-    public function createAllocationDeletedWebhooks($filenames = null)
-    {
-        return $this->createWebhooks(AllocationDeletedV2::EVENT_TYPE, $filenames);
-    }
     
     /**
      * Create and process webhook event
@@ -156,16 +144,6 @@ class CreateWebhookEvents
     public function createOnlineAuthorizationUpsertedWebhooks($filenames = null)
     {
         return $this->createWebhooks(OnlineAuthorizationUpsertedV2::EVENT_TYPE, $filenames);
-    }
-
-    /**
-     * Create and process webhook event
-     * @param string[] $filenames
-     * @return WebhookEvent[]
-     */
-    public function createOrderDeletedWebhooks($filenames = null)
-    {
-        return $this->createWebhooks(OrderDeletedV2::EVENT_TYPE, $filenames);
     }
 
     /**
@@ -281,10 +259,6 @@ class CreateWebhookEvents
     {
         $payload = $this->jsonSerializer->unserialize($payloadJson);
         switch ($eventName) {
-            case OrderDeletedV2::EVENT_TYPE:
-                return $payload['order']['number'];
-            case AllocationDeletedV2::EVENT_TYPE:
-                return $payload['allocation']['order']['number'];
             case FraudStatusChanged::EVENT_TYPE:
                 return $payload['order']['number'];
             case LabelUpserted::EVENT_TYPE:

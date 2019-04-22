@@ -1,9 +1,9 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: magento-flow-connector-mariadb
+  name: magento-flow-connector-development-mariadb
 spec:
-  host: magento-flow-connector-mariadb
+  host: magento-flow-connector-development-mariadb
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
@@ -18,7 +18,7 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: magento-flow-connector-mariadb
+  name: magento-flow-connector-development-mariadb
   labels:
     app.kubernetes.io/name: {{ include "deploy.name" $ }}-mariadb
     helm.sh/chart: {{ include "deploy.chart" $ }}
@@ -26,11 +26,11 @@ metadata:
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
 spec:
   hosts:
-    - magento-flow-connector-mariadb
+    - magento-flow-connector-development-mariadb
   tcp:
   - route:
     - destination:
-        host: magento-flow-connector-mariadb
+        host: magento-flow-connector-development-mariadb
         subset:  master
         port:
           number: 3306

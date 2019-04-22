@@ -125,6 +125,21 @@
         <plugin name="enqueue_products_after_mass_attribute_update" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Model\Product\Action"/>
     </type>
 
+    <!-- Plugin to localize pdp prices -->
+    <type name="Magento\Catalog\Block\Product\View">
+        <plugin name="localize_pdp_prices" type="FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Block\Product\View"/>
+    </type>
+
+    <!-- Plugin to localize plp prices -->
+    <type name="Magento\Swatches\Block\Product\Renderer\Listing\Configurable">
+        <plugin name="localize_plp_prices" type="FlowCommerce\FlowConnector\Plugin\Magento\Swatches\Block\Product\Renderer\Listing\Configurable"/>
+    </type>
+
+    <!-- Plugin for default priceBox localization -->
+    <type name="Magento\Framework\Pricing\Render\PriceBox">
+        <plugin name="default_pricebox_localization" type="FlowCommerce\FlowConnector\Plugin\Magento\Framework\Pricing\Render\PriceBox"/>
+    </type>
+
     <type name="Magento\Setup\Model\FixtureGenerator\ProductGenerator">
         <arguments>
             <argument name="customTableMap" xsi:type="array">
@@ -153,6 +168,37 @@
     <type name="FlowCommerce\FlowConnector\Model\Session">
         <arguments>
             <argument name="storage" xsi:type="object">FlowCommerce\FlowConnector\Model\Session\Storage</argument>
+        </arguments>
+    </type>
+
+    <!-- Webhook Events and Sync Sku Admin Grids Data Sources -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="flowconnector_webhookevent_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\Grid\Collection</item>
+                <item name="flowconnector_syncsku_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Grid\Collection</item>
+                <item name="sales_order_webhookevent_grid_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\Order\WebhookEvent\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Webhook Events Grid Collection -->
+    <type name="FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">flow_connector_webhook_events</argument>
+            <argument name="eventPrefix" xsi:type="string">flowconnector_webhookevents_collection</argument>
+            <argument name="eventObject" xsi:type="string">webhookevents_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent</argument>
+        </arguments>
+    </type>
+
+    <!-- Sync Sku Grid Collection -->
+    <type name="FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">flow_connector_sync_skus</argument>
+            <argument name="eventPrefix" xsi:type="string">flowconnector_syncskus_collection</argument>
+            <argument name="eventObject" xsi:type="string">syncskus_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku</argument>
         </arguments>
     </type>
 </config>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    FlowCommerce
+ * @package     FlowCommerce_FlowConnector
+ * @author      FlowCommerce
+ * @copyright   Copyright (c) 2019 FlowCommerce
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="FlowCommerce_FlowConnector::css/country_picker.css" />
+    </head>
+    <body>
+        <referenceContainer name="before.body.end">
+            <block class="FlowCommerce\FlowConnector\Block\FlowCountryPicker" name="flowcommerce.flowconnector.country.picker"
+                   template="FlowCommerce_FlowConnector::flow-country-picker.phtml" after="-"/>
+            <block class="FlowCommerce\FlowConnector\Block\FlowJS" name="flowcommerce.flowconnector.flowjs"
+                   template="FlowCommerce_FlowConnector::flowjs.phtml" after="-"/>
+        </referenceContainer>
+        <!-- Adding container for country-picker -->
+        <referenceContainer name="header.panel">
+            <container name="flow.country.picker.wrapper" htmlTag="div" htmlClass="flow-country-picker" htmlId="flow-country-picker" after="-">
+                <block class="Magento\Framework\View\Element\Text">
+                    <arguments>
+                        <argument name="text" xsi:type="string"><![CDATA[&nbsp;]]></argument>
+                    </arguments>
+                </block>
+            </container>
+        </referenceContainer>
+        <!-- Adding container for country-picker -->
+    </body>
+</page>

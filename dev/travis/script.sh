@@ -2,8 +2,6 @@
 
 cd $HOME/magento
 
-php $HOME/magento/bin/magento app:config:dump
-
 if [ "$TEST_SUITE" = "integration_core" ]; then
     echo '==> Run Magento Core Integration tests.'
     php bin/magento dev:tests:run integration -vvv

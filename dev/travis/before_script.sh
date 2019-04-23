@@ -25,8 +25,8 @@ else
 fi
 
 echo "==> Requiring flowcommerce/flowconnector from the $build_branch branch"
-composer config repositories.flowconnector vcs git@github.com:$GITHUB_ORGANIZATION_NAME/$GITHUB_REPOSITORY_NAME.git
-composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
+# composer config repositories.flowconnector vcs git@github.com:$GITHUB_ORGANIZATION_NAME/$GITHUB_REPOSITORY_NAME.git
+# composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
 
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"
@@ -34,7 +34,7 @@ if [ "$TEST_SUITE" != "static_flow" ]; then
     php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" --backend-frontname=admin --db-host=localhost --db-name=magento --db-user=root --admin-firstname=Magento --admin-lastname=User --admin-email=hi@flow.io --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/New_York --use-rewrites=1
 
     echo "==> Enable extension and compile magento..."
-    php bin/magento module:enable FlowCommerce_FlowConnector
+    # php bin/magento module:enable FlowCommerce_FlowConnector
     php bin/magento setup:di:compile
 fi
 

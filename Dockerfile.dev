@@ -17,7 +17,6 @@ RUN composer config repositories.flowconnector '{ "type": "path", "url": "/opt/f
     composer config http-basic.repo.magento.com e09972697200676346ab7a6981ac63fa $MAGENTO2_REPO_PRIVATE_KEY
 
 RUN composer require --no-interaction flowcommerce/flowconnector *@dev \
-    magento/module-bundle-sample-data:100.2.* \
     magento/module-sales-sample-data:100.2.* \
     magento/module-customer-sample-data:100.2.* \
     magento/module-catalog-sample-data:100.2.* \

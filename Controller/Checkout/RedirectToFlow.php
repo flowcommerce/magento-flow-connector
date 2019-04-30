@@ -29,6 +29,8 @@ use Psr\Log\LoggerInterface;
 class RedirectToFlow extends \Magento\Framework\App\Action\Action
 {
     const URL_STUB_PREFIX = '/order/';
+    const FLOW_RETURN_URL = 'flow_return_url';
+    const FLOW_SUCCESS_CALLBACK = 'flowconnector/checkout/flowsuccess';
 
     /**
      * @var LoggerInterface
@@ -173,6 +175,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         $attribs = [];
         $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
         $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
+        $attribs[self::FLOW_RETURN_URL] = $this->storeManager->getStore()->getBaseUrl() . self::FLOW_SUCCESS_CALLBACK;
 
         $params = [];
 

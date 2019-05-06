@@ -4,6 +4,7 @@ namespace FlowCommerce\FlowConnector\Controller\Checkout;
 
 use Magento\Sales\Model\Order as OrderRepository;
 use Magento\Quote\Model\Quote as QuoteRepository;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Action\Context;
 use Psr\Log\LoggerInterface;
 
@@ -23,6 +24,11 @@ class FlowSuccess extends \Magento\Framework\App\Action\Action
     private $quoteRepository;
 
     /**
+     * @var CheckoutSession
+     */
+    private $checkoutSession;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -37,11 +43,13 @@ class FlowSuccess extends \Magento\Framework\App\Action\Action
     public function __construct(
         OrderRepository $orderRepository,
         QuoteRepository $quoteRepository,
+        CheckoutSession $checkoutSession,
         LoggerInterface $logger,
         Context $context
     ) {
         $this->orderRepository = $orderRepository;
         $this->quoteRepository = $quoteRepository;
+        $this->checkoutSession = $checkoutSession;
         $this->logger = $logger;
         parent::__construct($context);
     }
@@ -55,9 +63,15 @@ class FlowSuccess extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $order = $this->orderRepository->load('50');
-        $quote = $this->quoteRepository->load($order->getQuoteId());
-        /* var_dump(json_encode($quote->getData())); die(); */
+        /* $order = $this->orderRepository->load('50'); */
+        /* $quote = $this->quoteRepository->load($order->getQuoteId()); */ 
+
+        /* $session = $this->getOnepage()->getCheckout(); */
+        /* $session->clearQuote(); */
+
+        /* $quote = $this->quoteRepository->load('564'); */ 
+        /* $quote->removeAllItems()->save(); */
+
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('checkout/onepage/success');
         return $resultRedirect;

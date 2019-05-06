@@ -12,6 +12,7 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use FlowCommerce\FlowConnector\Model\Api\Session as ApiSession;
 use Magento\Quote\Model\Quote;
 use FlowCommerce\FlowConnector\Model\Api\Order\Get as OrderGet;
+use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class SessionManager implements SessionManagementInterface
@@ -30,6 +31,16 @@ class SessionManager implements SessionManagementInterface
      * Name of Flow session cookie update flag
      */
     const FLOW_SESSION_UPDATE_COOKIE_FLAG = 'flow_mage_session_update';
+
+    /**
+     * CUI Order Placed callback url field name
+     */
+    const FLOW_RETURN_URL = 'flow_return_url';
+
+    /**
+     * CUI Order Placed callback url slug
+     */
+    const FLOW_SUCCESS_CALLBACK = 'flowconnector/checkout/flowsuccess';
 
     /**
      * @var SessionManagerInterface
@@ -76,6 +87,11 @@ class SessionManager implements SessionManagementInterface
      */
     private $flowCartManager;
 
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
     /*
      * @var OrderGet
      */
@@ -96,6 +112,7 @@ class SessionManager implements SessionManagementInterface
      * @param CustomerSession $customerSession
      * @param CheckoutSession $checkoutSession
      * @param AddressRepositoryInterface $addressRepository
+     * @param StoreManagerInterface $storeManager
      * @param OrderGet $orderGet
      * @param LoggerInterface $logger
      */
@@ -108,6 +125,7 @@ class SessionManager implements SessionManagementInterface
         CustomerSession $customerSession,
         CheckoutSession $checkoutSession,
         AddressRepositoryInterface $addressRepository,
+        StoreManagerInterface $storeManager,
         OrderGet $orderGet,
         LoggerInterface $logger
     ) {
@@ -120,6 +138,7 @@ class SessionManager implements SessionManagementInterface
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
         $this->addressRepository = $addressRepository;
+        $this->storeManager = $storeManager;
         $this->orderGet = $orderGet;
         $this->logger = $logger;
     }
@@ -200,6 +219,7 @@ class SessionManager implements SessionManagementInterface
         $attribs = [];
         $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
         $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
+        $attribs[self::FLOW_RETURN_URL] = $this->storeManager->getStore()->getBaseUrl() . self::FLOW_SUCCESS_CALLBACK;
 
         $params = [];
 

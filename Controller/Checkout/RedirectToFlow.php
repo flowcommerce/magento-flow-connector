@@ -115,6 +115,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         $this->checkoutSession = $checkoutSession;
         $this->cookieManager = $cookieManager;
         $this->customerSession = $customerSession;
+        $this->sessionManager = $sessionManager;
         $this->flowHelper = $flowHelper;
         $this->jsonHelper = $jsonHelper;
         $this->logger = $logger;
@@ -139,7 +140,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
 
         $quote = $this->checkoutSession->getQuote();
         if ($quote->hasItems()) {
-            $url = $this->getCheckoutUrlWithCart($quote, $this->getRequest()->getParam("country"));
+            $url = $this->sessionManager->getCheckoutUrlWithCart($this->getRequest()->getParam("country"));
         } else {
             $url = $this->storeManager->getStore()->getBaseUrl();
         }
@@ -149,99 +150,5 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $result->setUrl($url);
         return $result;
-    }
-
-    /**
-     * Returns the full Flow checkout url with the specified items.
-     * https://docs.flow.io/checkout/checkout
-     *
-     * @param Quote $quote
-     * @param null $country
-     * @return string
-     * @throws LocalizedException
-     * @throws NoSuchEntityException
-     */
-    private function getCheckoutUrlWithCart($quote, $country = null)
-    {
-        /** @var Item[] $items */
-        $items = $quote->getItems();
-
-        $url = $this->urlBuilder->getFlowCheckoutEndpoint(
-            self::URL_STUB_PREFIX,
-            $this->storeManager->getStore()->getId()
-        ) . '?';
-
-        // Additional custom attributes to pass through hosted checkout
-        $attribs = [];
-        $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
-        $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
-        $attribs[self::FLOW_RETURN_URL] = $this->storeManager->getStore()->getBaseUrl() . self::FLOW_SUCCESS_CALLBACK;
-
-        $params = [];
-
-        if ($country) {
-            $params['country'] = $country;
-        }
-
-        if ($flowSessionId = $this->cookieManager->getCookie(Util::FLOW_SESSION_COOKIE)) {
-            $params['flow_session_id'] = $flowSessionId;
-        }
-
-        if ($customer = $this->customerSession->getCustomer()) {
-            $attribs[WebhookEvent::CUSTOMER_ID] = $customer->getId();
-            $attribs[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
-            $attribs[WebhookEvent::QUOTE_APPLIED_RULE_IDS] = $quote->getAppliedRuleIds();
-
-            // Add customer info
-            $params['customer[name][first]'] = $customer->getFirstname();
-            $params['customer[name][last]'] = $customer->getLastname();
-            $params['customer[number]'] = $customer->getId();
-            $params['customer[phone]'] = $customer->getTelephone();
-            $params['customer[email]'] = $customer->getEmail();
-
-            // Add default shipping address
-            if ($shippingAddressId = $customer->getDefaultShipping()) {
-                $shippingAddress = $this->addressRepository->getById($shippingAddressId);
-
-                $ctr = 0;
-                foreach ($shippingAddress->getStreet() as $street) {
-                    $params['destination[streets][' . $ctr . ']'] = $street;
-                    $ctr += 1;
-                }
-                $params['destination[city]'] = $shippingAddress->getCity();
-                $params['destination[province]'] = $shippingAddress->getRegion()->getRegionCode();
-                $params['destination[postal]'] = $shippingAddress->getPostcode();
-                $params['destination[country]'] = $shippingAddress->getCountryId();
-                $params['destination[contact][name][first]'] = $shippingAddress->getFirstname();
-                $params['destination[contact][name][last]'] = $shippingAddress->getLastname();
-                $params['destination[contact][company]'] = $shippingAddress->getCompany();
-                $params['destination[contact][email]'] = $customer->getEmail();
-                $params['destination[contact][phone]'] = $shippingAddress->getTelephone();
-            }
-        }
-
-        // Add cart items
-        $ctr = 0;
-        $currencyCode = $quote->getBaseCurrencyCode();
-        foreach ($items as $item) {
-            $params['items[' . $ctr . '][number]'] = $item->getSku();
-            $params['items[' . $ctr . '][quantity]'] = $item->getQty();
-            $params['items[' . $ctr . '][discount]'] = [
-                'amount' => $item->getBaseDiscountAmount(),
-                'currency' => $currencyCode
-            ];
-
-            $ctr += 1;
-        }
-
-        // Add custom attributes
-        foreach ($attribs as $k => $v) {
-            $params['attributes[' . $k . ']'] = $v;
-        }
-
-        $this->logger->info('CART: ' . $this->jsonHelper->jsonEncode($params));
-
-        $url = $url . http_build_query($params);
-        return $url;
     }
 }

@@ -29,8 +29,6 @@ use Psr\Log\LoggerInterface;
 class RedirectToFlow extends \Magento\Framework\App\Action\Action
 {
     const URL_STUB_PREFIX = '/order/';
-    const FLOW_RETURN_URL = 'flow_return_url';
-    const FLOW_SUCCESS_CALLBACK = 'flowconnector/checkout/flowsuccess';
 
     /**
      * @var LoggerInterface

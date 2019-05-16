@@ -89,18 +89,24 @@ class Save
      * Note the order must be submitted before its expiration
      * @param $body
      * @param array $query
+     * @param string $sessionId
      * @return array|bool
      * @throws NoSuchEntityException
      */
-    public function execute($body, $query = [])
+    public function execute($body, $query = [], $sessionId = null)
     {
         $storeId = $this->getCurrentStoreId();
 
         /** @var HttpClient $client */
-        $client = $this->httpClientFactory->create();
+        $client = $this->httpClientFactory->create(['options' => [
+            'headers' => [
+                'Authorization' => 'Session ' . $sessionId
+            ]
+        ]]);
         $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
 
         try {
+            $this->logger->info('Order create attempt: ' . json_encode($body));
             $response = $client->post($url, [
                 'auth' => $this->auth->getAuthHeader($storeId),
                 'body' => $this->jsonSerializer->serialize($body),
@@ -130,5 +136,101 @@ class Save
     private function getCurrentStoreId()
     {
         return $this->storeManager->getStore()->getId();
+    }
+
+    /**
+     * Create secure checkout redirect token
+     * @param string $flowOrderNumber
+     * @param string $sessionId
+     * @return string|null
+     * @throws NoSuchEntityException
+     */
+    public function createCheckoutToken($flowOrderNumber, $sessionId)
+    {
+        $storeId = $this->getCurrentStoreId();
+
+        /** @var HttpClient $client */
+        $client = $this->httpClientFactory->create(['options' => [
+            'headers' => [
+                'Authorization' => 'Session ' . $sessionId
+            ]
+        ]]);
+        $url = $this->urlBuilder->getFlowApiEndpoint('/checkout/tokens', $storeId);
+        $body = (object)[
+            "order_number" => $flowOrderNumber,
+            "session_id" => $sessionId,
+            "urls" => (object)[
+                "continue_shopping" => $this->storeManager->getStore()->getBaseUrl()
+            ]
+        ];
+
+        try {
+            $response = $client->post($url, [
+                'auth' => $this->auth->getAuthHeader($storeId),
+                'body' => $this->jsonSerializer->serialize($body),
+            ]);
+
+            if ((int) $response->getStatusCode() === 201) {
+                $this->logger->info('Checkout token created: ' . $response->getBody());
+                $return = (string) $response->getBody();
+            } else {
+                throw new Exception(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
+            }
+        } catch (Exception $e) {
+            $this->logger->info(sprintf('Checkout token creation failed due to: %s', $e->getMessage()));
+
+            throw $e;
+        }
+
+        $tokenResponse = json_decode($return);
+        if (isset($tokenResponse->id)) {
+            return $tokenResponse->id;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Update existing order
+     * @param string $flowOrderNumber
+     * @param $body
+     * @param array $query
+     * @param string $sessionId
+     * @return array|bool
+     * @throws NoSuchEntityException
+     */
+    public function update($flowOrderNumber, $body, $query, $sessionId)
+    {
+        $storeId = $this->getCurrentStoreId();
+
+        /** @var HttpClient $client */
+        $client = $this->httpClientFactory->create(['options' => [
+            'headers' => [
+                'Authorization' => 'Session ' . $sessionId
+            ]
+        ]]);
+        $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX . '/' . $flowOrderNumber, $storeId);
+
+        try {
+            $this->logger->info('Order update attempt: ' . json_encode($body));
+            $response = $client->put($url, [
+                'auth' => $this->auth->getAuthHeader($storeId),
+                'body' => $this->jsonSerializer->serialize($body),
+                'query' => $query
+            ]);
+
+            if ((int) $response->getStatusCode() === 200) {
+                $this->logger->info('Order updated: ' . $response->getBody());
+                $return = (string) $response->getBody();
+            } else {
+                throw new Exception(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
+            }
+        } catch (Exception $e) {
+            $this->logger->info(sprintf('Order update failed due to: %s', $e->getMessage()));
+
+            throw $e;
+        }
+
+        return $return;
     }
 }

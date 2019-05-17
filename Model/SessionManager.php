@@ -204,18 +204,19 @@ class SessionManager implements SessionManagementInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getCheckoutUrlWithCart($country = null)
+    public function getCheckoutUrlWithCart($country = null, $currency = null)
     {
         $quote = $this->checkoutSession->getQuote();
         $result = null;
 
         $items = $quote->getAllVisibleItems();
-        if (!$items || !$country) {
+        if (!$items || !$country || !$currency) {
             return null;
         }
 
         $query = [
             'country' => $country,
+            'currency' => $currency,
             'flow_session_id' => $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE),
             'experience' => $this->getSessionExperienceKey()
         ];
@@ -314,6 +315,20 @@ class SessionManager implements SessionManagementInterface
     }
 
     /**
+     * Get session experience currency
+     * @return string|null
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
+     */
+    public function getSessionExperienceCurrency()
+    {
+        $sessionData = $this->getFlowSessionData();
+        $currency = isset($sessionData['local']['currency']['iso_4217_3']) ? $sessionData['local']['currency']['iso_4217_3'] : null;
+        return $currency;
+    }
+
+    /**
      * Get session experience country
      * @return string|null
      * @throws \Magento\Framework\Exception\InputException
@@ -323,7 +338,7 @@ class SessionManager implements SessionManagementInterface
     public function getSessionExperienceCountry()
     {
         $sessionData = $this->getFlowSessionData();
-        $country = isset($sessionData['experience']['country']) ? $sessionData['experience']['country'] : null;
+        $country = isset($sessionData['local']['country']['iso_3166_3']) ? $sessionData['local']['country']['iso_3166_3'] : null;
         return $country;
     }
 

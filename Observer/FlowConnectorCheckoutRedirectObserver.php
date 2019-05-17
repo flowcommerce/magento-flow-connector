@@ -50,9 +50,10 @@ class FlowConnectorCheckoutRedirectObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $experienceCountry = $this->sessionManager->getSessionExperienceCountry();
+        $experienceCurrency = $this->sessionManager->getSessionExperienceCurrency();
         if ($this->configuration->isFlowEnabled()
             && $this->configuration->isRedirectEnabled()
-            && ($redirectUrl = $this->sessionManager->getCheckoutUrlWithCart($experienceCountry))) {
+            && ($redirectUrl = $this->sessionManager->getCheckoutUrlWithCart($experienceCountry,$experienceCurrency))) {
             $this->actionFlag->set('', \Magento\Framework\App\Action\Action::FLAG_NO_DISPATCH, true);
             $observer->getControllerAction()->getResponse()->setRedirect($redirectUrl);
         }

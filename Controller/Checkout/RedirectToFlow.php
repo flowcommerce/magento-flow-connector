@@ -138,7 +138,7 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
 
         $quote = $this->checkoutSession->getQuote();
         if ($quote->hasItems()) {
-            $url = $this->sessionManager->getCheckoutUrlWithCart($this->getRequest()->getParam("country"));
+            $url = $this->sessionManager->getCheckoutUrlWithCart($this->getRequest()->getParam("country"),$this->getRequest()->getParam("currency"));
         } else {
             $url = $this->storeManager->getStore()->getBaseUrl();
         }

@@ -158,10 +158,10 @@ class Save
         $url = $this->urlBuilder->getFlowApiEndpoint('/checkout/tokens', $storeId);
         $body = (object)[
             "order_number" => $flowOrderNumber,
-            "session_id" => $sessionId
-            /* "urls" => (object)[ */
-            /*     "continue_shopping" => $this->storeManager->getStore()->getBaseUrl() */
-            /* ] */
+            "session_id" => $sessionId,
+            "urls" => (object)[
+                /* "continue_shopping" => $this->storeManager->getStore()->getBaseUrl() */
+            ]
         ];
 
         try {

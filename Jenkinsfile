@@ -9,7 +9,7 @@ pipeline {
 
   agent {
     kubernetes {
-      label 'worker-magento-flow-connector'
+      label 'worker-magento-flow-connector-development'
       inheritFrom 'default'
 
       containerTemplates([
@@ -21,7 +21,7 @@ pipeline {
 
   environment {
     DOCKER_ORG = 'flowcommerce'
-    APP_NAME   = 'magento-flow-connector'
+    APP_NAME   = 'magento-flow-connector-development'
   }
 
   stages {

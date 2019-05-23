@@ -168,17 +168,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
 
             $this->assertNotNull($submittedAt);
 
-            /* TODO: Check behaviour on previously existing customer
-            This test is commented because if the customer already exists, he is loaded by email and assigned to the
-            order and the first and last names will be from the customer and not from the payload.
-            FlowCommerce\FlowConnector\Model\WebhookEvent::processOrderUpsertedV2 L1119
-            Customer Information
-            $payloadCustomerInfo = $payloadOrderInfo['customer'];
-            $this->assertEquals($payloadCustomerInfo['name']['first'], $order->getCustomerFirstname());
-            $this->assertEquals($payloadCustomerInfo['name']['last'], $order->getCustomerLastname());
-            $this->assertEquals($payloadCustomerInfo['email'], $order->getCustomerEmail());
-            */
-
             //Extract prices info
             $pricesInfo = [];
             foreach ($payloadOrderInfo['prices'] as $price) {
@@ -370,9 +359,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($baseDutyPrice * $quantity, $item->getFlowConnectorBaseDuty());
                 $this->assertEquals($roundingPrice * $quantity, $item->getFlowConnectorRounding());
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
-                // TODO, ensure Flow sends item discounts, temporarily expecting discounts to only come through on the order, disabling test until furthur notice
-                /* $this->assertEquals(round($itemDiscountAmount, 4), $item->getDiscountAmount()); */
-                /* $this->assertEquals(round($itemBaseDiscountAmount, 4), $item->getBaseDiscountAmount()); */
 
                 $itemCount++;
             }

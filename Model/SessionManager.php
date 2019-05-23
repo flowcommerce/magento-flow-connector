@@ -12,6 +12,8 @@ use Magento\Framework\Stdlib\CookieManagerInterface;
 use FlowCommerce\FlowConnector\Model\Api\Session as ApiSession;
 use Magento\Quote\Model\Quote;
 use FlowCommerce\FlowConnector\Model\Api\Order\Get as OrderGet;
+use FlowCommerce\FlowConnector\Model\Api\Order\Save as OrderSave;
+use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 
 class SessionManager implements SessionManagementInterface
@@ -76,10 +78,20 @@ class SessionManager implements SessionManagementInterface
      */
     private $flowCartManager;
 
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
     /*
      * @var OrderGet
      */
     private $orderGet;
+
+    /*
+     * @var OrderSave
+     */
+    private $orderSave;
 
     /**
      * @var LoggerInterface
@@ -96,7 +108,9 @@ class SessionManager implements SessionManagementInterface
      * @param CustomerSession $customerSession
      * @param CheckoutSession $checkoutSession
      * @param AddressRepositoryInterface $addressRepository
+     * @param StoreManagerInterface $storeManager
      * @param OrderGet $orderGet
+     * @param OrderSave $orderSave
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -108,7 +122,9 @@ class SessionManager implements SessionManagementInterface
         CustomerSession $customerSession,
         CheckoutSession $checkoutSession,
         AddressRepositoryInterface $addressRepository,
+        StoreManagerInterface $storeManager,
         OrderGet $orderGet,
+        OrderSave $orderSave,
         LoggerInterface $logger
     ) {
 
@@ -120,7 +136,9 @@ class SessionManager implements SessionManagementInterface
         $this->customerSession = $customerSession;
         $this->checkoutSession = $checkoutSession;
         $this->addressRepository = $addressRepository;
+        $this->storeManager = $storeManager;
         $this->orderGet = $orderGet;
+        $this->orderSave = $orderSave;
         $this->logger = $logger;
     }
 
@@ -186,47 +204,45 @@ class SessionManager implements SessionManagementInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getCheckoutUrlWithCart($country = null)
+    public function getCheckoutUrlWithCart($country = null, $currency = null)
     {
         $quote = $this->checkoutSession->getQuote();
+        $result = null;
 
         $items = $quote->getAllVisibleItems();
-        if (!$items || !$country) {
+        if (!$items || !$country || !$currency) {
             return null;
         }
 
+        $query = [
+            'country' => $country,
+            'currency' => $currency,
+            'flow_session_id' => $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE),
+            'experience' => $this->getSessionExperienceKey()
+        ];
 
-        // Additional custom attributes to pass through hosted checkout
-        $attribs = [];
-        $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
-        $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
+        $orderForm = (object)[ 
+            'attributes' => [
+                WebhookEvent::QUOTE_ID => $quote->getId(),
+                WebhookEvent::CHECKOUT_SESSION_ID => $this->checkoutSession->getSessionId(),
+                WebhookEvent::CUSTOMER_SESSION_ID => $this->customerSession->getSessionId()
+            ]
+        ];
 
-        $params = [];
-
-        if ($country) {
-            $params['country'] = $country;
-        }
-
-        // Removed, unnecessary for now
-        /* $flowOrderNumber = $quote->getFlowConnectorOrderNumber(); */
-        /* $query = ['number' => $flowOrderNumber]; */
-        /* $result = $this->orderGet->execute($query); */
-        /* $flowOrderData = reset($result); */
-        
-        if ($flowSessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE)) {
-            $params['flow_session_id'] = $flowSessionId;
-        }
-
-        if ($customer = $this->customerSession->getCustomer()) {
-            $attribs[WebhookEvent::CUSTOMER_ID] = $customer->getId();
-            $attribs[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
+        $customer = $this->customerSession->getCustomer(); 
+        if ($customer->getId()) {
+            $orderForm->attributes[WebhookEvent::CUSTOMER_ID] = (string)$customer->getId();
 
             // Add customer info
-            $params['customer[name][first]'] = $customer->getFirstname();
-            $params['customer[name][last]'] = $customer->getLastname();
-            $params['customer[number]'] = $customer->getId();
-            $params['customer[phone]'] = $customer->getTelephone();
-            $params['customer[email]'] = $customer->getEmail();
+            $orderForm->customer = (object)[
+                'name' => (object)[
+                    'first' => $customer->getFirstname(),
+                    'last' => $customer->getLastname(),
+                ],
+                'number' => (string)$customer->getId(),
+                'phone' => $customer->getTelephone(),
+                'email' => $customer->getEmail()
+            ];
 
             // Add default shipping address
             if ($shippingAddressId = $customer->getDefaultShipping()) {
@@ -234,28 +250,33 @@ class SessionManager implements SessionManagementInterface
 
                 // Using strpos since country codes coming from FlowJS will not match M2 country codes directly but will likely be contained within them
                 if (strpos($country, $shippingAddress->getCountryId()) !== FALSE) {
-                    $ctr = 0;
-                    foreach ($shippingAddress->getStreet() as $street) {
-                        $params['destination[streets][' . $ctr . ']'] = $street;
-                        $ctr += 1;
-                    }
-                    $params['destination[city]'] = $shippingAddress->getCity();
-                    $params['destination[province]'] = $shippingAddress->getRegion()->getRegionCode();
-                    $params['destination[postal]'] = $shippingAddress->getPostcode();
-                    $params['destination[country]'] = $country;
-                    $params['destination[contact][name][first]'] = $shippingAddress->getFirstname();
-                    $params['destination[contact][name][last]'] = $shippingAddress->getLastname();
-                    $params['destination[contact][company]'] = $shippingAddress->getCompany();
-                    $params['destination[contact][email]'] = $customer->getEmail();
-                    $params['destination[contact][phone]'] = $shippingAddress->getTelephone();
+                    $orderForm->destination = (object)[
+                        'streets' => $shippingAddress->getStreet(),
+                        'city' => $shippingAddress->getCity(),
+                        'province' => $shippingAddress->getRegion()->getRegionCode(),
+                        'postal' => $shippingAddress->getPostcode(), 
+                        'country' => $country,
+                        'contact' => (object)[
+                            'name' => (object)[
+                                'first' => $shippingAddress->getFirstname(),
+                                'last' => $shippingAddress->getLastname(),
+                            ],
+                            'company' => $shippingAddress->getCompany(),
+                            'email' => $customer->getEmail(),
+                            'phone' => $shippingAddress->getTelephone()
+                        ]
+                    ];
                 }
             }
         }
 
         // Add cart items
-        $ctr = 0;
+        $orderForm->items = [];
         foreach ($items as $item) {
-            $params['items[' . $ctr . '][number]'] = $item->getSku();
+            $lineItem = (object) [
+                'number' => $item->getSku(),
+                'quantity' => $item->getQty(),
+            ];
             $itemRowTotal = $item->getRowTotal();
             $itemDiscountAmount = $item->getDiscountAmount();
             $itemDiscountPercentage = 0.0;
@@ -263,22 +284,48 @@ class SessionManager implements SessionManagementInterface
                 $itemDiscountPercentage = (float)(($itemDiscountAmount / $itemRowTotal) * 100);
             }
 
-            $params['items[' . $ctr . '][quantity]'] = $item->getQty();
             if ($itemDiscountPercentage > 0) {
-                $params['items[' . $ctr . '][discounts][discounts][0][offer][discriminator]'] = 'discount_offer_percent';
-                $params['items[' . $ctr . '][discounts][discounts][0][offer][percent]'] = $itemDiscountPercentage;
-                $params['items[' . $ctr . '][discounts][discounts][0][label]'] = 'Discount';
+                $lineItem->discounts = (object)[
+                    'discounts' => [
+                        (object)[
+                            'offer' => (object)[
+                                'discriminator' => 'discount_offer_percent',
+                                'percent' => $itemDiscountPercentage
+                            ],
+                            'label' => 'Discount'
+                        ]
+                    ]
+                ];
             }
-            $ctr += 1;
+            $orderForm->items[] = $lineItem;
         }
 
-        // Add custom attributes
-        foreach ($attribs as $k => $v) {
-            $params['attributes[' . $k . ']'] = $v;
-        }
+        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
 
-        $this->logger->info('CART: ' . json_encode($params));
-        return $this->configuration->getFlowCheckoutUrl() . '?' . http_build_query($params);
+        if ($sessionId) {
+            $createdOrder = json_decode($this->orderSave->execute($orderForm, $query, $sessionId));
+            $tokenId = $this->orderSave->createCheckoutToken($createdOrder->number, $sessionId);
+            if (isset($createdOrder->number) && $tokenId) {
+                $result = $this->configuration::FLOW_CHECKOUT_BASE_URL . '/tokens/' . $tokenId;
+
+            }
+        } 
+
+        return $result;
+    }
+
+    /**
+     * Get session experience currency
+     * @return string|null
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
+     */
+    public function getSessionExperienceCurrency()
+    {
+        $sessionData = $this->getFlowSessionData();
+        $currency = isset($sessionData['local']['currency']['iso_4217_3']) ? $sessionData['local']['currency']['iso_4217_3'] : null;
+        return $currency;
     }
 
     /**
@@ -291,7 +338,7 @@ class SessionManager implements SessionManagementInterface
     public function getSessionExperienceCountry()
     {
         $sessionData = $this->getFlowSessionData();
-        $country = isset($sessionData['experience']['country']) ? $sessionData['experience']['country'] : null;
+        $country = isset($sessionData['local']['country']['iso_3166_3']) ? $sessionData['local']['country']['iso_3166_3'] : null;
         return $country;
     }
 
@@ -305,10 +352,10 @@ class SessionManager implements SessionManagementInterface
     public function getSessionExperienceKey()
     {
         $sessionData = $this->getFlowSessionData();
-        if ($country = isset($sessionData['experience']['key']) ? $sessionData['experience']['key'] : null) {
-            $this->logger->info('Current Experience Key: '.$country);
+        if ($key = isset($sessionData['experience']['key']) ? $sessionData['experience']['key'] : null) {
+            $this->logger->info('Current Experience Key: '.$key);
         }
-        return $country;
+        return $key;
     }
 
     /**

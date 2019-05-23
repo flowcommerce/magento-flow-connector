@@ -11,13 +11,6 @@ use Psr\Log\LoggerInterface as Logger;
 interface WebhookManagementInterface
 {
     /**
-     * Delete all Flow connector webhooks.
-     * @param $storeId
-     * @return void
-     */
-    public function deleteAllWebhooks($storeId);
-
-    /**
      * Returns a list of webhooks registered with Flow
      * @param $storeId
      * @return string[]

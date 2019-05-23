@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.0.1
+- Consolidate all checkout redirects to use the same method
+- Checkout redirects now use secure checkout tokens and maintain session continuity
+- Trivial magento marketplace validation adjustments
+- Removing outdated/obsolete TODO comments
+
 ## 2.0.0
 - FlowJS and Flow's Country Picker JS now included by default
 - FlowJS version option in back office

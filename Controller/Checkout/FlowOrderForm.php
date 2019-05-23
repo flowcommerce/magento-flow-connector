@@ -124,14 +124,14 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         $data = [];
 
         // Additional custom attributes to pass through hosted checkout
-        $attribs = [];
-        $attribs[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
-        $attribs[WebhookEvent::QUOTE_ID] = $quote->getId();
+        $attributes = [];
+        $attributes[WebhookEvent::CHECKOUT_SESSION_ID] = $this->checkoutSession->getSessionId();
+        $attributes[WebhookEvent::QUOTE_ID] = $quote->getId();
 
         if ($customer = $this->customerSession->getCustomer()) {
-            $attribs[WebhookEvent::CUSTOMER_ID] = $this->customerSession->getId();
-            $attribs[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
-            $attribs[WebhookEvent::QUOTE_APPLIED_RULE_IDS] = $quote->getAppliedRuleIds();
+            $attributes[WebhookEvent::CUSTOMER_ID] = $this->customerSession->getId();
+            $attributes[WebhookEvent::CUSTOMER_SESSION_ID] = $this->customerSession->getSessionId();
+            $attributes[WebhookEvent::QUOTE_APPLIED_RULE_IDS] = $quote->getAppliedRuleIds();
 
             // Add customer info
             $data['customer'] = [
@@ -189,7 +189,7 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         }
 
         // Add custom attributes
-        $data['attributes'] = $attribs;
+        $data['attributes'] = $attributes;
 
         $this->logger->info('CART: ' . $this->jsonHelper->jsonEncode($data));
         return $data;

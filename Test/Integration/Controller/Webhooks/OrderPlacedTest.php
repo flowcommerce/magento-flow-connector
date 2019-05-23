@@ -1,5 +1,7 @@
 <?php
 
+namespace FlowCommerce\FlowConnector\Test\Integration\Controller\Webhooks;
+
 use Magento\TestFramework\Request;
 use Magento\TestFramework\TestCase\AbstractController as ControllerTestCase;
 

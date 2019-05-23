@@ -3,6 +3,7 @@
 namespace FlowCommerce\FlowConnector\Model\LockManager;
 
 use \FlowCommerce\FlowConnector\Api\LockManagerInterface;
+use \FlowCommerce\FlowConnector\Model\LockManager\CantAcquireLockException;
 use \Magento\Framework\FlagManager;
 
 /**

@@ -110,45 +110,4 @@ class Renderer
         }
         return $item;
     }
-
-    /**
-     * Localize quote item currency
-     *
-     * @param ItemRenderer $subject
-     * @param callable $proceed
-     * @param $price
-     * @return float
-     */
-    public function aroundFormatPrice(ItemRenderer $subject, callable $proceed, $price)
-    {
-        // TODO remove for TESTING ONLY
-        if (true) {
-            return $proceed($price);
-        }
-
-        $item = $subject->getItem();
-        if(!($item instanceof QuoteItem)) {
-            return $proceed($price);
-        }
-
-        try {
-            $flowCart = $this->flowCartManager->getFlowCartData();
-            if(!$flowCart || !isset($flowCart['total']['currency'])) {
-                return $proceed($price);
-            }
-
-            if ($item->getPriceFlowLabel()) {
-                return '<span class="price">'.$item->getPriceFlowLabel().'</span>'; 
-            }
-            return $this->priceCurrency->format(
-                $price,
-                true,
-                PriceCurrencyInterface::DEFAULT_PRECISION,
-                $item->getStore(),
-                $flowCart['total']['currency']
-            );
-        } catch (Exception $e) {
-            $this->logger->error(sprintf('Unable to localize cart item currency due to exception %s', $e->getMessage()));
-        }
-    }
 }

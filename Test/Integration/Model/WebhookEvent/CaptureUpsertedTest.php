@@ -503,11 +503,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
             /** @var Order $order */
             $order = $orders->getFirstItem();
-
-            foreach ($order->getInvoiceCollection() as $invoice) {
-                //TODO: Uncomment assert when email sending is fixed
-                //$this->assertTrue((bool) $invoice->getEmailSent());
-            }
         }
     }
 

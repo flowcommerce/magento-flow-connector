@@ -81,12 +81,11 @@ abstract class Base extends \Magento\Framework\App\Action\Action implements Csrf
         parent::__construct($context);
     }
 
-    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
-    {
+    public function createCsrfValidationException(RequestInterface $request) {
         return null;
     }
 
-    public function validateForCsrf(RequestInterface $request): ?bool
+    public function validateForCsrf(RequestInterface $request)
     {
         return true;
     }
@@ -104,7 +103,6 @@ abstract class Base extends \Magento\Framework\App\Action\Action implements Csrf
      */
     public function execute()
     {
-
         $payload = $this->getRequest()->getContent();
 
         if ($this->configuration->isWebhookValidationEnabled()) {

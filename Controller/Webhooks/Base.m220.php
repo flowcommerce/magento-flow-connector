@@ -91,7 +91,6 @@ abstract class Base extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-
         $payload = $this->getRequest()->getContent();
 
         if ($this->configuration->isWebhookValidationEnabled()) {

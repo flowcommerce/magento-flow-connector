@@ -1,3 +1,52 @@
+.flow-consent-container {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 99999;
+}
+
+.flow-consent-message > p {
+    display: inline-block;
+    /* Displayed in client websites, used to avoid style conflicts */
+    color: white !important;
+}
+
+.flow-consent-message-container-notice {
+    background-color: #00c024;
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 0;
+    text-align: center;
+}
+
+.flow-consent-message-container-action {
+    background-color: #5a7ee5;
+    color: white;
+    font-size: 12px;
+    padding: 5px 0;
+    text-align: center;
+}
+
+.flow-consent-dismiss-btn {
+    cursor: pointer;
+    color: white;
+    padding-left: 32px;
+    text-decoration: underline;
+}
+
+.flow-consent-decision-positive {
+    cursor: pointer;
+    padding-left: 32px;
+    text-decoration: underline;
+}
+
+.flow-consent-decision-negative {
+    cursor: pointer;
+    padding-left: 16px;
+    text-decoration: underline;
+}
+
 /* Country Picker dropdown container (Name depends on element being used as a container) */
 .dropdown-container {
     display: inline-block;

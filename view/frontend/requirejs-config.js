@@ -22,6 +22,9 @@ var config = {
     },
     config: {
         mixins: {
+            'Magento_Configurable/js/configurable': {
+                'FlowCommerce_FlowConnector/js/configurable-mixin': true
+            },
             'Magento_Customer/js/customer-data': {
                 'FlowCommerce_FlowConnector/js/customer-data-mixin': true
             },

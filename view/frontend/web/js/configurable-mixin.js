@@ -17,9 +17,9 @@ define([
                     if (window.flow.magento2.optionsIndex == undefined) {
                         window.flow.magento2.optionsIndex = {};
                     }
-                    var productId = this.options.jsonConfig.productId;
+                    var productId = this.options.spConfig.productId;
                     var optionIndex = [];
-                    _.each(this.options.jsonConfig.index, function (option, key) {
+                    _.each(this.options.spConfig.index, function (option, key) {
                         var optionData = {
                             productId: key,
                             optionIds: []

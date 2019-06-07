@@ -1,14 +1,22 @@
+.flow-optin {
+    font-size: 0;
+    line-height: 0;
+}
+
 .flow-consent-container {
     position: absolute;
     top: 0;
     width: 100%;
     z-index: 99999;
+    font-size: 12px;
+    line-height: 1em;
 }
 
 .flow-consent-message > p {
     display: inline-block;
     /* Displayed in client websites, used to avoid style conflicts */
     color: white !important;
+    margin-bottom: 0;
 }
 
 .flow-consent-message-container-notice {

@@ -137,7 +137,8 @@ define([
                                 productId = optionData.productId;
                             }
                         });
-                    }                } catch (e) {
+                    }
+                } catch (e) {
                     // Options index either malformed or not available, use original product id instead as fallback
                 }
                 return productId;

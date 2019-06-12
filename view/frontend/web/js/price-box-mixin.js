@@ -146,7 +146,7 @@ define([
 
             getCurrentProductSku: function (productId, flowLocalizedPrices, flowLocalizationKey) {
                 try {
-                    return _.toArray(flowLocalizedPrices)[0][productId]['sku'];
+                    return _.toArray(flowLocalizedPrices)[0][productId].sku;
                 } catch (e) {
                     return false;
                 }

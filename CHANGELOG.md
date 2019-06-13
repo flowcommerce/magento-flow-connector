@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.0.2
+- Support breaking change between M2.2 and M2.3 for custom controller POST calls
+- Support configurable product variant selection for dropdown and swatch/dropdown cases
+- Opt-in support with default css
+- Renamed default css file to reflect entire extension, not only country picker
+
 ## 2.0.1
 - Consolidate all checkout redirects to use the same method
 - Checkout redirects now use secure checkout tokens and maintain session continuity

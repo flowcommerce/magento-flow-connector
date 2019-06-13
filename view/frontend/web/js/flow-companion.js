@@ -12,6 +12,7 @@ define([
     }(window,document,'script',window.flow_flowjs_url,'flow');
 
     window.flow.cmd('set', 'organization', window.flow_organization_id);
+    window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
     window.flow.cmd('init');
     window.flow.cmd('localize');
 

@@ -81,11 +81,12 @@ abstract class Base extends \Magento\Framework\App\Action\Action implements Csrf
         parent::__construct($context);
     }
 
-    public function createCsrfValidationException(RequestInterface $request) {
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
         return null;
     }
 
-    public function validateForCsrf(RequestInterface $request)
+    public function validateForCsrf(RequestInterface $request: ?InvalidRequestException
     {
         return true;
     }

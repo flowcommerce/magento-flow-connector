@@ -12,7 +12,8 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
     echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini && \
     mkdir -p /etc/resolvconf/resolv.conf.d && \
     touch /etc/resolvconf/resolv.conf.d/base && \
-    echo 'nameserver 8.8.8.8' >> /etc/resolvconf/resolv.conf.d/base
+    echo 'nameserver 8.8.8.8' >> /etc/resolvconf/resolv.conf.d/base && \
+    resolvconf -u
 
 RUN composer config repositories.flowconnector '{ "type": "path", "url": "/opt/flowcommerce/flowconnector", "options" : { "symlink": false } }' && \
     composer config repo.0 false && \

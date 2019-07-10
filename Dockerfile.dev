@@ -37,7 +37,7 @@ RUN composer require --no-interaction flowcommerce/flowconnector *@dev \
     magento/module-offline-shipping-sample-data:100.2.* \
     magento/module-swatches-sample-data:100.2.* \
     magento/sample-data-media:100.2.* \
-    --update-with-all-dependencies
+    --update-with-all-dependencies --no-update
 
 RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile

@@ -9,8 +9,7 @@ ARG MAGENTO2_REPO_PRIVATE_KEY
 RUN find . -type d -print0 | xargs -0 chmod 775 && \
     find . -type f -print0 | xargs -0 chmod 664 && \
     chown -R bitnami:daemon . && \
-    echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini && \
-    echo '34.202.44.159 repo.magento.com' >> /etc/hosts
+    echo 'memory_limit = 2048M' >> /opt/bitnami/php/lib/php.ini
 
 RUN composer config repositories.flowconnector '{ "type": "path", "url": "/opt/flowcommerce/flowconnector", "options" : { "symlink": false } }' && \
     composer config repo.0 false && \

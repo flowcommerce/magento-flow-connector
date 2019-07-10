@@ -1,4 +1,4 @@
-FROM bitnami/magento:2.2.6-debian-9-r8
+FROM bitnami/magento:2.3.2
 
 ADD . /opt/flowcommerce/flowconnector
 

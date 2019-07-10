@@ -14,7 +14,7 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
 RUN composer config repositories.flowconnector '{ "type": "path", "url": "/opt/flowcommerce/flowconnector", "options" : { "symlink": false } }' && \
     composer config repo.0 false && \
     composer config repositories.magento '{ "type": "composer", "url": "https://repo.magento.com" }' && \
-    composer config http-basic.repo.magento.com tech@flow.io $MAGENTO2_REPO_PRIVATE_KEY
+    composer config https://repo.magento.com e09972697200676346ab7a6981ac63fa $MAGENTO2_REPO_PRIVATE_KEY
 
 RUN composer require --no-interaction flowcommerce/flowconnector *@dev \
     magento/module-bundle-sample-data:100.2.* \

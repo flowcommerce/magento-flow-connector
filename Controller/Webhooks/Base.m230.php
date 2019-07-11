@@ -86,7 +86,7 @@ abstract class Base extends \Magento\Framework\App\Action\Action implements Csrf
         return null;
     }
 
-    public function validateForCsrf(RequestInterface $request: ?InvalidRequestException
+    public function validateForCsrf(RequestInterface $request): ?bool
     {
         return true;
     }

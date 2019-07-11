@@ -4,7 +4,7 @@ namespace FlowCommerce\FlowConnector\Console\Command;
 
 use Symfony\Component\Console\Logger\ConsoleLogger;
 
-final class FlowConsoleLogger extends ConsoleLogger {
+class FlowConsoleLogger extends ConsoleLogger {
 
     const DATE_FORMAT = 'l jS F, Y - H:i:s';
 

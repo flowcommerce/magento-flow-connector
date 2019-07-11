@@ -11,7 +11,7 @@ use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 /**
  * Command to process the webhook event queue.
  */
-final class WebhookEventProcessCommand extends BaseCommand
+class WebhookEventProcessCommand extends BaseCommand
 {
     /**
      * @var WebhookEventManager

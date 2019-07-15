@@ -36,7 +36,7 @@ RUN composer require --no-interaction flowcommerce/flowconnector *@dev \
     magento/module-grouped-product-sample-data:* \
     magento/module-offline-shipping-sample-data:* \
     magento/module-swatches-sample-data:* \
-    magento/sample-data-media:* \
+    magento/sample-data-media:*
 
 RUN php bin/magento module:enable --all
 RUN php bin/magento setup:di:compile

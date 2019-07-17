@@ -29,7 +29,7 @@ use Magento\Quote\Model\Quote\Address\Rate as ShippingRate;
 use Magento\Quote\Api\Data\CurrencyInterface as Currency;
 use Magento\Directory\Model\CountryFactory;
 use Magento\Directory\Model\RegionFactory;
-use Magento\Sales\Model\OrderFactory;
+use Magento\Sales\Model\OrderFactory as MagentoOrderFactory;
 use Magento\Payment\Model\MethodList as PaymentMethodList;
 use Magento\Sales\Api\OrderRepositoryInterface as OrderRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -200,7 +200,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     protected $regionFactory;
 
     /**
-     * @var OrderFactory
+     * @var MagentoOrderFactory
      */
     protected $orderFactory;
 
@@ -316,7 +316,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param Currency $currency
      * @param CountryFactory $countryFactory
      * @param RegionFactory $regionFactory
-     * @param OrderFactory $orderFactory
+     * @param MagentoOrderFactory $orderFactory
      * @param PaymentMethodList $methodList
      * @param OrderRepository $orderRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
@@ -359,7 +359,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         Currency $currency,
         CountryFactory $countryFactory,
         RegionFactory $regionFactory,
-        OrderFactory $orderFactory,
+        MagentoOrderFactory $orderFactory,
         PaymentMethodList $methodList,
         OrderRepository $orderRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
@@ -1315,8 +1315,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      */
     private function getOrderByFlowOrderNumber($number)
     {
-        $order = $this->orderFactory->create();
-        $order->load($number, 'ext_order_id');
+        $order = $this->orderFactory->create()->loadByAttribute($number, 'ext_order_id');
         $this->logger->info('EXTORDERID: ' . $number);
         $this->logger->info('GETEXTORDERID1: ' . $order->getExtOrderId());
         $this->logger->info('GETEXTORDERID2: ' . $order->getData('ext_order_id'));

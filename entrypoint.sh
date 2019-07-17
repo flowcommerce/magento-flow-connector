@@ -9,10 +9,10 @@ print_welcome_page
 if [[ "$1" == "nami" && "$2" == "start" ]] || [[ "$1" == "/run.sh" ]]; then
     . /apache-init.sh
     . /magento-init.sh
-    nami_initialize apache php mysql-client magento
-    chown -RH bitnami:daemon ${M2_ROOT}var
-    chown -RH bitnami:daemon ${M2_ROOT}generated
-    chown -RH bitnami:daemon ${M2_ROOT}app/etc
+
+    find ${M2_ROOT} -type d -print0 | xargs -0 chmod 775
+    find ${M2_ROOT} -type f -print0 | xargs -0 chmod 664
+    chown -RH bitnami:daemon ${M2_ROOT}
     echo -e '\nSetEnvIf X-Forwarded-Proto https HTTPS=on' >> .htaccess
 
     nami_initialize apache php mysql-client libphp magento

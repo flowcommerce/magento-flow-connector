@@ -19,4 +19,4 @@ php ${M2_ROOT}bin/magento cache:flush
 
 find ${M2_ROOT} -type d -print0 | xargs -0 chmod 775
 find ${M2_ROOT} -type f -print0 | xargs -0 chmod 664
-chown -R bitnami:daemon ${M2_ROOT}
+chown -RH bitnami:daemon ${M2_ROOT}

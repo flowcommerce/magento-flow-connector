@@ -810,6 +810,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $data = $this->getPayloadData();
 
         if (!empty($data['authorization']['order']['number']) || !empty($data['authorization']['key'])) {
+            $flowOrderNumber = $data['authorization']['order']['number'];
+            $status = $data['authorization']['result']['status'];
             if ((!empty($data['authorization']['order']['number'])
                     && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
                 ) ||
@@ -817,9 +819,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     && ($order = $this->getOrderByFlowAuthorizationId($data['authorization']['key']))
                 )
             ) {
-            $flowOrderNumber = $data['authorization']['order']['number'];
-            $status = $data['authorization']['result']['status'];
-            if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
                 $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
                 $this->processPaymentAuthorization($order, $data['authorization']);
                 if (in_array($status, ['authorized', 'declined'])) {

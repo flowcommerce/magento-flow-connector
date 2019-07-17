@@ -1317,6 +1317,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         $order = $this->orderFactory->create();
         $order->load($number, 'ext_order_id');
+        $this->logger->info('EXTORDERID: ' . $number);
+        $this->logger->info('GETEXTORDERID1: ' . $order->getExtOrderId());
+        $this->logger->info('GETEXTORDERID2: ' . $order->getData('ext_order_id'));
         return ($order->getExtOrderId()) ? $order : null;
     }
 

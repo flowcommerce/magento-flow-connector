@@ -809,7 +809,14 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->logger->info('Processing card_authorization_upserted_v2 data');
         $data = $this->getPayloadData();
 
-        if (array_key_exists('order', $data['authorization'])) {
+        if (!empty($data['authorization']['order']['number']) || !empty($data['authorization']['key'])) {
+            if ((!empty($data['authorization']['order']['number'])
+                    && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
+                ) ||
+                (!empty($data['authorization']['key'])
+                    && ($order = $this->getOrderByFlowAuthorizationId($data['authorization']['key']))
+                )
+            ) {
             $flowOrderNumber = $data['authorization']['order']['number'];
             $status = $data['authorization']['result']['status'];
             if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
@@ -826,7 +833,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');
             }
-
         } else {
             throw new WebhookException('Event data does not have order number.');
         }
@@ -843,10 +849,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->logger->info('Processing online_authorization_upserted_v2 data');
         $data = $this->getPayloadData();
 
-        if (array_key_exists('order', $data['authorization'])) {
+        if (!empty($data['authorization']['order']['number']) || !empty($data['authorization']['key'])) {
             $flowOrderNumber = $data['authorization']['order']['number'];
             $status = $data['authorization']['result']['status'];
-            if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
+            if ((!empty($data['authorization']['order']['number'])
+                    && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
+                ) ||
+                (!empty($data['authorization']['key'])
+                    && ($order = $this->getOrderByFlowAuthorizationId($data['authorization']['key']))
+                )
+            ) {
                 $this->logger->info('Found order id: ' . $order->getId() . ', Flow order number: ' . $flowOrderNumber);
                 $this->processPaymentAuthorization($order, $data['authorization']);
 
@@ -995,11 +1007,17 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $refund = $data['refund_capture']['refund'];
 
-        if (array_key_exists('order', $refund['authorization'])) {
+        if (!empty($data['authorization']['order']['number']) || !empty($data['authorization']['key'])) {
             $flowOrderNumber = $refund['authorization']['order']['number'];
             $orderPayment = null;
 
-            if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
+            if ((!empty($data['authorization']['order']['number'])
+                    && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
+                ) ||
+                (!empty($data['authorization']['key'])
+                    && ($order = $this->getOrderByFlowAuthorizationId($data['authorization']['key']))
+                )
+            ) {
                 foreach ($order->getPaymentsCollection() as $payment) {
                     $this->logger->info('Payment: ' . $payment->getId());
 
@@ -1062,11 +1080,17 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $refund = $data['refund'];
 
-        if (array_key_exists('order', $refund['authorization'])) {
+        if (!empty($data['authorization']['order']['number']) || !empty($data['authorization']['key'])) {
             $flowOrderNumber = $refund['authorization']['order']['number'];
             $orderPayment = null;
 
-            if ($order = $this->getOrderByFlowOrderNumber($flowOrderNumber)) {
+            if ((!empty($data['authorization']['order']['number'])
+                    && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
+                ) ||
+                (!empty($data['authorization']['key'])
+                    && ($order = $this->getOrderByFlowAuthorizationId($data['authorization']['key']))
+                )
+            ) {
                 foreach ($order->getPaymentsCollection() as $payment) {
                     $this->logger->info('Payment: ' . $payment->getId());
 

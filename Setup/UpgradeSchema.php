@@ -145,7 +145,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $installer->getConnection()->changeColumn(
             $installer->getTable('sales_order'),
             'ext_order_id',
-            'ext_order_id',
             [
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 'length' => 64,

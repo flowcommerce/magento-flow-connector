@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Command to cleanup Flow cron tasks.
  */
-final class CronCleanupCommand extends BaseCommand
+class CronCleanupCommand extends BaseCommand
 {
 
     /**

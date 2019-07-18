@@ -39,8 +39,8 @@ Syncronize your Magento 2 Catalog
 1. Run the following commands on your web server from your Magento 2 app root directory
 ```plaintext
 php bin/magento flow:flow-connector:catalog-sync-attributes-save
-php bin/magento flow:flow-connector:catalog-sync-process
 php bin/magento flow:flow-connector:catalog-sync-queue-all
+php bin/magento flow:flow-connector:catalog-sync-process
 ```
 
 ## Overview 

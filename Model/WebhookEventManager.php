@@ -242,12 +242,12 @@ class WebhookEventManager implements WebhookEventManagementInterface
     /**
      * {@inheritdoc}
      */
-    public function requeue(WebhookEvent $webHookEvent, $message)
+    public function requeue(WebhookEvent $webHookEvent, $message, $force = false)
     {
         $interval = \DateInterval::createFromDateString(self::REQUEUE_MAX_AGE . ' seconds');
         $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $webHookEvent->getCreatedAt());
         $triggeredAt = \DateTime::createFromFormat('Y-m-d H:i:s', $webHookEvent->getTriggeredAt());
-        if ($createdAt->add($interval) < $triggeredAt) {
+        if ($createdAt->add($interval) < $triggeredAt && !$force) {
             $this->markWebhookEventAsError(
                 $webHookEvent,
                 'REQUEUE_MAX_AGE of ' . self::REQUEUE_MAX_AGE . ' seconds reached'

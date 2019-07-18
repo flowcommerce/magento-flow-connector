@@ -10,28 +10,30 @@ addons:
     - postfix
   hosts:
   - travis.flow.io
+services:
+  - rabbitmq
 language: php
 git:
   depth: 5
 env:
   global:
-  - INTEGRATION_SETS=3
+  # - INTEGRATION_SETS=3
   - MAGENTO_HOST_NAME="travis.flow.io"
 matrix:
   include:
   - php: 7.1
-    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=static_flow
+    env: MAGENTO_VERSION=2.3.1 TEST_SUITE=static_flow
   - php: 7.1
-    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_flow
-  - php: 7.1
-    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=1
-    if: branch=master
-  - php: 7.1
-    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=2
-    if: branch=master
-  - php: 7.1
-    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=3
-    if: branch=master
+    env: MAGENTO_VERSION=2.3.1 TEST_SUITE=integration_flow
+  # - php: 7.1
+  #   env: MAGENTO_VERSION=2.3.1 TEST_SUITE=integration_core INTEGRATION_INDEX=1
+  #   if: branch=master
+  # - php: 7.1
+  #   env: MAGENTO_VERSION=2.3.1 TEST_SUITE=integration_core INTEGRATION_INDEX=2
+  #   if: branch=master
+  # - php: 7.1
+  #   env: MAGENTO_VERSION=2.3.1 TEST_SUITE=integration_core INTEGRATION_INDEX=3
+  #   if: branch=master
 cache:
   apt: true
   directories:

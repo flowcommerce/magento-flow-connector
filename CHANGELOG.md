@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.0.3
+- Webhook events can be requeued even after they reach max retries or time limit
+- Addresses new errors introduced in M2.3+, ensures up to M2.3.2 compatibility
+- Payment webhook events use Flow Authorization ID and/or Flow Order ID as unique indentifier
+- Updates demo store to use latest Magento version (M2.3.2)
+
 ## 2.0.2
 - Support breaking change between M2.2 and M2.3 for custom controller POST calls
 - Support configurable product variant selection for dropdown and swatch/dropdown cases

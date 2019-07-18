@@ -62,7 +62,7 @@ class Requeue extends Action
             $webhookEvent->load($id);
             if ($webhookEvent->getId()) {
                 try {
-                    $this->webhookEventManager->requeue($webhookEvent, '');
+                    $this->webhookEventManager->requeue($webhookEvent, '', true);
                     $this->messageManager->addSuccessMessage('The webhook has been requeued');
                 } catch (Exception $e) {
                     $this->messageManager->addExceptionMessage($e);

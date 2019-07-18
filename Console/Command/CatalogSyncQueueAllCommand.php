@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Command to sync the entire catalog to Flow.
  */
-final class CatalogSyncQueueAllCommand extends BaseCommand
+class CatalogSyncQueueAllCommand extends BaseCommand
 {
 
     /**

@@ -13,7 +13,7 @@ use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
 /**
  * Command to process the SyncSku queue.
  */
-final class CatalogSyncProcessCommand extends BaseCommand
+class CatalogSyncProcessCommand extends BaseCommand
 {
     /**
      * @var CatalogSync
@@ -41,6 +41,12 @@ final class CatalogSyncProcessCommand extends BaseCommand
             ->addArgument('num-to-process', InputArgument::OPTIONAL, 'Number of records to process. Defaults to processing all records.');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function execute(InputInterface $input, OutputInterface $output) {
         $numToProcess = $input->getArgument('num-to-process');
         if (!isset($numToProcess)) {

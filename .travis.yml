@@ -20,17 +20,17 @@ env:
 matrix:
   include:
   - php: 7.1
-    env: MAGENTO_VERSION=2.3.2 TEST_SUITE=static_flow
+    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=static_flow
   - php: 7.1
-    env: MAGENTO_VERSION=2.3.2 TEST_SUITE=integration_flow
+    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_flow
   - php: 7.1
-    env: MAGENTO_VERSION=2.3.2 TEST_SUITE=integration_core INTEGRATION_INDEX=1
+    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=1
     if: branch=master
   - php: 7.1
-    env: MAGENTO_VERSION=2.3.2 TEST_SUITE=integration_core INTEGRATION_INDEX=2
+    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=2
     if: branch=master
   - php: 7.1
-    env: MAGENTO_VERSION=2.3.2 TEST_SUITE=integration_core INTEGRATION_INDEX=3
+    env: MAGENTO_VERSION=2.2.7 TEST_SUITE=integration_core INTEGRATION_INDEX=3
     if: branch=master
 cache:
   apt: true

@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.0.4
+- Removing recurring deployment initialization, preventing overload of webhook registrations for development environments
+
 ## 2.0.3
 - Webhook events can be requeued even after they reach max retries or time limit
 - Addresses new errors introduced in M2.3+, ensures up to M2.3.2 compatibility

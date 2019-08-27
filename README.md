@@ -33,7 +33,16 @@ Login to your Magento 2 Back Office:
 1. From the left hand menu, click on Stores -> Configuration.
 2. Change the Scope to your store (or default store if you only have one).
 3. Select Flow Commerce -> Connector Settings, enable the connector and fill out your Flow Organization ID and Flow API Key.
-    - After saving the configuration, the module will connect to Flow and register webhooks. You can view webhooks from your Flow Console -> Organization Settings.
+    - After saving the configuration, the module will be able to connect to Flow's API
+
+Initialize Installation Settings
+1. Run the following command on your web server from your Magento 2 app root directory. This will accomplish:
+    - Webhook registration
+    - Fetching inventory center keys
+    - Generating price attributes in Flow
+```plaintext
+php bin/magento flow:flow-connector:integration-initialize
+```
 
 Syncronize your Magento 2 Catalog
 1. Run the following commands on your web server from your Magento 2 app root directory

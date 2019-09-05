@@ -2,10 +2,13 @@
 
 cd $HOME/magento
 
-if [ "$TEST_SUITE" = "integration_core" ]; then
-    echo '==> Run Magento Core Integration tests.'
-    php bin/magento dev:tests:run integration -vvv
-elif [ "$TEST_SUITE" = "static_flow" ]; then
+php $HOME/magento/bin/magento app:config:dump
+cat $HOME/magento/app/etc/config.php
+
+# if [ "$TEST_SUITE" = "integration_core" ]; then
+#     echo '==> Run Magento Core Integration tests.'
+#     php bin/magento dev:tests:run integration -vvv
+if [ "$TEST_SUITE" = "static_flow" ]; then
     echo '==> Configure PHP code sniffer'
     composer require "magento-ecg/coding-standard"
     php $HOME/magento/vendor/bin/phpcs --config-set installed_paths $HOME/magento/vendor/magento-ecg/coding-standard

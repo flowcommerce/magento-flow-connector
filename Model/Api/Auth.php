@@ -75,6 +75,24 @@ class Auth
     }
 
     /**
+     * Returns true when Flow Organization ID status set in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isFlowSandboxOrganization($storeId = null)
+    {
+        $result = false;
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+        if (strpos($this->scopeConfig->getValue(self::FLOW_ORGANIZATION_ID, ScopeInterface::SCOPE_STORE, $storeId), '-sandbox')) {
+            $result = true;
+        }
+        return $result ;
+    }
+
+    /**
      * Returns the Flow API Token set in the Admin Store Configuration.
      * @param int|null $storeId
      * @return string

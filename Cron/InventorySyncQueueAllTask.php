@@ -4,6 +4,7 @@ namespace FlowCommerce\FlowConnector\Cron;
 
 use \Psr\Log\LoggerInterface as Logger;
 use \FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface as InventorySyncManager;
+use \FlowCommerce\FlowConnector\Model\Api\Auth;
 
 /**
  * Cron Task wrapper class to run catalog sync queue all.
@@ -21,6 +22,11 @@ class InventorySyncQueueAllTask
      */
     private $logger;
 
+    /** 
+     * @var Auth 
+     */
+    private $auth;
+
     /**
      * CatalogSyncQueueAllTask constructor.
      * @param Logger $logger
@@ -28,10 +34,12 @@ class InventorySyncQueueAllTask
      */
     public function __construct(
         Logger $logger,
-        InventorySyncManager $inventorySyncManager
+        InventorySyncManager $inventorySyncManager,
+        Auth $auth
     ) {
         $this->logger = $logger;
         $this->inventorySyncManager = $inventorySyncManager;
+        $this->auth = $auth;
     }
 
     /**
@@ -40,7 +48,9 @@ class InventorySyncQueueAllTask
      */
     public function execute()
     {
-        $this->logger->info('Running InventorySyncQueueAllTask execute.');
-        $this->inventorySyncManager->enqueueAllStockItems();
+        if ($this->auth->isFlowSandboxOrganization()) {
+            $this->logger->info('Running InventorySyncQueueAllTask execute.');
+            $this->inventorySyncManager->enqueueAllStockItems();
+        }
     }
 }

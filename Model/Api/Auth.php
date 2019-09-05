@@ -77,7 +77,7 @@ class Auth
     /**
      * Returns true when Flow Organization ID status set in the Admin Store Configuration.
      * @param int|null $storeId
-     * @return bool
+     * @return boolean
      * @throws NoSuchEntityException
      */
     public function isFlowSandboxOrganization($storeId = null)

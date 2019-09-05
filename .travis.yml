@@ -17,7 +17,7 @@ git:
   depth: 5
 env:
   global:
-  # - INTEGRATION_SETS=3
+  - INTEGRATION_SETS=3
   - MAGENTO_HOST_NAME="travis.flow.io"
 matrix:
   include:

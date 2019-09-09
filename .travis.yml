@@ -14,9 +14,6 @@ services:
   - rabbitmq
   - elasticsearch
 language: php
-php:
-  - 7.1
-  - 7.2
 git:
   depth: 5
 env:

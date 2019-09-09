@@ -35,6 +35,7 @@ if [ "$TEST_SUITE" != "static_flow" ]; then
 
     echo "==> Enable extension and compile magento..."
     php bin/magento module:enable FlowCommerce_FlowConnector
+    php bin/magento setup:upgrade
     php bin/magento setup:di:compile
 fi
 

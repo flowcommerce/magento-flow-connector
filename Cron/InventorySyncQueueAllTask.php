@@ -48,9 +48,11 @@ class InventorySyncQueueAllTask
      */
     public function execute()
     {
-        if ($this->auth->isFlowSandboxOrganization()) {
+        if (!$this->auth->isFlowSandboxOrganization()) {
             $this->logger->info('Running InventorySyncQueueAllTask execute.');
             $this->inventorySyncManager->enqueueAllStockItems();
+        } else {
+            $this->logger->info('Skipping InventorySyncQueueAllTask due to sandbox config');
         }
     }
 }

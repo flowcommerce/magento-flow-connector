@@ -48,7 +48,7 @@ class CatalogSyncQueueAllTask
      */
     public function execute()
     {
-        if (!$this->auth->isFlowSandboxOrganization()) {
+        if ($this->auth->isFlowProductionOrganization()) {
             $this->logger->info('Running CatalogSyncQueueAllTask execute.');
             $this->syncSkuManager->enqueueAllProducts();
         } else {

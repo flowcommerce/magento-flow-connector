@@ -75,21 +75,22 @@ class Auth
     }
 
     /**
-     * Returns true when Flow Organization ID status set in the Admin Store Configuration.
+     * Returns true when Flow Organization ID exists and is not a sandbox
      * @param int|null $storeId
      * @return boolean
      * @throws NoSuchEntityException
      */
-    public function isFlowSandboxOrganization($storeId = null)
+    public function isFlowProductionOrganization($storeId = null)
     {
         $result = false;
         if ($storeId === null) {
             $storeId = $this->getCurrentStoreId();
         }
-        if (strpos($this->scopeConfig->getValue(self::FLOW_ORGANIZATION_ID, ScopeInterface::SCOPE_STORE, $storeId), '-sandbox')) {
+        $orgId = $this->getFlowOrganizationId($storeId);
+        if (strlen($orgId) > 1 && !strpos($orgId, '-sandbox')) {
             $result = true;
-        }
-        return $result ;
+        } 
+        return $result;
     }
 
     /**

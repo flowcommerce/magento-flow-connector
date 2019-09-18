@@ -7,7 +7,7 @@ use \FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface as Inventor
 use \FlowCommerce\FlowConnector\Model\Api\Auth;
 
 /**
- * Cron Task wrapper class to run catalog sync queue all.
+ * Cron Task wrapper class to run inventory sync queue all.
  * @package FlowCommerce\FlowConnector\Cron
  */
 class InventorySyncQueueAllTask
@@ -48,7 +48,7 @@ class InventorySyncQueueAllTask
      */
     public function execute()
     {
-        if (!$this->auth->isFlowSandboxOrganization()) {
+        if ($this->auth->isFlowProductionOrganization()) {
             $this->logger->info('Running InventorySyncQueueAllTask execute.');
             $this->inventorySyncManager->enqueueAllStockItems();
         } else {

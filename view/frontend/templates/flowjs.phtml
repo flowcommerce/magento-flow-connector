@@ -61,7 +61,7 @@ body.flow-catalog-localized [data-role="priceBox"] span.price {
 }
 </style>
 <?php endif; ?>
-<?php if($block->getFlowMaxCartHideMs() > 0): ?>
+<?php if((int)$block->getFlowMaxCartHideMs() > 0): ?>
 <style>
 body.checkout-cart-index .cart-container span.price,
 body.checkout-cart-index #cart-totals span.price,

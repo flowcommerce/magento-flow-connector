@@ -20,6 +20,7 @@ define([
     window.flow.cart = window.flow.cart || {};
     window.flow.magento2 = window.flow.magento2 || {};
     window.flow.magento2.enabled = window.flow_enabled;
+    window.flow.magento2.production = window.flow_production;
     window.flow.magento2.cart_localize = window.flow_cart_localize;
     window.flow.magento2.catalog_localize = window.flow_catalog_localize;
     window.flow.magento2.pricing_timeout = window.flow_pricing_timeout;

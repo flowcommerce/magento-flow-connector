@@ -35,12 +35,12 @@ class FlowCountryPicker extends Template
 
     /**
      * Check if country picker is enabled
-     * @return bool
+     * @return boolean
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function isCountryPickerEnabled()
     {
-        return (bool) $this->configuration->isCountryPickerEnabled();
+        return $this->configuration->isCountryPickerEnabled();
     }
 
 }

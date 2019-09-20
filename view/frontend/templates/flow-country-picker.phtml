@@ -12,5 +12,5 @@
 /** @var $block \FlowCommerce\FlowConnector\Block\FlowCountryPicker */
 ?>
 <script type="text/javascript">
-window.flow_country_picker_enabled = <?php echo $block->isCountryPickerEnabled(); ?>
+window.flow_country_picker_enabled = <?php echo (int)$block->isCountryPickerEnabled(); ?>
 </script>

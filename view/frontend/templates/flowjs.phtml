@@ -15,11 +15,12 @@
 <script type="text/javascript">
 window.flow_enabled = true;
 window.flow_organization_id = "<?php echo $block->getFlowOrganizationId(); ?>";
+window.flow_production = "<?php echo (int)$block->isFlowProduction(); ?>";
 window.flow_flowjs_url = "<?php echo $block->getFlowJsUrl(); ?>";
-window.flow_cart_localize = <?php echo $block->isFlowCartLocalize(); ?>;
-window.flow_catalog_localize = <?php echo $block->isFlowCatalogLocalize(); ?>;
-window.flow_pricing_timeout = "<?php echo $block->getFlowMaxCatalogHideMs(); ?>";
-window.flow_cart_timeout = "<?php echo $block->getFlowMaxCartHideMs(); ?>";
+window.flow_cart_localize = <?php echo (int)$block->isFlowCartLocalize(); ?>;
+window.flow_catalog_localize = <?php echo (int)$block->isFlowCatalogLocalize(); ?>;
+window.flow_pricing_timeout = "<?php echo (int)$block->getFlowMaxCatalogHideMs(); ?>";
+window.flow_cart_timeout = "<?php echo (int)$block->getFlowMaxCartHideMs(); ?>";
 setTimeout(function(){
     if (window.flow == undefined) {
         document.getElementsByTagName('body')[0].classList.add('flow-catalog-localized');
@@ -60,7 +61,7 @@ body.flow-catalog-localized [data-role="priceBox"] span.price {
 }
 </style>
 <?php endif; ?>
-<?php if($block->getFlowMaxCartHideMs() > 0): ?>
+<?php if((int)$block->getFlowMaxCartHideMs() > 0): ?>
 <style>
 body.checkout-cart-index .cart-container span.price,
 body.checkout-cart-index #cart-totals span.price,

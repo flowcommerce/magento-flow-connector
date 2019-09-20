@@ -19,7 +19,7 @@ define([
                 miniCart = $('[data-block=\'minicart\']');
                 body = $('[data-container=\'body\']');
                 window.flow.magento2.miniCartAvailable = false;
-                flowMiniCartLocalize = function (source, waitTimeMs = 0) {
+                flowMiniCartLocalize = function (source, waitTimeMs) {
                     window.flow.magento2.hideCart();
                     window.flow.magento2.hideCartTotals();
                     setTimeout(function(){
@@ -35,7 +35,7 @@ define([
                     // Is not Cart page
                     window.flow.magento2.miniCartAvailable = true;
                     miniCart.attr('data-flow-cart-container', '');
-                    miniCart.on('dropdowndialogopen', function(){flowMiniCartLocalize('open')});
+                    miniCart.on('dropdowndialogopen', function(){flowMiniCartLocalize('open', 0)});
                     miniCart.on('contentUpdated', function(){flowMiniCartLocalize('minicart.contentUpdated', 500)});
                 }
                 return result;

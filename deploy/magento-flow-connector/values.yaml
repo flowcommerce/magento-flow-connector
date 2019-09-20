@@ -6,7 +6,7 @@ service:
 
 iamRole: arn:aws:iam::479720515435:role/ecsInstanceRole
 image:
-  repository: flowcommerce/magento-flow-connector-development
+  repository: flowcommerce/magento-flow-connector
   pullPolicy: IfNotPresent
 resources:
   requests:
@@ -26,16 +26,16 @@ ingress:
     - key: flo-pub
       tld: flo.pub
       hosts:
-        - magento-development.flo.pub
+        - magento.flo.pub
 
 services:
   live:
     hosts:
-      - magento-flow-connector-development
-      - magento-development.flo.pub
+      - magento-flow-connector
+      - magento.flo.pub
     gateways:
       - mesh
-      - magento-flow-connector-development-flo-pub
+      - magento-flow-connector-flo-pub
     stages:
       - deployment: live
         weight: 100
@@ -44,10 +44,10 @@ deployments:
   live:
     replicaCount: 1
     version: master-1
-    host: magento-development.flo.pub
+    host: magento.flo.pub
     env:
       - name: MAGENTO_HOST
-        value: magento-development.flo.pub
+        value: magento.flo.pub
 
 magento:
   mode: developer

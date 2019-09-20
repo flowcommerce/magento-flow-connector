@@ -73,10 +73,6 @@ class DefaultConfigProvider
                     $subtotal = $price['amount'];
                     $currency = $price['currency'];
                 }
-                // TODO Implement shipping
-                /* if($price['key'] === 'shipping') { */
-                /*     $shippingSubtotal = $price['amount']; */
-                /* } */
             }
 
             if(!$subtotal || !$currency) {

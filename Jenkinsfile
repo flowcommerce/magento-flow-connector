@@ -9,7 +9,7 @@ pipeline {
 
   agent {
     kubernetes {
-      label 'worker-magento-flow-connector'
+      label 'worker-magento-flow-connector-development'
       inheritFrom 'default'
 
       containerTemplates([
@@ -21,7 +21,7 @@ pipeline {
 
   environment {
     DOCKER_ORG = 'flowcommerce'
-    APP_NAME   = 'magento-flow-connector'
+    APP_NAME   = 'magento-flow-connector-development'
   }
 
   stages {
@@ -46,7 +46,7 @@ pipeline {
           withCredentials([string(credentialsId: 'magento2-repo-keys', variable: 'magento2_repo_private_key')]) {
             script {
               docker.withRegistry('https://index.docker.io/v1/', 'jenkins-dockerhub') {
-                image = docker.build( "$DOCKER_ORG/$APP_NAME:$IMAGE_TAG", '--build-arg MAGENTO2_REPO_PRIVATE_KEY=$magento2_repo_private_key -f Dockerfile.dev .' )
+                image = docker.build( "$DOCKER_ORG/$APP_NAME:$IMAGE_TAG", '--network=host --build-arg MAGENTO2_REPO_PRIVATE_KEY=$magento2_repo_private_key -f Dockerfile.dev .' )
                 image.push()
               }
             }

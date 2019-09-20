@@ -6,19 +6,17 @@ M2_ROOT="/opt/bitnami/magento/htdocs/"
 
 print_welcome_page
 
-echo "Initilizing magento..."
-echo "NAMI_DEBUG=$NAMI_DEBUG"
-echo "NAMI_LOG_LEVEL=$NAMI_LOG_LEVEL"
+if [[ "$1" == "nami" && "$2" == "start" ]] || [[ "$1" == "/run.sh" ]]; then
+    . /apache-init.sh
+    . /magento-init.sh
 
-usermod -aG sudo bitnami
+    find ${M2_ROOT} -type d -print0 | xargs -0 chmod 775
+    find ${M2_ROOT} -type f -print0 | xargs -0 chmod 664
+    chown -RH bitnami:daemon ${M2_ROOT}
+    echo -e '\nSetEnvIf X-Forwarded-Proto https HTTPS=on' >> .htaccess
 
-. /init.sh
-chown -RH bitnami:daemon ${M2_ROOT}var
-chown -RH bitnami:daemon ${M2_ROOT}generated
-chown -RH bitnami:daemon ${M2_ROOT}app/etc
-echo -e '\nSetEnvIf X-Forwarded-Proto https HTTPS=on' >> .htaccess
-
-nami_initialize apache php mysql-client libphp magento
-info "Starting magento... "
+    nami_initialize apache php mysql-client libphp magento
+    info "Starting magento... "
+fi
 
 exec tini -- "$@"

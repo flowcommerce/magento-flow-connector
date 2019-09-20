@@ -1,5 +1,33 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.1.0
+- Removing daily batch catalog syncing for sandbox environments
+- Exposing methods to determine production status (boolean)
+- Patching compatiblity for IE11, removing dependencies on ES6
+- Dropping support for Magento versions below 2.3 due to breaking changes and in anticipation of Magento deprecating version 2.2 as of December 2019
+- Updating testing suite to include Magento version 2.3.2
+
+## 2.0.4
+- Removing recurring deployment initialization, preventing overload of webhook registrations for development environments
+
+## 2.0.3
+- Webhook events can be requeued even after they reach max retries or time limit
+- Addresses new errors introduced in M2.3+, ensures up to M2.3.2 compatibility
+- Payment webhook events use Flow Authorization ID and/or Flow Order ID as unique indentifier
+- Updates demo store to use latest Magento version (M2.3.2)
+
+## 2.0.2
+- Support breaking change between M2.2 and M2.3 for custom controller POST calls
+- Support configurable product variant selection for dropdown and swatch/dropdown cases
+- Opt-in support with default css
+- Renamed default css file to reflect entire extension, not only country picker
+
+## 2.0.1
+- Consolidate all checkout redirects to use the same method
+- Checkout redirects now use secure checkout tokens and maintain session continuity
+- Trivial magento marketplace validation adjustments
+- Removing outdated/obsolete TODO comments
+
 ## 2.0.0
 - FlowJS and Flow's Country Picker JS now included by default
 - FlowJS version option in back office

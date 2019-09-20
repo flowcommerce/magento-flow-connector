@@ -129,13 +129,15 @@ define([
 
             getCurrentProductId: function (productId) {
                 try {
-                    if (!_.contains(window.flow.magento2.optionsSelected[productId], false) && window.flow.magento2.optionsIndex[productId] != undefined) {
+                    if (window.flow.magento2.simpleProduct != undefined) {
+                        productId = window.flow.magento2.simpleProduct;
+                    } else if (!_.contains(window.flow.magento2.optionsSelected[productId], false) && window.flow.magento2.optionsIndex[productId] != undefined) {
                         _.each(window.flow.magento2.optionsIndex[productId], function (optionData) {
                             if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[productId]).length == 0) {
                                 productId = optionData.productId;
                             }
                         });
-                    } 
+                    }
                 } catch (e) {
                     // Options index either malformed or not available, use original product id instead as fallback
                 }
@@ -144,7 +146,7 @@ define([
 
             getCurrentProductSku: function (productId, flowLocalizedPrices, flowLocalizationKey) {
                 try {
-                    return flowLocalizedPrices[flowLocalizationKey][productId]['sku'];
+                    return _.toArray(flowLocalizedPrices)[0][productId].sku;
                 } catch (e) {
                     return false;
                 }

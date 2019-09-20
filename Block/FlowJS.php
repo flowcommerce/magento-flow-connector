@@ -49,6 +49,11 @@ class FlowJS extends Template
         return $this->auth->getFlowOrganizationId() && $this->configuration->getFlowJsVersion();
     }
 
+    public function isFlowProduction()
+    {
+        return $this->auth->isFlowProductionOrganization();
+    }
+
     /**
      * Return flowjs version
      * @return string

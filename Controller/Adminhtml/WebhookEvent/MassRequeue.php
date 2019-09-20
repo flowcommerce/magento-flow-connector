@@ -68,7 +68,7 @@ class MassRequeue extends Action
         $collectionSize = $collection->getSize();
 
         foreach ($collection as $webhookEvent) {
-            $this->webhookEventManager->requeue($webhookEvent, '');
+            $this->webhookEventManager->requeue($webhookEvent, '', true);
         }
 
         $this->messageManager->addSuccess(__('A total of %1 webhook event(s) have been requeued.', $collectionSize));

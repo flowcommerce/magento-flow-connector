@@ -6,6 +6,9 @@ use FlowCommerce\FlowConnector\Model\Configuration;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\Controller\ResultFactory;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use Magento\Framework\Event\ManagerInterface;
@@ -16,7 +19,7 @@ use FlowCommerce\FlowConnector\Model\WebhookManager\PayloadValidator;
 /**
  * Base controller to help with webhook events.
  */
-abstract class Base extends \Magento\Framework\App\Action\Action
+abstract class Base extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface
 {
 
     /**
@@ -77,6 +80,16 @@ abstract class Base extends \Magento\Framework\App\Action\Action
         parent::__construct($context);
     }
 
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return null;
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
+    }
+
     /**
      * Returns the event type for the webhook.
      */
@@ -90,7 +103,6 @@ abstract class Base extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-
         $payload = $this->getRequest()->getContent();
 
         if ($this->configuration->isWebhookValidationEnabled()) {

@@ -144,22 +144,6 @@ class WebhookManager implements WebhookManagementInterface
      * {@inheritdoc}
      * @throws NoSuchEntityException
      */
-    public function deleteAllWebhooks($storeId)
-    {
-        $webhooks = $this->getRegisteredWebhooks($storeId);
-        foreach ($webhooks as $webhook) {
-            if (strpos($webhook['url'], '/flowconnector/webhooks/') &&
-                strpos($webhook['url'], 'storeId=' . $storeId)) {
-                $this->logger->info('Deleting webhook: ' . $webhook['url']);
-                $this->webhookDeleteApiClient->execute($storeId, $webhook['id']);
-            }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     * @throws NoSuchEntityException
-     */
     public function getRegisteredWebhooks($storeId)
     {
         if (!$this->configuration->isFlowEnabled($storeId)) {

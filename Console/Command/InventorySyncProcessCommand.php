@@ -12,7 +12,7 @@ use FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface as Inventory
 /**
  * Command to process the Inventory Sync queue.
  */
-final class InventorySyncProcessCommand extends BaseCommand
+class InventorySyncProcessCommand extends BaseCommand
 {
     /**
      * @var InventoryManager

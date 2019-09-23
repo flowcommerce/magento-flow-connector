@@ -6,9 +6,9 @@ use \Psr\Log\LoggerInterface as Logger;
 use FlowCommerce\FlowConnector\Model\CronManager;
 
 /**
-* Cron cleanup task.
-* @package FlowCommerce\FlowConnector\Cron
-*/
+ * Cron cleanup task.
+ * @package FlowCommerce\FlowConnector\Cron
+ */
 class CronCleanupTask
 {
     /**
@@ -45,3 +45,4 @@ class CronCleanupTask
         $this->logger->info('Finished CronCleanupTask.');
     }
 }
+

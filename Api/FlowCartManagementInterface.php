@@ -14,11 +14,10 @@ interface FlowCartManagementInterface
      */
     public function getFlowCartData();
 
-
     /**
      * Sync cart data
      * @return mixed
      */
     public function syncCartData();
-
 }
+

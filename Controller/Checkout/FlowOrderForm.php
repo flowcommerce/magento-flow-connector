@@ -21,7 +21,8 @@ use Psr\Log\LoggerInterface;
  *
  * https://docs.flow.io/type/order-form
  */
-class FlowOrderForm extends \Magento\Framework\App\Action\Action {
+class FlowOrderForm extends \Magento\Framework\App\Action\Action
+{
     /**
      * @var LoggerInterface
      */
@@ -195,3 +196,4 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action {
         return $data;
     }
 }
+

@@ -75,3 +75,4 @@ class Start extends Action
         return substr($this->getRequest()->getParam(self::EXPERIENCE_PARAM_KEY), 0, 3);
     }
 }
+

@@ -32,8 +32,7 @@ class CatalogSyncQueueAllCommand extends BaseCommand
     ) {
         parent::__construct($appState, $registry);
         $this->syncSkuManager = $syncSkuManager;
-    }
-
+    } 
 
     /**
      * Configures this command
@@ -59,3 +58,4 @@ class CatalogSyncQueueAllCommand extends BaseCommand
         $this->syncSkuManager->enqueueAllProducts();
     }
 }
+

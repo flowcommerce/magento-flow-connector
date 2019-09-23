@@ -9,7 +9,6 @@ use Magento\Framework\App\State as AppState;
 use Magento\Framework\Registry;
 use FlowCommerce\FlowConnector\Model\Sync\CatalogSync;
 
-
 /**
  * Command to process the SyncSku queue.
  */
@@ -30,15 +29,21 @@ class CatalogSyncProcessCommand extends BaseCommand
         AppState $appState,
         Registry $registry,
         CatalogSync $catalogSync
-    ) {
+    )
+    {
         parent::__construct($appState, $registry);
         $this->catalogSync = $catalogSync;
     }
 
-    public function configure() {
+    public function configure()
+    {
         $this->setName('flow:flow-connector:catalog-sync-process')
             ->setDescription('Process sync skus queue and send to Flow.')
-            ->addArgument('num-to-process', InputArgument::OPTIONAL, 'Number of records to process. Defaults to processing all records.');
+            ->addArgument(
+                'num-to-process',
+                InputArgument::OPTIONAL,
+                'Number of records to process. Defaults to processing all records.'
+            );
     }
 
     /**
@@ -47,7 +52,8 @@ class CatalogSyncProcessCommand extends BaseCommand
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function execute(InputInterface $input, OutputInterface $output) {
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
         $numToProcess = $input->getArgument('num-to-process');
         if (!isset($numToProcess)) {
             $numToProcess = -1;
@@ -59,3 +65,4 @@ class CatalogSyncProcessCommand extends BaseCommand
         $this->catalogSync->process($numToProcess, 1);
     }
 }
+

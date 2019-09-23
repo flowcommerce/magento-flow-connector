@@ -22,8 +22,8 @@ class InventorySyncQueueAllTask
      */
     private $logger;
 
-    /** 
-     * @var Auth 
+    /**
+     * @var Auth
      */
     private $auth;
 
@@ -56,3 +56,4 @@ class InventorySyncQueueAllTask
         }
     }
 }
+

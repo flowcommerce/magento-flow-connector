@@ -2,7 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -405,3 +404,4 @@ class Configuration
         );
     }
 }
+

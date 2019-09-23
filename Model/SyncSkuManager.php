@@ -218,7 +218,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     {
         if ($product->getStoreId() == 0) {
             // Global store, queue product for all valid stores
-            foreach($this->configuration->getEnabledStores() as $store) {
+            foreach ($this->configuration->getEnabledStores() as $store) {
                 $product2 = $this->productFactory->create()->setStoreId($store->getId())->load($product->getId());
                 if ($product2->getId() != null) {
                     $this->logger->info('queuing product2');
@@ -226,7 +226,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
                 }
             }
 
-        } else if (!$this->configuration->isFlowEnabled($product->getStoreId())) {
+        } elseif (!$this->configuration->isFlowEnabled($product->getStoreId())) {
             $this->logger->info('Product store does not have Flow enabled, skipping: ' . $product->getSku());
 
         } else {
@@ -249,27 +249,34 @@ class SyncSkuManager implements SyncSkuManagementInterface
                 $syncSku->setStoreId($product->getStoreId());
                 $syncSku->setShouldSyncChildren($shouldSyncChildren);
                 $syncSku->save();
-                $this->logger
-                    ->info('Queued new product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
+                $this->logger->info(
+                    'Queued new product for sync: ' .
+                    $product->getSku() .
+                    ', storeId: ' .
+                    $product->getStoreId()
+                );
             } else {
                 /** @var SyncSku $existingSyncSku */
                 $existingSyncSku = $collection->getFirstItem();
-                if($existingSyncSku->getStatus() != SyncSku::STATUS_NEW)  {
+                if ($existingSyncSku->getStatus() != SyncSku::STATUS_NEW)  {
                     $existingSyncSku->setStatus(SyncSku::STATUS_NEW);
-                    if($existingSyncSku->isShouldSyncChildren() !== $shouldSyncChildren) {
+                    if ($existingSyncSku->isShouldSyncChildren() !== $shouldSyncChildren) {
                         $existingSyncSku->setShouldSyncChildren($shouldSyncChildren);
                     }
 
                     $existingSyncSku->save();
 
-                    $this->logger
-                        ->info('Queued existing product for sync: ' . $product->getSku() . ', storeId: ' . $product->getStoreId());
+                    $this->logger->info(
+                        'Queued existing product for sync: ' .
+                        $product->getSku() .
+                        ', storeId: ' .
+                        $product->getStoreId()
+                    );
                 } else {
-                    $this->logger
-                        ->info(
-                            'Product already queued, skipping: ' . $product->getSku() . ', storeId: ' .
-                            $product->getStoreId()
-                        );
+                    $this->logger->info(
+                        'Product already queued, skipping: ' . $product->getSku() . ', storeId: ' .
+                        $product->getStoreId()
+                    );
                 }
             }
         }
@@ -353,12 +360,11 @@ class SyncSkuManager implements SyncSkuManagementInterface
                     $syncSku->setSku($productSku);
                     $syncSku->setStoreId($storeId);
                     $syncSku->save();
-                    $this->logger
-                        ->info('Queued new product for sync: ' . $productSku . ', storeId: ' . $storeId);
+                    $this->logger->info('Queued new product for sync: ' . $productSku . ', storeId: ' . $storeId);
                 } else {
                     /** @var SyncSku $existingSyncSku */
                     $existingSyncSku = $collection->getFirstItem();
-                    if($existingSyncSku->getStatus() != SyncSku::STATUS_NEW)  {
+                    if($existingSyncSku->getStatus() != SyncSku::STATUS_NEW) {
                         $existingSyncSku->setStatus(SyncSku::STATUS_NEW);
 
                         $existingSyncSku->save();

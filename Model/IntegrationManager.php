@@ -7,7 +7,6 @@ use FlowCommerce\FlowConnector\Api\InventoryCenterManagementInterface as Invento
 use FlowCommerce\FlowConnector\Api\SyncSkuPriceAttributesManagementInterface as SyncSkuPriceAttributesManager;
 use FlowCommerce\FlowConnector\Api\WebhookManagementInterface as WebhookManager;
 
-
 /**
  * Class IntegrationManager
  * @package FlowCommerce\FlowConnector\Model
@@ -58,3 +57,4 @@ class IntegrationManager implements IntegrationManagementInterface
             && $resultWebhookRegistration && $resultWebhookSettings;
     }
 }
+

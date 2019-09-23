@@ -29,7 +29,7 @@ class CreateWebhookEvents
 {
 
     /**
-     * Organization ID
+     * Test Organization ID
      */
     const ORGANIZATION_ID = 'magento-integration-sandbox';
 
@@ -39,7 +39,7 @@ class CreateWebhookEvents
     const NUMBER_ORDERS = 30;
 
     /**
-     * Store Id
+     * Test Store Id
      */
     const STORE_ID = 1;
 

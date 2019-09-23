@@ -18,52 +18,62 @@ use Psr\Log\LoggerInterface;
  */
 class BaseTest extends \PHPUnit\Framework\TestCase {
 
-    public function testAuthorizationDeletedV2() {
+    public function testAuthorizationDeletedV2()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
         $controller->execute();
     }
 
-    public function testCaptureUpsertedV2() {
+    public function testCaptureUpsertedV2()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\CaptureUpsertedV2');
         $controller->execute();
     }
 
-    public function testCardAuthorizationUpsertedV2() {
+    public function testCardAuthorizationUpsertedV2()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\CardAuthorizationUpsertedV2');
         $controller->execute();
     }
 
-    public function testFraudStatusChanged() {
+    public function testFraudStatusChanged()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged');
         $controller->execute();
     }
 
-    public function testOnlineAuthorizationUpsertedV2() {
+    public function testOnlineAuthorizationUpsertedV2()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2');
         $controller->execute();
     }
 
-    public function testOrderPlaced() {
+    public function testOrderPlaced()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced');
         $controller->execute();
     }
 
-    public function testRefundCaptureUpsertedV2() {
+    public function testRefundCaptureUpsertedV2()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2');
         $controller->execute();
     }
 
-    public function testRefundUpsertedV2() {
+    public function testRefundUpsertedV2()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2');
         $controller->execute();
     }
 
-    public function testTrackingLabelEventUpserted() {
+    public function testTrackingLabelEventUpserted()
+    {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\TrackingLabelEventUpserted');
         $controller->execute();
     }
 
-    private function getController($className) {
+    private function getController($className)
+    {
         $reflection = new \ReflectionClass($className);
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -113,5 +123,5 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
 
         return $controller;
     }
-
 }
+

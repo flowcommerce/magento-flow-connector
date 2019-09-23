@@ -76,5 +76,5 @@ class UtilTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(self::SCOPE_CONFIG_VALUE_MAP[Configuration::FLOW_ENABLED], $this->util->isFlowEnabled());
     }
-
 }
+

@@ -53,10 +53,11 @@ class PayloadValidator
         $this->hash->setKey($this->getSecret());
         $hash =  sprintf('sha256=%s', bin2hex($this->hash->hash($payload)));
 
-        if($hash === $xFlowSignatureHeader) {
+        if ($hash === $xFlowSignatureHeader) {
             return true;
         }
 
         return false;
     }
 }
+

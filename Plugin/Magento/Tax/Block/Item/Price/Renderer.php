@@ -63,16 +63,16 @@ class Renderer
      */
     public function afterGetItem(ItemRenderer $subject, $item)
     {
-        if($item instanceof QuoteItem) {
+        if ($item instanceof QuoteItem) {
             try {
                 $flowCart = $this->flowCartManager->getFlowCartData();
-                if(!$flowCart) {
+                if (!$flowCart) {
                     $this->logger->error('Unable to localize cart item due to inability to fetch Flow cart');
 
                     return $item;
                 }
 
-                if(!isset($flowCart['items'])) {
+                if (!isset($flowCart['items'])) {
                     $this->logger->error('Unable to localize cart item because Flow cart is empty');
 
                     return $item;
@@ -80,13 +80,13 @@ class Renderer
 
                 $flowItem = null;
                 foreach ($flowCart['items'] as $i) {
-                    if($item->getSku() === $i['number']) {
+                    if ($item->getSku() === $i['number']) {
                         $flowItem = $i;
                         break;
                     }
                 }
 
-                if(!$flowItem
+                if (!$flowItem
                     || !isset($flowItem['local']['price_attributes']['regular_price']['amount'])
                     || !$flowItem['local']['price_attributes']['final_price']['amount']) {
                     $this->logger->error(sprintf(
@@ -101,7 +101,9 @@ class Renderer
                 $flowItemRegularAmount = $flowItem['local']['price_attributes']['regular_price']['amount'];
                 $flowItemRegularLabel = $flowItem['local']['price_attributes']['regular_price']['label'];
                 $itemPrice = $this->localeFormat->getNumber($flowItemRegularAmount);
-                $discountAmount = $this->localeFormat->getNumber($flowItemRegularAmount * ($item->getDiscountPercent()/100));
+                $discountAmount = $this->localeFormat->getNumber(
+                    $flowItemRegularAmount * ($item->getDiscountPercent()/100)
+                );
 
                 $item->setPriceFlowLabel($flowItemRegularLabel);
             } catch (Exception $e) {

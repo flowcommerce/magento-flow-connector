@@ -21,8 +21,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 use Magento\Sales\Model\Order\ItemRepository as OrderItemRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Customer\Model\ResourceModel\CustomerRepository;
-use Magento\Sales\Model\Order\Item as OrderItem;
-
+use Magento\Sales\Model\Order\Item as OrderItem; 
 
 /**
  * Test class for Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent

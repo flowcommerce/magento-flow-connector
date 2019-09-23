@@ -47,7 +47,7 @@ $webhookEvent = $block->getWebhookEvent();
         </tbody>
     </table>
 </div>
-<?php if ($payload = $webhookEvent->getPayload()): ?>
+<?php if ($payload = $webhookEvent->getPayload()) : ?>
     <br />
     <div>
         <div class="fieldset-wrapper-title">

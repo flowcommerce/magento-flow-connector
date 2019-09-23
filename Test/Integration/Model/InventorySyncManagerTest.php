@@ -229,7 +229,7 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
             /** @var InventorySync $inventorySync */
             $inventorySync = reset($inventorySyncItems);
             $this->assertEquals(
-                md5($inventorySync->getId() . $inventorySync->getCreatedAt() . $inventorySync->getUpdatedAt()),
+                hash('sha256', $inventorySync->getId() . $inventorySync->getCreatedAt() . $inventorySync->getUpdatedAt()),
                 $jsonRequest->idempotency_key,
                 'Failed asserting that idempotency_key matches'
             );

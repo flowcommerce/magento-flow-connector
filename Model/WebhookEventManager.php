@@ -139,11 +139,11 @@ class WebhookEventManager implements WebhookEventManagementInterface
                 $this->logger->info('Processing webhook event: ' . $webhookEvent->getType());
                 $webhookEvent->process();
 
-                $numToProcess -= 1;
+                $numToProcess--;
             }
 
             // $this->logger->info('Webhook keep alive remaining: ' . $keepAlive);
-            $keepAlive -= 1;
+            $keepAlive--;
             sleep(1);
         }
 

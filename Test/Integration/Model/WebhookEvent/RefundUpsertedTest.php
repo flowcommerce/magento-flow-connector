@@ -23,8 +23,6 @@ use Magento\Sales\Api\OrderPaymentRepositoryInterface as OrderPaymentRepository;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Magento\Sales\Model\ResourceModel\Order\Payment\Collection as OrderPaymentCollection;
 
-
-
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
  * @magentoAppIsolation enabled
@@ -164,5 +162,5 @@ class RefundUpsertedTest extends \PHPUnit\Framework\TestCase
             $webhookCollection->count()
         );
     }
-
 }
+

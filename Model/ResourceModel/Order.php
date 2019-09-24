@@ -2,25 +2,28 @@
 
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
-use Magento\Framework\{
-    Model\ResourceModel\Db\AbstractDb,
-    Model\ResourceModel\Db\Context
-};
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\Model\ResourceModel\Db\Context;
 
-class Order extends AbstractDb {
+class Order extends AbstractDb
+{
 
-    public function __construct(Context $ctx) {
+    public function __construct(Context $ctx)
+    {
         parent::__construct($ctx);
     }
 
-    protected function _construct() {
+    protected function _construct()
+    {
         $this->_init('flow_connector_orders', 'id');
     }
 
-    protected function _getDefaultAttributes() {
+    protected function _getDefaultAttributes()
+    {
         return [
             'created_at',
             'updated_at',
         ];
     }
 }
+

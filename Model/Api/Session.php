@@ -19,7 +19,7 @@ use Magento\Framework\Session\SessionManagerInterface;
 class Session
 {
     /**
-     * Cookie duration
+     * Session cookie duration
      */
     const COOKIE_DURATION = 86400;
 
@@ -122,7 +122,6 @@ class Session
         UrlBuilder $urlBuilder,
         CookieMetadataFactory $cookieMetadataFactory,
         SessionManagerInterface $sessionManagerInterface
-
     ) {
         $this->auth = $auth;
         $this->cookieManagerInterface = $cookieManagerInterface;
@@ -203,3 +202,4 @@ class Session
         return $this->storeManager->getStore()->getId();
     }
 }
+

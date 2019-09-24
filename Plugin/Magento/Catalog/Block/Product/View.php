@@ -28,7 +28,7 @@ class View
      * @param FlowPrices $flowPrices
      * @param JsonSerializer $jsonSerializer
      */
-    public function __construct(     
+    public function __construct(
         Configuration $configuration,
         FlowPrices $flowPrices,
         JsonSerializer $jsonSerializer
@@ -57,3 +57,4 @@ class View
         return $this->jsonSerializer->serialize($config);
     }
 }
+

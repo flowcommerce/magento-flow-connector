@@ -11,12 +11,12 @@ use Magento\Framework\Exception\NoSuchEntityException;
 class UrlBuilder
 {
     /**
-     * Flow API base endpoint
+     * Base url for Flow API calls
      */
     const FLOW_API_BASE_ENDPOINT = 'https://api.flow.io/';
 
     /**
-     * Flow Checkout base endpoint
+     * Base url for Flow checkout UI
      */
     const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
 

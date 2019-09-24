@@ -117,5 +117,5 @@ class Get
     {
         return $this->storeManager->getStore()->getId();
     }
-
 }
+

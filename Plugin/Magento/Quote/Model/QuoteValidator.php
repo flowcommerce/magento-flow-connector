@@ -18,7 +18,7 @@ class QuoteValidator
     public function aroundValidateBeforeSubmit(Subject $subject, callable $proceed, QuoteEntity $quote)
     {
         $paymentMethod = $quote->getPayment()->getMethod();
-        if($paymentMethod !== 'flowpayment') {
+        if ($paymentMethod !== 'flowpayment') {
             $returnValue = $proceed($quote);
         } else {
             $returnValue = $subject;
@@ -27,3 +27,4 @@ class QuoteValidator
         return $returnValue;
     }
 }
+

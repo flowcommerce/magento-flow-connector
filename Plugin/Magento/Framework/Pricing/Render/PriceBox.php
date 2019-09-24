@@ -21,7 +21,7 @@ class PriceBox
      * @param Configuration $configuration
      * @param Logger $logger
      */
-    public function __construct(     
+    public function __construct(
         Configuration $configuration,
         Logger $logger
     ) {
@@ -55,7 +55,12 @@ class PriceBox
         $saleableSku = $priceBox->getSaleableItem()->getSku();
         $position = strpos($result, 'class="price"');
         if ($flowPriceCode != 'final_price') {
-            $result = substr_replace($result, ' data-flow-localize="item-price-attribute" data-flow-item-price-attribute="'.$flowPriceCode.'" ', $position, 0);
+            $result = substr_replace(
+                $result,
+                ' data-flow-localize="item-price-attribute" data-flow-item-price-attribute="'.$flowPriceCode.'" ',
+                $position,
+                0
+            );
         } else {
             $result = substr_replace($result, ' data-flow-localize="item-price" ', $position, 0);
         }

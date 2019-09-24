@@ -86,7 +86,6 @@ class Collection extends WebhookEventCollection implements SearchResultInterface
         $this->setMainTable($mainTable);
     }
 
-
     /**
      * @return AggregationInterface
      */

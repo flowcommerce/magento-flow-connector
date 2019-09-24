@@ -28,7 +28,7 @@ class Configurable
      * @param FlowPrices $flowPrices
      * @param JsonSerializer $jsonSerializer
      */
-    public function __construct(     
+    public function __construct(
         Configuration $configuration,
         FlowPrices $flowPrices,
         JsonSerializer $jsonSerializer
@@ -38,8 +38,10 @@ class Configurable
         $this->jsonSerializer = $jsonSerializer;
     }
 
-    public function afterGetPricesJson(\Magento\Swatches\Block\Product\Renderer\Listing\Configurable $configurable, $result)
-    {
+    public function afterGetPricesJson(
+        \Magento\Swatches\Block\Product\Renderer\Listing\Configurable $configurable,
+        $result
+    ) {
         $config = $this->jsonSerializer->unserialize($result);
         if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled()) {
             return $this->jsonSerializer->serialize($config);

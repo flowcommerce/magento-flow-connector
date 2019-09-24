@@ -97,7 +97,10 @@ class WebhookEventProcessTask
         try {
             $this->acquireLock();
             $this->logger->info('Running WebhookEventProcessTask execute');
-            $this->webhookEventManager->process($this->getNumberOfJobsToProcess(), $this->getKeepAliveAfterQueueIsProcessed());
+            $this->webhookEventManager->process(
+                $this->getNumberOfJobsToProcess(),
+                $this->getKeepAliveAfterQueueIsProcessed()
+            );
             $this->releaseLock();
         } catch (CantAcquireLockException $e) {
             $this->logger->info($e->getMessage());
@@ -113,3 +116,4 @@ class WebhookEventProcessTask
         $this->lockManager->releaseLock(self::LOCK_CODE);
     }
 }
+

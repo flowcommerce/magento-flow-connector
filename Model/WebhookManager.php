@@ -198,7 +198,15 @@ class WebhookManager implements WebhookManagementInterface
         if (count($existingWebhooks) > 0) {
             foreach ($existingWebhooks as $webhook) {
                 if ($webhook['url'] == $url) {
-                    $this->logger->info('Webhook already exists ' . var_export($events, true) . ': ' . $url . ', ID:' . $webhook['id'] . ' but must be updated');
+                    $this->logger->info(
+                        'Webhook already exists ' .
+                        var_export($events, true) .
+                        ': ' .
+                        $url .
+                        ', ID:' .
+                        $webhook['id'] .
+                        ' but must be updated'
+                    );
                     $this->webhookSaveApiClient->execute($storeId, $url, $events, $webhook['id']);
                     return true;
                 }
@@ -238,3 +246,4 @@ class WebhookManager implements WebhookManagementInterface
         $this->notification->setLogger($logger);
     }
 }
+

@@ -28,7 +28,6 @@ class LockManager
      */
     private $objectManager;
 
-
     public function __construct()
     {
         $this->objectManager = Bootstrap::getObjectManager();

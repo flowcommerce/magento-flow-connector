@@ -103,7 +103,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const EVENT_FLOW_CHECKOUT_EMAIL_CHANGED = 'flow_checkout_email_changed';
 
     /**
-     * Cache Tag
+     * Webhook event cache Tag
      */
     const CACHE_TAG = 'flow_connector_webhook_events';
 
@@ -519,7 +519,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      *
      * https://docs.flow.io/type/allocation-upserted-v-2
      */
-    private function processAllocationUpsertedV2() {
+    private function processAllocationUpsertedV2()
+    {
         $this->logger->info('Processing allocation_upserted_v2 data');
         $data = $this->getPayloadData();
 
@@ -906,7 +907,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $status = $authorization['result']['status'];
             switch ($status) {
                 case 'pending':
-                    // If an immediate response is not available, the state will be 'pending'. For example, online payment methods like AliPay or PayPal will have a status of 'pending' until the user completes the payment. Pending authorizations expire if the user does not complete the payment in a timely fashion.
+                    // If an immediate response is not available, the state will be 'pending'.
+                    // For example, online payment methods like AliPay or PayPal will have a
+                    // status of 'pending' until the user completes the payment.
+                    // Pending authorizations expire if the user does not complete the payment in a timely fashion.
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
                     $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
                     $order->save();
@@ -928,13 +932,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $order->save();
                     break;
                 case 'review':
-                    // If an immediate response is not available, the state will be 'review' - this usually indicates fraud review requires additional time / verification (or a potential network issue with the issuing bank)
+                    // If an immediate response is not available, the state will be 'review' -
+                    // this usually indicates fraud review requires additional time / verification
+                    // (or a potential network issue with the issuing bank)
                     $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
                     $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PAYMENT_REVIEW));
                     $order->save();
                     break;
                 case 'declined':
-                    // Indicates the authorization has been declined by the issuing bank. See the authorization decline code for more details as to the reason for decline.
+                    // Indicates the authorization has been declined by the issuing bank.
+                    // See the authorization decline code for more details as to the reason for decline.
                     $orderPayment->setIsFraudDetected(true);
                     $orderPayment->save();
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
@@ -943,7 +950,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $order->save();
                     break;
                 case 'reversed':
-                    // Indicates the authorization has been fully reversed. You can fully reverse an authorization up until the moment you capture funds; once you have captured funds you must create refunds.
+                    // Indicates the authorization has been fully reversed.
+                    // You can fully reverse an authorization up until the moment you capture funds;
+                    // once you have captured funds you must create refunds.
                     $orderPayment->setAmountAuthorized(0.0);
                     $orderPayment->save();
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
@@ -1155,9 +1164,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $order->getState() != OrderModel::STATE_CANCELED) {
                 if ($data['status'] == 'pending') {
                     $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
-                } else if ($data['status'] == 'approved') {
+                } elseif ($data['status'] == 'approved') {
                     $order->setState(OrderModel::STATE_PROCESSING);
-                } else if ($data['status'] == 'declined') {
+                } elseif ($data['status'] == 'declined') {
                     $order->setStatus(OrderModel::STATUS_FRAUD);
                 }
                 $order->save();
@@ -1612,7 +1621,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         // Create shipment
         $shipment = $this->convertOrder->toShipment($order);
-        foreach ($order->getAllItems() AS $orderItem) {
+        foreach ($order->getAllItems() as $orderItem) {
             // Check virtual item and item Quantity
             if (!$orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
                 continue;
@@ -1741,7 +1750,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
 
             }
-        } else if (array_key_exists('email', $receivedOrder['customer'])) {
+        } elseif (array_key_exists('email', $receivedOrder['customer'])) {
             $this->logger->info('Retrieving existing user by email: ' . $receivedOrder['customer']['email']);
             $customer->loadByEmail($receivedOrder['customer']['email']);
             if ($customer->getEntityId()) {
@@ -1756,7 +1765,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             /*
              * For some Flow clients $customer->setStoreId($store->getId()); sets website_id to 0 for unknown reason,
-             * most likely custom functionality like a plugin or a preference. We workaround by setting website_id again.
+             * most likely custom functionality like a plugin or a preference.
+             * We workaround by setting website_id again.
              */
             $customer->setWebsiteId($store->getWebsiteId());
 
@@ -1878,16 +1888,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $payment->setQuote($quote);
                 $payment->setMethod('flowpayment');
                 $payment->setAdditionalInformation(
-                    self::FLOW_PAYMENT_REFERENCE, $flowPayment[self::ORDER_PAYMENT_REFERENCE]
+                    self::FLOW_PAYMENT_REFERENCE,
+                    $flowPayment[self::ORDER_PAYMENT_REFERENCE]
                 );
                 $payment->setAdditionalInformation(
-                    self::FLOW_PAYMENT_TYPE, $flowPayment[self::ORDER_PAYMENT_TYPE]
+                    self::FLOW_PAYMENT_TYPE,
+                    $flowPayment[self::ORDER_PAYMENT_TYPE]
                 );
                 $payment->setAdditionalInformation(
-                    self::FLOW_PAYMENT_DESCRIPTION, $flowPayment[self::ORDER_PAYMENT_DESCRIPTION]
+                    self::FLOW_PAYMENT_DESCRIPTION,
+                    $flowPayment[self::ORDER_PAYMENT_DESCRIPTION]
                 );
                 $payment->setAdditionalInformation(
-                    self::FLOW_PAYMENT_ORDER_NUMBER, $receivedOrder['number']
+                    self::FLOW_PAYMENT_ORDER_NUMBER,
+                    $receivedOrder['number']
                 );
 
                 // NOTE: only supporting 1 payment for now
@@ -1949,7 +1963,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                     // set region
                     if (isset($paymentAddress['province'])) {
-                        $region = $this->regionFactory->create()->loadByName($paymentAddress['province'], $country->getId());
+                        $region = $this->regionFactory->create()->loadByName(
+                            $paymentAddress['province'],
+                            $country->getId()
+                        );
                         $billingAddress->setRegionId($region->getId());
                     }
                 }
@@ -1961,7 +1978,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 break;
             }
         }
-
 
         ////////////////////////////////////////////////////////////
         // Discounts
@@ -1986,9 +2002,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $quote->collectTotals()->save();
 
-
         /*
-         * Fix for missing ext_order_id due to "This product is out of stock" exception thrown in quote submission process.
+         * Fix for missing ext_order_id due to "This product is out of stock"
+         * exception thrown in quote submission process.
          *
          * It is required to load quote through the repository before passing it on to
          * \Magento\Quote\Model\QuoteManagement::submit() due to Magento switching data types for quote item fields upon
@@ -2001,8 +2017,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $quote = $this->cartRepository->get($quote->getId());
 
         /*
-         * Workaround for issue where \Magento\Quote\Model\QuoteRepository::loadQuote() method from cart repository used by
-         * \Magento\Quote\Model\QuoteRepository::get() clobbers store ID from quote with current store ID:
+         * Workaround for issue where \Magento\Quote\Model\QuoteRepository::loadQuote()
+         * method from cart repository used by \Magento\Quote\Model\QuoteRepository::get()
+         * clobbers store ID from quote with current store ID:
          */
         $quote->setStoreId($this->getStoreId());
 
@@ -2092,9 +2109,17 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $baseRoundingAmount += $roundingComponent['base']['amount'];
                         }
 
-                        $vatPriceComponentKeys = ['vat_item_price', 'vat_deminimis', 'vat_duties_item_price', 'vat_subsidy'];
+                        $vatPriceComponentKeys = [
+                            'vat_item_price',
+                            'vat_deminimis',
+                            'vat_duties_item_price',
+                            'vat_subsidy'
+                        ];
                         foreach ($vatPriceComponentKeys as $vatPriceComponentKey) {
-                            $vatPriceComponentIndex = array_search($vatPriceComponentKey, array_column($components, 'key'));
+                            $vatPriceComponentIndex = array_search(
+                                $vatPriceComponentKey,
+                                array_column($components, 'key')
+                            );
                             if (($vatPriceComponentIndex !== false) &&
                                 is_array($vatPriceComponent = $components[$vatPriceComponentIndex])
                             ) {
@@ -2105,7 +2130,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                         $dutyComponentKeys = ['duties_item_price', 'duty_deminimis'];
                         foreach ($dutyComponentKeys as $dutyComponentKey) {
-                            $dutyPriceComponentIndex = array_search($dutyComponentKey, array_column($components, 'key'));
+                            $dutyPriceComponentIndex = array_search(
+                                $dutyComponentKey,
+                                array_column($components, 'key')
+                            );
                             if (($dutyPriceComponentIndex !== false) &&
                                 is_array($dutyPriceComponent = $components[$dutyPriceComponentIndex])
                             ) {
@@ -2131,9 +2159,17 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                     if (array_key_exists('components', $price)) {
                         $components = $price['components'];
-                        $vatPriceComponentKeys = ['vat_deminimis', 'vat_freight', 'vat_duties_freight', 'vat_subsidy'];
+                        $vatPriceComponentKeys = [
+                            'vat_deminimis',
+                            'vat_freight',
+                            'vat_duties_freight',
+                            'vat_subsidy'
+                        ];
                         foreach ($vatPriceComponentKeys as $vatPriceComponentKey) {
-                            $vatPriceComponentIndex = array_search($vatPriceComponentKey, array_column($components, 'key'));
+                            $vatPriceComponentIndex = array_search(
+                                $vatPriceComponentKey,
+                                array_column($components, 'key')
+                            );
                             if (($vatPriceComponentIndex !== false) &&
                                 is_array($vatPriceComponent = $components[$vatPriceComponentIndex])
                             ) {
@@ -2144,7 +2180,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                         $dutyComponentKeys = ['duties_freight', 'duty_deminimis'];
                         foreach ($dutyComponentKeys as $dutyComponentKey) {
-                            $dutyPriceComponentIndex = array_search($dutyComponentKey, array_column($components, 'key'));
+                            $dutyPriceComponentIndex = array_search(
+                                $dutyComponentKey,
+                                array_column($components, 'key')
+                            );
                             if (($dutyPriceComponentIndex !== false) &&
                                 is_array($dutyPriceComponent = $components[$dutyPriceComponentIndex])
                             ) {
@@ -2199,7 +2238,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         foreach ($deliveries as $delivery) {
             if (array_key_exists('options', $delivery)) {
                 foreach ($delivery['options'] as $option) {
-                    $order->setShippingDescription($option['service']['carrier']['id'] . ': ' . $option['service']['name']);
+                    $order->setShippingDescription(
+                        $option['service']['carrier']['id'] .
+                        ': ' .
+                        $option['service']['name']
+                    );
                     break;
                 }
             }

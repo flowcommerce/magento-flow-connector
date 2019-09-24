@@ -155,13 +155,13 @@ class DiscountRepository implements DiscountRepositoryInterface
         $this->logger->info('Currency used: ' . $orderCurrency);
 
         $quote = $this->generateQuote($order);
-        $quote->setCouponCode($code); 
+        $quote->setCouponCode($code);
         $quote->collectTotals()->save();
 
         $items = $quote->getAllItems();
         $orderDiscountAmount = 0.0;
         $orderTotal = 0.0;
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $orderTotal += $item->getRowTotal();
             $orderDiscountAmount += $item->getDiscountAmount();
         }
@@ -210,12 +210,12 @@ class DiscountRepository implements DiscountRepositoryInterface
         $actionData = json_decode($rule->getData('actions_serialized'));
         if (isset($actionData->conditions)) {
             foreach ($actionData->conditions as $actions) {
-                $attribute = $actions->attribute; 
+                $attribute = $actions->attribute;
                 if ($attribute != null || isset($actions->conditions)) {
                     $this->logger->info('Action conditions are not supported at this time');
                     return false;
                 }
-            } 
+            }
         }
 
         $this->logger->info('Code validated');
@@ -268,7 +268,7 @@ class DiscountRepository implements DiscountRepositoryInterface
             return false;
         }
 
-        foreach($order['lines'] as $line) {
+        foreach ($order['lines'] as $line) {
             $catalogProduct = $this->productRepository->get($line['item_number']);
             $product = $this->productFactory->create()->load($catalogProduct->getId());
             $product->setPrice($line['price']['amount']);

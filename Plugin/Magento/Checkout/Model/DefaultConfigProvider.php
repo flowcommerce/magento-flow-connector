@@ -54,13 +54,13 @@ class DefaultConfigProvider
     {
         try {
             $flowCart = $this->flowCartManager->getFlowCartData();
-            if(!$flowCart) {
+            if (!$flowCart) {
                 $this->logger->error('Unable to localize cart item due to inability to fetch Flow cart');
 
                 return $config;
             }
 
-            if(!isset($config['totalsData']) || !isset($flowCart['prices']) || !is_array($flowCart['prices'])) {
+            if (!isset($config['totalsData']) || !isset($flowCart['prices']) || !is_array($flowCart['prices'])) {
                 $this->logger->error('Unable to localize cart item due to Flow cart being incomplete');
 
                 return $config;
@@ -69,20 +69,20 @@ class DefaultConfigProvider
             $subtotal = null;
             $currency = null;
             foreach ($flowCart['prices'] as $price) {
-                if($price['key'] === 'subtotal') {
+                if ($price['key'] === 'subtotal') {
                     $subtotal = $price['amount'];
                     $currency = $price['currency'];
                 }
             }
 
-            if(!$subtotal || !$currency) {
+            if (!$subtotal || !$currency) {
                 $this->logger->error('Unable to localize cart item due to Flow cart missing subtotal or currency');
 
                 return $config;
             }
 
             $discountPct = 0;
-            if(isset($config['totalsData']['discount_amount']) && isset($config['totalsData']['subtotal'])) {
+            if (isset($config['totalsData']['discount_amount']) && isset($config['totalsData']['subtotal'])) {
                 $discountPct = $config['totalsData']['discount_amount'] / $config['totalsData']['subtotal'];
             }
 
@@ -138,5 +138,5 @@ class DefaultConfigProvider
 
         return $config;
     }
-
 }
+

@@ -5,8 +5,8 @@ namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 /**
  * Test class for WebhookEvent.
  */
-class WebhookEventTest extends \PHPUnit\Framework\TestCase {
-
+class WebhookEventTest extends \PHPUnit\Framework\TestCase
+{ 
     protected $logger;
     protected $jsonHelper;
     protected $storeManager;
@@ -31,7 +31,6 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase {
     protected $eventManager;
 
     protected function setUp() {
-
         $this->context = $this->createMock(\Magento\Framework\Model\Context::class);
         $this->registry = $this->createMock(\Magento\Framework\Registry::class);
         $this->logger = $this->createMock(\Psr\Log\LoggerInterface::class);
@@ -53,13 +52,16 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase {
         $this->orderFactory = $this->createMock(\Magento\Sales\Model\OrderFactory::class);
         $this->methodList = $this->createMock(\Magento\Payment\Model\MethodList::class);
         $this->orderRepository = $this->createMock(\Magento\Sales\Api\OrderRepositoryInterface::class);
-        $this->searchCriteriaBuilder = $this->createMock(\Magento\Framework\Api\SearchCriteriaBuilder::class); $this->quotePaymentFactory = $this->createMock(\Magento\Quote\Model\Quote\PaymentFactory::class); $this->eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
+        $this->searchCriteriaBuilder = $this->createMock(\Magento\Framework\Api\SearchCriteriaBuilder::class);
+        $this->quotePaymentFactory = $this->createMock(\Magento\Quote\Model\Quote\PaymentFactory::class);
+        $this->eventManager = $this->createMock(\Magento\Framework\Event\ManagerInterface::class);
     }
 
     /**
      * Test WebhookEvent.process
      */
-    public function testProcess() {
+    public function testProcess()
+    {
         // $webhookEvent = new \FlowCommerce\FlowConnector\Model\WebhookEvent(
         //     $this->context,
         //     $this->registry,
@@ -91,5 +93,5 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase {
         // );
         // $webhookEvent->process();
     }
-
 }
+

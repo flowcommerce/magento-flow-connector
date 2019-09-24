@@ -3,7 +3,7 @@
 ## 2.1.0
 - Removing daily batch catalog syncing for sandbox environments
 - Exposing methods to determine production status (boolean)
-- Patching compatiblity for IE11, removing dependencies on ES6
+- Patching compatibility for IE11, removing dependencies on ES6
 - Dropping support for Magento versions below 2.3 due to breaking changes and in anticipation of Magento deprecating version 2.2 as of December 2019
 - Updating testing suite to include Magento version 2.3.2
 

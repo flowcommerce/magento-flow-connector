@@ -35,7 +35,7 @@ class WebhookEvent extends AbstractDb
     const STATUS_DONE = 'done';
 
     /**
-     * Update multiple statuses batch size
+     * Webhook event batch size for updating multiple statuses
      */
     const UPDATE_MULTIPLE_STATUSES_BATCH_SIZE = 50;
 

@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface as Logger;
 class Price
 {
     /**
-     * Schedule full sync flag code
+     * Schedule full price sync flag code
      */
     const SCHEDULE_FULL_SYNC_FLAG_CODE = 'flowconnector_full_sync_after_price_reindex';
 

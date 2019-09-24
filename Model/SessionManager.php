@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 class SessionManager implements SessionManagementInterface
 {
     /**
-     * Cookie duration
+     * Session cookie duration
      */
     const COOKIE_DURATION = 86400;
 
@@ -221,7 +221,7 @@ class SessionManager implements SessionManagementInterface
             'experience' => $this->getSessionExperienceKey()
         ];
 
-        $orderForm = (object)[ 
+        $orderForm = (object)[
             'attributes' => [
                 WebhookEvent::QUOTE_ID => $quote->getId(),
                 WebhookEvent::CHECKOUT_SESSION_ID => $this->checkoutSession->getSessionId(),
@@ -229,7 +229,7 @@ class SessionManager implements SessionManagementInterface
             ]
         ];
 
-        $customer = $this->customerSession->getCustomer(); 
+        $customer = $this->customerSession->getCustomer();
         if ($customer->getId()) {
             $orderForm->attributes[WebhookEvent::CUSTOMER_ID] = (string)$customer->getId();
 
@@ -248,13 +248,13 @@ class SessionManager implements SessionManagementInterface
             if ($shippingAddressId = $customer->getDefaultShipping()) {
                 $shippingAddress = $this->addressRepository->getById($shippingAddressId);
 
-                // Using strpos since country codes coming from FlowJS will not match M2 country codes directly but will likely be contained within them
-                if (strpos($country, $shippingAddress->getCountryId()) !== FALSE) {
+                // Using strpos since country codes coming from FlowJS will not match M2 country codes directly
+                if (strpos($country, $shippingAddress->getCountryId()) !== false) {
                     $orderForm->destination = (object)[
                         'streets' => $shippingAddress->getStreet(),
                         'city' => $shippingAddress->getCity(),
                         'province' => $shippingAddress->getRegion()->getRegionCode(),
-                        'postal' => $shippingAddress->getPostcode(), 
+                        'postal' => $shippingAddress->getPostcode(),
                         'country' => $country,
                         'contact' => (object)[
                             'name' => (object)[
@@ -309,7 +309,7 @@ class SessionManager implements SessionManagementInterface
                 $result = $this->configuration::FLOW_CHECKOUT_BASE_URL . '/tokens/' . $tokenId;
 
             }
-        } 
+        }
 
         return $result;
     }

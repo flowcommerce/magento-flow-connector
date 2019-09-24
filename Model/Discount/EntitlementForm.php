@@ -5,7 +5,8 @@ use FlowCommerce\FlowConnector\Api\Data\DiscountEntitlementFormInterface;
 
 class EntitlementForm implements DiscountEntitlementFormInterface
 {
-    public function __construct(){
+    public function __construct()
+    {
         $this->order_entitlement_forms = [];
     }
 
@@ -29,3 +30,4 @@ class EntitlementForm implements DiscountEntitlementFormInterface
         return $this->order_entitlement_forms;
     }
 }
+

@@ -22,8 +22,8 @@ class CatalogSyncQueueAllTask
      */
     private $syncSkuManager;
 
-    /** 
-     * @var Auth 
+    /**
+     * @var Auth
      */
     private $auth;
 
@@ -56,3 +56,4 @@ class CatalogSyncQueueAllTask
         }
     }
 }
+

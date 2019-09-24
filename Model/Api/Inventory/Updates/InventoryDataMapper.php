@@ -66,7 +66,7 @@ class InventoryDataMapper
      */
     private function getIdempotencyKey(InventorySyncInterface $inventorySync)
     {
-        return md5($inventorySync->getId() . $inventorySync->getCreatedAt() . $inventorySync->getUpdatedAt());
+        return hash('sha256', $inventorySync->getId() . $inventorySync->getCreatedAt() . $inventorySync->getUpdatedAt());
     }
 
     /**

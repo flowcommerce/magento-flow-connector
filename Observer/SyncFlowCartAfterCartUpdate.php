@@ -35,7 +35,6 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
         FlowCartManager $flowCartManager,
         CheckoutSession $checkoutSession,
         Logger $logger
-
     ) {
         $this->flowCartManager = $flowCartManager;
         $this->checkoutSession = $checkoutSession;
@@ -56,3 +55,4 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
         }
     }
 }
+

@@ -23,3 +23,4 @@ interface DiscountOfferFormInterface
      */
     public function getCurrency();
 }
+

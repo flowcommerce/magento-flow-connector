@@ -17,7 +17,7 @@ class Prices
     /**
      * Url Stub Prefix of this API endpoint
      */
-    const EXPERIENCE_ITEMS_PREFIX = '/experiences/items/filters/'; 
+    const EXPERIENCE_ITEMS_PREFIX = '/experiences/items/filters/';
 
     /**
      * @var HttpClientFactory
@@ -118,7 +118,7 @@ class Prices
                 }
                 $item['items'][0]['local']['price_attributes']['sku'] = $item['value'];
                 $labels[$localizationKey][$productId] = $item['items'][0]['local']['price_attributes'];
-            } 
+            }
         }
         return $labels;
     }

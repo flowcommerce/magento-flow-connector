@@ -198,7 +198,7 @@ class CatalogSync
                             $this->syncSkuManager->deleteSyncSku($syncSku);
                         }
 
-                        $numToProcess -= 1;
+                        $numToProcess--;
                     }
 
                     if (count($this->syncSkusToUpdate)) {
@@ -230,7 +230,7 @@ class CatalogSync
                 }
 
                 // Num to process not exhausted, keep alive to wait for more.
-                $keepAlive -= 1;
+                $keepAlive--;
                 sleep(1);
             }
 

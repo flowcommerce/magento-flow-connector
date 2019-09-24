@@ -20,7 +20,7 @@ use \Magento\Framework\Registry;
 class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterface
 {
     /**
-     * Cache Tag
+     * Sync sku cache tag
      */
     const CACHE_TAG = 'flow_connector_sync_skus';
 
@@ -68,7 +68,6 @@ class SyncSku extends AbstractModel implements SyncSkuInterface, IdentityInterfa
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->productRepository = $productRepository;
     }
-
 
     /**
      * Initializes the model

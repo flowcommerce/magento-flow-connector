@@ -42,5 +42,5 @@ class FlowCountryPicker extends Template
     {
         return $this->configuration->isCountryPickerEnabled();
     }
-
 }
+

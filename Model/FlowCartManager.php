@@ -108,7 +108,7 @@ class FlowCartManager implements FlowCartManagementInterface
             }
         }
 
-        if($orderData) {
+        if ($orderData) {
             $orderData = $this->validateOrderData($orderData);
         }
 
@@ -200,7 +200,7 @@ class FlowCartManager implements FlowCartManagementInterface
     private function createFlowOrderFromQuote()
     {
         $postData = $this->extractPostDataFromQuote();
-        if($postData) {
+        if ($postData) {
             $query = ['experience' => $this->sessionManager->getSessionExperienceKey()];
             $orderData = $this->orderSave->execute($postData, $query);
             if ($orderData) {
@@ -219,7 +219,7 @@ class FlowCartManager implements FlowCartManagementInterface
     private function extractPostDataFromQuote()
     {
         $quote = $this->getQuoteFromSession();
-        if(!$quote->getId() || !$quote->getAllVisibleItems()) {
+        if (!$quote->getId() || !$quote->getAllVisibleItems()) {
             return false;
         }
 
@@ -257,7 +257,7 @@ class FlowCartManager implements FlowCartManagementInterface
         $query = ['number' => $flowOrderNumber];
         $result = $this->orderGet->execute($query);
         $orderData = reset($result);
-        if($orderData) {
+        if ($orderData) {
             $this->updateSessionAndQuote($orderData);
         }
         return $orderData;

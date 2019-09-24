@@ -2,7 +2,8 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use Magento\Framework\{
+use Magento\Framework\
+{
     Model\AbstractModel,
     DataObject\IdentityInterface
 };
@@ -10,8 +11,8 @@ use Magento\Framework\{
 /**
  * Model class for storing Flow order data.
  */
-class Order extends AbstractModel implements IdentityInterface {
-
+class Order extends AbstractModel implements IdentityInterface
+{ 
     /**
      * Possible values for status
      */
@@ -48,15 +49,18 @@ class Order extends AbstractModel implements IdentityInterface {
         );
     }
 
-    protected function _construct() {
+    protected function _construct()
+    {
         $this->_init(ResourceModel\Order::class);
     }
 
-    public function getIdentities() {
+    public function getIdentities()
+    {
         return [self::CACHE_TAG . '_' . $this->getId()];
     }
 
-    public function getDefaultValues() {
+    public function getDefaultValues()
+    {
         return [];
     }
 
@@ -67,7 +71,8 @@ class Order extends AbstractModel implements IdentityInterface {
      *
      * @return array A Flow shipping address object
      */
-    public function getCrossDockAddress() {
+    public function getCrossDockAddress()
+    {
         $data = $this->jsonHelper->jsonDecode($this->getData());
 
         foreach ($data['deliveries'] as $delivery) {
@@ -83,3 +88,4 @@ class Order extends AbstractModel implements IdentityInterface {
         return null;
     }
 }
+

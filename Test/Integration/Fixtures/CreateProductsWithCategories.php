@@ -26,7 +26,7 @@ use \Magento\Framework\ObjectManagerInterface as ObjectManager;
 class CreateProductsWithCategories
 {
     /**
-     * SKU Prefix
+     * SKU Prefix for simple products
      */
     const SKU_PREFIX = 'simple_';
 

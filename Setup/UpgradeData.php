@@ -111,7 +111,8 @@ class UpgradeData implements UpgradeDataInterface
      * @param ModuleContextInterface $context
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context) {
+    public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    {
         if ($context->getVersion() && version_compare($context->getVersion(), '1.0.29', '<')) {
             $this->fixCustomerWebsiteIdToMatchStoreId($setup);
         }
@@ -214,3 +215,4 @@ class UpgradeData implements UpgradeDataInterface
         }
     }
 }
+

@@ -87,9 +87,9 @@ class Auth
             $storeId = $this->getCurrentStoreId();
         }
         $orgId = $this->getFlowOrganizationId($storeId);
-        if (strlen($orgId) > 1 && !strpos($orgId, '-sandbox')) {
+        if (strlen($orgId) > 1 && strpos($orgId, '-sandbox') === false) {
             $result = true;
-        } 
+        }
         return $result;
     }
 
@@ -117,3 +117,4 @@ class Auth
         return $this->storeManager->getStore()->getId();
     }
 }
+

@@ -119,3 +119,4 @@ class UrlBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedApiEndpoint, $endpoint);
     }
 }
+

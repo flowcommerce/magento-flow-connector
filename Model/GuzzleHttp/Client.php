@@ -15,7 +15,6 @@ use Zend\Http\ClientFactory as HttpClientFactory;
 use Zend\Http\Request;
 use Psr\Log\LoggerInterface as Logger;
 
-
 /**
  * Class Client
  * @package FlowCommerce\FlowConnector\Model\GuzzleHttp
@@ -195,8 +194,13 @@ class Client extends GuzzleClient
             if ($numRetries <= 0) {
                 throw $e;
             } else {
-                $this->logger->info('Error sending client request, retries remaining: ' . $numRetries .
-                    ', trying again in ' . self::FLOW_CLIENT_RETRY_DELAY . ' seconds');
+                $this->logger->info(
+                    'Error sending client request, retries remaining: ' .
+                    $numRetries .
+                    ', trying again in ' .
+                    self::FLOW_CLIENT_RETRY_DELAY .
+                    ' seconds'
+                );
                 sleep(self::FLOW_CLIENT_RETRY_DELAY);
                 return $this->sendFlowClient($client, $numRetries - 1);
             }
@@ -215,3 +219,4 @@ class Client extends GuzzleClient
         return $this->storeManager->getStore()->getId();
     }
 }
+

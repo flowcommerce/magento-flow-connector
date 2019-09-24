@@ -15,7 +15,7 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 class InventorySync extends AbstractDb
 {
     /**
-     * Update multiple statuses batch size
+     * Inventory sync batch size for updating multiple statuses
      */
     const UPDATE_MULTIPLE_STATUSES_BATCH_SIZE = 50;
 
@@ -71,7 +71,6 @@ class InventorySync extends AbstractDb
         }
     }
 
-
     /**
      * Delete Inventory Syncs by Store ID
      * @param null $storeId
@@ -79,7 +78,7 @@ class InventorySync extends AbstractDb
      */
     public function deleteByStoreId($storeId = null)
     {
-        if($storeId) {
+        if ($storeId) {
             $condition = $this->getConnection()->quoteInto(
                 InventorySyncInterface::DATA_KEY_STORE_ID. ' = ?',
                 $storeId

@@ -55,7 +55,7 @@ $syncSku = $block->getSyncSku();
         </tbody>
     </table>
 </div>
-<?php if ($requestUrls = $syncSku->getRequestUrl()): ?>
+<?php if ($requestUrls = $syncSku->getRequestUrl()) : ?>
     <br />
     <div>
         <div class="fieldset-wrapper-title">
@@ -66,7 +66,7 @@ $syncSku = $block->getSyncSku();
         </div>
     </div>
 <?php endif; ?>
-<?php if ($requestBody = $syncSku->getRequestBody()): ?>
+<?php if ($requestBody = $syncSku->getRequestBody()) : ?>
 <br />
 <div>
     <div class="fieldset-wrapper-title">
@@ -77,7 +77,7 @@ $syncSku = $block->getSyncSku();
     </div>
 </div>
 <?php endif; ?>
-<?php if ($responseHeaders = $syncSku->getResponseHeaders()): ?>
+<?php if ($responseHeaders = $syncSku->getResponseHeaders()) : ?>
 <br />
 <div>
     <div class="fieldset-wrapper-title">
@@ -88,7 +88,7 @@ $syncSku = $block->getSyncSku();
     </div>
 </div>
 <?php endif; ?>
-<?php if ($responseBody = $syncSku->getResponseBody()): ?>
+<?php if ($responseBody = $syncSku->getResponseBody()) : ?>
 <br />
 <div>
     <div class="fieldset-wrapper-title">

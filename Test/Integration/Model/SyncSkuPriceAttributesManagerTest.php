@@ -161,8 +161,6 @@ class SyncSkuPriceAttributesManager extends TestCase
         }
     }
 
-
-
     /**
      * @param string $url
      * @return bool

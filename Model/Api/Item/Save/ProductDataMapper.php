@@ -240,7 +240,6 @@ class ProductDataMapper
         return $data;
     }
 
-
     /**
      * Returns Flow product dimension data.
      * https://docs.flow.io/type/dimension

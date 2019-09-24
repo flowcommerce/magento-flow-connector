@@ -7,7 +7,7 @@
 1. In the `require` section of Magento 2's `composer.json`, require the `flowcommerce/flowconnector` module.
 ```json
 "require": {
-    "flowcommerce/flowconnector": "^2.1.0"
+    "flowcommerce/flowconnector": "^2.1.1"
 }
 ```
 2. Run following commands from your Magento 2 app root:
@@ -61,7 +61,7 @@ Documentation: [Flow Product Catalog](https://docs.flow.io/integration-overview#
 This module automatically syncs product information to Flow in two ways:
 
 1. Product creations, updates, and deletes are queued with an observer. This queue is processed with a cron task every minute, with additional workers spawned every minute the queue is not empty.
-2. There is a cron task that syncs the entire product catalog to Flow. By default, this will sync twice per day.
+2. There is a cron task that syncs the entire product catalog to Flow. By default, this will sync twice per day for production Flow organizations only.
 
 ### Price Localization
 

@@ -314,7 +314,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
             $searchCriteria = $this->stockItemCriteriaFactory->create();
             $stockItems = $this->stockItemRepository->getList($searchCriteria);
 
-            if($stockItems->getTotalCount()) {
+            if ($stockItems->getTotalCount()) {
                 $this->inventorySyncRepository->deleteByStoreId($storeId);
 
                 /** @var StockItemInterface $stockItem */
@@ -400,7 +400,8 @@ class InventorySyncManager implements InventorySyncManagementInterface
         $this->inventorySyncRepository->save($inventorySync);
     }
 
-    // Duplicated in Model\Api\Inventory\Updates.php due to circular dependency and class scoping problem. TODO refactor hotfix
+    // Duplicated in Model\Api\Inventory\Updates.php due to circular dependency and class scoping problem.
+    // TODO refactor hotfix
     /**
      * {@inheritdoc}
      */
@@ -468,7 +469,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
                             $this->markInventorySyncAsProcessing($inventorySync);
                             array_push($this->inventorySyncsToUpdate, $inventorySync);
                         }
-                        $numToProcess -= 1;
+                        $numToProcess--;
                     }
 
                     if (count($this->inventorySyncsToUpdate)) {
@@ -489,7 +490,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
                 }
 
                 // Num to process not exhausted, keep alive to wait for more.
-                $keepAlive -= 1;
+                $keepAlive--;
                 sleep(1);
             }
 

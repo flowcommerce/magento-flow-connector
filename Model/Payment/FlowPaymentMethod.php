@@ -145,13 +145,26 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
             if ($response->isSuccess()) {
                 $payment->setIsTransactionClosed(true);
 
-                $this->logger->info('Successfully captured payment with Flow: ' . $flowPaymentRef . ', paymentId: ' . $payment->getId());
-
+                $this->logger->info(
+                    'Successfully captured payment with Flow: ' .
+                    $flowPaymentRef .
+                    ', paymentId: ' .
+                    $payment->getId()
+                ); 
             } else {
                 $content = $response->getContent();
                 $contentData = $this->_jsonHelper->jsonDecode($content);
 
-                $errorMsg = 'Unable to capture payment with Flow: paymentId=' . $payment->getId() . ', flowPaymentRef=' . $flowPaymentRef . ', errorCode=' . $contentData['code'] . ', declineCode=' . $contentData['decline_code'] . ', message=' . implode(", ", $contentData['messages']);
+                $errorMsg = 'Unable to capture payment with Flow: paymentId=' .
+                    $payment->getId() .
+                    ', flowPaymentRef=' .
+                    $flowPaymentRef .
+                    ', errorCode=' .
+                    $contentData['code'] .
+                    ', declineCode=' .
+                    $contentData['decline_code'] .
+                    ', message=' .
+                    implode(", ", $contentData['messages']);
 
                 $this->logger->error($errorMsg);
                 throw new LocalizedException($errorMsg);

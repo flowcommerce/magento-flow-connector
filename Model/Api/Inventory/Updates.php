@@ -124,12 +124,24 @@ class Updates
             foreach ($inventorySyncs as $inventorySync) {
                 $storeId = $inventorySync->getStoreId();
                 if (!$inventorySync->getProduct()) {
-                    $this->logger->warning('Product id: ' . $inventorySync->getProductId() . ' does not have an associated product for store id: ' . $storeId . ' and will not be synced.');
+                    $this->logger->warning(
+                        'Product id: ' .
+                        $inventorySync->getProductId() .
+                        ' does not have an associated product for store id: ' .
+                        $storeId .
+                        ' and will not be synced.'
+                    );
                     $this->markInventorySyncAsError($inventorySync, $e->getMessage());
                     continue;
                 }
                 if (!$inventorySync->getStockItem()) {
-                    $this->logger->warning('Product Id: ' . $inventorySync->getProductId() . ' does not have stock information available for store id: ' . $storeId . ' and will not be synced.');
+                    $this->logger->warning(
+                        'Product Id: ' .
+                        $inventorySync->getProductId() .
+                        ' does not have stock information available for store id: ' .
+                        $storeId .
+                        ' and will not be synced.'
+                    );
                     $this->markInventorySyncAsError($inventorySync, $e->getMessage());
                     continue;
                 }
@@ -170,7 +182,8 @@ class Updates
         $promise->wait();
     }
 
-    // Duplicated from Model\InventorySyncManager.php due to circular dependency and class scoping problem. TODO refactor hotfix
+    // Duplicated from Model\InventorySyncManager.php due to circular dependency and class scoping problem.
+    // TODO refactor hotfix
     /**
      * {@inheritdoc}
      */

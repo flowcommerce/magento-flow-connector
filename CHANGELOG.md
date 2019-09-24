@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.1.1
+- Magento Marketplace linter suggestions
+
 ## 2.1.0
 - Removing daily batch catalog syncing for sandbox environments
 - Exposing methods to determine production status (boolean)

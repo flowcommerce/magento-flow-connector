@@ -29,8 +29,7 @@ class CatalogSyncProcessCommand extends BaseCommand
         AppState $appState,
         Registry $registry,
         CatalogSync $catalogSync
-    )
-    {
+    ) {
         parent::__construct($appState, $registry);
         $this->catalogSync = $catalogSync;
     }
@@ -65,4 +64,3 @@ class CatalogSyncProcessCommand extends BaseCommand
         $this->catalogSync->process($numToProcess, 1);
     }
 }
-

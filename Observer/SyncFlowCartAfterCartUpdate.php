@@ -55,4 +55,3 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
         }
     }
 }
-

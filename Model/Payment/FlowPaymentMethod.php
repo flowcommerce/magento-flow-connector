@@ -150,7 +150,7 @@ class FlowPaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                     $flowPaymentRef .
                     ', paymentId: ' .
                     $payment->getId()
-                ); 
+                );
             } else {
                 $content = $response->getContent();
                 $contentData = $this->_jsonHelper->jsonDecode($content);

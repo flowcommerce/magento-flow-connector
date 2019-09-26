@@ -6,7 +6,7 @@ namespace FlowCommerce\FlowConnector\Test\Integration\Model;
  * Test class for WebhookEvent.
  */
 class WebhookEventTest extends \PHPUnit\Framework\TestCase
-{ 
+{
     protected $logger;
     protected $jsonHelper;
     protected $storeManager;
@@ -30,7 +30,8 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase
     protected $quotePaymentFactory;
     protected $eventManager;
 
-    protected function setUp() {
+    protected function setUp()
+    {
         $this->context = $this->createMock(\Magento\Framework\Model\Context::class);
         $this->registry = $this->createMock(\Magento\Framework\Registry::class);
         $this->logger = $this->createMock(\Psr\Log\LoggerInterface::class);
@@ -94,4 +95,3 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase
         // $webhookEvent->process();
     }
 }
-

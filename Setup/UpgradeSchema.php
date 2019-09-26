@@ -422,8 +422,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
     }
 
-
-
     /**
      * Adds request_body, response_body, response_headers and response_status columns to sync sku table
      * @param SchemaSetupInterface $installer

@@ -120,4 +120,3 @@ class Delete
         $promise->wait();
     }
 }
-

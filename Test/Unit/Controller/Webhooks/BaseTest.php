@@ -16,8 +16,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Test class for webhook controllers.
  */
-class BaseTest extends \PHPUnit\Framework\TestCase {
-
+class BaseTest extends \PHPUnit\Framework\TestCase
+{ 
     public function testAuthorizationDeletedV2()
     {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
@@ -124,4 +124,3 @@ class BaseTest extends \PHPUnit\Framework\TestCase {
         return $controller;
     }
 }
-

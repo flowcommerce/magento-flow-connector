@@ -20,4 +20,3 @@ interface FlowCartManagementInterface
      */
     public function syncCartData();
 }
-

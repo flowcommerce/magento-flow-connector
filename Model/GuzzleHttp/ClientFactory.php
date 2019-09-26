@@ -54,4 +54,3 @@ class ClientFactory
         return $this->guzzleHttpClientFactory->create($config);
     }
 }
-

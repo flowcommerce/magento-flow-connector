@@ -53,7 +53,8 @@ class Cart
                 $result[$subtotalKey] = substr_replace(
                     $subtotalHtml,
                     ' data-flow-localize="cart-subtotal" ',
-                    $position, 0
+                    $position,
+                    0
                 );
             }
 

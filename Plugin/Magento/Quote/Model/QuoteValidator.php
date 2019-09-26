@@ -27,4 +27,3 @@ class QuoteValidator
         return $returnValue;
     }
 }
-

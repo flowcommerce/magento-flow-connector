@@ -227,7 +227,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process(1000, 1);
-        
 
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process(1000, 1);

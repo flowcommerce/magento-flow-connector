@@ -153,4 +153,3 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         return $result;
     }
 }
-

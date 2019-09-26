@@ -60,4 +60,3 @@ class PayloadValidator
         return false;
     }
 }
-

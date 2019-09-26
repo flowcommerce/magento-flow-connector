@@ -59,4 +59,3 @@ class FlowConnectorCheckoutRedirectObserver implements ObserverInterface
         }
     }
 }
-

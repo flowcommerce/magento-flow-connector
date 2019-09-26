@@ -139,4 +139,3 @@ class DefaultConfigProvider
         return $config;
     }
 }
-

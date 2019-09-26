@@ -16,4 +16,3 @@ class OnlineAuthorizationUpsertedV2 extends Base
         return self::EVENT_TYPE;
     }
 }
-

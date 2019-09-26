@@ -57,4 +57,3 @@ class View
         return $this->jsonSerializer->serialize($config);
     }
 }
-

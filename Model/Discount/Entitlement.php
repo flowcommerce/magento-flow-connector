@@ -31,4 +31,3 @@ class Entitlement implements DiscountEntitlementInterface
         return $this->offer_form;
     }
 }
-

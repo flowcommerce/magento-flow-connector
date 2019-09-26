@@ -66,4 +66,3 @@ class Get extends Action
         return $result;
     }
 }
-

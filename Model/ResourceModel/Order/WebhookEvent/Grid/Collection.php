@@ -37,4 +37,3 @@ class Collection extends \Magento\Framework\View\Element\UiComponent\DataProvide
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $mainTable, $resourceModel);
     }
 }
-

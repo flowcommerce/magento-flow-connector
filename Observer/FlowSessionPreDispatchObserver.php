@@ -6,7 +6,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use FlowCommerce\FlowConnector\Model\SessionManager;
 use Psr\Log\LoggerInterface as Logger;
-use Magento\Framework\App\RequestInterface; 
+use Magento\Framework\App\RequestInterface;
 
 /**
  * Class FlowConnectorSettingsObserver

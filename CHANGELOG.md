@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.1.2
+- Fixing typo that helps optimize sku syncing
+- Magento Marketplace linter suggestions
+
 ## 2.1.1
 - Magento Marketplace linter suggestions
 

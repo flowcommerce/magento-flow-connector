@@ -7,7 +7,7 @@
 1. In the `require` section of Magento 2's `composer.json`, require the `flowcommerce/flowconnector` module.
 ```json
 "require": {
-    "flowcommerce/flowconnector": "^2.1.1"
+    "flowcommerce/flowconnector": "^{VERSION}"
 }
 ```
 2. Run following commands from your Magento 2 app root:

@@ -2,17 +2,14 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use Magento\Framework\
-{
-    Model\AbstractModel,
-    DataObject\IdentityInterface
-};
+use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\DataObject\IdentityInterface;
 
 /**
  * Model class for storing Flow order data.
  */
 class Order extends AbstractModel implements IdentityInterface
-{ 
+{
     /**
      * Possible values for status
      */
@@ -88,4 +85,3 @@ class Order extends AbstractModel implements IdentityInterface
         return null;
     }
 }
-

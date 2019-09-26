@@ -45,4 +45,3 @@ class CronCleanupTask
         $this->logger->info('Finished CronCleanupTask.');
     }
 }
-

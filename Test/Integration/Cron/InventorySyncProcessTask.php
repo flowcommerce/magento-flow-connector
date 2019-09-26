@@ -108,4 +108,3 @@ class InventorySyncProcessTask extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->lockManager->isLocked(Subject::LOCK_CODE));
     }
 }
-

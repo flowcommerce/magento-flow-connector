@@ -16,4 +16,3 @@ class FraudStatusChanged extends Base
         return self::EVENT_TYPE;
     }
 }
-

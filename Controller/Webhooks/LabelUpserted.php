@@ -16,4 +16,3 @@ class LabelUpserted extends Base
         return self::EVENT_TYPE;
     }
 }
-

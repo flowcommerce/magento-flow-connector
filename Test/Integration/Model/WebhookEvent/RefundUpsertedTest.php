@@ -149,8 +149,6 @@ class RefundUpsertedTest extends \PHPUnit\Framework\TestCase
 
             /*$creditMemos = $order->getCreditmemosCollection();
             $this->assertEquals(1, count($creditMemos)); */
-
-
         }
         //Validate all "done" events
         $webhookCollection = $this->webhookEventCollectionFactory->create();
@@ -163,4 +161,3 @@ class RefundUpsertedTest extends \PHPUnit\Framework\TestCase
         );
     }
 }
-

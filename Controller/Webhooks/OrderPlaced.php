@@ -16,4 +16,3 @@ class OrderPlaced extends Base
         return self::EVENT_TYPE;
     }
 }
-

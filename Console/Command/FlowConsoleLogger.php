@@ -16,4 +16,3 @@ class FlowConsoleLogger extends ConsoleLogger
         parent::log($level, $msg, $context);
     }
 }
-

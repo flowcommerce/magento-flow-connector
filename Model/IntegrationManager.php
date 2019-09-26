@@ -57,4 +57,3 @@ class IntegrationManager implements IntegrationManagementInterface
             && $resultWebhookRegistration && $resultWebhookSettings;
     }
 }
-

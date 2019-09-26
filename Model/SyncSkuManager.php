@@ -237,7 +237,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
             $collection = $syncSku->getCollection()
                 ->addFieldToSelect('*')
                 ->addFieldToFilter('sku', $product->getSku())
-                ->addFieldToFilter('store_id', $product->getStoreid())
+                ->addFieldToFilter('store_id', $product->getStoreId())
                 ->setPageSize(1);
 
             // Only queue if product is not already queued.
@@ -258,7 +258,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
             } else {
                 /** @var SyncSku $existingSyncSku */
                 $existingSyncSku = $collection->getFirstItem();
-                if ($existingSyncSku->getStatus() != SyncSku::STATUS_NEW)  {
+                if ($existingSyncSku->getStatus() != SyncSku::STATUS_NEW) {
                     $existingSyncSku->setStatus(SyncSku::STATUS_NEW);
                     if ($existingSyncSku->isShouldSyncChildren() !== $shouldSyncChildren) {
                         $existingSyncSku->setShouldSyncChildren($shouldSyncChildren);
@@ -364,7 +364,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
                 } else {
                     /** @var SyncSku $existingSyncSku */
                     $existingSyncSku = $collection->getFirstItem();
-                    if($existingSyncSku->getStatus() != SyncSku::STATUS_NEW) {
+                    if ($existingSyncSku->getStatus() != SyncSku::STATUS_NEW) {
                         $existingSyncSku->setStatus(SyncSku::STATUS_NEW);
 
                         $existingSyncSku->save();

@@ -116,4 +116,3 @@ class WebhookEventProcessTask
         $this->lockManager->releaseLock(self::LOCK_CODE);
     }
 }
-

@@ -123,4 +123,3 @@ class AuthTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedHeader, $header);
     }
 }
-

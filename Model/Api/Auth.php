@@ -117,4 +117,3 @@ class Auth
         return $this->storeManager->getStore()->getId();
     }
 }
-

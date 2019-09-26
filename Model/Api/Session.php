@@ -202,4 +202,3 @@ class Session
         return $this->storeManager->getStore()->getId();
     }
 }
-

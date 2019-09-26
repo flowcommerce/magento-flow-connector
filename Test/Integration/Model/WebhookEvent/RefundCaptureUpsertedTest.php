@@ -163,4 +163,3 @@ class RefundCaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         );
     }
 }
-

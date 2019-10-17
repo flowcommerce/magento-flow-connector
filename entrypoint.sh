@@ -7,8 +7,8 @@ M2_ROOT="/opt/bitnami/magento/htdocs/"
 print_welcome_page
 
 if [[ "$1" == "nami" && "$2" == "start" ]] || [[ "$1" == "/run.sh" ]]; then
-    . /apache-init.sh
-    . /magento-init.sh
+    # . /apache-init.sh
+    # . /magento-init.sh
 
     find ${M2_ROOT} -type d -print0 | xargs -0 chmod 775
     find ${M2_ROOT} -type f -print0 | xargs -0 chmod 664

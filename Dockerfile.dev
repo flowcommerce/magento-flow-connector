@@ -48,3 +48,4 @@ RUN find . -type d -print0 | xargs -0 chmod 775 && \
 EXPOSE 80 443
 
 ENTRYPOINT ["/opt/flowcommerce/flowconnector/entrypoint.sh"]
+CMD [ "/run.sh" ]

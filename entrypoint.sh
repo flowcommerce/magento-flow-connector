@@ -7,8 +7,10 @@ M2_ROOT="/opt/bitnami/magento/htdocs/"
 print_welcome_page
 
 if [[ "$1" == "nami" && "$2" == "start" ]] || [[ "$1" == "/run.sh" ]]; then
-    . /magento-init.sh
+    echo -e "\nSetEnvIf X-Forwarded-Proto https HTTPS=on" >> /opt/bitnami/apache/conf/httpd.conf
+    echo -e "\nServerName $MAGENTO_BASE_URL" >> /opt/bitnami/apache/conf/httpd.conf
 
+    . /magento-init.sh
     nami_initialize apache php mysql-client libphp magento
     info "Starting magento... "
 fi

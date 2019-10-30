@@ -35,7 +35,7 @@ services:
       - magento-development.flo.pub
     gateways:
       - mesh
-      - magento-development-flo-pub
+      - magento-flow-connector-development-flo-pub
     stages:
       - deployment: live
         weight: 100

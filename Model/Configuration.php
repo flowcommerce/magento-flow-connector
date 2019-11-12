@@ -56,8 +56,11 @@ class Configuration
     // Store configuration key for max cart hide ms
     const FLOW_MAX_CART_HIDE_MS = 'flowcommerce/flowconnector/max_cart_hide_ms';
 
-    // Flow checkout base url
-    const FLOW_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
+    // Store configuration key for checkout base url
+    const FLOW_CHECKOUT_BASE_URL = 'flowcommerce/flowconnector/checkout_base_url';
+    
+    // Default checkout base url for Flow checkout
+    const FLOW_DEFAULT_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
 
     // Name of Flow session cookie
     const FLOW_SESSION_COOKIE = '_f60_session';
@@ -171,6 +174,24 @@ class Configuration
     }
 
     /**
+     * Returns the Flow Checkout Base Url
+     * @param int|null $storeId
+     * @throws NoSuchEntityException
+     * @return string
+     */
+    public function getFlowCheckoutBaseUrl($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+        $result = $this->scopeConfig->getValue(self::FLOW_CHECKOUT_BASE_URL, ScopeInterface::SCOPE_STORE, $storeId);
+        if (empty($result)) {
+            $result = self::FLOW_DEFAULT_CHECKOUT_BASE_URL;
+        }
+        return $result;
+    }
+
+    /**
      * Returns the Flow Checkout Url
      * @param int|null $storeId
      * @throws NoSuchEntityException
@@ -182,7 +203,7 @@ class Configuration
             $storeId = $this->getCurrentStoreId();
         }
 
-        return self::FLOW_CHECKOUT_BASE_URL .
+        return $this->getFlowCheckoutBaseUrl($storeId) .
             $this->auth->getFlowOrganizationId($storeId) . '/order/';
     }
 

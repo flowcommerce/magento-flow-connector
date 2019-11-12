@@ -23,7 +23,7 @@ affinity: {}
 ingress:
   enabled: true
   gateways:
-    - key: flo-pub
+    - key: magento-development-flow-pub
       tld: flo.pub
       hosts:
         - magento-development.flo.pub

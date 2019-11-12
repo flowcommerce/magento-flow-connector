@@ -306,7 +306,7 @@ class SessionManager implements SessionManagementInterface
             $createdOrder = json_decode($this->orderSave->execute($orderForm, $query, $sessionId));
             $tokenId = $this->orderSave->createCheckoutToken($createdOrder->number, $sessionId);
             if (isset($createdOrder->number) && $tokenId) {
-                $result = $this->configuration::FLOW_CHECKOUT_BASE_URL . '/tokens/' . $tokenId;
+                $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
 
             }
         }

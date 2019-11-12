@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.1.4
+- Support for vanity urls in Flow Checkout UI
+
 ## 2.1.2
 - Fixing typo that helps optimize sku syncing
 - Magento Marketplace linter suggestions

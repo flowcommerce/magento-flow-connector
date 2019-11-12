@@ -40,21 +40,28 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="redirect_enabled" translate="label" type="select" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="checkout_base_url" translate="label" type="text" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Checkout Base Url</label>
+                    <comment>Value provided must have a CNAME DNS record mapped to https://checkout.flow.io/ which must be validated by Flow</comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="redirect_enabled" translate="label" type="select" sortOrder="6" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Redirect to Flow Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="invoice_event" translate="label" type="select" sortOrder="6" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="invoice_event" translate="label" type="select" sortOrder="7" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Create Invoice</label>
                     <source_model>FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="invoice_email" translate="label" type="select" sortOrder="7" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="invoice_email" translate="label" type="select" sortOrder="8" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Send invoice email</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
@@ -62,14 +69,14 @@
                         <field id="invoice_event" separator=",">1,2</field>
                     </depends>
                 </field>
-                <field id="shipment_event" translate="label" type="select" sortOrder="8" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="shipment_event" translate="label" type="select" sortOrder="9" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Create Shipment</label>
                     <source_model>FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="shipment_email" translate="label" type="select" sortOrder="9" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="shipment_email" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Send shipment email</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
@@ -77,28 +84,28 @@
                         <field id="shipment_event">1</field>
                     </depends>
                 </field>
-                <field id="webhook_validation" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="webhook_validation" translate="label" type="select" sortOrder="11" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enable Webhook Validation</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="country_picker" translate="label" type="select" sortOrder="11" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="country_picker" translate="label" type="select" sortOrder="12" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enable Country Picker</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="catalog_price_localization" translate="label" type="select" sortOrder="12" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="catalog_price_localization" translate="label" type="select" sortOrder="13" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enable Catalog Price Localization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="max_catalog_hide_ms" translate="label" type="text" sortOrder="13" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="max_catalog_hide_ms" translate="label" type="text" sortOrder="14" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Maximum Time to Hide Catalog Prices</label>
                     <comment>After this amount of milliseconds, catalog prices will display regardless of Flow's localization results</comment>
                     <depends>
@@ -106,14 +113,14 @@
                         <field id="catalog_price_localization">1</field>
                     </depends>
                 </field>
-                <field id="cart_localization" translate="label" type="select" sortOrder="14" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="cart_localization" translate="label" type="select" sortOrder="15" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Enable Cart Localization</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="max_cart_hide_ms" translate="label" type="text" sortOrder="15" showInDefault="0" showInWebsite="0" showInStore="1">
+                <field id="max_cart_hide_ms" translate="label" type="text" sortOrder="16" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Maximum Time to Hide Carts</label>
                     <comment>After this amount of milliseconds, carts will display regardless of Flow's localization results</comment>
                     <depends>

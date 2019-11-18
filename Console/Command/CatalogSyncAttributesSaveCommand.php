@@ -50,7 +50,7 @@ class CatalogSyncAttributesSaveCommand extends BaseCommand
     public function configure()
     {
         $this->setName('flow:flow-connector:catalog-sync-attributes-save')
-            ->setDescription('Saves product attributes needed for the integration in flow.io');
+            ->setDescription('Save product attributes needed for catalog integration to Flow.');
     }
 
     /**

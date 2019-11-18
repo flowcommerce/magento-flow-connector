@@ -37,7 +37,7 @@ class CatalogSyncProcessCommand extends BaseCommand
     public function configure()
     {
         $this->setName('flow:flow-connector:catalog-sync-process')
-            ->setDescription('Process sync skus queue and send to Flow.')
+            ->setDescription('Sync queued items to Flow catalog.')
             ->addArgument(
                 'num-to-process',
                 InputArgument::OPTIONAL,

@@ -44,7 +44,7 @@ class WebhookUpdateSettingsCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:webhook-update-settings')
+        $this->setName('flow:connector:webhook-update')
             ->setDescription('Create secret for webhook payload verification.');
     }
 

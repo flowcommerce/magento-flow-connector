@@ -40,7 +40,7 @@ class CronCleanupCommand extends BaseCommand
      */
     public function configure()
     {
-        $this->setName('flow:flow-connector:cron-cleanup')
+        $this->setName('flow:connector:cron-cleanup')
             ->setDescription('Remove Flow cron tasks older than 5 minutes and still marked as running.');
     }
 

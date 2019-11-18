@@ -61,18 +61,18 @@ Then, enable the connector and fill out your Flow Organization ID, Flow API Key,
 
 Then, we will use the settings we just configured to register webhooks for importing orders from Flow and prepare Flow's catalog to sync Magento's catalog attributes:
 ```plaintext
-$ php bin/magento flow:flow-connector:integration-initialize
+$ php bin/magento flow:connector:initialize
 ```
 For more detail about how Flow Webhooks work please refer to this guide: [Flow Webhook](https://docs.flow.io/docs/webhooks)
 
 Then, enqueue your Magento catalog to be synced:
 ```plaintext
-$ php bin/magento flow:flow-connector:catalog-sync-queue-all
+$ php bin/magento flow:connector:catalog-enqueue
 ```
 
 Finally, synchronize your Magento catalog:
 ```plaintext
-$ php bin/magento flow:flow-connector:catalog-sync-process
+$ php bin/magento flow:connector:catalog-sync
 ```
 
 This extension also automatically syncs product information to Flow in two ways:
@@ -151,57 +151,57 @@ This text field controls the amount of time in milliseconds that cart prices wil
 ### Shell Commands Available
 Save product attributes needed for catalog integration to Flow:
 ```plaintext
-$ php bin/magento flow:flow-connector:catalog-sync-attributes-save
+$ php bin/magento flow:connector:catalog-attributes-save
 ```
 
 Sync queued items to Flow catalog:
 ```plaintext
-$ php bin/magento flow:flow-connector:catalog-sync-process
+$ php bin/magento flow:connector:catalog-sync
 ```
 
-Queue all products for sync to Flow catalog:
+Enqueue all products for sync to Flow catalog:
 ```plaintext
-$ php bin/magento flow:flow-connector:catalog-sync-queue-all
+$ php bin/magento flow:connector:catalog-enqueue
 ```
 
 Remove Flow cron tasks older than 5 minutes and still marked as running:
 ```plaintext
-$ php bin/magento flow:flow-connector:cron-cleanup
+$ php bin/magento flow:connector:cron-cleanup
 ```
 
 Initialize integration with Flow. Includes webhook registration, attributes creation, inventory center key fetching, and creating secret for webhook payload verification:
 ```plaintext
-$ php bin/magento flow:flow-connector:integration-initialize
+$ php bin/magento flow:connector:initialize
 ```
 
 Fetch inventory center keys for all store views where flowconnector is configured:
 ```plaintext
-$ php bin/magento flow:flow-connector:inventory-center-fetch-keys
+$ php bin/magento flow:connector:center-fetch
 ```
 
 Sync inventory queue to Flow. Warnings may be logged for items which are configured to not track inventory:
 ```plaintext
-$ php bin/magento flow:flow-connector:inventory-sync-process
+$ php bin/magento flow:connector:inventory-process
 ```
 
-Queue all products for sync to Flow inventory:
+Enqueue all products for sync to Flow inventory:
 ```plaintext
-$ php bin/magento flow:flow-connector:inventory-sync-queue-all
+$ php bin/magento flow:connector:inventory-sync
 ```
 
 Process recieved Flow webhook events:
 ```plaintext
-$ php bin/magento flow:flow-connector:webhook-event-process
+$ php bin/magento flow:connector:webhook-process
 ```
 
 Register or update existing webhooks with Flow:
 ```plaintext
-$ php bin/magento flow:flow-connector:webhook-register-webhooks
+$ php bin/magento flow:connector:webhook-register
 ```
 
 Create secret for webhook payload verification:
 ```plaintext
-$ php bin/magento flow:flow-connector:webhook-update-settings
+$ php bin/magento flow:connector:webhook-update
 ```
 
 ### Extending Functionality

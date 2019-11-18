@@ -45,7 +45,7 @@ class InventoryCenterFetchKeysCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:inventory-center-fetch-keys')
+        $this->setName('flow:connector:center-fetch')
             ->setDescription('Fetch inventory center keys for all store views where flowconnector is configured.');
     }
 

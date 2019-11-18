@@ -44,7 +44,7 @@ class WebhookRegisterWebhooksCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:webhook-register-webhooks')
+        $this->setName('flow:connector:webhook-register')
             ->setDescription('Register or update existing webhooks with Flow.');
     }
 

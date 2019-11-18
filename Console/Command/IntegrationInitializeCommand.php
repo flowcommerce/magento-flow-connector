@@ -45,7 +45,7 @@ class IntegrationInitializeCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:integration-initialize')
+        $this->setName('flow:connector:initialize')
             ->setDescription('Initialize integration with Flow.');
     }
 

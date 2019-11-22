@@ -37,8 +37,6 @@ pipeline {
     stage('Build and push docker image release') {
       when { 
           anyOf { 
-              branch 'master'
-              changeRequest target: 'master'
           }
       }
       steps {
@@ -58,14 +56,10 @@ pipeline {
     stage('Deploy Helm chart') {
       when { 
           anyOf { 
-              branch 'master'
-              changeRequest target: 'master'
           }
       }
       steps {
         container('helm') {
-          sh('helm init --client-only')
-          sh("helm upgrade --wait --install --debug --timeout 900 --namespace production --set deployments.live.version=$IMAGE_TAG -i $APP_NAME ./deploy/$APP_NAME")
         }
       }
     }

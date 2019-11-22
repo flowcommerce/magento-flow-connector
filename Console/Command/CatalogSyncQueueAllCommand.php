@@ -40,8 +40,8 @@ class CatalogSyncQueueAllCommand extends BaseCommand
      */
     public function configure()
     {
-        $this->setName('flow:flow-connector:catalog-sync-queue-all')
-            ->setDescription('Queue all products for sync to Flow catalog.');
+        $this->setName('flow:connector:catalog-enqueue')
+            ->setDescription('Enqueue all products for sync to Flow catalog.');
     }
 
     /**

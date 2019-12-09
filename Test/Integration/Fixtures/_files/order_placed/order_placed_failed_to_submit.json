@@ -8,7 +8,7 @@
     },
     "details": [
       {
-        "number": "634511",
+        "number": "simple_1",
         "total": {
           "amount": 28092,
           "currency": "JPY",
@@ -551,7 +551,7 @@
         ],
         "items": [
           {
-            "number": "634511",
+            "number": "simple_1",
             "quantity": 1,
             "price": {
               "amount": 33050,
@@ -757,12 +757,12 @@
             "label": "US$292.02"
           }
         },
-        "item_number": "634511"
+        "item_number": "simple_1"
       }
     ],
     "items": [
       {
-        "number": "634511",
+        "number": "simple_1",
         "quantity": 1,
         "discounts": [
           {
@@ -821,7 +821,7 @@
             "name": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
             "small_image": "/h/t/httpss3.amazonaws.commoissanite2-media-importimages607052-3a-round-foreverone-moissanite-14k-yellow-gold-necklace.jpg",
             "web_site_stone_html": "<thead><tr><td colspan=\"2\"><br>Stone 1</td></tr></thead><tbody><tr class=\"data-web_stone_side_shape_1\"><td class=\"details-title\"> Stone Shape</td><td class=\"details-data\"> Round</td></tr><tr class=\"data-web_stone_side_color_1\"><td class=\"details-title\"> Stone Color</td><td class=\"details-data\"> I or better</td></tr><tr class=\"data-web_stone_side_size_1\"><td class=\"details-title\"> Size (mm)</td><td class=\"details-data\"> 3</td></tr><tr class=\"data-web_stone_side_weight_cttw_1\"><td class=\"details-title\">Carat Total Weight (DEW)</td><td class=\"details-data\"> 0.10ctw</td></tr></tbody>",
-            "sku": "634511",
+            "sku": "simple_1",
             "quantity_and_stock_status": "In Stock",
             "product_description_list": "<ul><li>Forever One Moissanite Accent Stones</li><li>Expertly faceted round cut, 3.0mm.</li><li>Carat Total Weight (CTW) expressed in Diamond Equivalent Weight (DEW), 0.10 carats.</li><li>Presented in solid 14k yellow gold.</li></ul>",
             "product_detail_image": "/h/t/httpss3.amazonaws.commoissanite2-media-importimages607052-3a-round-foreverone-moissanite-14k-yellow-gold-necklace.jpg",
@@ -864,8 +864,8 @@
             "gift_message_available": "No",
             "custom_design": "-- Please Select --",
             "status": "Enabled",
-            "web_product_group_sku": "634511",
-            "url_key": "moissanite-accent-personalized-script-name-bar-necklace-14k-yellow-gold-634511",
+            "web_product_group_sku": "simple_1",
+            "url_key": "moissanite-accent-personalized-script-name-bar-necklace-14k-yellow-gold-simple_1",
             "web_chain_length": "18",
             "tax_class_id": "Taxable Goods",
             "web_stone_center_grade": "I or better",

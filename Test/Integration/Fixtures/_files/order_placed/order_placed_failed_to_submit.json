@@ -1,0 +1,950 @@
+{
+  "allocation": {
+    "id": "evt-334c5028a2af46d386872e52496d6d39",
+    "order": {
+      "number": "ord-b28d986781214915bed7e0dfaf8be785",
+      "submitted_at": "2019-12-06T06:32:02.044Z",
+      "id": "ior-c0f4ebf648244246a6112781a730251f"
+    },
+    "details": [
+      {
+        "number": "634511",
+        "total": {
+          "amount": 28092,
+          "currency": "JPY",
+          "label": "¥28,092",
+          "base": {
+            "amount": 248.22,
+            "currency": "USD",
+            "label": "US$248.22"
+          }
+        },
+        "quantity": 1,
+        "not_included": [
+          {
+            "total": {
+              "amount": 1399,
+              "currency": "JPY",
+              "label": "¥1,399",
+              "base": {
+                "amount": 12.36,
+                "currency": "USD",
+                "label": "US$12.36"
+              }
+            },
+            "rate": 0.054,
+            "price": {
+              "amount": 1399,
+              "currency": "JPY",
+              "label": "¥1,399",
+              "base": {
+                "amount": 12.36,
+                "currency": "USD",
+                "label": "US$12.36"
+              }
+            },
+            "name": "Duty",
+            "accuracy": "calculated",
+            "key": "duties_item_price",
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "price": {
+          "amount": 28092,
+          "currency": "JPY",
+          "label": "¥28,092",
+          "base": {
+            "amount": 248.22,
+            "currency": "USD",
+            "label": "US$248.22"
+          }
+        },
+        "included": [
+          {
+            "total": {
+              "amount": 30466,
+              "currency": "JPY",
+              "label": "¥30,466",
+              "base": {
+                "amount": 269.2,
+                "currency": "USD",
+                "label": "US$269.20"
+              }
+            },
+            "price": {
+              "amount": 30466,
+              "currency": "JPY",
+              "label": "¥30,466",
+              "base": {
+                "amount": 269.2,
+                "currency": "USD",
+                "label": "US$269.20"
+              }
+            },
+            "key": "item_price",
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "total": {
+              "amount": 13,
+              "currency": "JPY",
+              "label": "¥13",
+              "base": {
+                "amount": 0.11,
+                "currency": "USD",
+                "label": "US$0.11"
+              }
+            },
+            "price": {
+              "amount": 13,
+              "currency": "JPY",
+              "label": "¥13",
+              "base": {
+                "amount": 0.11,
+                "currency": "USD",
+                "label": "US$0.11"
+              }
+            },
+            "key": "rounding",
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "total": {
+              "amount": -4572,
+              "currency": "JPY",
+              "label": "-¥4,572",
+              "base": {
+                "amount": -40.4,
+                "currency": "USD",
+                "label": "-US$40.40"
+              }
+            },
+            "price": {
+              "amount": -4572,
+              "currency": "JPY",
+              "label": "-¥4,572",
+              "base": {
+                "amount": -40.4,
+                "currency": "USD",
+                "label": "-US$40.40"
+              }
+            },
+            "key": "item_discount",
+            "discriminator": "allocation_detail_component"
+          },
+          {
+            "total": {
+              "amount": 2185,
+              "currency": "JPY",
+              "label": "¥2,185",
+              "base": {
+                "amount": 19.31,
+                "currency": "USD",
+                "label": "US$19.31"
+              }
+            },
+            "rate": 0.08,
+            "price": {
+              "amount": 2185,
+              "currency": "JPY",
+              "label": "¥2,185",
+              "base": {
+                "amount": 19.31,
+                "currency": "USD",
+                "label": "US$19.31"
+              }
+            },
+            "name": "CT",
+            "accuracy": "calculated",
+            "key": "vat_item_price",
+            "discriminator": "allocation_levy_component"
+          }
+        ],
+        "key": "subtotal",
+        "discriminator": "allocation_line_detail"
+      },
+      {
+        "total": {
+          "amount": 0,
+          "currency": "JPY",
+          "label": "¥0",
+          "base": {
+            "amount": 0,
+            "currency": "USD",
+            "label": "US$0.00"
+          }
+        },
+        "not_included": [],
+        "included": [],
+        "key": "shipping",
+        "discriminator": "allocation_order_detail"
+      },
+      {
+        "total": {
+          "amount": 0,
+          "currency": "JPY",
+          "label": "¥0",
+          "base": {
+            "amount": 0,
+            "currency": "USD",
+            "label": "US$0.00"
+          }
+        },
+        "not_included": [],
+        "included": [],
+        "key": "discount",
+        "discriminator": "allocation_order_detail"
+      }
+    ],
+    "total": {
+      "currency": "JPY",
+      "amount": 29491,
+      "label": "¥29,491",
+      "base": {
+        "amount": 260.58,
+        "currency": "USD",
+        "label": "US$260.58"
+      }
+    }
+  },
+  "event_id": "evt-933c85a8d89b41e3b85f72ea7fa997df",
+  "organization": "magento-integration-sandbox",
+  "order_number": "ord-b28d986781214915bed7e0dfaf8be785",
+  "timestamp": "2019-12-06T06:34:04.203Z",
+  "order": {
+    "submitted_at": "2019-12-06T06:32:02.044Z",
+    "delivered_duty": "paid",
+    "payments": [
+      {
+        "reference": "aut-WpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
+        "date": "2019-12-06T06:31:59.414Z",
+        "total": {
+          "amount": 29491,
+          "currency": "JPY",
+          "label": "¥29,491",
+          "base": {
+            "amount": 260.58,
+            "currency": "USD",
+            "label": "US$260.58"
+          }
+        },
+        "merchant_of_record": "flow",
+        "address": {
+          "country": "JPN",
+          "streets": [
+            "123 Fake",
+            "Unit 123"
+          ],
+          "province": "Tokyo",
+          "city": "Minato-ku",
+          "name": {
+            "last": "David",
+            "first": "Mancuso"
+          },
+          "postal": "1080073"
+        },
+        "description": "Mastercard 0049",
+        "attributes": {},
+        "id": "opm-f171ffffb062457a9e1203b0ba2f2862",
+        "type": "card"
+      }
+    ],
+    "destination": {
+      "country": "JPN",
+      "streets": [
+        "123 Fake",
+        "Unit 123"
+      ],
+      "province": "Tokyo",
+      "city": "Minato-ku",
+      "contact": {
+        "phone": "5555555555",
+        "name": {
+          "last": "David",
+          "first": "Mancuso"
+        },
+        "email": "david@flow.io"
+      },
+      "postal": "1080073"
+    },
+    "experience": {
+      "key": "japan",
+      "discriminator": "experience_reference"
+    },
+    "deliveries": [
+      {
+        "total": {
+          "currency": "JPY",
+          "amount": 29491,
+          "label": "¥29,491",
+          "base": {
+            "amount": 260.58,
+            "currency": "USD",
+            "label": "US$260.58"
+          }
+        },
+        "center": {
+          "address": {
+            "contact": {
+              "name": {}
+            },
+            "location": {
+              "country": "USA",
+              "streets": [
+                "170 Southport Drive"
+              ],
+              "province": "NC",
+              "city": "Morrisville",
+              "postal": "27560"
+            }
+          },
+          "id": "cen-62257e95b18440a1acdd1e5b91778f58",
+          "key": "default"
+        },
+        "options": [
+          {
+            "cost": {
+              "amount": 2134,
+              "currency": "JPY",
+              "details": [
+                {
+                  "amount": 2134,
+                  "components": [
+                    {
+                      "amount": 144,
+                      "currency": "JPY",
+                      "label": "¥144",
+                      "key": "ratecard_fuel_surcharge",
+                      "base": {
+                        "amount": 1.27455,
+                        "currency": "USD",
+                        "label": "US$1.27"
+                      }
+                    },
+                    {
+                      "amount": 1990,
+                      "currency": "JPY",
+                      "label": "¥1,990",
+                      "key": "ratecard_base_cost",
+                      "base": {
+                        "amount": 17.58,
+                        "currency": "USD",
+                        "label": "US$17.58"
+                      }
+                    }
+                  ],
+                  "currency": "JPY",
+                  "source": "ratecard",
+                  "label": "¥2,134",
+                  "base": {
+                    "amount": 18.85455,
+                    "currency": "USD",
+                    "label": "US$18.85"
+                  }
+                }
+              ],
+              "label": "¥2,134",
+              "base": {
+                "amount": 18.85455,
+                "currency": "USD",
+                "label": "US$18.85"
+              }
+            },
+            "tier": {
+              "visibility": "public",
+              "display": {
+                "estimate": {
+                  "label": "Combine transit time with product stock status to determine estimated delivery date",
+                  "type": "custom"
+                }
+              },
+              "integration": "information",
+              "name": "Free Express Shipping",
+              "currency": "USD",
+              "id": "tie-15009edb9fec4ee18a1debb3686fa244",
+              "services": [
+                "dhl-express-worldwide"
+              ],
+              "strategy": "fastest"
+            },
+            "delivered_duty": "paid",
+            "price": {
+              "amount": 0,
+              "currency": "JPY",
+              "label": "¥0",
+              "base": {
+                "amount": 0,
+                "currency": "USD",
+                "label": "US$0.00"
+              }
+            },
+            "service": {
+              "carrier": {
+                "id": "dhl"
+              },
+              "name": "Express Worldwide",
+              "id": "dhl-express-worldwide"
+            },
+            "rule_outcome": {
+              "zero_amount_indicator": "zero",
+              "price": {
+                "amount": 0,
+                "currency": "USD",
+                "label": "US$0.00"
+              },
+              "discriminator": "flat_rate"
+            },
+            "ratecard_owner": "flow",
+            "weight": {
+              "gravitational": {
+                "value": "1.25",
+                "units": "pound"
+              },
+              "dimensional": {
+                "value": "0.80",
+                "units": "inch"
+              }
+            },
+            "id": "opt-86a7680d026c4be5884ae992334705a9",
+            "window": {
+              "timezone": "UTC",
+              "from": "2019-12-09T00:00:00.000Z",
+              "to": "2019-12-16T00:00:00.000Z",
+              "label": "1-6 Business Days"
+            }
+          }
+        ],
+        "goods_supply": "export",
+        "id": "del-5487d2747b864d42a3a556b7e7df7be5",
+        "prices": [
+          {
+            "amount": 33050,
+            "components": [
+              {
+                "amount": 2439,
+                "name": "CT on item price",
+                "currency": "JPY",
+                "label": "¥2,439",
+                "key": "vat_item_price",
+                "base": {
+                  "amount": 21.55,
+                  "currency": "USD",
+                  "label": "US$21.55"
+                }
+              },
+              {
+                "amount": 132,
+                "name": "CT on duties on item price",
+                "currency": "JPY",
+                "label": "¥132",
+                "key": "vat_duties_item_price",
+                "base": {
+                  "amount": 1.16,
+                  "currency": "USD",
+                  "label": "US$1.16"
+                }
+              },
+              {
+                "amount": 30466,
+                "name": "Item price",
+                "currency": "JPY",
+                "label": "¥30,466",
+                "key": "item_price",
+                "base": {
+                  "amount": 269.2,
+                  "currency": "USD",
+                  "label": "US$269.20"
+                }
+              },
+              {
+                "amount": 13,
+                "name": "Rounding",
+                "currency": "JPY",
+                "label": "¥13",
+                "key": "rounding",
+                "base": {
+                  "amount": 0.11,
+                  "currency": "USD",
+                  "label": "US$0.11"
+                }
+              }
+            ],
+            "name": "Subtotal",
+            "accuracy": "calculated",
+            "currency": "JPY",
+            "label": "¥33,050",
+            "key": "subtotal",
+            "base": {
+              "amount": 292.02,
+              "currency": "USD",
+              "label": "US$292.02"
+            }
+          },
+          {
+            "amount": 1399,
+            "components": [
+              {
+                "amount": 1399,
+                "name": "Duties on item price",
+                "currency": "JPY",
+                "label": "¥1,399",
+                "key": "duties_item_price",
+                "base": {
+                  "amount": 12.36,
+                  "currency": "USD",
+                  "label": "US$12.36"
+                }
+              }
+            ],
+            "name": "Duties",
+            "accuracy": "calculated",
+            "currency": "JPY",
+            "label": "¥1,399",
+            "key": "duty",
+            "base": {
+              "amount": 12.36,
+              "currency": "USD",
+              "label": "US$12.36"
+            }
+          },
+          {
+            "amount": 0,
+            "components": [],
+            "name": "Shipping",
+            "accuracy": "calculated",
+            "currency": "JPY",
+            "label": "¥0",
+            "key": "shipping",
+            "base": {
+              "amount": 0,
+              "currency": "USD",
+              "label": "US$0.00"
+            }
+          },
+          {
+            "amount": -4958,
+            "components": [
+              {
+                "amount": -4958,
+                "name": "Discount",
+                "currency": "JPY",
+                "label": "-¥4,958",
+                "key": "item_discount",
+                "base": {
+                  "amount": -43.8,
+                  "currency": "USD",
+                  "label": "-US$43.80"
+                }
+              }
+            ],
+            "name": "Discount",
+            "accuracy": "calculated",
+            "currency": "JPY",
+            "label": "-¥4,958",
+            "key": "discount",
+            "base": {
+              "amount": -43.8,
+              "currency": "USD",
+              "label": "-US$43.80"
+            }
+          }
+        ],
+        "items": [
+          {
+            "number": "634511",
+            "quantity": 1,
+            "price": {
+              "amount": 33050,
+              "currency": "JPY",
+              "base": {
+                "amount": 292.02,
+                "currency": "USD"
+              }
+            },
+            "line_number": 0
+          }
+        ],
+        "key": "ord-b28d986781214915bed7e0dfaf8be785",
+        "discriminator": "physical_delivery"
+      }
+    ],
+    "geo": {
+      "country": "JPN",
+      "ip": "54.91.98.232",
+      "currency": "JPY",
+      "language": "ja"
+    },
+    "number": "ord-b28d986781214915bed7e0dfaf8be785",
+    "selections": [
+      "opt-86a7680d026c4be5884ae992334705a9"
+    ],
+    "total": {
+      "currency": "JPY",
+      "amount": 29491,
+      "label": "¥29,491",
+      "base": {
+        "amount": 260.58,
+        "currency": "USD",
+        "label": "US$260.58"
+      }
+    },
+    "expires_at": "2019-12-06T07:31:56.682Z",
+    "attributes": {
+      "customer_session_id": "mdhe20ftt1gutle45ktd9246tv",
+      "pricing_key": "{\"vat\":\"included\",\"duty\":\"ignored\",\"rounding\":{\"type\":\"multiple\",\"method\":\"up\",\"value\":50}}",
+      "flow-policies": "true",
+      "quote_id": "300824",
+      "flow_checkout_behavior_customer_email_prompt": "incomplete",
+      "flow_checkout_behavior_shipping_method_prompt": "multiple",
+      "flow_checkout_behavior_shipping_address_prompt": "incomplete",
+      "checkout-persistence": "true",
+      "checkout_session_id": "mdhe20ftt1gutle45ktd9246tv"
+    },
+    "id": "ior-c0f4ebf648244246a6112781a730251f",
+    "prices": [
+      {
+        "amount": 33050,
+        "components": [
+          {
+            "amount": 132,
+            "name": "CT on duties on item price",
+            "currency": "JPY",
+            "label": "¥132",
+            "key": "vat_duties_item_price",
+            "base": {
+              "amount": 1.16,
+              "currency": "USD",
+              "label": "US$1.16"
+            }
+          },
+          {
+            "amount": 2439,
+            "name": "CT on item price",
+            "currency": "JPY",
+            "label": "¥2,439",
+            "key": "vat_item_price",
+            "base": {
+              "amount": 21.55,
+              "currency": "USD",
+              "label": "US$21.55"
+            }
+          },
+          {
+            "amount": 30466,
+            "name": "Item price",
+            "currency": "JPY",
+            "label": "¥30,466",
+            "key": "item_price",
+            "base": {
+              "amount": 269.2,
+              "currency": "USD",
+              "label": "US$269.20"
+            }
+          },
+          {
+            "amount": 13,
+            "name": "Rounding",
+            "currency": "JPY",
+            "label": "¥13",
+            "key": "rounding",
+            "base": {
+              "amount": 0.11,
+              "currency": "USD",
+              "label": "US$0.11"
+            }
+          }
+        ],
+        "name": "Subtotal",
+        "accuracy": "calculated",
+        "currency": "JPY",
+        "label": "¥33,050",
+        "key": "subtotal",
+        "base": {
+          "amount": 292.02,
+          "currency": "USD",
+          "label": "US$292.02"
+        }
+      },
+      {
+        "amount": 1399,
+        "components": [
+          {
+            "amount": 1399,
+            "name": "Duties on item price",
+            "currency": "JPY",
+            "label": "¥1,399",
+            "key": "duties_item_price",
+            "base": {
+              "amount": 12.36,
+              "currency": "USD",
+              "label": "US$12.36"
+            }
+          }
+        ],
+        "name": "Duties",
+        "accuracy": "calculated",
+        "currency": "JPY",
+        "label": "¥1,399",
+        "key": "duty",
+        "base": {
+          "amount": 12.36,
+          "currency": "USD",
+          "label": "US$12.36"
+        }
+      },
+      {
+        "amount": 0,
+        "components": [],
+        "name": "Shipping",
+        "accuracy": "calculated",
+        "currency": "JPY",
+        "label": "¥0",
+        "key": "shipping",
+        "base": {
+          "amount": 0,
+          "currency": "USD",
+          "label": "US$0.00"
+        }
+      },
+      {
+        "amount": -4958,
+        "components": [
+          {
+            "amount": -4958,
+            "name": "Discount",
+            "currency": "JPY",
+            "label": "-¥4,958",
+            "key": "item_discount",
+            "base": {
+              "amount": -43.8,
+              "currency": "USD",
+              "label": "-US$43.80"
+            }
+          }
+        ],
+        "name": "Discount",
+        "accuracy": "calculated",
+        "currency": "JPY",
+        "label": "-¥4,958",
+        "key": "discount",
+        "base": {
+          "amount": -43.8,
+          "currency": "USD",
+          "label": "-US$43.80"
+        }
+      }
+    ],
+    "lines": [
+      {
+        "total": {
+          "amount": 33050,
+          "currency": "JPY",
+          "label": "¥33,050",
+          "base": {
+            "amount": 292.02,
+            "currency": "USD",
+            "label": "US$292.02"
+          }
+        },
+        "quantity": 1,
+        "price": {
+          "amount": 33050,
+          "currency": "JPY",
+          "label": "¥33,050",
+          "base": {
+            "amount": 292.02,
+            "currency": "USD",
+            "label": "US$292.02"
+          }
+        },
+        "item_number": "634511"
+      }
+    ],
+    "items": [
+      {
+        "number": "634511",
+        "quantity": 1,
+        "discounts": [
+          {
+            "amount": -4958,
+            "requested": {
+              "amount": -4958,
+              "currency": "JPY"
+            },
+            "currency": "JPY",
+            "label": "-¥4,958",
+            "discount_label": "Discount",
+            "base": {
+              "amount": -43.8,
+              "currency": "USD",
+              "label": "-US$43.80"
+            }
+          }
+        ],
+        "name": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
+        "price_source": {
+          "price": {
+            "amount": 239.2,
+            "currency": "USD"
+          },
+          "discriminator": "catalog"
+        },
+        "local": {
+          "spot_rates": [],
+          "price_attributes": {
+            "regular_price": {
+              "amount": 40400,
+              "currency": "JPY",
+              "label": "¥40,400",
+              "base": {
+                "amount": 356.97,
+                "currency": "USD",
+                "label": "US$356.97"
+              }
+            },
+            "final_price": {
+              "amount": 33050,
+              "currency": "JPY",
+              "label": "¥33,050",
+              "base": {
+                "amount": 292.02,
+                "currency": "USD",
+                "label": "US$292.02"
+              }
+            }
+          },
+          "rates": [],
+          "attributes": {
+            "web_stone_center_shape": "Round",
+            "weight": "0.0000",
+            "web_product_type": "Necklace",
+            "name": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
+            "small_image": "/h/t/httpss3.amazonaws.commoissanite2-media-importimages607052-3a-round-foreverone-moissanite-14k-yellow-gold-necklace.jpg",
+            "web_site_stone_html": "<thead><tr><td colspan=\"2\"><br>Stone 1</td></tr></thead><tbody><tr class=\"data-web_stone_side_shape_1\"><td class=\"details-title\"> Stone Shape</td><td class=\"details-data\"> Round</td></tr><tr class=\"data-web_stone_side_color_1\"><td class=\"details-title\"> Stone Color</td><td class=\"details-data\"> I or better</td></tr><tr class=\"data-web_stone_side_size_1\"><td class=\"details-title\"> Size (mm)</td><td class=\"details-data\"> 3</td></tr><tr class=\"data-web_stone_side_weight_cttw_1\"><td class=\"details-title\">Carat Total Weight (DEW)</td><td class=\"details-data\"> 0.10ctw</td></tr></tbody>",
+            "sku": "634511",
+            "quantity_and_stock_status": "In Stock",
+            "product_description_list": "<ul><li>Forever One Moissanite Accent Stones</li><li>Expertly faceted round cut, 3.0mm.</li><li>Carat Total Weight (CTW) expressed in Diamond Equivalent Weight (DEW), 0.10 carats.</li><li>Presented in solid 14k yellow gold.</li></ul>",
+            "product_detail_image": "/h/t/httpss3.amazonaws.commoissanite2-media-importimages607052-3a-round-foreverone-moissanite-14k-yellow-gold-necklace.jpg",
+            "magento_version": "2.3.2-p2",
+            "web_vendor": "Default",
+            "web_stone_center_weight_ct": "0.50 and Under",
+            "country_of_origin": "US",
+            "country_of_manufacture": "United States",
+            "web_metal_type_concat": "14K Yellow Gold",
+            "image": "/h/t/httpss3.amazonaws.commoissanite2-media-importimages607052-3a-round-foreverone-moissanite-14k-yellow-gold-necklace.jpg",
+            "description": "Commemorate a special time with our stylish personalized 18 inch bar necklaces. Engrave your name, initials or a special date. There is room for up to 13 characters in script font on the gold horizontal bar measuring 1  inch by 1/5 inch. A single Forever One moissanite accent stone helps to create a truly unique look perfect for layering with your other Charles and Colvard favorites.Any engraved or personalized items are final and not eligible for returns or exchanges.Please see our return policy page for more information.Charles &amp; Colvard reserves the right to refuse any personalization that is deemed to be inappropriate.When necessary, we will contact you for alternative personalization.",
+            "web_descriptor": "Personalized Script Name Bar",
+            "web_stone_count": "1",
+            "web_stone_center_cut": "Brilliant",
+            "price": "299.0000",
+            "image_label": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
+            "options_container": "Block after Info Column",
+            "web_stone_center_weight_cttw": "0.10ctw",
+            "web_gender": "Women",
+            "web_metal_color": "Yellow",
+            "short_description": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
+            "web_vendor_part_no": "LC-NCC-011/SCRIPT",
+            "regular_price": "40400.0",
+            "web_batch_upload_desc": "personalization_14k",
+            "web_stone_weight_cttw": "0.50 and Under",
+            "user_agent": "Flow-M2-2.1.1",
+            "minimal_price": "239.2000",
+            "thumbnail": "/h/t/httpss3.amazonaws.commoissanite2-media-importimages607052-3a-round-foreverone-moissanite-14k-yellow-gold-necklace.jpg",
+            "web_stone_weight_cttw_extended": "0.10ctw",
+            "web_metal_karat": "14K",
+            "attribute_set_id": "26",
+            "final_price": "33050.0",
+            "page_layout": "No layout updates",
+            "row_id": "65132",
+            "small_image_label": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
+            "required_options": "1",
+            "entity_id": "65132",
+            "web_product_group_desc": "Moissanite Personalized Script Name Bar Necklace",
+            "web_batch_upload_id": "mdoherty_11.6",
+            "gift_message_available": "No",
+            "custom_design": "-- Please Select --",
+            "status": "Enabled",
+            "web_product_group_sku": "634511",
+            "url_key": "moissanite-accent-personalized-script-name-bar-necklace-14k-yellow-gold-634511",
+            "web_chain_length": "18",
+            "tax_class_id": "Taxable Goods",
+            "web_stone_center_grade": "I or better",
+            "product_id": "65132",
+            "web_sort_weight": "1034106",
+            "web_product_group_id": "GID-100994",
+            "meta_title": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent | Charles & Colvard",
+            "web_clasp_type": "Lobster",
+            "shipment_type": "Together",
+            "affirm_product_mfp_type": "Exclusive",
+            "type_id": "simple",
+            "created_at": "2018-11-06 20:21:52",
+            "web_stone_center_type": "Forever One Moissanite Accent Stones",
+            "web_stone_center_count": "1",
+            "web_default_category": "Shop/Fine Jewelry/Necklaces/Fashion Necklaces",
+            "web_chain_type": "Cable",
+            "gift_wrapping_available": "No",
+            "thumbnail_label": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
+            "web_metal_type": "Gold",
+            "web_stone_center_size": "3.5mm and Under",
+            "custom_layout_update": "<body>\\r\\n    <referenceBlock name=\"head.additional\">\\r\\n        <block class=\"Magento\\Framework\\View\\Element\\Text\" name=\"my_script\">\\r\\n            <action method=\"setText\">\\r\\n                <argument translate=\"true\" name=\"text\" xsi:type=\"string\">\\r\\n                    <![CDATA[<script type=\"text/javascript\" src=\"https://trade.charlesandcolvard.com/api/js/personalization.3.js\"></script>]]>\\r\\n                </argument>\\r\\n            </action>\\r\\n        </block>\\r\\n    </referenceBlock>\\r\\n</body>",
+            "custom_layout": "No layout updates",
+            "msrp_display_actual_price_type": "Use config",
+            "updated_at": "2019-11-22 22:00:24",
+            "web_warehouse_primary": "Vault",
+            "visibility": "Catalog, Search",
+            "web_stone_weight_cttw_moi": "0.09",
+            "has_options": "1",
+            "price_view": "Price Range",
+            "web_video_url": "https://vimeo.com/299285147"
+          },
+          "experience": {
+            "name": "Japan",
+            "id": "exp-411d776897214957aea0c9f0bfd869b3",
+            "key": "japan"
+          },
+          "prices": [
+            {
+              "amount": 33050,
+              "currency": "JPY",
+              "includes": {
+                "key": "vat",
+                "label": "Includes CT"
+              },
+              "label": "¥33,050",
+              "key": "localized_item_price",
+              "base": {
+                "amount": 292.02,
+                "currency": "USD",
+                "label": "US$292.02"
+              }
+            }
+          ],
+          "status": "included"
+        }
+      }
+    ],
+    "customer": {
+      "address": {
+        "country": "JPN",
+        "streets": [
+          "123 Fake",
+          "Unit 123"
+        ],
+        "province": "Tokyo",
+        "city": "Minato-ku",
+        "name": {
+          "last": "David",
+          "first": "Mancuso"
+        },
+        "postal": "1080073"
+      },
+      "phone": "5555555555",
+      "name": {
+        "last": "David",
+        "first": "Mancuso"
+      },
+      "email": "david@flow.io"
+    }
+  },
+  "discriminator": "order_placed"
+}

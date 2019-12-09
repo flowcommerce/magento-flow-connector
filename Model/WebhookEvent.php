@@ -2034,10 +2034,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         /** @var Order $order */
         $order = $this->quoteManagement->submit($quote);
 
-        if ($order->getEntityId()) {
+        if ($order) {
             $this->logger->info('Created order id: ' . $order->getEntityId());
         } else {
-            $this->logger->info('Error processing Flow order: ' . $receivedOrder['number']);
+            $this->logger->info('Flow order could not be submitted: ' . $receivedOrder['number']);
             throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number']);
         }
 

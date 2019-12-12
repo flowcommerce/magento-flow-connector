@@ -300,7 +300,7 @@ class SessionManager implements SessionManagementInterface
 
             $info_buyRequest = $item->getProductOptionByCode('info_buyRequest'); 
             if ($info_buyRequest) {
-                $lineItem->attributes = (object) [
+                $lineItem->attributes = [
                     'info_buyRequest' => $info_buyRequest
                 ];
             }

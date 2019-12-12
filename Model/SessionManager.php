@@ -297,6 +297,13 @@ class SessionManager implements SessionManagementInterface
                     ]
                 ];
             }
+
+            $info_buyRequest = $item->getProductOptionByCode('info_buyRequest'); 
+            if ($info_buyRequest) {
+                $lineItem->attributes = (object) [
+                    'info_buyRequest' => $info_buyRequest
+                ];
+            }
             $orderForm->items[] = $lineItem;
         }
 

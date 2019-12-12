@@ -561,9 +561,9 @@
                 "currency": "USD"
               }
             },
-            "attributes": {
+            "attributes": [
               "info_buyRequest": {"options":{"1":"HEY THERE FLOW"},"qty":"1"}
-            },
+            ],
             "line_number": 0
           }
         ],
@@ -784,9 +784,9 @@
             }
           }
         ],
-        "attributes": {
+        "attributes": [
           "info_buyRequest": {"options":{"1":"HEY THERE FLOW"},"qty":"1"}
-        },
+        ],
         "name": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
         "price_source": {
           "price": {

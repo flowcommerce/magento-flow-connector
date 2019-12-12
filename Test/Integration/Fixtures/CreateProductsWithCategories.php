@@ -254,7 +254,7 @@ class CreateProductsWithCategories
                 ->setStatus(ProductStatus::STATUS_ENABLED)
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
                 ->setTestConfigurable($option->getValue())
-                ->setHasOptions(1);
+                ->setHasOptions(1)
                 ->setCanSaveCustomOptions(true);
             $fieldOption = $objectManager->create('\Magento\Catalog\Model\Product\Option')
                                          ->setProductId($product->getId())

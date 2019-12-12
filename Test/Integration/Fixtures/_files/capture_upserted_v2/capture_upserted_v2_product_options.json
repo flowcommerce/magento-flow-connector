@@ -1,0 +1,31 @@
+{
+  "event_id": "evt-ecef8636939c49aa80ae7e139a8f3dc1",
+  "timestamp": "2018-12-12T11:57:47.024Z",
+  "organization": "magento-integration-sandbox",
+  "id": "cap-a3bd95af3286462dbc2b78c75b183d49",
+  "capture": {
+    "id": "cap-a3bd95af3286462dbc2b78c75b183d49",
+    "key": "cap-a3bd95af3286462dbc2b78c75b183d49",
+    "authorization": {
+      "id": "aut-WpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
+      "key": "aut-WpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
+      "order": {
+        "number": "ord-b28d986781214915bed7e0dfaf8be785"
+      }
+    },
+    "amount": 29491,
+    "currency": "JPY",
+    "created_at": "2018-12-12T11:57:47.024Z",
+    "status": "succeeded",
+    "requested": {
+      "amount": 29491,
+      "currency": "JPY"
+    },
+    "attributes": {},
+    "base": {
+      "amount": 260.58,
+      "currency": "USD"
+    }
+  },
+  "discriminator": "capture_upserted_v2"
+}

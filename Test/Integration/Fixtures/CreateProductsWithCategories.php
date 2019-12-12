@@ -256,7 +256,7 @@ class CreateProductsWithCategories
                 ->setTestConfigurable($option->getValue())
                 ->setHasOptions(1)
                 ->setCanSaveCustomOptions(true);
-            $fieldOption = $objectManager->create('\Magento\Catalog\Model\Product\Option')
+            $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
                                          ->setProductId($product->getId())
                                          ->setStoreId($product->getStoreId())
                                          ->addData([

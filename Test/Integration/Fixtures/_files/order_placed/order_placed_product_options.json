@@ -562,7 +562,7 @@
               }
             },
             "attributes": {
-              "info_buyRequest": {"uenc":"aHR0cHM6Ly9kZXZlbG9wbWVudC1xNW56aGFhLWpscWF2NmdnMmU0ZmsudXMtNC5tYWdlbnRvc2l0ZS5jbG91ZC9mdXNpb24tYmFja3BhY2suaHRtbA,,","product":"6","selected_configurable_option":"","related_product":"","item":"6","options":{"1":"HEY THERE FLOW"},"qty":"1"}
+              "info_buyRequest": {"options":{"1":"HEY THERE FLOW"},"qty":"1"}
             },
             "line_number": 0
           }
@@ -785,7 +785,7 @@
           }
         ],
         "attributes": {
-          "info_buyRequest": {"uenc":"aHR0cHM6Ly9kZXZlbG9wbWVudC1xNW56aGFhLWpscWF2NmdnMmU0ZmsudXMtNC5tYWdlbnRvc2l0ZS5jbG91ZC9mdXNpb24tYmFja3BhY2suaHRtbA,,","product":"6","selected_configurable_option":"","related_product":"","item":"6","options":{"1":"HEY THERE FLOW"},"qty":"1"}
+          "info_buyRequest": {"options":{"1":"HEY THERE FLOW"},"qty":"1"}
         },
         "name": "Personalized Script Name Bar Necklace in 14K Yellow Gold with Forever One Moissanite Accent",
         "price_source": {

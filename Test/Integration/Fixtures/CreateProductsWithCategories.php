@@ -260,16 +260,16 @@ class CreateProductsWithCategories
             $product = $this->productRepository->save($product);
 
             $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
-                                         ->setProductId($product->getId())
-                                         ->setStoreId($product->getStoreId())
-                                         ->addData([
-                                             "sort_order"    => 0,
-                                             "title"         => "Field Option",
-                                             "price_type"    => "fixed",
-                                             "price"         => "",
-                                             "type"          => "field",
-                                             "is_require"    => 0
-                                         ]);
+                                ->setProductId($product->getId())
+                                ->setStoreId($product->getStoreId())
+                                ->addData([
+                                    "sort_order"    => 0,
+                                    "title"         => "Field Option",
+                                    "price_type"    => "fixed",
+                                    "price"         => "",
+                                    "type"          => "field",
+                                    "is_require"    => 0
+                                ]);
             $fieldOption->save();
             $product->addOption($fieldOption);
 

@@ -256,11 +256,14 @@ class CreateProductsWithCategories
                 ->setTestConfigurable($option->getValue())
                 ->setHasOptions(1)
                 ->setCanSaveCustomOptions(true);
+            $this->productRepository->cleanCache();
+            $product = $this->productRepository->save($product);
+
             $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
                                          ->setProductId($product->getId())
                                          ->setStoreId($product->getStoreId())
                                          ->addData([
-                                             "sort_order"    => 1,
+                                             "sort_order"    => 0,
                                              "title"         => "Field Option",
                                              "price_type"    => "fixed",
                                              "price"         => "",
@@ -269,7 +272,7 @@ class CreateProductsWithCategories
                                          ]);
             $fieldOption->save();
             $product->addOption($fieldOption);
-            $this->productRepository->cleanCache();
+
             $product = $this->productRepository->save($product);
 
             $attributeValues[] = [

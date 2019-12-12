@@ -232,19 +232,6 @@ class CreateProductsWithCategories
 
         $options = $this->attributeResourceModel->getOptions();
 
-        $fieldOption = $objectManager->create('\Magento\Catalog\Model\Product\Option')
-                                     ->setProductId($productId)
-                                     ->setStoreId($product->getStoreId())
-                                     ->addData([
-                                         "sort_order"    => 1,
-                                         "title"         => "Field Option",
-                                         "price_type"    => "fixed",
-                                         "price"         => "",
-                                         "type"          => "field",
-                                         "is_require"    => 0
-                                     ]);
-        $fieldOption->save();
-
         $i = 0;
         foreach ($options as $option) {
             if ($option->getValue() == '') {
@@ -266,8 +253,22 @@ class CreateProductsWithCategories
                 ->setVisibility(ProductVisibility::VISIBILITY_BOTH)
                 ->setStatus(ProductStatus::STATUS_ENABLED)
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
-                ->setTestConfigurable($option->getValue());
-                ->addOption($fieldOption);
+                ->setTestConfigurable($option->getValue())
+                ->setHasOptions(1);
+                ->setCanSaveCustomOptions(true);
+            $fieldOption = $objectManager->create('\Magento\Catalog\Model\Product\Option')
+                                         ->setProductId($product->getId())
+                                         ->setStoreId($product->getStoreId())
+                                         ->addData([
+                                             "sort_order"    => 1,
+                                             "title"         => "Field Option",
+                                             "price_type"    => "fixed",
+                                             "price"         => "",
+                                             "type"          => "field",
+                                             "is_require"    => 0
+                                         ]);
+            $fieldOption->save();
+            $product->addOption($fieldOption);
             $this->productRepository->cleanCache();
             $product = $this->productRepository->save($product);
 

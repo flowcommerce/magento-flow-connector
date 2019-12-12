@@ -1,0 +1,14 @@
+{
+  "event_id": "evt-241a646e15464adf9d5320c4baec28ec",
+  "timestamp": "2018-12-12T11:57:36.051Z",
+  "organization": "magento-integration-sandbox",
+  "id": "aut-ZpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
+  "authorization": {
+    "id": "aut-ZpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
+    "key": "aut-ZpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
+    "order": {
+      "number": "ord-b28d986781214915bed7e0dfaf8be785"
+    }
+  },
+  "discriminator": "card_authorization_upserted_v2"
+}

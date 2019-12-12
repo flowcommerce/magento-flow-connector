@@ -216,7 +216,7 @@
     "delivered_duty": "paid",
     "payments": [
       {
-        "reference": "aut-WpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
+        "reference": "aut-ZpNdDs7BjXUTS4WPER7CmhBQdLYMmINW",
         "date": "2019-12-06T06:31:59.414Z",
         "total": {
           "amount": 29491,

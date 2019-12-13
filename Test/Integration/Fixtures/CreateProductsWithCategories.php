@@ -210,13 +210,13 @@ class CreateProductsWithCategories
                                 [
                                     'option_0' => ['Option 1'],
                                     'option_1' => ['Option 2'],
-                                    'option_2' => ['Option 3']
+                                    'option_2' => ['Option 3'],
                                     'option_3' => ['Option 4']
                                 ],
                             'order' => [
                                 'option_0' => 1,
                                 'option_1' => 2,
-                                'option_2' => 3
+                                'option_2' => 3,
                                 'option_3' => 4
                             ],
                         ],

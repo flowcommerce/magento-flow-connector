@@ -211,11 +211,13 @@ class CreateProductsWithCategories
                                     'option_0' => ['Option 1'],
                                     'option_1' => ['Option 2'],
                                     'option_2' => ['Option 3']
+                                    'option_3' => ['Option 4']
                                 ],
                             'order' => [
                                 'option_0' => 1,
                                 'option_1' => 2,
                                 'option_2' => 3
+                                'option_3' => 4
                             ],
                         ],
                     ]
@@ -259,21 +261,23 @@ class CreateProductsWithCategories
             $this->productRepository->cleanCache();
             $product = $this->productRepository->save($product);
 
-            $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
-                                ->setProductId($product->getId())
-                                ->setStoreId($product->getStoreId())
-                                ->addData([
-                                    "sort_order"    => 0,
-                                    "title"         => "Field Option",
-                                    "price_type"    => "fixed",
-                                    "price"         => "",
-                                    "type"          => "field",
-                                    "is_require"    => 1
-                                ]);
-            $fieldOption->save();
-            $product->addOption($fieldOption);
-
-            $product = $this->productRepository->save($product);
+            // Only set required feild option on simple_4
+            if ($i == 4) {
+                $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
+                                    ->setProductId($product->getId())
+                                    ->setStoreId($product->getStoreId())
+                                    ->addData([
+                                        "sort_order"    => 0,
+                                        "title"         => "Field Option",
+                                        "price_type"    => "fixed",
+                                        "price"         => "",
+                                        "type"          => "field",
+                                        "is_require"    => 1
+                                    ]);
+                $fieldOption->save();
+                $product->addOption($fieldOption);
+                $product = $this->productRepository->save($product);
+            }
 
             $attributeValues[] = [
                 'label' => 'test',

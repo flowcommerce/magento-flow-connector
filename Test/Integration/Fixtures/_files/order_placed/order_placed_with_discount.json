@@ -48,9 +48,12 @@
         "expires_at": "2019-03-08T19:06:10.602Z",
         "items": [
             {
-                "number": "simple_1",
+                "number": "simple_4",
                 "name": "Desiree Fitness Tee-XL-Yellow",
                 "quantity": 4,
+                "attributes": {
+                    "info_buyRequest": {"options":{"1":"HEY THERE FLOW"},"qty":"4"}
+                },
                 "local": {
                     "experience": {
                         "id": "exp-88750520a77144289d4729fb02171ddf",
@@ -82,7 +85,7 @@
                         "weight": "1.0000",
                         "name": "Desiree Fitness Tee-XL-Yellow",
                         "small_image": "/w/s/ws05-yellow_main.jpg",
-                        "sku": "simple_1",
+                        "sku": "simple_4",
                         "quantity_and_stock_status": "In Stock",
                         "magento_version": "2.2.6",
                         "size": "XL",
@@ -151,7 +154,7 @@
                 "id": "del-1d3c21f911f74a7ea0dfb47cca0f3200",
                 "items": [
                     {
-                        "number": "simple_1",
+                        "number": "simple_4",
                         "quantity": 4,
                         "price": {
                             "currency": "CAD",
@@ -543,7 +546,7 @@
         "submitted_at": "2019-03-08T18:06:11.405Z",
         "lines": [
             {
-                "item_number": "simple_1",
+                "item_number": "simple_4",
                 "quantity": 4,
                 "price": {
                     "currency": "CAD",
@@ -611,7 +614,7 @@
         },
         "details": [
             {
-                "number": "simple_1",
+                "number": "simple_4",
                 "quantity": 4,
                 "key": "subtotal",
                 "price": {

@@ -255,14 +255,14 @@ class CreateProductsWithCategories
                 ->setVisibility(ProductVisibility::VISIBILITY_BOTH)
                 ->setStatus(ProductStatus::STATUS_ENABLED)
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
-                ->setTestConfigurable($option->getValue())
-                ->setHasOptions(1)
-                ->setCanSaveCustomOptions(true);
+                ->setTestConfigurable($option->getValue());
             $this->productRepository->cleanCache();
             $product = $this->productRepository->save($product);
 
             // Only set required feild option on simple_4
             if ($i == 4) {
+                $product->setHasOptions(1)
+                        ->setCanSaveCustomOptions(true);
                 $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
                                     ->setProductId($product->getId())
                                     ->setStoreId($product->getStoreId())

@@ -268,7 +268,7 @@ class CreateProductsWithCategories
                                     "price_type"    => "fixed",
                                     "price"         => "",
                                     "type"          => "field",
-                                    "is_require"    => 0
+                                    "is_require"    => 1
                                 ]);
             $fieldOption->save();
             $product->addOption($fieldOption);

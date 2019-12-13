@@ -194,7 +194,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
             $syncSkuSku = $syncSkuObject->getSku();
 
-            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus());
+            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
             $this->assertEquals(1, $syncSkuObject->getStoreId());
             $this->assertArrayHasKey($syncSkuSku, $productSkus);
 

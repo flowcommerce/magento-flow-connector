@@ -128,7 +128,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             /** @var Order $order */
             $order = $orders->getFirstItem();
 
-            $this->assertEquals($flowOrderId, $order->getExtOrderId());
+            $this->assertEquals($flowOrderId, $order->getExtOrderId(), 'Order could not be found with number:' . $flowOrderId);
             $this->assertEquals(1, $orders->count());
         }
         

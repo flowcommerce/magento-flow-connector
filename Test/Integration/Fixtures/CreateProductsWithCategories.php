@@ -256,8 +256,8 @@ class CreateProductsWithCategories
                 ->setStatus(ProductStatus::STATUS_ENABLED)
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
                 ->setTestConfigurable($option->getValue());
-            $this->productRepository->cleanCache();
             $product = $this->productRepository->save($product);
+            $this->productRepository->cleanCache();
 
             // Only set required feild option on simple_4
             if ($i === 4) {
@@ -273,10 +273,11 @@ class CreateProductsWithCategories
                                         "is_require"    => 1
                                     ]);
                 $fieldOption->save();
-                $product->setHasOptions(1)
-                        ->setCanSaveCustomOptions(true)
-                        ->addOption($fieldOption);
+                $product->setHasOptions(1);
+                $product->setCanSaveCustomOptions(true);
+                $product->addOption($fieldOption);
                 $product = $this->productRepository->save($product);
+                $this->productRepository->cleanCache();
             }
 
             $attributeValues[] = [

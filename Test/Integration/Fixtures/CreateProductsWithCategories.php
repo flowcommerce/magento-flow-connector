@@ -260,25 +260,25 @@ class CreateProductsWithCategories
             $product = $this->productRepository->save($product);
 
             // Only set required feild option on simple_4
-            if ($i === 4) {
-                $product->setHasOptions(1)
-                        ->setCanSaveCustomOptions(true);
-                $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
-                                    ->setProductId($product->getId())
-                                    ->setStoreId($product->getStoreId())
-                                    ->addData([
-                                        "sort_order"    => 0,
-                                        "title"         => "Field Option",
-                                        "price_type"    => "fixed",
-                                        "price"         => "",
-                                        "type"          => "field",
-                                        "is_require"    => 1
-                                    ]);
-                $fieldOption->save();
-                $product->addOption($fieldOption);
-                $this->productRepository->cleanCache();
-                $product = $this->productRepository->save($product);
-            }
+            /* if ($i === 4) { */
+            /*     $product->setHasOptions(1) */
+            /*             ->setCanSaveCustomOptions(true); */
+            /*     $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option') */
+            /*                         ->setProductId($product->getId()) */
+            /*                         ->setStoreId($product->getStoreId()) */
+            /*                         ->addData([ */
+            /*                             "sort_order"    => 0, */
+            /*                             "title"         => "Field Option", */
+            /*                             "price_type"    => "fixed", */
+            /*                             "price"         => "", */
+            /*                             "type"          => "field", */
+            /*                             "is_require"    => 1 */
+            /*                         ]); */
+            /*     $fieldOption->save(); */
+            /*     $product->addOption($fieldOption); */
+            /*     $this->productRepository->cleanCache(); */
+            /*     $product = $this->productRepository->save($product); */
+            /* } */
 
             $attributeValues[] = [
                 'label' => 'test',

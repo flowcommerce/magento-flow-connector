@@ -260,76 +260,76 @@ class CreateProductsWithCategories
             $product = $this->productRepository->save($product);
 
             // Only set required feild option on simple_4
-            /* if ($i === 4) { */
-            /*     $product->setHasOptions(1) */
-            /*             ->setCanSaveCustomOptions(true); */
-            /*     $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option') */
-            /*                         ->setProductId($product->getId()) */
-            /*                         ->setStoreId($product->getStoreId()) */
-            /*                         ->addData([ */
-            /*                             "sort_order"    => 0, */
-            /*                             "title"         => "Field Option", */
-            /*                             "price_type"    => "fixed", */
-            /*                             "price"         => "", */
-            /*                             "type"          => "field", */
-            /*                             "is_require"    => 1 */
-            /*                         ]); */
-            /*     $fieldOption->save(); */
-            /*     $product->addOption($fieldOption); */
-            /*     $this->productRepository->cleanCache(); */
-            /*     $product = $this->productRepository->save($product); */
-            /* } */
+            if ($i === 4) {
+                $product->sethasoptions(1)
+                        ->setcansavecustomoptions(true);
+                $fieldoption = $this->objectmanager->create('\magento\catalog\model\product\option')
+                                    ->setproductid($product->getid())
+                                    ->setstoreid($product->getstoreid())
+                                    ->adddata([
+                                        "sort_order"    => 0,
+                                        "title"         => "field option",
+                                        "price_type"    => "fixed",
+                                        "price"         => "",
+                                        "type"          => "field",
+                                        "is_require"    => 1
+                                    ]);
+                $fieldoption->save();
+                $product->addoption($fieldoption);
+                $this->productrepository->cleancache();
+                $product = $this->productrepository->save($product);
+            }
 
-            $attributeValues[] = [
+            $attributevalues[] = [
                 'label' => 'test',
-                'attribute_id' => $this->attributeResourceModel->getId(),
-                'value_index' => $option->getValue(),
+                'attribute_id' => $this->attributeresourcemodel->getid(),
+                'value_index' => $option->getvalue(),
             ];
-            $associatedProductIds[] = $product->getId();
+            $associatedproductids[] = $product->getid();
         }
 
         /**
-         * Creating configurable product
+         * creating configurable product
          */
-        $configurableProduct = $this->objectManager->create(Product::class);
-        $attributeSetId = $this->installer->getAttributeSetId('catalog_product', 'Default');
+        $configurableproduct = $this->objectmanager->create(product::class);
+        $attributesetid = $this->installer->getattributesetid('catalog_product', 'default');
 
-        /** @var Factory $optionsFactory */
-        $configurableAttributesData = [
+        /** @var factory $optionsfactory */
+        $configurableattributesdata = [
             [
-                'attribute_id' => $this->attributeResourceModel->getId(),
-                'code' => $this->attributeResourceModel->getAttributeCode(),
-                'label' => $this->attributeResourceModel->getStoreLabel(),
+                'attribute_id' => $this->attributeresourcemodel->getid(),
+                'code' => $this->attributeresourcemodel->getattributecode(),
+                'label' => $this->attributeresourcemodel->getstorelabel(),
                 'position' => '0',
-                'values' => $attributeValues,
+                'values' => $attributevalues,
             ],
         ];
-        $configurableOptions = $this->configurableOptionsFactory->create($configurableAttributesData);
-        $extensionConfigurableAttributes = $configurableProduct->getExtensionAttributes();
-        $extensionConfigurableAttributes->setConfigurableProductOptions($configurableOptions);
-        $extensionConfigurableAttributes->setConfigurableProductLinks($associatedProductIds);
-        $configurableProduct->setExtensionAttributes($extensionConfigurableAttributes);
+        $configurableoptions = $this->configurableoptionsfactory->create($configurableattributesdata);
+        $extensionconfigurableattributes = $configurableproduct->getextensionattributes();
+        $extensionconfigurableattributes->setconfigurableproductoptions($configurableoptions);
+        $extensionconfigurableattributes->setconfigurableproductlinks($associatedproductids);
+        $configurableproduct->setextensionattributes($extensionconfigurableattributes);
 
-        $configurableProduct
-            ->setTypeId(Configurable::TYPE_CODE)
-            ->setAttributeSetId($attributeSetId)
-            ->setWebsiteIds([1])
-            ->setName('Configurable Product')
-            ->setSku('configurable')
-            ->setVisibility(ProductVisibility::VISIBILITY_BOTH)
-            ->setStatus(ProductStatus::STATUS_ENABLED)
-            ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
-            ->setStockData(['use_config_manage_stock' => 1, 'is_in_stock' => 1]);
-        $this->productRepository->cleanCache();
-        $this->productRepository->save($configurableProduct);
+        $configurableproduct
+            ->settypeid(configurable::type_code)
+            ->setattributesetid($attributesetid)
+            ->setwebsiteids([1])
+            ->setname('configurable product')
+            ->setsku('configurable')
+            ->setvisibility(productvisibility::visibility_both)
+            ->setstatus(productstatus::status_enabled)
+            ->setcategoryids([$category2->getid(), $category4->getid(), $category5->getid()])
+            ->setstockdata(['use_config_manage_stock' => 1, 'is_in_stock' => 1]);
+        $this->productrepository->cleancache();
+        $this->productrepository->save($configurableproduct);
     }
 
     /**
-     * @return ProductSearchResultsInterface
+     * @return productsearchresultsinterface
      */
-    public function getProducts()
+    public function getproducts()
     {
-        $searchCriteria = $this->searchCriteriaBuilder->create();
-        return $this->productRepository->getList($searchCriteria);
+        $searchcriteria = $this->searchcriteriabuilder->create();
+        return $this->productrepository->getlist($searchcriteria);
     }
 }

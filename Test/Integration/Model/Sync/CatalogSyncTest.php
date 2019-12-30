@@ -365,10 +365,10 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                     }
                 }
             } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {
-                $optionValues = ['Option 1', 'Option 2', 'Option 3'];
+                $optionValues = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
                 $optionLabels = ['Test Configurable'];
                 $optionAttributeCodes = ['test_configurable'];
-                $childrenProductSkus = ['simple_1', 'simple_2', 'simple_3'];
+                $childrenProductSkus = ['simple_1', 'simple_2', 'simple_3', 'simple_4'];
 
                 $this->assertEquals(
                     $optionValues,

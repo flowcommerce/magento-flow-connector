@@ -180,7 +180,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->httpPromise);
 
         $this->syncSkuManager->enqueueAllProducts();
-        $this->subject->process(100, 10);
+        $this->subject->process();
 
         $this->syncSkuCollection->load();
         $this->assertEquals($products->getTotalCount(), $this->syncSkuCollection->count());
@@ -368,7 +368,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                     $this->assertEquals(
                         count($product->getOptions()),
                         1,
-                        'Failed asserting that product with sku simple_4 does not have an option'
+                        'Failed asserting that sku simple_4 does not have an option'
                     );
                 }
             } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {

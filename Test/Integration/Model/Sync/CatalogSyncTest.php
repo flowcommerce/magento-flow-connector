@@ -364,6 +364,13 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                         }
                     }
                 }
+                if ($product->getSku() === 'simple_4') {
+                    $this->assertEquals(
+                        count($product->getOptions()),
+                        1,
+                        'Failed asserting that product with sku simple_4 does not have an option'
+                    );
+                }
             } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {
                 $optionValues = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
                 $optionLabels = ['Test Configurable'];

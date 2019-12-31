@@ -92,7 +92,6 @@ class CreateProductsWithCategories
         $this->installer = $this->objectManager->create(Installer::class);
         $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
-        $this->_options = $_options;
     }
 
     /**

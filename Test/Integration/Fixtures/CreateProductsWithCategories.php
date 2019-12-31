@@ -260,7 +260,7 @@ class CreateProductsWithCategories
             $this->productRepository->cleanCache();
 
             // Only set required field option on simple_4
-            if ($i === 4) {
+            if ($product->getSku() === 'simple_4') {
                 $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
                                     ->setProductId($product->getId())
                                     ->setStoreId($product->getStoreId())

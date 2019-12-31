@@ -259,7 +259,7 @@ class CreateProductsWithCategories
             $product = $this->productRepository->save($product);
             $this->productRepository->cleanCache();
 
-            // Only set required feild option on simple_4
+            // Only set required field option on simple_4
             if ($i === 4) {
                 $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
                                     ->setProductId($product->getId())
@@ -276,8 +276,6 @@ class CreateProductsWithCategories
                 $product->setHasOptions(1);
                 $product->setCanSaveCustomOptions(true);
                 $product->addOption($fieldOption);
-                $product = $this->productRepository->save($product);
-                $this->productRepository->cleanCache();
             }
 
             $attributeValues[] = [

@@ -8,6 +8,7 @@ use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use \Magento\Catalog\Model\Category;
 use \Magento\Catalog\Model\Product;
 use \Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
+use \Magento\Catalog\Model\Product\Option as Option;
 use \Magento\Catalog\Model\Product\Type as ProductType;
 use \Magento\Catalog\Model\Product\Visibility as ProductVisibility;
 use \Magento\Catalog\Model\ResourceModel\Eav\Attribute as AttributeResourceModel;
@@ -75,6 +76,11 @@ class CreateProductsWithCategories
      */
     private $searchCriteriaBuilder;
 
+    /**
+     * @var Option
+     */
+    private $_options;
+
     public function __construct()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
@@ -86,6 +92,7 @@ class CreateProductsWithCategories
         $this->installer = $this->objectManager->create(Installer::class);
         $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
+        $this->_options = $_options;
     }
 
     /**
@@ -261,7 +268,7 @@ class CreateProductsWithCategories
 
             // Only set required field option on simple_4
             if ($product->getSku() === 'simple_4') {
-                $fieldOption = $this->objectManager->create('\Magento\Catalog\Model\Product\Option')
+                $fieldOption = $this->_options
                                     ->setProductId($product->getId())
                                     ->setStoreId($product->getStoreId())
                                     ->addData([
@@ -273,11 +280,7 @@ class CreateProductsWithCategories
                                         "is_require"    => 1
                                     ]);
                 $fieldOption->save();
-                $product->setHasOptions(1);
-                $product->setCanSaveCustomOptions(true);
                 $product->addOption($fieldOption);
-                $this->productRepository->cleanCache();
-                $product = $this->productRepository->save($product);
             }
 
             $attributeValues[] = [

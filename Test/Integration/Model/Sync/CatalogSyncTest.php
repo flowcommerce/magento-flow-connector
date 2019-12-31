@@ -190,7 +190,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
             $productSkus[$product->getSku()] = $product->getSku();
         }
         $this->assertArraySubset(
-            ['configurable','simple_1','simple_2','simple_3','simple_4'],
+            ['simple_1', 'simple_2', 'simple_3', 'simple_4', 'configurable'],
             array_keys($productSkus),
             'Failed to assert a subset of expected skus exists'
         );
@@ -372,19 +372,19 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 if ($product->getSku() === 'simple_4') {
                     $productOptions = $product->getOptions();
                     $this->assertEquals(
-                        count($productOptions),
                         1,
+                        count($productOptions),
                         'Failed asserting that sku simple_4 has one option'
                     );
                     $this->assertEquals(
-                        $productOptions[0]['is_require'],
                         1,
+                        $productOptions[0]['is_require'],
                         'Failed asserting that sku simple_4 has one required option'
                     );
                 } else {
                     $this->assertEquals(
-                        count($product->getOptions()),
                         0,
+                        count($product->getOptions()),
                         'Failed asserting that a sku which is not simple_4 has no options'
                     );
                 }

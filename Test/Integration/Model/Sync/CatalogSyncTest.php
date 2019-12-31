@@ -371,13 +371,15 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 }
                 if ($product->getSku() === 'simple_4') {
                     $productOptions = $product->getOptions();
+                    // TODO TOGGLE THIS TEST EXPECTATION BACK TO 1, this change is intended to fail
                     $this->assertEquals(
-                        1,
+                        0,
                         count($productOptions),
                         'Failed asserting that sku simple_4 has one option'
                     );
+                    // TODO TOGGLE THIS TEST EXPECTATION BACK TO 1, this change is intended to fail
                     $this->assertEquals(
-                        1,
+                        0,
                         $productOptions[0]['is_require'],
                         'Failed asserting that sku simple_4 has one required option'
                     );

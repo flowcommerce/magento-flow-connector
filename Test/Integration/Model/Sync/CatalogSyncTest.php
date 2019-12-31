@@ -190,8 +190,8 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
             $productSkus[$product->getSku()] = $product->getSku();
         }
         $this->assertArraySubset(
-            $productSkus,
             ['configurable','simple_1','simple_2','simple_3','simple_4'],
+            array_keys($productSkus),
             'Failed to assert a subset of expected skus exists'
         );
 

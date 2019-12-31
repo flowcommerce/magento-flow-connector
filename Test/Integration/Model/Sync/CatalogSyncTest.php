@@ -370,6 +370,11 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                         1,
                         'Failed asserting that sku simple_4 has one option'
                     );
+                    $this->assertEquals(
+                        $product->getOptions()->getFirstItem()->getData('is_require'),
+                        1,
+                        'Failed asserting that sku simple_4 has one required option'
+                    );
                 } else {
                     $this->assertEquals(
                         count($product->getOptions()),

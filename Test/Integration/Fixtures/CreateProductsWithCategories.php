@@ -81,7 +81,9 @@ class CreateProductsWithCategories
      */
     private $_options;
 
-    public function __construct()
+    public function __construct(
+        Option $options
+    )
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->attributeRepository = $this->objectManager->create(AttributeRepository::class);
@@ -92,6 +94,7 @@ class CreateProductsWithCategories
         $this->installer = $this->objectManager->create(Installer::class);
         $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
+        $this->_options = $options;
     }
 
     /**

@@ -547,7 +547,7 @@
                 "item_number": "simple_4",
                 "quantity": 4,
                 "attributes": {
-                    "info_buyRequest": {"0options":{"1":"HEY THERE FLOW"},"0qty":"4"}
+                    "info_buyRequest": {"options":{"1":"HEY THERE FLOW"},"qty":"4"}
                 },
                 "price": {
                     "currency": "CAD",

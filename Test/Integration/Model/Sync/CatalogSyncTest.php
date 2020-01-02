@@ -199,7 +199,6 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
             $syncSkuSku = $syncSkuObject->getSku();
 
-            sleep(120);
             // TODO POSSIBLY FAILING DUE TO RACE CONDITION
             $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
             $this->assertEquals(1, $syncSkuObject->getStoreId());
@@ -373,15 +372,13 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 }
                 if ($product->getSku() === 'simple_4') {
                     $productOptions = $product->getOptions();
-                    // TODO TOGGLE THIS TEST EXPECTATION BACK TO 1, this change is intended to fail
                     $this->assertEquals(
-                        0,
+                        1,
                         count($productOptions),
                         'Failed asserting that sku simple_4 has one option'
                     );
-                    // TODO TOGGLE THIS TEST EXPECTATION BACK TO 1, this change is intended to fail
                     $this->assertEquals(
-                        0,
+                        1,
                         $productOptions[0]['is_require'],
                         'Failed asserting that sku simple_4 has one required option'
                     );

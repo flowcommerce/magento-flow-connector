@@ -264,28 +264,28 @@ class CreateProductsWithCategories
                 ->setVisibility(ProductVisibility::VISIBILITY_BOTH)
                 ->setStatus(ProductStatus::STATUS_ENABLED)
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
+                ->setHasOptions(1)
                 ->setTestConfigurable($option->getValue());
             $this->productRepository->cleanCache();
             $product = $this->productRepository->save($product);
-
+            $isRequire = 0;
             // Only set required field option on simple_4
             if ($product->getSku() === 'simple_4') {
-                $product->setHasOptions(1);
-                $product = $this->productRepository->save($product);
-                $fieldOption = $this->_options
-                                    ->setProductId($product->getId())
-                                    ->setStoreId($product->getStoreId())
-                                    ->addData([
-                                        "sort_order"    => 0,
-                                        "title"         => "Field Option",
-                                        "price_type"    => "fixed",
-                                        "price"         => "",
-                                        "type"          => "field",
-                                        "is_require"    => true
-                                    ]);
-                $fieldOption->save();
-                $product->addOption($fieldOption);
+                $isRequire = 1;
             }
+            $fieldOption = $this->_options
+                                ->setProductId($product->getId())
+                                ->setStoreId($product->getStoreId())
+                                ->addData([
+                                    "sort_order"    => 0,
+                                    "title"         => "Field Option",
+                                    "price_type"    => "fixed",
+                                    "price"         => "",
+                                    "type"          => "field",
+                                    "is_require"    => $isRequire
+                                ]);
+            $fieldOption->save();
+            $product->addOption($fieldOption);
 
             $attributeValues[] = [
                 'label' => 'test',

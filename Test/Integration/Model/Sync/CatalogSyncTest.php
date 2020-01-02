@@ -369,25 +369,28 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                         }
                     }
                 }
-                if ($product->getSku() === 'simple_4') {
-                    $productOptions = $product->getOptions();
-                    $this->assertEquals(
-                        1,
-                        count($productOptions),
-                        'Failed asserting that sku simple_4 has one option'
-                    );
-                    $this->assertEquals(
-                        1,
-                        $productOptions[0]['is_require'],
-                        'Failed asserting that sku simple_4 has one required option'
-                    );
-                } else {
-                    $this->assertEquals(
-                        0,
-                        count($product->getOptions()),
-                        'Failed asserting that a sku which is not simple_4 has no options'
-                    );
-                }
+                // TODO COMMENTED OUT FOR FALSE POSITIVE TESTING
+                /* if ($product->getSku() === 'simple_4') { */
+                $productOptions = $product->getOptions();
+                $sku = $product->getSku();
+                $this->assertEquals(
+                    1,
+                    count($productOptions),
+                    'Failed asserting that sku has one option: ' . $sku
+                );
+                $this->assertEquals(
+                    1,
+                    $productOptions[0]['is_require'],
+                    'Failed asserting that sku has one required option: ' . $sku
+                );
+                // TODO COMMENTED OUT FOR FALSE POSITIVE TESTING
+                /* } else { */
+                /*     $this->assertEquals( */
+                /*         0, */
+                /*         count($product->getOptions()), */
+                /*         'Failed asserting that a sku which is not simple_4 has no options' */
+                /*     ); */
+                /* } */
             } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {
                 $optionValues = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
                 $optionLabels = ['Test Configurable'];

@@ -2477,7 +2477,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param array $line
      * @return \Magento\Framework\DataObject
      */
-    private function getRequestFromLine(array $line)
+    private function getRequestFromLine($line = null)
     {
         if (isset($line['attributes']['info_buyRequest'])) {
             return $line['attributes']['info_buyRequest']);

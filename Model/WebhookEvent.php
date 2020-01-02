@@ -1803,7 +1803,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setBasePrice($line['price']['base']['amount']);
 
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
-            $quote->addProduct($product, getRequestFromLine($line)); 
+            $quote->addProduct($product, $this->getRequestFromLine($line)); 
         }
 
         ////////////////////////////////////////////////////////////

@@ -270,6 +270,8 @@ class CreateProductsWithCategories
 
             // Only set required field option on simple_4
             if ($product->getSku() === 'simple_4') {
+                $product->setHasOptions(1);
+                $product = $this->productRepository->save($product);
                 $fieldOption = $this->_options
                                     ->setProductId($product->getId())
                                     ->setStoreId($product->getStoreId())
@@ -279,7 +281,7 @@ class CreateProductsWithCategories
                                         "price_type"    => "fixed",
                                         "price"         => "",
                                         "type"          => "field",
-                                        "is_require"    => 1
+                                        "is_require"    => true
                                     ]);
                 $fieldOption->save();
                 $product->addOption($fieldOption);

@@ -371,23 +371,32 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                         }
                     }
                 }
-                if ($productSku === 'simple_4') {
+                if ($productSku == 'simple_4') {
                     $productOptions = $product->getOptions();
                     $this->assertEquals(
-                        1,
+                        // TODO PURPOSELY BREAKING FOR FALSE POSITIVE, SHOULD BE 1
+                        0,
                         count($productOptions),
                         'Failed asserting that sku has one option: ' . $productSku
                     );
                     $this->assertEquals(
-                        1,
+                        // TODO PURPOSELY BREAKING FOR FALSE POSITIVE, SHOULD BE 1
+                        0,
                         $productOptions[0]['is_require'],
                         'Failed asserting that sku has one required option: ' . $productSku
                     );
                 } else {
                     $this->assertEquals(
-                        0,
+                        // TODO PURPOSELY BREAKING FOR FALSE POSITIVE, SHOULD BE 0
+                        1,
                         count($product->getOptions()),
                         'Failed asserting that a sku which is not simple_4 has no options'
+                    );
+                    // TODO PURPOSELY BREAKING FOR FALSE POSITIVE, SHOULD HAVE NO OPTIONS
+                    $this->assertEquals(
+                        1,
+                        $productOptions[0]['is_require'],
+                        'Failed asserting that sku has one required option: ' . $productSku
                     );
                 }
             } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {

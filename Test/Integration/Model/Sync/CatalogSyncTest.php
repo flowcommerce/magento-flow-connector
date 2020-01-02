@@ -182,9 +182,6 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         $this->syncSkuManager->enqueueAllProducts();
         $this->subject->process();
 
-        // TODO REMOVE THIS SLEEP, GIVING EXTRA TIME TO PROCESS
-        sleep(30);
-
         $this->syncSkuCollection->load();
         $this->assertEquals($products->getTotalCount(), $this->syncSkuCollection->count());
 
@@ -202,10 +199,9 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
             $syncSkuSku = $syncSkuObject->getSku();
 
-            // TODO TEMPORARILY REMOVE THESE, FALSE NEGATIVES
-            /* $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku); */
-            /* $this->assertEquals(1, $syncSkuObject->getStoreId()); */
-            /* $this->assertArrayHasKey($syncSkuSku, $productSkus); */
+            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
+            $this->assertEquals(1, $syncSkuObject->getStoreId());
+            $this->assertArrayHasKey($syncSkuSku, $productSkus);
 
             if (array_key_exists($syncSkuSku, $productSkus)) {
                 unset($productSkus[$syncSkuSku]);

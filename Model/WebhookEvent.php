@@ -2492,6 +2492,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             return $this->objectFactory->create($line['attributes']['info_buyRequest']);
         }
 
+        if (isset($line['quantity'])) {
+            return $line['quantity'];
+        }
+
         return null;
     }
 

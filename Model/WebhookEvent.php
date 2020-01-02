@@ -9,6 +9,7 @@ use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEve
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\DataObject\Factory;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface as Order;
 use Magento\Sales\Api\Data\OrderItemInterface as OrderItem;
@@ -118,6 +119,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var string
      */
     protected $_eventPrefix = 'flow_connector_webhook_events';
+
+    /**
+     * @var Factory
+     */
+    protected $objectFactory;
 
     /**
      * @var Logger
@@ -300,6 +306,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
+     * @param Factory $objectFactory
      * @param Logger $logger
      * @param JsonSerializer $jsonSerializer
      * @param StoreManager $storeManager
@@ -343,6 +350,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function __construct(
         Context $context,
         Registry $registry,
+        Factory $objectFactory,
         Logger $logger,
         JsonSerializer $jsonSerializer,
         StoreManager $storeManager,
@@ -390,6 +398,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $resourceCollection,
             $data
         );
+        $this->objectFactory = $objectFactory;
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
         $this->storeManager = $storeManager;
@@ -2480,7 +2489,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private function getRequestFromLine($line = null)
     {
         if (isset($line['attributes']['info_buyRequest'])) {
-            return $line['attributes']['info_buyRequest']);
+            return $this->objectFactory->create($line['attributes']['info_buyRequest']);
         }
 
         return null;

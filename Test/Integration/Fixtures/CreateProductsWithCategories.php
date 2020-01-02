@@ -269,23 +269,21 @@ class CreateProductsWithCategories
             $product = $this->productRepository->save($product);
 
             // Only set required field option on simple_4
-            // TODO COMMENTED OUT FOR FALSE POSITIVE TESTING
-            /* if ($product->getSku() === 'simple_4') { */
-            $fieldOption = $this->_options
-                                ->setProductId($product->getId())
-                                ->setStoreId($product->getStoreId())
-                                ->addData([
-                                    "sort_order"    => 0,
-                                    "title"         => "Field Option",
-                                    "price_type"    => "fixed",
-                                    "price"         => "",
-                                    "type"          => "field",
-                                    "is_require"    => 1
-                                ]);
-            $fieldOption->save();
-            $product->addOption($fieldOption);
-            // TODO COMMENTED OUT FOR FALSE POSITIVE TESTING
-            /* } */
+            if ($product->getSku() === 'simple_4') {
+                $fieldOption = $this->_options
+                                    ->setProductId($product->getId())
+                                    ->setStoreId($product->getStoreId())
+                                    ->addData([
+                                        "sort_order"    => 0,
+                                        "title"         => "Field Option",
+                                        "price_type"    => "fixed",
+                                        "price"         => "",
+                                        "type"          => "field",
+                                        "is_require"    => 1
+                                    ]);
+                $fieldOption->save();
+                $product->addOption($fieldOption);
+            }
 
             $attributeValues[] = [
                 'label' => 'test',

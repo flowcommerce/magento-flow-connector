@@ -1803,11 +1803,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setBasePrice($line['price']['base']['amount']);
 
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
-            if (isset($line['attributes']['info_buyRequest'])) {
-                $quote->addProduct($product, $line['attributes']['info_buyRequest']);
-            } else {
-                $quote->addProduct($product, $line['quantity']);
-            }
+            $quote->addProduct($product, getRequestFromLine($line)); 
         }
 
         ////////////////////////////////////////////////////////////
@@ -2475,4 +2471,19 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $this->webhookEventManager->markWebhookEventAsDone($this);
     }
+
+
+    /**
+     * @param array $line
+     * @return \Magento\Framework\DataObject
+     */
+    private function getRequestFromLine(array $line)
+    {
+        if (isset($line['attributes']['info_buyRequest'])) {
+            return $line['attributes']['info_buyRequest']);
+        }
+
+        return null;
+    }
+
 }

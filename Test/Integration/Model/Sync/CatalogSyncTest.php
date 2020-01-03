@@ -189,11 +189,10 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($products->getItems() as $product) {
             $productSkus[$product->getSku()] = $product->getSku();
         }
-        $expectedSkus = sort(['simple_1', 'simple_2', 'simple_3', 'simple_4', 'configurable']);
-        $actualSkus = sort(array_keys($productSkus));
+        $expectedSkus = ['simple_1', 'simple_2', 'simple_3', 'simple_4', 'configurable'];
         $this->assertEquals(
-            $expectedSkus,
-            $actualSkus,
+            sort($expectedSkus),
+            sort(array_keys($productSkus)),
             'Failed to assert that the expected skus were generated'
         );
 

@@ -198,6 +198,34 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         /** @var SyncSku $syncSkuObject */
         foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
             $syncSkuSku = $syncSkuObject->getSku();
+            $product = $this->productRepository->get($syncSkuSku);
+            // TODO REMOVE THIS TEST
+            $this->assertEquals(
+                1,
+                2,
+                'This is a blatantly false assumption, testing if the simple options part of the test runs at all'
+            );
+            $productOptions = $product->getOptions();
+            $this->assertEquals(
+                1,
+                count($productOptions),
+                'Failed asserting that sku has one option: ' . $syncSkuSku
+            );
+            $expectedIsRequire = 0;
+            if ($syncSkuSku == 'simple_4') {
+                $expectedIsRequire = 1;
+                // TODO REMOVE THIS TEST
+                $this->assertEquals(
+                    1,
+                    2,
+                    'This is a blatantly false assumption, testing if the simple_4 part of the test runs at all'
+                );
+            }
+            $this->assertEquals(
+                $expectedIsRequire,
+                $productOptions[0]['is_require'],
+                'Failed asserting that sku has one required option: ' . $syncSkuSku
+            );
 
             $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
             $this->assertEquals(1, $syncSkuObject->getStoreId());
@@ -370,33 +398,6 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                         }
                     }
                 }
-                // TODO REMOVE THIS TEST
-                $this->assertEquals(
-                    1,
-                    2,
-                    'This is a blatantly false assumption, testing if the simple options part of the test runs at all'
-                );
-                $productOptions = $product->getOptions();
-                $this->assertEquals(
-                    1,
-                    count($productOptions),
-                    'Failed asserting that sku has one option: ' . $productSku
-                );
-                $expectedIsRequire = 0;
-                if ($productSku == 'simple_4') {
-                    $expectedIsRequire = 1;
-                    // TODO REMOVE THIS TEST
-                    $this->assertEquals(
-                        1,
-                        2,
-                        'This is a blatantly false assumption, testing if the simple_4 part of the test runs at all'
-                    );
-                }
-                $this->assertEquals(
-                    $expectedIsRequire,
-                    $productOptions[0]['is_require'],
-                    'Failed asserting that sku has one required option: ' . $productSku
-                );
             } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {
                 $optionValues = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
                 $optionLabels = ['Test Configurable'];

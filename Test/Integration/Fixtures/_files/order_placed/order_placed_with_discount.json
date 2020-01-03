@@ -53,7 +53,7 @@
                 "quantity": 4,
                 "attributes": {
                     "info_buyRequest": {
-                        "options": {
+                        "0options": {
                             "1": "HEY THERE FLOW"
                         },
                         "qty": "4"
@@ -555,7 +555,7 @@
                 "quantity": 4,
                 "attributes": {
                     "info_buyRequest": {
-                        "options": {
+                        "0options": {
                             "1": "HEY THERE FLOW"
                         },
                         "qty": "4"

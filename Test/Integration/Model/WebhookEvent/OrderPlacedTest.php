@@ -377,13 +377,13 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 if ($flowOrderId === 'ord-2a12e176b3e440289a0320600abe2c93') {
                     $this->assertEquals(
                         (object)[
-                            "1": "HEY THERE FLOW"
+                            "1" => "HEY THERE FLOW"
                         ],
                         $expectedProductOptions
                     );
                     $this->assertEquals(
                         (object)[
-                            "1": "HEY THERE FLOW"
+                            "1" => "HEY THERE FLOW"
                         ],
                         $actualProductOptions
                     );

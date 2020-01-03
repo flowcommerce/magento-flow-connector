@@ -273,21 +273,17 @@ class CreateProductsWithCategories
             if ($product->getSku() === 'simple_4') {
                 $isRequire = 1;
             }
-            $fieldOption = $this->_options
-                                ->setProductId($product->getId())
-                                ->setStoreId($product->getStoreId())
-                                ->addData([
-                                    "sort_order"    => 0,
-                                    "title"         => "Field Option",
-                                    "price_type"    => "fixed",
-                                    "price"         => "",
-                                    "type"          => "field",
-                                    "is_require"    => $isRequire
-                                ]);
-            $fieldOption->save();
-            $product->addOption($fieldOption);
-            $this->productRepository->cleanCache();
-            $product = $this->productRepository->save($product);
+            $customOption = $this->objectManager->create('Magento\Catalog\Api\Data\ProductCustomOptionInterface');
+            $customOption->setTitle('Text')
+                    ->setType('area')
+                    ->setIsRequire($isRequire)
+                    ->setSortOrder(1)
+                    ->setPrice(0)
+                    ->setPriceType('fixed')
+                    ->setMaxCharacters(50)
+                    ->setProductSku($product->getSku());
+            $customOptions[] = $customOption;
+            $product->setOptions($customOptions)->save();
 
             $attributeValues[] = [
                 'label' => 'test',

@@ -374,20 +374,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                     $expectedProductOptions = $lines[$orderItemSku]['attributes']['info_buyRequest']['options'];
                 }
                 $this->assertEquals($actualProductOptions, $expectedProductOptions);
-                if ($flowOrderId === 'ord-2a12e176b3e440289a0320600abe2c93') {
-                    $this->assertEquals(
-                        [
-                            "1" => "HEY THERE FLOW"
-                        ],
-                        $expectedProductOptions
-                    );
-                    $this->assertEquals(
-                        [
-                            "1" => "HEY2 THERE FLOW"
-                        ],
-                        $actualProductOptions
-                    );
-                }
 
                 $itemCount++;
             }

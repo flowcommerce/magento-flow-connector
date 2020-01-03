@@ -45,9 +45,8 @@ class IntegrationInitializeCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:integration-initialize')
-            ->setDescription('Initializes integration with flow.io. This is a wrapper for webhooks ' .
-                'registration, attributes creation and inventory center key fetching.');
+        $this->setName('flow:connector:initialize')
+            ->setDescription('Initialize integration with Flow.');
     }
 
     /**

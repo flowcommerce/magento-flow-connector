@@ -8,6 +8,7 @@ use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use \Magento\Catalog\Model\Category;
 use \Magento\Catalog\Model\Product;
 use \Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
+use \Magento\Catalog\Model\Product\Option as Option;
 use \Magento\Catalog\Model\Product\Type as ProductType;
 use \Magento\Catalog\Model\Product\Visibility as ProductVisibility;
 use \Magento\Catalog\Model\ResourceModel\Eav\Attribute as AttributeResourceModel;
@@ -75,7 +76,14 @@ class CreateProductsWithCategories
      */
     private $searchCriteriaBuilder;
 
-    public function __construct()
+    /**
+     * @var Option
+     */
+    private $_options;
+
+    public function __construct(
+        Option $options
+    )
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->attributeRepository = $this->objectManager->create(AttributeRepository::class);
@@ -86,6 +94,7 @@ class CreateProductsWithCategories
         $this->installer = $this->objectManager->create(Installer::class);
         $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
+        $this->_options = $options;
     }
 
     /**
@@ -210,12 +219,14 @@ class CreateProductsWithCategories
                                 [
                                     'option_0' => ['Option 1'],
                                     'option_1' => ['Option 2'],
-                                    'option_2' => ['Option 3']
+                                    'option_2' => ['Option 3'],
+                                    'option_3' => ['Option 4']
                                 ],
                             'order' => [
                                 'option_0' => 1,
                                 'option_1' => 2,
-                                'option_2' => 3
+                                'option_2' => 3,
+                                'option_3' => 4
                             ],
                         ],
                     ]
@@ -253,9 +264,26 @@ class CreateProductsWithCategories
                 ->setVisibility(ProductVisibility::VISIBILITY_BOTH)
                 ->setStatus(ProductStatus::STATUS_ENABLED)
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
+                ->setHasOptions(1)
                 ->setTestConfigurable($option->getValue());
             $this->productRepository->cleanCache();
             $product = $this->productRepository->save($product);
+            $isRequire = 0;
+            // Only set required field option on simple_4
+            if ($product->getSku() === 'simple_4') {
+                $isRequire = 1;
+            }
+            $customOption = $this->objectManager->create('Magento\Catalog\Api\Data\ProductCustomOptionInterface');
+            $customOption->setTitle('Text')
+                    ->setType('area')
+                    ->setIsRequire($isRequire)
+                    ->setSortOrder(1)
+                    ->setPrice(0)
+                    ->setPriceType('fixed')
+                    ->setMaxCharacters(50)
+                    ->setProductSku($product->getSku());
+            $customOptions[] = $customOption;
+            $product->setOptions($customOptions)->save();
 
             $attributeValues[] = [
                 'label' => 'test',

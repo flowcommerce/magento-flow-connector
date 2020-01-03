@@ -39,8 +39,8 @@ class InventorySyncProcessCommand extends BaseCommand
      */
     public function configure()
     {
-        $this->setName('flow:flow-connector:inventory-sync-process')
-            ->setDescription('Process inventory sync queue and send to Flow.')
+        $this->setName('flow:connector:inventory-sync')
+            ->setDescription('Sync inventory queue to Flow.')
             ->addArgument(
                 'num-to-process',
                 InputArgument::OPTIONAL,

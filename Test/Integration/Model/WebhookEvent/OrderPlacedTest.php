@@ -162,6 +162,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             $order = $orders->getFirstItem();
 
             $payloadOrderInfo = $payload['order'];
+            $payloadOrderLines = $payload['order']['lines'];
+            $lines = [];
+            foreach ($payloadOrderLines as $line) {
+                $lines[$line['item_number']] = $line;
+            }
 
             $submittedAt = isset($payloadOrderInfo['submitted_at']) ? $payloadOrderInfo['submitted_at'] : null;
 
@@ -358,6 +363,17 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($baseDutyPrice * $quantity, $item->getFlowConnectorBaseDuty());
                 $this->assertEquals($roundingPrice * $quantity, $item->getFlowConnectorRounding());
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
+
+                $productOptions = $item->getProductOptions();
+                $actualProductOptions = null;
+                $expectedProductOptions = null;
+                if (isset($productOptions['info_buyRequest']['options'])) {
+                    $actualProductOptions = $productOptions['info_buyRequest']['options'];
+                }
+                if (isset($lines[$orderItemSku]['attributes']['info_buyRequest']['options'])) {
+                    $expectedProductOptions = $lines[$orderItemSku]['attributes']['info_buyRequest']['options'];
+                }
+                $this->assertEquals($actualProductOptions, $expectedProductOptions);
 
                 $itemCount++;
             }

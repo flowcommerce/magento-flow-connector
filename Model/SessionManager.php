@@ -34,6 +34,11 @@ class SessionManager implements SessionManagementInterface
     const FLOW_SESSION_UPDATE_COOKIE_FLAG = 'flow_mage_session_update';
 
     /**
+     * Label for buy request info
+     */
+    const INFO_BUYREQUEST_LABEL = 'info_buyRequest';
+
+    /**
      * @var SessionManagerInterface
      */
     private $sessionManagerInterface;
@@ -295,6 +300,13 @@ class SessionManager implements SessionManagementInterface
                             'label' => 'Discount'
                         ]
                     ]
+                ];
+            }
+
+            $info_buyRequest = $item->getProductOptionByCode(self::INFO_BUYREQUEST_LABEL); 
+            if ($info_buyRequest) {
+                $lineItem->attributes = [
+                    self::INFO_BUYREQUEST_LABEL => $info_buyRequest
                 ];
             }
             $orderForm->items[] = $lineItem;

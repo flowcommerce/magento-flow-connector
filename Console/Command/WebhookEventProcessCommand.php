@@ -35,8 +35,8 @@ class WebhookEventProcessCommand extends BaseCommand
 
     public function configure()
     {
-        $this->setName('flow:flow-connector:webhook-event-process')
-            ->setDescription('Process Flow webhook events.');
+        $this->setName('flow:connector:webhook-process')
+            ->setDescription('Process recieved Flow webhook events.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)

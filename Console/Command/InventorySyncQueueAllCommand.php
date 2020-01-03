@@ -39,8 +39,8 @@ class InventorySyncQueueAllCommand extends BaseCommand
      */
     public function configure()
     {
-        $this->setName('flow:flow-connector:inventory-sync-queue-all')
-            ->setDescription('Queue all products for sync to Flow inventory.');
+        $this->setName('flow:connector:inventory-enqueue')
+            ->setDescription('Enqueue all products for sync to Flow inventory.');
     }
 
     /**

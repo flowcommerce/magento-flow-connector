@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.2.0
+- Adding support for buy requests on order items which are required to properly track product custom options
+- Update documentation for completeness and ease of use
+- Removing Kubernetes deployment configuration from repo
+
 ## 2.1.4
 - Support for vanity urls in Flow Checkout UI
 

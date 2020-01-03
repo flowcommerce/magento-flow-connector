@@ -9,6 +9,7 @@ use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEve
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\DataObject\Factory;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface as Order;
 use Magento\Sales\Api\Data\OrderItemInterface as OrderItem;
@@ -118,6 +119,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var string
      */
     protected $_eventPrefix = 'flow_connector_webhook_events';
+
+    /**
+     * @var Factory
+     */
+    protected $objectFactory;
 
     /**
      * @var Logger
@@ -300,6 +306,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
+     * @param Factory $objectFactory
      * @param Logger $logger
      * @param JsonSerializer $jsonSerializer
      * @param StoreManager $storeManager
@@ -343,6 +350,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function __construct(
         Context $context,
         Registry $registry,
+        Factory $objectFactory,
         Logger $logger,
         JsonSerializer $jsonSerializer,
         StoreManager $storeManager,
@@ -390,6 +398,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $resourceCollection,
             $data
         );
+        $this->objectFactory = $objectFactory;
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
         $this->storeManager = $storeManager;
@@ -1802,8 +1811,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
 
-            $this->logger->info('Adding product to quote: ' . $product->getSku());
-            $quote->addProduct($product, $line['quantity']);
+            $this->logger->info('Adding product to quote: ' . $line['item_number']);
+            $quote->addProduct($product, $this->getRequestFromLine($line)); 
         }
 
         ////////////////////////////////////////////////////////////
@@ -2034,10 +2043,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         /** @var Order $order */
         $order = $this->quoteManagement->submit($quote);
 
-        if ($order->getEntityId()) {
+        if ($order) {
             $this->logger->info('Created order id: ' . $order->getEntityId());
         } else {
-            $this->logger->info('Error processing Flow order: ' . $receivedOrder['number']);
+            $this->logger->info('Flow order could not be submitted: ' . $receivedOrder['number']);
             throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number']);
         }
 
@@ -2471,4 +2480,23 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $this->webhookEventManager->markWebhookEventAsDone($this);
     }
+
+
+    /**
+     * @param array $line
+     * @return \Magento\Framework\DataObject
+     */
+    private function getRequestFromLine($line = null)
+    {
+        if (isset($line['attributes']['info_buyRequest'])) {
+            return $this->objectFactory->create($line['attributes']['info_buyRequest']);
+        }
+
+        if (isset($line['quantity'])) {
+            return $line['quantity'];
+        }
+
+        return null;
+    }
+
 }

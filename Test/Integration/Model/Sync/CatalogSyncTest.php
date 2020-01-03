@@ -199,12 +199,6 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
             $syncSkuSku = $syncSkuObject->getSku();
             $product = $this->productRepository->get($syncSkuSku);
-            // TODO REMOVE THIS TEST
-            $this->assertEquals(
-                1,
-                2,
-                'This is a blatantly false assumption, testing if the simple options part of the test runs at all'
-            );
             $productOptions = $product->getOptions();
             $this->assertEquals(
                 1,
@@ -214,12 +208,6 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
             $expectedIsRequire = 0;
             if ($syncSkuSku == 'simple_4') {
                 $expectedIsRequire = 1;
-                // TODO REMOVE THIS TEST
-                $this->assertEquals(
-                    1,
-                    2,
-                    'This is a blatantly false assumption, testing if the simple_4 part of the test runs at all'
-                );
             }
             $this->assertEquals(
                 $expectedIsRequire,

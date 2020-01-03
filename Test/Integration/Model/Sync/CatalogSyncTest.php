@@ -189,9 +189,9 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($products->getItems() as $product) {
             $productSkus[$product->getSku()] = $product->getSku();
         }
-        $this->assertArraySubset(
-            ['simple_1', 'simple_2', 'simple_3', 'simple_4', 'configurable'],
-            array_keys($productSkus),
+        $this->assertEquals(
+            sort(['simple_1', 'simple_2', 'simple_3', 'simple_4', 'configurable']),
+            sort(array_keys($productSkus)),
             'Failed to assert a subset of expected skus exists'
         );
 
@@ -208,25 +208,18 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 );
                 $expectedIsRequire = 0;
                 if ($syncSkuSku == 'simple_4') {
-                    // TODO this should generate a failure on sku simple_4
-                    /* $expectedIsRequire = 1; */
+                    $expectedIsRequire = 1;
                 }
                 $this->assertEquals(
                     $expectedIsRequire,
                     $productOptions[0]['is_require'],
                     'Failed asserting that sku has one required option: ' . $syncSkuSku
                 );
-                // TODO if all else passes, this should DEFINITELY fail
-                $this->assertEquals(
-                    1,
-                    0,
-                    'Blatantly false'
-                );
             }
 
-            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
-            $this->assertEquals(1, $syncSkuObject->getStoreId());
             $this->assertArrayHasKey($syncSkuSku, $productSkus);
+            $this->assertEquals(1, $syncSkuObject->getStoreId());
+            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
 
             if (array_key_exists($syncSkuSku, $productSkus)) {
                 unset($productSkus[$syncSkuSku]);

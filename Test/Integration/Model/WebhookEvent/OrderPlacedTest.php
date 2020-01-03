@@ -377,17 +377,16 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 if ($flowOrderId === 'ord-2a12e176b3e440289a0320600abe2c93') {
                     $this->assertEquals(
                         [
-                            "1" => "HEY THERE FLOW"
+                            "1" => "HEY2 THERE FLOW"
                         ],
                         $expectedProductOptions
                     );
                     $this->assertEquals(
                         [
-                            "1" => "HEY THERE FLOW"
+                            "1" => "HEY2 THERE FLOW"
                         ],
                         $actualProductOptions
                     );
-                    $this->assertEquals(0, 1, 'BLATANTLY FALSE');
                 }
 
                 $itemCount++;

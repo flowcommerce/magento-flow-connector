@@ -180,7 +180,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
             ->willReturn($this->httpPromise);
 
         $this->syncSkuManager->enqueueAllProducts();
-        $this->subject->process(100, 10);
+        $this->subject->process();
 
         $this->syncSkuCollection->load();
         $this->assertEquals($products->getTotalCount(), $this->syncSkuCollection->count());
@@ -189,14 +189,39 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($products->getItems() as $product) {
             $productSkus[$product->getSku()] = $product->getSku();
         }
+        $expectedSkus = ['simple_1', 'simple_2', 'simple_3', 'simple_4', 'configurable'];
+        $actualSkus = array_keys($productSkus);
+        $this->assertEquals(
+            sort($expectedSkus),
+            sort($actualSkus),
+            'Failed to assert that the expected skus were generated'
+        );
 
         /** @var SyncSku $syncSkuObject */
         foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
             $syncSkuSku = $syncSkuObject->getSku();
+            $product = $this->productRepository->get($syncSkuSku);
+            if ($product->getTypeId() == ProductType::TYPE_SIMPLE) {
+                $productOptions = $product->getOptions();
+                $this->assertEquals(
+                    1,
+                    count($productOptions),
+                    'Failed asserting that sku has one option: ' . $syncSkuSku
+                );
+                $expectedIsRequire = 0;
+                if ($syncSkuSku == 'simple_4') {
+                    $expectedIsRequire = 1;
+                }
+                $this->assertEquals(
+                    $expectedIsRequire,
+                    $productOptions[0]['is_require'],
+                    'Failed asserting that sku has one required option: ' . $syncSkuSku
+                );
+            }
 
-            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus());
-            $this->assertEquals(1, $syncSkuObject->getStoreId());
             $this->assertArrayHasKey($syncSkuSku, $productSkus);
+            $this->assertEquals(1, $syncSkuObject->getStoreId());
+            $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
 
             if (array_key_exists($syncSkuSku, $productSkus)) {
                 unset($productSkus[$syncSkuSku]);
@@ -219,8 +244,9 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         try {
             $jsonRequest = json_decode($rawBody);
             $product = $this->productRepository->get($jsonRequest->number);
+            $productSku = $product->getSku();
             $this->assertEquals(
-                $product->getSku(),
+                $productSku,
                 $jsonRequest->number,
                 'Failed asserting that name matches'
             );
@@ -280,7 +306,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 'Failed asserting that created at matches'
             );
             $this->assertEquals(
-                $product->getSku(),
+                $productSku,
                 $jsonRequest->attributes->sku,
                 'Failed asserting that sku matches'
             );
@@ -365,10 +391,10 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                     }
                 }
             } elseif ($product->getTypeId() == Configurable::TYPE_CODE) {
-                $optionValues = ['Option 1', 'Option 2', 'Option 3'];
+                $optionValues = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
                 $optionLabels = ['Test Configurable'];
                 $optionAttributeCodes = ['test_configurable'];
-                $childrenProductSkus = ['simple_1', 'simple_2', 'simple_3'];
+                $childrenProductSkus = ['simple_1', 'simple_2', 'simple_3', 'simple_4'];
 
                 $this->assertEquals(
                     $optionValues,

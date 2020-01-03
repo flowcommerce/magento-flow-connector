@@ -199,21 +199,30 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         foreach ($this->syncSkuCollection->getItems() as $syncSkuObject) {
             $syncSkuSku = $syncSkuObject->getSku();
             $product = $this->productRepository->get($syncSkuSku);
-            $productOptions = $product->getOptions();
-            $this->assertEquals(
-                1,
-                count($productOptions),
-                'Failed asserting that sku has one option: ' . $syncSkuSku
-            );
-            $expectedIsRequire = 0;
-            if ($syncSkuSku == 'simple_4') {
-                $expectedIsRequire = 1;
+            if ($product->getTypeId() == ProductType::TYPE_SIMPLE) {
+                $productOptions = $product->getOptions();
+                $this->assertEquals(
+                    1,
+                    count($productOptions),
+                    'Failed asserting that sku has one option: ' . $syncSkuSku
+                );
+                $expectedIsRequire = 0;
+                if ($syncSkuSku == 'simple_4') {
+                    // TODO this should generate a failure on sku simple_4
+                    /* $expectedIsRequire = 1; */
+                }
+                $this->assertEquals(
+                    $expectedIsRequire,
+                    $productOptions[0]['is_require'],
+                    'Failed asserting that sku has one required option: ' . $syncSkuSku
+                );
+                // TODO if all else passes, this should DEFINITELY fail
+                $this->assertEquals(
+                    1,
+                    0,
+                    'Blatantly false'
+                );
             }
-            $this->assertEquals(
-                $expectedIsRequire,
-                $productOptions[0]['is_require'],
-                'Failed asserting that sku has one required option: ' . $syncSkuSku
-            );
 
             $this->assertEquals(SyncSku::STATUS_DONE, $syncSkuObject->getStatus(), 'Status not "done" for SKU: ' . $syncSkuSku);
             $this->assertEquals(1, $syncSkuObject->getStoreId());

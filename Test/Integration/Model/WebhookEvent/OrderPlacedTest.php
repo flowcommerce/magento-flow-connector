@@ -364,7 +364,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($roundingPrice * $quantity, $item->getFlowConnectorRounding());
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
 
-                $productOptions = $orderItem->getProductOptions();
+                $productOptions = $item->getProductOptions();
                 $actualProductOptions = null;
                 $expectedProductOptions = null;
                 if (isset($productOptions['info_buyRequest']['options'])) {

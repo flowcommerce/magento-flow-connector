@@ -266,8 +266,6 @@ class CreateProductsWithCategories
                 ->setCategoryIds([$category2->getId(), $category4->getId(), $category5->getId()])
                 ->setHasOptions(1)
                 ->setTestConfigurable($option->getValue());
-            $this->productRepository->cleanCache();
-            $product = $this->productRepository->save($product);
             $isRequire = 0;
             // Only set required field option on simple_4
             if ($product->getSku() === 'simple_4') {
@@ -286,6 +284,8 @@ class CreateProductsWithCategories
                                 ]);
             $fieldOption->save();
             $product->addOption($fieldOption);
+            $this->productRepository->cleanCache();
+            $product = $this->productRepository->save($product);
 
             $attributeValues[] = [
                 'label' => 'test',

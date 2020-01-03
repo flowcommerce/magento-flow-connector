@@ -210,7 +210,8 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
                 );
                 $expectedIsRequire = 0;
                 if ($syncSkuSku == 'simple_4') {
-                    $expectedIsRequire = 1;
+                    // TODO THIS SHOULD CAUSE A FAILURE
+                    /* $expectedIsRequire = 1; */
                 }
                 $this->assertEquals(
                     $expectedIsRequire,

@@ -374,6 +374,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                     $expectedProductOptions = $lines[$orderItemSku]['attributes']['info_buyRequest']['options'];
                 }
                 $this->assertEquals($actualProductOptions, $expectedProductOptions);
+                $this->assertEquals(0, 1, 'BLATANTLY FALSE');
 
                 $itemCount++;
             }

@@ -16,7 +16,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class SessionManagerTest extends TestCase
+class SessionManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Sets up for tests

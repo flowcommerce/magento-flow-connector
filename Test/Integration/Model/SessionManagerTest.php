@@ -45,15 +45,15 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         $orderForm = $this->subject->createFlowOrderForm();
         $this->assertEquals(
             $orderForm->items[0]->number,
-            $quote->getFirstItem()->getSku()
+            $quote->getAllItems()[0]->getSku()
         );
         $this->assertEquals(
             $orderForm->items[0]->quantity,
-            $quote->getFirstItem()->getQty()
+            $quote->getAllItems()[0]->getQty()
         );
         $this->assertEquals(
             json_decode($orderForm->items[0]->attributes[$this->subject::INFO_BUYREQUEST_LABEL]),
-            $quote->getFirstItem()->getProductOptionByCode($this->subject::INFO_BUYREQUEST_LABEL)
+            $quote->getAllItems()[0]->getProductOptionByCode($this->subject::INFO_BUYREQUEST_LABEL)
         );
     }
 }

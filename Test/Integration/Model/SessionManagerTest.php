@@ -59,8 +59,8 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             $quote->getAllItems()[0]->getQty()
         );
         $this->assertEquals(
-            json_decode($orderForm->items[0]->attributes['info_buyRequest']['options']),
-            $customOptions
+            json_decode($orderForm->items[0]->attributes['info_buyRequest']),
+            $quote->getAllItems()[0]->getBuyRequest()
         );
     }
 }

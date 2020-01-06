@@ -42,7 +42,13 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             ->withSimpleProduct('simple_4',4)
             ->build();
         $quote = $cart->getQuote();
-        $quote->getAllItems()[0]->getProductOptionByCode($this->subject::INFO_BUYREQUEST_LABEL)->setValue('HEY THERE FLOW');
+        $customOptions = [
+            [
+                "option_id" => 1,
+                "option_value" => "Hey there Flow!"
+            ]
+        ];
+        $quote->getAllItems()[0]->setCustomOptions($customOptions);
         $orderForm = $this->subject->createFlowOrderForm();
         $this->assertEquals(
             $orderForm->items[0]->number,
@@ -53,8 +59,8 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             $quote->getAllItems()[0]->getQty()
         );
         $this->assertEquals(
-            json_decode($orderForm->items[0]->attributes[$this->subject::INFO_BUYREQUEST_LABEL]),
-            $quote->getAllItems()[0]->getProductOptionByCode($this->subject::INFO_BUYREQUEST_LABEL)
+            json_decode($orderForm->items[0]->attributes['info_buyRequest']['options']),
+            $customOptions
         );
     }
 }

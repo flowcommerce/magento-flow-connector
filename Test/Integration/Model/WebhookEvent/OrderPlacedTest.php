@@ -370,8 +370,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 if (isset($productOptions['info_buyRequest']['options'])) {
                     $actualProductOptions = $productOptions['info_buyRequest']['options'];
                 }
-                if (isset($lines[$orderItemSku]['attributes']['info_buyRequest']['options'])) {
-                    $expectedProductOptions = $lines[$orderItemSku]['attributes']['info_buyRequest']['options'];
+                if (isset($lines[$orderItemSku]['attributes']['info_buyRequest'])) {
+                    $expectedBuyRequest = json_decode($lines[$orderItemSku]['attributes']['info_buyRequest'], true);
+                    if (isset($expectedBuyRequest['options'])) {
+                        $expectedProductOptions = $expectedBuyRequest['options'];
+                    }
                 }
                 $this->assertEquals($actualProductOptions, $expectedProductOptions);
 

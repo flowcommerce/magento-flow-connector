@@ -42,6 +42,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             ->withSimpleProduct('simple_4',4)
             ->build();
         $quote = $cart->getQuote();
+        $quote->getAllItems()[0]->getProductOptionByCode($this->subject::INFO_BUYREQUEST_LABEL)->setValue('HEY THERE FLOW');
         $orderForm = $this->subject->createFlowOrderForm();
         $this->assertEquals(
             $orderForm->items[0]->number,

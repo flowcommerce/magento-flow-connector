@@ -305,8 +305,9 @@ class SessionManager implements SessionManagementInterface
 
             $info_buyRequest = $item->getProductOptionByCode(self::INFO_BUYREQUEST_LABEL); 
             if ($info_buyRequest) {
+                $this->logger->info('Adding info_buyRequest: ' . json_encode($info_buyRequest));
                 $lineItem->attributes = [
-                    self::INFO_BUYREQUEST_LABEL => $info_buyRequest
+                    self::INFO_BUYREQUEST_LABEL => json_encode($info_buyRequest)
                 ];
             }
             $orderForm->items[] = $lineItem;

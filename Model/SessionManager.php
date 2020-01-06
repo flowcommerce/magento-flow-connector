@@ -211,12 +211,10 @@ class SessionManager implements SessionManagementInterface
      */
     public function getCheckoutUrlWithCart($country = null, $currency = null)
     {
-        $quote = $this->checkoutSession->getQuote();
         $result = null;
 
-        $items = $quote->getAllVisibleItems();
-        if (!$items || !$country || !$currency) {
-            return null;
+        if (!$country || !$currency) {
+            return $result;
         }
 
         $query = [
@@ -225,6 +223,36 @@ class SessionManager implements SessionManagementInterface
             'flow_session_id' => $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE),
             'experience' => $this->getSessionExperienceKey()
         ];
+
+        $orderForm = $this->createFlowOrderForm();
+
+        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
+
+        if ($sessionId) {
+            $createdOrder = json_decode($this->orderSave->execute($orderForm, $query, $sessionId));
+            $tokenId = $this->orderSave->createCheckoutToken($createdOrder->number, $sessionId);
+            if (isset($createdOrder->number) && $tokenId) {
+                $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
+
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Create Flow Order Form from Magento Quote
+     * @return object|null
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
+     */
+    public function createFlowOrderForm() {
+        $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+        if (!$items) {
+            return null;
+        }
 
         $orderForm = (object)[
             'attributes' => [
@@ -313,18 +341,7 @@ class SessionManager implements SessionManagementInterface
             $orderForm->items[] = $lineItem;
         }
 
-        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
-
-        if ($sessionId) {
-            $createdOrder = json_decode($this->orderSave->execute($orderForm, $query, $sessionId));
-            $tokenId = $this->orderSave->createCheckoutToken($createdOrder->number, $sessionId);
-            if (isset($createdOrder->number) && $tokenId) {
-                $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
-
-            }
-        }
-
-        return $result;
+        return $orderForm;
     }
 
     /**

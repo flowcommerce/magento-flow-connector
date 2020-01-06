@@ -27,7 +27,6 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->subject = $this->objectManager->create(Subject::class);
         $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);
-        $this->cartBuilder = $this->objectManager->create(CartBuilder::class);
         $this->customerSession = $this->objectManager->create(CustomerSession::class);
         $this->checkoutSession = $this->objectManager->create(CheckoutSession::class);
     }
@@ -39,7 +38,10 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
     public function testCreateFlowOrderFormAddsAvailableInfoBuyRequest()
     {
         $this->createProductsFixture->execute();
-        $quote = $this->cartBuilder->build()->withSimpleProduct('simple_4', 4);
+        $cart = CartBuilder::forCurrentSession()
+            ->withSimpleProduct('simple_4',4)
+            ->build();
+        $quote = $cart->getQuote();
         $orderForm = $this->subject->createFlowOrderForm();
         $this->assertEquals(
             $orderForm->items[0]['number'],

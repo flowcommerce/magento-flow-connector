@@ -327,10 +327,19 @@ class SessionManager implements SessionManagementInterface
             }
 
             $itemOptions = $item->getOptions();
-            if ($itemOptions) {
-                $this->logger->info('Adding options: ' . json_encode($itemOptions));
+            $optionsArray = [];
+            foreach ($itemOptions as $option) {
+                if ($option->getId() && $option->getValue()) {
+                    $optionsArray[] = [
+                        $option->getId() => $option->getValue()
+                    ]
+                }
+            }
+            if (count($optionsArray) > 0) {
+                $encodedOptions = json_encode($optionsArray);
+                $this->logger->info('Adding options: ' . $encodedOptions);
                 $lineItem->attributes = [
-                    'options' => json_encode($itemOptions)
+                    'options' => $encodedOptions
                 ];
             }
             $orderForm->items[] = $lineItem;

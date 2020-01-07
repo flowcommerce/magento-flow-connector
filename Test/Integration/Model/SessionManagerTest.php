@@ -58,9 +58,17 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             $orderFormAttributesOptions = json_decode($orderForm->items[0]->attributes['options'], true);
         }
         $itemOptions = $quote->getAllItems()[0]->getOptions();
+        $optionsArray = [];
+        foreach ($itemOptions as $option) {
+            if ($option->getId() && $option->getValue()) {
+                $optionsArray[] = [
+                    $option->getId() => $option->getValue()
+                ];
+            }
+        }
         $this->assertEquals(
             count($orderFormAttributesOptions),
-            count($itemOptions)
+            count($optionsArray)
         );
         $this->assertEquals(
             2,
@@ -72,16 +80,16 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         );
         $this->assertEquals(
             2,
-            count($itemOptions)
+            count($optionsArray)
         );
         for ($i=0; $i>count($orderFormAttributesOptions); $i++) {
             $this->assertEquals(
                 $orderFormAttributesOptions[$i],
-                $itemOptions->getValue()
+                $optionsArray[$i]
             );
             $this->assertEquals(
                 $options[$i],
-                $itemOptions->getValue()
+                $optionsArray[$i]
             );
             $this->assertEquals(
                 $options[$i],

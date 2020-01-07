@@ -1811,7 +1811,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
             if (isset($line['attributes']['options'])) {
-                $product->setOptions($this->objectFactory->create(json_decode($line['attributes']['options'], true)));
+                $product->setOptions(json_decode($line['attributes']['options'], true));
             }
 
             $this->logger->info('Adding product to quote: ' . $line['item_number']);

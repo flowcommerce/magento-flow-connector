@@ -63,12 +63,16 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             count($itemOptions)
         );
         $this->assertEquals(
-            count($orderFormAttributesOptions),
-            2
+            2,
+            count($orderFormAttributesOptions)
         );
         $this->assertEquals(
-            count($itemOptions),
-            2
+            $options,
+            count($orderFormAttributesOptions)
+        );
+        $this->assertEquals(
+            2,
+            count($itemOptions)
         );
         for ($i=0; $i>count($orderFormAttributesOptions); $i++) {
             $this->assertEquals(
@@ -76,12 +80,12 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
                 $itemOptions->getValue()
             );
             $this->assertEquals(
-                $itemOptions->getValue(),
-                $options[$i]
+                $options[$i],
+                $itemOptions->getValue()
             );
             $this->assertEquals(
-                $orderFormAttributesOptions[$i],
-                $options[$i]
+                $options[$i],
+                $orderFormAttributesOptions[$i]
             );
         }
     }

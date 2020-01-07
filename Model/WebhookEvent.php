@@ -776,21 +776,24 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
                 if (($orderPayment = $order->getPayment())) {
                     if ($order->getFlowConnectorOrderReady()) {
-                        // Close transaction
-                        /** @var Payment|null $orderPayment */
-                        if ($orderPayment->canCapture()) {
-                            // Mark payment as closed.
-                            $orderPayment->setIsTransactionClosed(true);
-                        }
+                        if ($order->canInvoice()) {
+                            // Close transaction
+                            /** @var Payment|null $orderPayment */
+                            if ($orderPayment->canCapture()) {
+                                // Mark payment as closed.
+                                $orderPayment->setIsTransactionClosed(true);
+                            }
 
-                        // Create invoice
-                        if ($this->configuration->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED
-                            && $order->canInvoice()
-                        ) {
-                            $this->invoiceOrder($order);
+                            // Create invoice
+                            if ($this->configuration->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED) {
+                                $this->invoiceOrder($order);
+                                $this->webhookEventManager->markWebhookEventAsDone($this, 'Invoice created');
+                            } else {
+                                $this->webhookEventManager->markWebhookEventAsDone($this, 'Invoice creation on capture disabled by configuration');
+                            }
+                        } else {
+                            $this->requeue('Unable to invoice order at this time, reprocess.');
                         }
-
-                        $this->webhookEventManager->markWebhookEventAsDone($this, '');
                     } else {
                         $this->requeue('Unable to find order right now, reprocess.');
                     }

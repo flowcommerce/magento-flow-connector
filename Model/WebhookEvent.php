@@ -1811,7 +1811,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
             if (isset($line['attributes']['options'])) {
-                $product->setOptions(json_decode($line['attributes']['options'], true));
+                $rawOptions = json_decode($line['attributes']['options'], true);
+                $cleanOptions = [];
+                foreach ($productOptions as $option) {
+                    $cleanOptions[] = new \Magento\Framework\DataObject($option);
+                }
+                $product->setOptions($cleanOptions);
             }
 
             $this->logger->info('Adding product to quote: ' . $line['item_number']);

@@ -62,7 +62,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             count($orderFormAttributesOptions),
             count($itemOptions)
         );
-        for ($i; $i>count($orderFormAttributesOptions); $i++) {
+        for ($i=0; $i>count($orderFormAttributesOptions); $i++) {
             $this->assertEquals(
                 $orderFormAttributesOptions[$i],
                 $itemOptions->getValue()

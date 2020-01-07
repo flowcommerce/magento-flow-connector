@@ -34,11 +34,6 @@ class SessionManager implements SessionManagementInterface
     const FLOW_SESSION_UPDATE_COOKIE_FLAG = 'flow_mage_session_update';
 
     /**
-     * Label for buy request info
-     */
-    const INFO_BUYREQUEST_LABEL = 'info_buyRequest';
-
-    /**
      * @var SessionManagerInterface
      */
     private $sessionManagerInterface;
@@ -211,12 +206,10 @@ class SessionManager implements SessionManagementInterface
      */
     public function getCheckoutUrlWithCart($country = null, $currency = null)
     {
-        $quote = $this->checkoutSession->getQuote();
         $result = null;
 
-        $items = $quote->getAllVisibleItems();
-        if (!$items || !$country || !$currency) {
-            return null;
+        if (!$country || !$currency) {
+            return $result;
         }
 
         $query = [
@@ -225,6 +218,36 @@ class SessionManager implements SessionManagementInterface
             'flow_session_id' => $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE),
             'experience' => $this->getSessionExperienceKey()
         ];
+
+        $orderForm = $this->createFlowOrderForm();
+
+        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
+
+        if ($sessionId) {
+            $createdOrder = json_decode($this->orderSave->execute($orderForm, $query, $sessionId));
+            $tokenId = $this->orderSave->createCheckoutToken($createdOrder->number, $sessionId);
+            if (isset($createdOrder->number) && $tokenId) {
+                $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
+
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Create Flow Order Form from Magento Quote
+     * @return object|null
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
+     */
+    public function createFlowOrderForm() {
+        $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+        if (!$items) {
+            return null;
+        }
 
         $orderForm = (object)[
             'attributes' => [
@@ -303,27 +326,17 @@ class SessionManager implements SessionManagementInterface
                 ];
             }
 
-            $info_buyRequest = $item->getProductOptionByCode(self::INFO_BUYREQUEST_LABEL); 
-            if ($info_buyRequest) {
+            $itemOptions = $item->getOptions();
+            if ($itemOptions) {
+                $this->logger->info('Adding options: ' . json_encode($itemOptions));
                 $lineItem->attributes = [
-                    self::INFO_BUYREQUEST_LABEL => $info_buyRequest
+                    'options' => json_encode($itemOptions)
                 ];
             }
             $orderForm->items[] = $lineItem;
         }
 
-        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
-
-        if ($sessionId) {
-            $createdOrder = json_decode($this->orderSave->execute($orderForm, $query, $sessionId));
-            $tokenId = $this->orderSave->createCheckoutToken($createdOrder->number, $sessionId);
-            if (isset($createdOrder->number) && $tokenId) {
-                $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
-
-            }
-        }
-
-        return $result;
+        return $orderForm;
     }
 
     /**

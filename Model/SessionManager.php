@@ -332,7 +332,7 @@ class SessionManager implements SessionManagementInterface
                 if ($option->getId() && $option->getValue()) {
                     $optionsArray[] = [
                         $option->getId() => $option->getValue()
-                    ]
+                    ];
                 }
             }
             if (count($optionsArray) > 0) {

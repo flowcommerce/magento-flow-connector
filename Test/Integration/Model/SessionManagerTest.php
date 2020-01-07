@@ -57,9 +57,16 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         if (isset($orderForm->items[0]->attributes['options'])) {
             $orderFormAttributesOptions = json_decode($orderForm->items[0]->attributes['options'], true);
         }
+        $itemOptions = $quote->getAllItems()[0]->getOptions();
         $this->assertEquals(
-            $orderFormAttributesOptions,
-            $quote->getAllItems()[0]->getOptions()
+            count($orderFormAttributesOptions),
+            count($itemOptions)
         );
+        for ($i; $i>count($orderFormAttributesOptions); $i++) {
+            $this->assertEquals(
+                $orderFormAttributesOptions[$i],
+                $itemOptions->getValue()
+            );
+        }
     }
 }

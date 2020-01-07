@@ -364,12 +364,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($roundingPrice * $quantity, $item->getFlowConnectorRounding());
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
 
-                $expectedProductOptions = $item->getOptions();
                 $actualProductOptions = null;
                 if (isset($lines[$orderItemSku]['attributes']['options'])) {
-                    $expectedProductOptions = json_decode($lines[$orderItemSku]['attributes']['options'], true);
+                    $actualProductOptions = json_decode($lines[$orderItemSku]['attributes']['options'], true);
                 }
-                $this->assertEquals($expectedProductOptions, $actualProductOptions);
+                $this->assertEquals($item->getOptions(), $actualProductOptions);
 
                 $itemCount++;
             }

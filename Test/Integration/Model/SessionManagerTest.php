@@ -42,12 +42,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             ->withSimpleProduct('simple_4',4)
             ->build();
         $quote = $cart->getQuote();
-        $options = [
-            [
-                "option_id" => 1,
-                "option_value" => "Hey there Flow!"
-            ]
-        ];
+        $options = [ "1" => "testing" ];
         $quote->getAllItems()[0]->setOptions($options);
         $orderForm = $this->subject->createFlowOrderForm();
         $this->assertEquals(
@@ -59,7 +54,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             $quote->getAllItems()[0]->getQty()
         );
         $orderFormAttributesOptions = null;
-        $testObj = new \Magento\Framework\DataObject(['1'=>'testing']);
+        $testObj = new \Magento\Framework\DataObject($options);
         if (isset($orderForm->items[0]->attributes['options'])) {
             $orderFormAttributesOptions = new \Magento\Framework\DataObject(json_decode($orderForm->items[0]->attributes['options'], true));
         }

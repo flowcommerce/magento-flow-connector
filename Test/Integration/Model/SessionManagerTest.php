@@ -59,7 +59,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         }
         $this->assertEquals(
             $orderFormAttributesOptions,
-            $quote->getAllItems()[0]->getOptions
+            $quote->getAllItems()[0]->getOptions()
         );
     }
 }

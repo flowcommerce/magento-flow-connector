@@ -52,12 +52,7 @@
                 "name": "Desiree Fitness Tee-XL-Yellow",
                 "quantity": 4,
                 "attributes": {
-                    "info_buyRequest": {
-                        "options": {
-                            "1": "HEY THERE FLOW"
-                        },
-                        "qty": "4"
-                    }
+                    "options": "[[\"1\":\"HEY THERE FLOW\"]]"
                 },
                 "local": {
                     "experience": {
@@ -554,12 +549,7 @@
                 "item_number": "simple_4",
                 "quantity": 4,
                 "attributes": {
-                    "info_buyRequest": {
-                        "options": {
-                            "1": "HEY THERE FLOW"
-                        },
-                        "qty": "4"
-                    }
+                    "options": "[[\"1\":\"HEY THERE FLOW\"]]"
                 },
                 "price": {
                     "currency": "CAD",

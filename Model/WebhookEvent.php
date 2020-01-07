@@ -1810,9 +1810,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
+            if (isset($line['attributes']['options'])) {
+                $product->setOptions($this->objectFactory->create(json_decode($line['attributes']['options'], true)));
+            }
 
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
-            $quote->addProduct($product, $this->getRequestFromLine($line)); 
+            $quote->addProduct($product, $line['quantity']); 
         }
 
         ////////////////////////////////////////////////////////////
@@ -2480,23 +2483,4 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $this->webhookEventManager->markWebhookEventAsDone($this);
     }
-
-
-    /**
-     * @param array $line
-     * @return \Magento\Framework\DataObject
-     */
-    private function getRequestFromLine($line = null)
-    {
-        if (isset($line['attributes']['options'])) {
-            return $this->objectFactory->create(json_decode($line['attributes']['options'], true));
-        }
-
-        if (isset($line['quantity'])) {
-            return $line['quantity'];
-        }
-
-        return null;
-    }
-
 }

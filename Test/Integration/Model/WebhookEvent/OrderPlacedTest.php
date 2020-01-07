@@ -376,7 +376,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                         $expectedProductOptions = $expectedBuyRequest['options'];
                     }
                 }
-                $this->assertEquals($actualProductOptions, $expectedProductOptions);
+                $this->assertEquals($expectedProductOptions, $actualProductOptions);
 
                 $itemCount++;
             }

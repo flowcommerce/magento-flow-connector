@@ -42,13 +42,13 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             ->withSimpleProduct('simple_4',4)
             ->build();
         $quote = $cart->getQuote();
-        $customOptions = [
+        $options = [
             [
                 "option_id" => 1,
                 "option_value" => "Hey there Flow!"
             ]
         ];
-        $quote->getAllItems()[0]->setCustomOptions($customOptions);
+        $quote->getAllItems()[0]->setOptions($options);
         $orderForm = $this->subject->createFlowOrderForm();
         $this->assertEquals(
             $orderForm->items[0]->number,

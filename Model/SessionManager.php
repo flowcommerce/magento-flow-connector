@@ -326,7 +326,7 @@ class SessionManager implements SessionManagementInterface
                 ];
             }
 
-            $infoBuyRequest = $item->getBuyRequest();
+            $infoBuyRequest = $item->getProductOptionByCode('info_buyRequest');
             if ($infoBuyRequest) {
                 $this->logger->info('Adding info_buyRequest: ' . json_encode($infoBuyRequest));
                 $lineItem->attributes = [

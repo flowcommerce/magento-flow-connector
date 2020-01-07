@@ -35,7 +35,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
      * @magentoDbIsolation enabled
      * @throws Exception
      */
-    public function testCreateFlowOrderFormAddsAvailableInfoBuyRequest()
+    public function testCreateFlowOrderFormAddsOptions()
     {
         $this->createProductsFixture->execute();
         $cart = CartBuilder::forCurrentSession()
@@ -58,12 +58,13 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             $orderForm->items[0]->quantity,
             $quote->getAllItems()[0]->getQty()
         );
-        if (isset($orderForm->items[0]->attributes)) {
+        $orderFormBuyRequest = null;
+        if (isset($orderForm->items[0]->attributes['info_buyRequest'])) {
             $orderFormBuyRequest = new \Magento\Framework\DataObject(json_decode($orderForm->items[0]->attributes['info_buyRequest'], true));
         }
         $this->assertEquals(
             $orderFormBuyRequest,
-            $quote->getAllItems()[0]->getBuyRequest()
+            $quote->getAllItems()[0]->getProductOptionByCode('info_buyRequest')
         );
     }
 }

@@ -58,22 +58,22 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             $orderForm->items[0]->quantity,
             $quote->getAllItems()[0]->getQty()
         );
-        $orderFormBuyRequest = null;
+        $orderFormAttributesOptions = null;
         $testObj = new \Magento\Framework\DataObject(['1'=>'testing']);
-        if (isset($orderForm->items[0]->attributes['info_buyRequest'])) {
-            $orderFormBuyRequest = new \Magento\Framework\DataObject(json_decode($orderForm->items[0]->attributes['info_buyRequest'], true));
+        if (isset($orderForm->items[0]->attributes['options'])) {
+            $orderFormAttributesOptions = new \Magento\Framework\DataObject(json_decode($orderForm->items[0]->attributes['options'], true));
         }
         $this->assertEquals(
-            $orderFormBuyRequest,
+            $orderFormAttributesOptions,
             $testObj
         );
         $this->assertEquals(
-            $quote->getAllItems()[0]->getProductOptionByCode('info_buyRequest'),
+            $quote->getAllItems()[0]->getOptions,
             $testObj
         );
         $this->assertEquals(
-            $orderFormBuyRequest,
-            $quote->getAllItems()[0]->getProductOptionByCode('info_buyRequest')
+            $orderFormAttributesOptions,
+            $quote->getAllItems()[0]->getOptions
         );
     }
 }

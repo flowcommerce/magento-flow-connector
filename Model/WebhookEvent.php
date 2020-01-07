@@ -2488,8 +2488,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      */
     private function getRequestFromLine($line = null)
     {
-        if (isset($line['attributes']['info_buyRequest'])) {
-            return $this->objectFactory->create(json_decode($line['attributes']['info_buyRequest'], true));
+        if (isset($line['attributes']['options'])) {
+            return $this->objectFactory->create(json_decode($line['attributes']['options'], true));
         }
 
         if (isset($line['quantity'])) {

@@ -45,14 +45,6 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         $productId = $quote->getAllItems()[0]->getId();
         $productSku = $quote->getAllItems()[0]->getSku();
         $productQty = $quote->getAllItems()[0]->getSku();
-        $this->assertEquals(
-            $orderForm->items[0]->number,
-            $productSku
-        );
-        $this->assertEquals(
-            $orderForm->items[0]->quantity,
-            $productQty
-        );
         $options = [
             [
                 'product_id' => $productId,
@@ -62,6 +54,14 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         ];
         $quote->getAllItems()[0]->setOptions($options);
         $orderForm = $this->subject->createFlowOrderForm();
+        $this->assertEquals(
+            $orderForm->items[0]->number,
+            $productSku
+        );
+        $this->assertEquals(
+            $orderForm->items[0]->quantity,
+            $productQty
+        );
         $orderFormAttributesOptions = null;
         if (isset($orderForm->items[0]->attributes['options'])) {
             $orderFormAttributesOptions = json_decode($orderForm->items[0]->attributes['options'], true);

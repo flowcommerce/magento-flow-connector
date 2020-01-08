@@ -44,7 +44,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
         $quote = $cart->getQuote();
         $productId = $quote->getAllItems()[0]->getId();
         $productSku = $quote->getAllItems()[0]->getSku();
-        $productQty = $quote->getAllItems()[0]->getSku();
+        $productQty = $quote->getAllItems()[0]->getQty();
         $options = [
             [
                 'product_id' => $productId,

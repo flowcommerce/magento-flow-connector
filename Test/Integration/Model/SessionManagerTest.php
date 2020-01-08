@@ -42,17 +42,26 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             ->withSimpleProduct('simple_4',4)
             ->build();
         $quote = $cart->getQuote();
-        $options = [[ '1' => 'testing' ]];
-        $quote->getAllItems()[0]->setOptions($options);
-        $orderForm = $this->subject->createFlowOrderForm();
+        $productId = $quote->getAllItems()[0]->getId();
+        $productSku = $quote->getAllItems()[0]->getSku();
+        $productQty = $quote->getAllItems()[0]->getSku();
         $this->assertEquals(
             $orderForm->items[0]->number,
-            $quote->getAllItems()[0]->getSku()
+            $productSku
         );
         $this->assertEquals(
             $orderForm->items[0]->quantity,
-            $quote->getAllItems()[0]->getQty()
+            $productQty
         );
+        $options = [
+            [
+                'product_id' => $productId,
+                'code' => '1',
+                'value' => 'testing'
+            ]
+        ];
+        $quote->getAllItems()[0]->setOptions($options);
+        $orderForm = $this->subject->createFlowOrderForm();
         $orderFormAttributesOptions = null;
         if (isset($orderForm->items[0]->attributes['options'])) {
             $orderFormAttributesOptions = json_decode($orderForm->items[0]->attributes['options'], true);

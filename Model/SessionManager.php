@@ -329,9 +329,9 @@ class SessionManager implements SessionManagementInterface
             $itemOptions = $item->getOptions();
             $optionsArray = [];
             foreach ($itemOptions as $option) {
-                if ($option->getId() && $option->getValue()) {
+                if ($option->getCode() && $option->getValue()) {
                     $optionsArray[] = [
-                        $option->getId() => $option->getValue()
+                        $option->getCode() => $option->getValue()
                     ];
                 }
             }

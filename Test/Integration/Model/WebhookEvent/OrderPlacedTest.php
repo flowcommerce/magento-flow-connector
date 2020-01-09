@@ -140,7 +140,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      */
     public function testOrderPlaced()
     {
-
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks();
 
@@ -152,8 +151,8 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             $payload = $orderPlacedEvent->getPayloadData();
             $flowOrderId = $payload['order']['number'];
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
-                ->create();
+                                   ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                                   ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
             $this->assertEquals(1, $orders->count());
@@ -364,6 +363,26 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($roundingPrice * $quantity, $item->getFlowConnectorRounding());
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
 
+                // TODO REMOVE TEST ASSERTION
+                if ($flowOrderId == 'ord-2a12e176b3e440289a0320600abe2c93') {
+                    $payloadOptions = json_decode($lines[$orderItemSku]['attributes']['options'], true);
+                    $optionsArray = [];
+                    $itemOptions = $item->getOptions();
+                    if (is_array($itemOptions)) {
+                        foreach ($item->getOptions() as $option) {
+                            if ($option->getCode() && $option->getValue()) {
+                                $optionsArray[] = [
+                                    $option->getCode() => $option->getValue()
+                                ];
+                            }
+                        }
+                    }
+                    $this->assertEquals(
+                        $payloadOptions,
+                        $optionsArray
+                    );
+                }
+                // TODO END TEST ASSERTION
                 $actualProductOptions = null;
                 if (isset($lines[$orderItemSku]['attributes']['options'])) {
                     $actualProductOptions = json_decode($lines[$orderItemSku]['attributes']['options'], true);

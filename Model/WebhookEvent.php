@@ -19,6 +19,7 @@ use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Catalog\Model\Product\OptionFactory;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Customer\Model\CustomerFactory;
@@ -154,6 +155,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var QuoteFactory
      */
     protected $quoteFactory;
+
+    /**
+     * @var OptionFactory
+     */
+    private $optionFactory;
 
     /**
      * @var QuoteManagement
@@ -313,6 +319,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param ProductFactory $productFactory
      * @param ProductRepository $productRepository
      * @param QuoteFactory $quoteFactory
+     * @param OptionFactory $optionFactory
      * @param QuoteManagement $quoteManagement
      * @param CustomerFactory $customerFactory
      * @param CustomerRepository $customerRepository
@@ -357,6 +364,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ProductFactory $productFactory,
         ProductRepository $productRepository,
         QuoteFactory $quoteFactory,
+        OptionFactory $optionFactory,
         QuoteManagement $quoteManagement,
         CustomerFactory $customerFactory,
         CustomerRepository $customerRepository,
@@ -405,6 +413,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->quoteFactory = $quoteFactory;
+        $this->optionFactory = $optionFactory;
         $this->quoteManagement = $quoteManagement;
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
@@ -1813,12 +1822,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
-            if (isset($line['attributes']['options'])) {
-                $product->setOptions(json_decode($line['attributes']['options'], true));
-            }
-
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
-            $quote->addProduct($product, $line['quantity']); 
+            $this->addProductWithOptions($quote, $product, $line);
         }
 
         ////////////////////////////////////////////////////////////
@@ -2485,5 +2490,34 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
 
         $this->webhookEventManager->markWebhookEventAsDone($this);
+    }
+
+    private function addProductWithOptions ($quote = null, $product = null, $line = null) {
+        $productSku = $product->getSku();
+        $parentItem = $quote->addProduct($product, $line['quantity']);
+        $item = null;
+        foreach ($parentItem->getChildren() as $child) {
+            if ($child->getSku() == $productSku) {
+                $item = $child;
+            }
+        }
+        if (is_null($item)) {
+            $item = $parentItem;
+        }
+        if (isset($line['attributes']['options'])) {
+            $productOptionsJson = json_decode($line['attributes']['options'], true);
+            if (is_array($productOptionsJson)) {
+                /* foreach ($productOptionsJson as $key => $value) { */
+                /*     $item->addOption( */
+                /*         $this->optionFactory->create() */
+                /*              ->setCode($key) */
+                /*              ->setProduct($product) */
+                /*              ->setValue($value) */
+                /*     ); */
+                /* } */
+                /* $item->saveItemOptions(); */
+            }
+        }
+        return $item;
     }
 }

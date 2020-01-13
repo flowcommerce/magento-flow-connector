@@ -2492,32 +2492,68 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->webhookEventManager->markWebhookEventAsDone($this);
     }
 
-    private function addProductWithOptions ($quote = null, $product = null, $line = null) {
-        $productSku = $product->getSku();
-        $parentItem = $quote->addProduct($product, $line['quantity']);
-        $item = null;
-        foreach ($parentItem->getChildren() as $child) {
-            if ($child->getSku() == $productSku) {
-                $item = $child;
-            }
-        }
-        if (is_null($item)) {
-            $item = $parentItem;
-        }
+    public function addProductWithOptions ($quote, $product, $line) {
+        $item = $quote->addProduct($product, $line['quantity']);
         if (isset($line['attributes']['options'])) {
-            $productOptionsJson = json_decode($line['attributes']['options'], true);
-            if (is_array($productOptionsJson)) {
-                /* foreach ($productOptionsJson as $key => $value) { */
-                /*     $item->addOption( */
-                /*         $this->optionFactory->create() */
-                /*              ->setCode($key) */
-                /*              ->setProduct($product) */
-                /*              ->setValue($value) */
-                /*     ); */
-                /* } */
-                /* $item->saveItemOptions(); */
+            $requestedOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
+            if (is_array($requestedOptions)) {
+                foreach ($requestedOptions as $optionTitle => $optionValue) {
+                    $this->setOptionValue($product, $item, $optionTitle, $optionValue);
+                }
             }
         }
         return $item;
+    }
+
+    public function setOptionValue($product = null, $item = null, $optionTitle = null, $value = null)
+    {
+        $option = $this->getOption($product, $optionTitle);
+        if (is_null($option)) {
+            throw new \Exception("Option not found with title \"{$optionTitle}\"");
+        }
+
+        if (!$option->getId()) {
+            throw new \Exception("Option not found with title \"{$optionTitle}\"");
+        }
+
+        if (is_null($product)) {
+            throw new \Exception("Product not found");
+        }
+
+        if (!$product->getId()) {
+            throw new \Exception("Product not found");
+        }
+
+        if (is_null($value)) {
+            throw new \Exception("Value \"$value\" could not be set for option \"{$option->getTitle()}\" for product {$product->getId()}");
+        }
+
+        $item->addOption(
+            $this->optionFactory->create()
+                 ->setCode('option_'.$option->getId())
+                 ->setProduct($product)
+                 ->setValue($value)
+        );
+
+        $item->addOption(
+            $this->optionFactory->create()
+                 ->setCode('option_ids')
+                 ->setProduct($product)
+                 ->setValue($option->getId())
+        );
+
+        $item->saveItemOptions();
+
+         return $item;
+    }
+
+
+    public function getOption($product, $title)
+    {
+        foreach ($product->getOptions() as $option) {
+            if ($option->getTitle() == $title) {
+                return $option;
+            }
+        }
     }
 }

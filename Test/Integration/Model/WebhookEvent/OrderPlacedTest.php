@@ -3,8 +3,8 @@ namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
 use FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced;
 use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\CollectionFactory as WebhookEventCollectionFactory;
+use FlowCommerce\FlowConnector\Model\SessionManager;
 use FlowCommerce\FlowConnector\Model\WebhookEvent as Subject;
-use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateProductsWithCategories;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateWebhookEvents;
@@ -12,6 +12,7 @@ use Magento\Directory\Model\CountryFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
@@ -47,6 +48,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
     private $mageOrderCollectionFactory;
 
     /**
+     * @var SessionManager
+     */
+    private $sessionManager;
+
+    /**
      * @var CountryFactory
      */
     private $countryFactory;
@@ -55,6 +61,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      * @var ObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var JsonSerializer
+     */
+    private $jsonSerializer;
 
     /**
      * @var Subject|\PHPUnit_Framework_MockObject_MockObject
@@ -120,6 +131,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->createWebhookEventsFixture = $this->objectManager->create(CreateWebhookEvents::class);
         $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);
+        $this->sessionManager = $this->objectManager->create(SessionManager::class);
         $this->countryFactory = $this->objectManager->create(CountryFactory::class);
         $this->customerRepository = $this->objectManager->create(CustomerRepository::class);
         $this->mageOrderFactory = $this->objectManager->create(OrderFactory::class);
@@ -131,6 +143,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
         $this->subject = $this->objectManager->create(Subject::class);
         $this->createProductsFixture->execute();
+        $this->jsonSerializer = $this->objectManager->create(JsonSerializer::class);
     }
 
     /**
@@ -365,29 +378,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
 
                 // TODO REMOVE TEST ASSERTION
                 if ($flowOrderId == 'ord-2a12e176b3e440289a0320600abe2c93') {
-                    $payloadOptions = json_decode($lines[$orderItemSku]['attributes']['options'], true);
-                    $optionsArray = [];
-                    $itemOptions = $item->getOptions();
-                    if (is_array($itemOptions)) {
-                        foreach ($item->getOptions() as $option) {
-                            if ($option->getCode() && $option->getValue()) {
-                                $optionsArray[] = [
-                                    $option->getCode() => $option->getValue()
-                                ];
-                            }
-                        }
-                    }
                     $this->assertEquals(
-                        $payloadOptions,
-                        $optionsArray
+                        $lines[$orderItemSku]['attributes']['options'],
+                        $this->sessionManager->getItemOptionsSerialized($item)
                     );
                 }
-                // TODO END TEST ASSERTION
-                $actualProductOptions = null;
-                if (isset($lines[$orderItemSku]['attributes']['options'])) {
-                    $actualProductOptions = json_decode($lines[$orderItemSku]['attributes']['options'], true);
-                }
-                $this->assertEquals($item->getOptions(), $actualProductOptions);
 
                 $itemCount++;
             }

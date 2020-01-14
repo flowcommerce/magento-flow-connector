@@ -409,14 +409,11 @@ class SessionManager implements SessionManagementInterface
      * @return string
      */
     public function getItemOptionsSerialized ($item) {
-        $itemOptions = $item->getProductOptions();
+        $itemOptions = $item->getOptions();
         $optionsArray = [];
-        $options = '';
-        foreach ($itemOptions as $option) {
-            if ($option->getTitle() && $option->getValue()) {
-                $optionsArray[] = [
-                    $option->getTitle() => $option->getValue()
-                ];
+        if (is_array($itemOptions)) {
+            foreach ($itemOptions as $option) {
+                $optionsArray[] = $option->getData();
             }
         }
         return $this->jsonSerializer->serialize($optionsArray);

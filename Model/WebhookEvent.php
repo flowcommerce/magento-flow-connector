@@ -1823,7 +1823,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
-            $this->addProductWithOptions($quote, $product, $line);
+
+            $testItem = $this->addProductWithOptions($quote, $product, $line);
         }
 
         ////////////////////////////////////////////////////////////
@@ -2496,62 +2497,32 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $item = $quote->addProduct($product, $line['quantity']);
         if (isset($line['attributes']['options'])) {
             $requestedOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
-            if (is_array($requestedOptions)) {
-                foreach ($requestedOptions as $optionTitle => $optionValue) {
-                    $this->setOptionValue($product, $item, $optionTitle, $optionValue);
-                }
-            }
+            $this->setOptionValues($product, $item, $requestedOptions);
         }
         return $item;
     }
 
-    public function setOptionValue($product = null, $item = null, $optionTitle = null, $value = null)
+    public function setOptionValues($product = null, $item = null, $options = null)
     {
-        $option = $this->getOption($product, $optionTitle);
-        if (is_null($option)) {
-            throw new \Exception("Option not found with title \"{$optionTitle}\"");
+        if (is_array($options)) {
+            foreach ($options as $option) {
+                $item->addOption(
+                    $this->optionFactory->create()
+                         ->setCode($option['code'])
+                         ->setProduct($product)
+                         ->setValue($option['value'])
+                 );
+            }
+            $item->saveItemOptions();
         }
-
-        if (!$option->getId()) {
-            throw new \Exception("Option not found with title \"{$optionTitle}\"");
-        }
-
-        if (is_null($product)) {
-            throw new \Exception("Product not found");
-        }
-
-        if (!$product->getId()) {
-            throw new \Exception("Product not found");
-        }
-
-        if (is_null($value)) {
-            throw new \Exception("Value \"$value\" could not be set for option \"{$option->getTitle()}\" for product {$product->getId()}");
-        }
-
-        $item->addOption(
-            $this->optionFactory->create()
-                 ->setCode('option_'.$option->getId())
-                 ->setProduct($product)
-                 ->setValue($value)
-        );
-
-        $item->addOption(
-            $this->optionFactory->create()
-                 ->setCode('option_ids')
-                 ->setProduct($product)
-                 ->setValue($option->getId())
-        );
-
-        $item->saveItemOptions();
-
-         return $item;
+        return $item;
     }
 
 
-    public function getOption($product, $title)
+    public function getOption($product, $id)
     {
         foreach ($product->getOptions() as $option) {
-            if ($option->getTitle() == $title) {
+            if ($option->getId() == $id) {
                 return $option;
             }
         }

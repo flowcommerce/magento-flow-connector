@@ -377,7 +377,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
 
                 // TODO REMOVE TEST ASSERTION
-                if ($flowOrderId == 'ord-2a12e176b3e440289a0320600abe2c93') {
+                if (isset($lines[$orderItemSku]['attributes']['options'])) {
                     $this->assertEquals(
                         $lines[$orderItemSku]['attributes']['options'],
                         $this->sessionManager->getItemOptionsSerialized($item)

@@ -75,7 +75,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
                 "code" => "info_buyRequest",
                 "value" => "{\"qty\":3}",
                 "item_id" => "1",
-                "option_id" => "1" 
+                "option_id" => "1"
             ],
             [ 
                 "code" => "option_4",
@@ -93,7 +93,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             ]
         ];
         // Set Options
-        $this->webhookEvent->setOptionValues($product, $item, $options);
+        $this->webhookEvent->setOptionValues($quote, $product, $item, $options);
         
         // Get Options
         $itemAfter = $quote->getItemById($itemId);

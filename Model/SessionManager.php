@@ -413,7 +413,7 @@ class SessionManager implements SessionManagementInterface
         $optionsArray = [];
         if (is_array($itemOptions)) {
             foreach ($itemOptions as $option) {
-                $optionsArray[] = $option->getData();
+                    $optionsArray[] = $option->getData();
             }
         }
         return $this->jsonSerializer->serialize($optionsArray);

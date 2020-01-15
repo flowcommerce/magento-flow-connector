@@ -2516,7 +2516,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     }
                     $buyRequest->setData('options', new \Magento\Framework\DataObject($newBuyRequestOptions));
                     $quote->updateItem($item->getId(), $buyRequest);
-                    $item->saveItemOptions();
                     $quote->save();
                 } else {
                     $item->addOption(

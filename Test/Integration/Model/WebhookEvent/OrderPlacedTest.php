@@ -300,7 +300,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             /** @var OrderItem $item */
             foreach ($order->getAllVisibleItems() as $item) {
                 $orderItemSku = $item->getSku();
-                $quantity = $allocationItems[$item->getSku()]['quantity'];
+                $quantity = $allocationItems[$item->getSku()]['quantity'] * 1;
                 $itemPrice = 0.0;
                 $baseItemPrice = 0.0;
                 $rawItemPrice = 0.0;
@@ -353,7 +353,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                     }
                 }
 
-                //$this->assertEquals($item->getQtyOrdered(), $quantity);
+                /* $this->assertEquals($quantity, $item->getQtyOrdered()); */
                 $this->assertEquals($itemPrice, $item->getOriginalPrice());
                 $this->assertEquals($baseItemPrice, $item->getBaseOriginalPrice());
                 $this->assertEquals($itemPrice, $item->getPrice());
@@ -376,12 +376,25 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($roundingPrice * $quantity, $item->getFlowConnectorRounding());
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
 
-                // TODO REMOVE TEST ASSERTION
+                // Check if requested options were actually applied to order item
                 if (isset($lines[$orderItemSku]['attributes']['options'])) {
-                    $this->assertEquals(
-                        $lines[$orderItemSku]['attributes']['options'],
-                        $this->sessionManager->getItemOptionsSerialized($item)
-                    );
+                    $savedOptions = $item->getProductOptions();
+                    $savedOptionValues = [];
+                    $this->assertTrue(isset($savedOptions['options']));
+                    foreach ($savedOptions['options'] as $savedOption) {
+                        $savedOptionValues['option_'.$savedOption['option_id']] = $savedOption['option_value'];
+                        
+                    }
+                    $requestedOptions = $this->jsonSerializer->unserialize($lines[$orderItemSku]['attributes']['options']);
+
+                    foreach ($requestedOptions as $requestedOption) {
+                        if (!in_array($requestedOption['code'], ['info_buyRequest','option_ids'])) {
+                            $this->assertEquals(
+                                $requestedOption['value'],
+                                $savedOptionValues[$requestedOption['code']]
+                            );
+                        }
+                    }
                 }
 
                 $itemCount++;

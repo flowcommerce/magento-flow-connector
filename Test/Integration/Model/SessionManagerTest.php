@@ -111,13 +111,18 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
             $orderFormItem->quantity,
             $item->getQty()
         );
-        $this->assertEquals(
-            $orderFormItem->attributes['options'],
-            $this->jsonSerializer->serialize($options)
-        );
-        $this->assertEquals(
-            $orderFormItem->attributes['options'],
-            $this->subject->getItemOptionsSerialized($itemAfter)
-        );
+        $requestedOptions = $this->jsonSerializer->unserialize($orderFormItem->attributes['options']);
+        $requestedOptionValues = [];
+        foreach ($requestedOptions as $requestedOption) {
+            $requestedOptionValues[$requestedOption['code']] = $requestedOption['value'];
+        }
+        foreach ($itemAfter->getOptions() as $savedOption) {
+            if (!in_array($savedOption->getCode(), ['info_buyRequest','option_ids'])) {
+                $this->assertEquals(
+                    $requestedOptionValues[$savedOption->getCode()],
+                    $savedOption->getValue()
+                );
+            }
+        }
     }
 }

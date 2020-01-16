@@ -11,6 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * Test class for FlowCommerce\FlowConnector\Console\Command\InventoryCenterFetchKeysCommand
+ * @magentoAppIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Console\Command
  */
 class InventoryCenterFetchKeysCommandTest extends TestCase

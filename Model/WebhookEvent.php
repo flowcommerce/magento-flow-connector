@@ -2533,10 +2533,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
 
-    public function getOption($product, $id)
+    public function getOption($product, $identifier)
     {
         foreach ($product->getOptions() as $option) {
-            if ($option->getId() == $id) {
+            if ($option->getTitle() == $identifier) {
                 return $option;
             }
         }

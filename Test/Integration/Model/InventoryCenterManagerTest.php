@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class InventoryCenterManagerTest
+ * @magentoAppIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */

@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class WebhookManagerTest
+ * @magentoAppIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)

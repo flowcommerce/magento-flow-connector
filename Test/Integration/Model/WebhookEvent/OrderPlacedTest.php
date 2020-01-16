@@ -125,6 +125,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Sets up for tests
+     * @magentoDbIsolation enabled
      */
     public function setUp()
     {
@@ -142,7 +143,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         $this->webhookEventCollectionFactory = $this->objectManager->create(WebhookEventCollectionFactory::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
         $this->subject = $this->objectManager->create(Subject::class);
-        $this->createProductsFixture->execute();
         $this->jsonSerializer = $this->objectManager->create(JsonSerializer::class);
     }
 
@@ -153,6 +153,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      */
     public function testOrderPlaced()
     {
+        $this->createProductsFixture->execute();
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks();
 
@@ -380,20 +381,32 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 if (isset($lines[$orderItemSku]['attributes']['options'])) {
                     $savedOptions = $item->getProductOptions();
                     $savedOptionValues = [];
-                    $this->assertTrue(isset($savedOptions['options']));
-                    foreach ($savedOptions['options'] as $savedOption) {
-                        $savedOptionValues['option_'.$savedOption['option_id']] = $savedOption['option_value'];
-                        
-                    }
-                    $requestedOptions = $this->jsonSerializer->unserialize($lines[$orderItemSku]['attributes']['options']);
-
-                    foreach ($requestedOptions as $requestedOption) {
-                        if (!in_array($requestedOption['code'], ['info_buyRequest','option_ids'])) {
-                            $this->assertEquals(
-                                $requestedOption['value'],
-                                $savedOptionValues[$requestedOption['code']]
-                            );
+                    if (isset($savedOptions['options'])) {
+                        foreach ($savedOptions['options'] as $savedOption) {
+                            $savedOptionValues['option_'.$savedOption['option_id']] = $savedOption['option_value'];
                         }
+                        $requestedOptions = $this->jsonSerializer->unserialize($lines[$orderItemSku]['attributes']['options']);
+
+                        foreach ($requestedOptions as $requestedOption) {
+                            if (!in_array($requestedOption['code'], ['info_buyRequest','option_ids'])) {
+                                $this->assertEquals(
+                                    $requestedOption['value'],
+                                    $savedOptionValues[$requestedOption['code']]
+                                );
+                            }
+                        }
+                    } else {
+                        $test = [];
+                        $test[] = $flowOrderId;
+                        $test[] = $item->getSku();
+                        $test[] = $item->getProduct()->getId();
+                        foreach ($item->getProductOptions() as $option) {
+                            $test[] = $option;
+                        }
+                        $this->assertEquals(
+                            $this->jsonSerializer->serialize($test),
+                            ''
+                        );
                     }
                 }
 

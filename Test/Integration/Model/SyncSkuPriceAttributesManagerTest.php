@@ -16,6 +16,13 @@ use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class SyncSkuPriceAttributesManager
+ * @magentoAppIsolation enabled
+ * @package FlowCommerce\FlowConnector\Test\Integration\Model
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 class SyncSkuPriceAttributesManager extends TestCase
 {
     const ORGANIZATION_ID = 'organization-id';

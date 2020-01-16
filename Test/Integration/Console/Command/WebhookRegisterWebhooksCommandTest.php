@@ -11,6 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * Test class for @see \FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand
+ * @magentoAppIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Console\Command
  */
 class WebhookRegisterWebhooksCommandTest extends TestCase

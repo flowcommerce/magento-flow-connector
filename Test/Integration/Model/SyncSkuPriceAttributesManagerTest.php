@@ -18,10 +18,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class SyncSkuPriceAttributesManager
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @magentoDbIsolation enabled
  */
 class SyncSkuPriceAttributesManager extends TestCase
 {

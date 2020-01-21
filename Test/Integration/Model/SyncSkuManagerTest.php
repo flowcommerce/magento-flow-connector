@@ -11,6 +11,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\SyncSkuManager
+ * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
 class SyncSkuManagerTest extends \PHPUnit\Framework\TestCase

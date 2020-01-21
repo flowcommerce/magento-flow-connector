@@ -15,10 +15,11 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * Class SessionManagerTest
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @magentoDbIsolation enabled
  */
 class SessionManagerTest extends \PHPUnit\Framework\TestCase
 {

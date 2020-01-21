@@ -25,6 +25,7 @@ use Magento\Sales\Model\ResourceModel\Order\Payment\Collection as OrderPaymentCo
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
+ * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
 class RefundUpsertedTest extends \PHPUnit\Framework\TestCase

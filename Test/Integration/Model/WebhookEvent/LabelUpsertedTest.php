@@ -21,6 +21,7 @@ use Magento\Sales\Model\Order\Shipment as OrderShipment;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
+ * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
 class LabelUpsertedTest extends \PHPUnit\Framework\TestCase

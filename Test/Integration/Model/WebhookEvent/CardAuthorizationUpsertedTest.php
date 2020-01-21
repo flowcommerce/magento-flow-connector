@@ -20,6 +20,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
+ * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
 class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase

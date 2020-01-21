@@ -26,7 +26,6 @@ use Magento\Sales\Model\Order\Item as OrderItem;
 
 /**
  * Test class for Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
- * @magentoAppIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  */
 class OrderPlacedTest extends \PHPUnit\Framework\TestCase
@@ -125,7 +124,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Sets up for tests
-     * @magentoDbIsolation enabled
      */
     public function setUp()
     {
@@ -147,7 +145,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @throws \Exception
      * @throws LocalizedException
      */

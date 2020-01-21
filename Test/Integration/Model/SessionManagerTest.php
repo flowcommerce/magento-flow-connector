@@ -18,7 +18,6 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @magentoAppIsolation enabled
  */
 class SessionManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -54,7 +53,6 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @throws Exception
      */
     public function testCreateFlowOrderFormAddsOptions()

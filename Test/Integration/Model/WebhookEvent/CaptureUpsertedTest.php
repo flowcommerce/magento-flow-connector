@@ -20,7 +20,6 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
- * @magentoAppIsolation enabled
  */
 class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 {
@@ -78,7 +77,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Sets up for tests
-     * @magentoDbIsolation enabled
      */
     public function setUp()
     {
@@ -99,7 +97,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @magentoDbIsolation enabled
      * @throws LocalizedException
      */
     public function testCaptureUpserted()
@@ -217,7 +214,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test auto invoice
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 1
      * @throws LocalizedException
      */
@@ -301,7 +297,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test auto invoice
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 2
      * @throws LocalizedException
      */
@@ -383,7 +378,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test auto invoice
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 0
      * @throws LocalizedException
      */
@@ -463,7 +457,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test send email on invoice
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_email 1
      * @throws LocalizedException
@@ -510,7 +503,6 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test don't send email on invoice
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_email 0
      * @throws LocalizedException

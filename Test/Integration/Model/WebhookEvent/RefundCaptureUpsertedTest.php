@@ -25,7 +25,6 @@ use Magento\Sales\Model\ResourceModel\Order\Payment\Collection as OrderPaymentCo
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
- * @magentoAppIsolation enabled
  */
 class RefundCaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 {
@@ -80,7 +79,6 @@ class RefundCaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Sets up for tests
-     * @magentoDbIsolation enabled
      */
     public function setUp()
     {
@@ -99,7 +97,6 @@ class RefundCaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @magentoDbIsolation enabled
      * @throws LocalizedException
      * @throws WebhookException
      */

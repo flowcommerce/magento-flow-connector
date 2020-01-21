@@ -18,6 +18,7 @@ use Magento\TestFramework\Helper\Bootstrap;
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @magentoDbIsolation enabled
  */
 class SessionManagerTest extends \PHPUnit\Framework\TestCase
 {

@@ -27,6 +27,7 @@ use Magento\Sales\Model\Order\Item as OrderItem;
 /**
  * Test class for Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
+ * @magentoDbIsolation enabled
  */
 class OrderPlacedTest extends \PHPUnit\Framework\TestCase
 {

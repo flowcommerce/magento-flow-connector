@@ -24,7 +24,7 @@ use Magento\Store\Model\StoreManagerInterface as StoreManager;
 /**
  * Class InventorySyncManagerTest
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
- *
+ * @magentoDbIsolation enabled
  */
 class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
 {

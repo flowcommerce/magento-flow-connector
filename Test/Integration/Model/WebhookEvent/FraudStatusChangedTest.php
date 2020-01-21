@@ -19,6 +19,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
+ * @magentoDbIsolation enabled
  */
 class FraudStatusChanged extends \PHPUnit\Framework\TestCase
 {

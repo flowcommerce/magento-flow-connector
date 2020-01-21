@@ -11,7 +11,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\SyncSkuManager
- * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  */
 class SyncSkuManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -48,7 +48,6 @@ class SyncSkuManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 0
      */
     public function testDoesNotEnqueueWhenFlowModuleDisabled()
@@ -60,7 +59,6 @@ class SyncSkuManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      */
     public function testEnqueuesSuccessfullyWhenFlowModuleEnabled()

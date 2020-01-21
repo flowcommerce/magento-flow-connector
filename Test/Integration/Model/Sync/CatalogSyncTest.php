@@ -27,6 +27,7 @@ use FlowCommerce\FlowConnector\Model\Configuration;
 
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\Sync\CatalogSync
+ * @magentoDbIsolation enabled
  */
 class CatalogSyncTest extends \PHPUnit\Framework\TestCase
 {

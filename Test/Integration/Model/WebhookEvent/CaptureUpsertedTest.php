@@ -97,6 +97,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @throws LocalizedException
@@ -216,6 +217,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test auto invoice
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 1
      * @throws LocalizedException
      */
@@ -299,6 +301,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test auto invoice
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 2
      * @throws LocalizedException
      */
@@ -380,6 +383,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test auto invoice
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 0
      * @throws LocalizedException
      */
@@ -459,6 +463,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test send email on invoice
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_email 1
      * @throws LocalizedException
@@ -505,6 +510,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test don't send email on invoice
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_event 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/invoice_email 0
      * @throws LocalizedException

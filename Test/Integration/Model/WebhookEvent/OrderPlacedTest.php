@@ -147,6 +147,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @throws \Exception
      * @throws LocalizedException
      */

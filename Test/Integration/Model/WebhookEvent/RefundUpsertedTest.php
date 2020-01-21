@@ -97,6 +97,7 @@ class RefundUpsertedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @throws LocalizedException

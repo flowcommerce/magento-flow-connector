@@ -52,7 +52,7 @@
                 "name": "Desiree Fitness Tee-XL-Yellow",
                 "quantity": 4,
                 "attributes": {
-                    "options": "[[\"1\":\"HEY THERE FLOW\"]]"
+                    "options": "[{\"product_id\":\"4\",\"product\":{},\"code\":\"info_buyRequest\",\"value\":\"{\\\"qty\\\":4}\",\"item_id\":\"22\",\"option_id\":\"1\"},{\"code\":\"option_4\",\"value\":\"This one is just for dave\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"2\"},{\"code\":\"option_ids\",\"value\":\"4\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"3\"}]"
                 },
                 "local": {
                     "experience": {
@@ -549,7 +549,7 @@
                 "item_number": "simple_4",
                 "quantity": 4,
                 "attributes": {
-                    "options": "[[\"1\":\"HEY THERE FLOW\"]]"
+                    "options": "[{\"product_id\":\"4\",\"product\":{},\"code\":\"info_buyRequest\",\"value\":\"{\\\"qty\\\":4}\",\"item_id\":\"22\",\"option_id\":\"1\"},{\"code\":\"option_4\",\"value\":\"This one is just for dave\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"2\"},{\"code\":\"option_ids\",\"value\":\"4\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"3\"}]"
                 },
                 "price": {
                     "currency": "CAD",

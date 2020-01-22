@@ -11,6 +11,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * Test class for FlowCommerce\FlowConnector\Console\Command\CatalogSyncAttributesSaveCommand
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Console\Command
  */
 class CatalogSyncAttributesSaveCommandTest extends TestCase
@@ -52,9 +54,6 @@ class CatalogSyncAttributesSaveCommandTest extends TestCase
         $this->tester = new CommandTester($this->subject);
     }
 
-    /**
-     * @magentoDbIsolation enabled
-     */
     public function testSuccessfulExecution()
     {
         $this->syncSkuPriceAttributesManager

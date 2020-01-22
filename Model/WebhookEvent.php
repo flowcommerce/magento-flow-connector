@@ -19,6 +19,7 @@ use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Catalog\Model\Product\OptionFactory;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Customer\Model\CustomerFactory;
@@ -154,6 +155,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var QuoteFactory
      */
     protected $quoteFactory;
+
+    /**
+     * @var OptionFactory
+     */
+    private $optionFactory;
 
     /**
      * @var QuoteManagement
@@ -313,6 +319,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param ProductFactory $productFactory
      * @param ProductRepository $productRepository
      * @param QuoteFactory $quoteFactory
+     * @param OptionFactory $optionFactory
      * @param QuoteManagement $quoteManagement
      * @param CustomerFactory $customerFactory
      * @param CustomerRepository $customerRepository
@@ -357,6 +364,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ProductFactory $productFactory,
         ProductRepository $productRepository,
         QuoteFactory $quoteFactory,
+        OptionFactory $optionFactory,
         QuoteManagement $quoteManagement,
         CustomerFactory $customerFactory,
         CustomerRepository $customerRepository,
@@ -405,6 +413,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->quoteFactory = $quoteFactory;
+        $this->optionFactory = $optionFactory;
         $this->quoteManagement = $quoteManagement;
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
@@ -1813,12 +1822,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
-            if (isset($line['attributes']['options'])) {
-                $product->setOptions(json_decode($line['attributes']['options'], true));
-            }
-
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
-            $quote->addProduct($product, $line['quantity']); 
+
+            $this->addProductWithOptions($quote, $product, $line);
         }
 
         ////////////////////////////////////////////////////////////
@@ -2485,5 +2491,54 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
 
         $this->webhookEventManager->markWebhookEventAsDone($this);
+    }
+
+    public function addProductWithOptions ($quote, $product, $line) {
+        $item = $quote->addProduct($product, $line['quantity']);
+        $quote->save();
+        if (isset($line['attributes']['options'])) {
+            $formOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
+            $this->setOptionValues($quote, $product, $item, $formOptions);
+        }
+        return $item;
+    }
+
+    public function setOptionValues($quote = null, $product = null, $item = null, $options = null)
+    {
+        if (is_array($options) && $product && $quote && $item) {
+            foreach ($options as $option) {
+                if ($option['code'] === 'info_buyRequest') {
+                    $newBuyRequestOptions = $this->jsonSerializer->unserialize($option['value']);
+                    $buyRequest = $item->getBuyRequest();
+                    $buyRequestOptions = $buyRequest->getData('options');
+                    if (is_array($buyRequestOptions)) {
+                        $newBuyRequestOptions = array_merge($buyRequestOptions, $newBuyRequestOptions);
+                    }
+                    $buyRequest->setData('options', new \Magento\Framework\DataObject($newBuyRequestOptions));
+                    $quote->updateItem($item->getId(), $buyRequest);
+                    $quote->save();
+                } else {
+                    $item->addOption(
+                        $this->optionFactory->create()
+                             ->setCode($option['code'])
+                             ->setProduct($product)
+                             ->setValue($option['value'])
+                     );
+                }
+            }
+            $item->saveItemOptions();
+            $quote->save();
+        }
+        return $item;
+    }
+
+
+    public function getOption($product, $identifier)
+    {
+        foreach ($product->getOptions() as $option) {
+            if ($option->getTitle() == $identifier) {
+                return $option;
+            }
+        }
     }
 }

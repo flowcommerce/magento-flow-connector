@@ -11,6 +11,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * Test class for @see \FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Console\Command
  */
 class WebhookUpdateSettingsCommandTest extends TestCase
@@ -53,7 +55,6 @@ class WebhookUpdateSettingsCommandTest extends TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/default_center_key center-1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/api_token 0123456789

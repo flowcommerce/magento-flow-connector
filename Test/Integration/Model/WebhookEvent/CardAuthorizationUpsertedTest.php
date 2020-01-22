@@ -21,6 +21,7 @@ use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
  * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  */
 class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 {
@@ -72,7 +73,6 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Sets up for tests
-     * @magentoDbIsolation enabled
      */
     public function setUp()
     {
@@ -88,9 +88,9 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @magentoDbIsolation enabled
      * @throws LocalizedException
      */
     public function testCardAuthorizationUpserted()

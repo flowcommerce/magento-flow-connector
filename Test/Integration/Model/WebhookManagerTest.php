@@ -23,6 +23,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class WebhookManagerTest
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -215,7 +217,6 @@ class WebhookManagerTest extends TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 0
      */
     public function testWebhookRegistrationIsNotExecutedWhenModuleDisabled()
@@ -236,7 +237,6 @@ class WebhookManagerTest extends TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/organization_id organization-id
      * @magentoConfigFixture current_store flowcommerce/flowconnector/api_token api-token

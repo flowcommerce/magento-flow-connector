@@ -11,6 +11,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 
 /**
  * Test class for FlowCommerce\FlowConnector\Cron\CatalogSyncProcessTask
+ * @magentoAppIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Cron
  */
 class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase

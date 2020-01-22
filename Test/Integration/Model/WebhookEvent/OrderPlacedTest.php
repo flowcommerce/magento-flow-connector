@@ -3,15 +3,19 @@ namespace FlowCommerce\FlowConnector\Test\Integration\Model;
 
 use FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced;
 use FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\CollectionFactory as WebhookEventCollectionFactory;
+use FlowCommerce\FlowConnector\Model\SessionManager;
 use FlowCommerce\FlowConnector\Model\WebhookEvent as Subject;
-use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateProductsWithCategories;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateWebhookEvents;
+use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Directory\Model\CountryFactory;
+use Magento\Framework\Api\Filter;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
@@ -19,13 +23,13 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 use Magento\Sales\Model\Order\ItemRepository as OrderItemRepository;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Customer\Model\ResourceModel\CustomerRepository;
 use Magento\Sales\Model\Order\Item as OrderItem;
 
 /**
  * Test class for Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
  * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  * @package FlowCommerce\FlowConnector\Test\Integration\Model
  */
 class OrderPlacedTest extends \PHPUnit\Framework\TestCase
@@ -47,6 +51,16 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
     private $mageOrderCollectionFactory;
 
     /**
+     * @var SessionManager
+     */
+    private $sessionManager;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
      * @var CountryFactory
      */
     private $countryFactory;
@@ -55,6 +69,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      * @var ObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var JsonSerializer
+     */
+    private $jsonSerializer;
 
     /**
      * @var Subject|\PHPUnit_Framework_MockObject_MockObject
@@ -120,6 +139,8 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         $this->objectManager = Bootstrap::getObjectManager();
         $this->createWebhookEventsFixture = $this->objectManager->create(CreateWebhookEvents::class);
         $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);
+        $this->sessionManager = $this->objectManager->create(SessionManager::class);
+        $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->countryFactory = $this->objectManager->create(CountryFactory::class);
         $this->customerRepository = $this->objectManager->create(CustomerRepository::class);
         $this->mageOrderFactory = $this->objectManager->create(OrderFactory::class);
@@ -130,7 +151,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         $this->webhookEventCollectionFactory = $this->objectManager->create(WebhookEventCollectionFactory::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
         $this->subject = $this->objectManager->create(Subject::class);
-        $this->createProductsFixture->execute();
+        $this->jsonSerializer = $this->objectManager->create(JsonSerializer::class);
     }
 
     /**
@@ -140,7 +161,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      */
     public function testOrderPlaced()
     {
-
+        $this->createProductsFixture->execute();
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks();
 
@@ -152,8 +173,8 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             $payload = $orderPlacedEvent->getPayloadData();
             $flowOrderId = $payload['order']['number'];
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
-                ->create();
+                                   ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                                   ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
             $this->assertEquals(1, $orders->count());
@@ -288,7 +309,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             /** @var OrderItem $item */
             foreach ($order->getAllVisibleItems() as $item) {
                 $orderItemSku = $item->getSku();
-                $quantity = $allocationItems[$item->getSku()]['quantity'];
+                $quantity = $allocationItems[$item->getSku()]['quantity'] * 1;
                 $itemPrice = 0.0;
                 $baseItemPrice = 0.0;
                 $rawItemPrice = 0.0;
@@ -341,7 +362,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                     }
                 }
 
-                //$this->assertEquals($item->getQtyOrdered(), $quantity);
+                /* $this->assertEquals($quantity, $item->getQtyOrdered()); */
                 $this->assertEquals($itemPrice, $item->getOriginalPrice());
                 $this->assertEquals($baseItemPrice, $item->getBaseOriginalPrice());
                 $this->assertEquals($itemPrice, $item->getPrice());
@@ -364,11 +385,26 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($roundingPrice * $quantity, $item->getFlowConnectorRounding());
                 $this->assertEquals($baseRoundingPrice * $quantity, $item->getFlowConnectorBaseRounding());
 
-                $actualProductOptions = null;
+                // Check if requested options were actually applied to order item
                 if (isset($lines[$orderItemSku]['attributes']['options'])) {
-                    $actualProductOptions = json_decode($lines[$orderItemSku]['attributes']['options'], true);
+                    $savedOptions = $item->getProductOptions();
+                    $savedOptionValues = [];
+                    if (isset($savedOptions['options'])) {
+                        foreach ($savedOptions['options'] as $savedOption) {
+                            $savedOptionValues['option_'.$savedOption['option_id']] = $savedOption['option_value'];
+                        }
+                        $requestedOptions = $this->jsonSerializer->unserialize($lines[$orderItemSku]['attributes']['options']);
+
+                        foreach ($requestedOptions as $requestedOption) {
+                            if (!in_array($requestedOption['code'], ['info_buyRequest','option_ids'])) {
+                                $this->assertEquals(
+                                    $requestedOption['value'],
+                                    $savedOptionValues[$requestedOption['code']]
+                                );
+                            }
+                        }
+                    }
                 }
-                $this->assertEquals($item->getOptions(), $actualProductOptions);
 
                 $itemCount++;
             }

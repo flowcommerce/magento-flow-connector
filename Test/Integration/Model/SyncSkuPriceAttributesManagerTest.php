@@ -16,6 +16,14 @@ use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class SyncSkuPriceAttributesManager
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
+ * @package FlowCommerce\FlowConnector\Test\Integration\Model
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 class SyncSkuPriceAttributesManager extends TestCase
 {
     const ORGANIZATION_ID = 'organization-id';
@@ -118,7 +126,6 @@ class SyncSkuPriceAttributesManager extends TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 0
      */
     public function testWebhookRegistrationIsNotExecutedWhenModuleDisabled()
@@ -132,7 +139,6 @@ class SyncSkuPriceAttributesManager extends TestCase
     }
 
     /**
-     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/organization_id organization-id
      * @magentoConfigFixture current_store flowcommerce/flowconnector/api_token api-token

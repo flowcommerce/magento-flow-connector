@@ -22,6 +22,7 @@ use Magento\Sales\Model\Order\Shipment as OrderShipment;
 /**
  * Test class for \FlowCommerce\FlowConnector\Model\WebhookEvent
  * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
  */
 class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
 {
@@ -76,7 +77,6 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Sets up for tests
-     * @magentoDbIsolation enabled
      */
     public function setUp()
     {
@@ -95,9 +95,9 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @magentoDbIsolation enabled
      * @throws LocalizedException
      */
     public function testLabelUpserted()

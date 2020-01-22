@@ -7,14 +7,11 @@ use Magento\TestFramework\TestCase\AbstractController as ControllerTestCase;
 
 /**
  * Class OrderPlacedTest
- *
+ * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
 class OrderPlacedTest extends ControllerTestCase
 {
-    /**
-     * @magentoDbIsolation enabled
-     */
     public function testThrows404WithoutXFlowSignature()
     {
         $this->getRequest()->setMethod(Request::METHOD_POST);

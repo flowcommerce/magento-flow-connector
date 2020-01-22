@@ -6,9 +6,10 @@ use FlowCommerce\FlowConnector\Api\SessionManagementInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Model\Session as CustomerSession;
-use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\Stdlib\CookieManagerInterface;
+use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
 use FlowCommerce\FlowConnector\Model\Api\Session as ApiSession;
 use Magento\Quote\Model\Quote;
 use FlowCommerce\FlowConnector\Model\Api\Order\Get as OrderGet;
@@ -47,6 +48,11 @@ class SessionManager implements SessionManagementInterface
      * @var CookieMetadataFactory
      */
     private $cookieMetadataFactory;
+
+    /**
+     * @var JsonSerializer
+     */
+    protected $jsonSerializer;
 
     /**
      * @var ApiSession
@@ -102,6 +108,7 @@ class SessionManager implements SessionManagementInterface
      * SessionManager constructor.
      * @param CookieManagerInterface $cookieManagerInterface
      * @param CookieMetadataFactory $cookieMetadataFactory
+     * @param JsonSerializer $jsonSerializer
      * @param SessionManagerInterface $sessionManagerInterface
      * @param ApiSession $sessionApiClient
      * @param \FlowCommerce\FlowConnector\Model\Configuration $configuration
@@ -116,6 +123,7 @@ class SessionManager implements SessionManagementInterface
     public function __construct(
         CookieManagerInterface $cookieManagerInterface,
         CookieMetadataFactory $cookieMetadataFactory,
+        JsonSerializer $jsonSerializer,
         SessionManagerInterface $sessionManagerInterface,
         ApiSession $sessionApiClient,
         Configuration $configuration,
@@ -130,6 +138,7 @@ class SessionManager implements SessionManagementInterface
 
         $this->cookieManagerInterface = $cookieManagerInterface;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
+        $this->jsonSerializer = $jsonSerializer;
         $this->sessionManagerInterface = $sessionManagerInterface;
         $this->sessionApiClient = $sessionApiClient;
         $this->configuration = $configuration;
@@ -326,13 +335,7 @@ class SessionManager implements SessionManagementInterface
                 ];
             }
 
-            $itemOptions = $item->getOptions();
-            if ($itemOptions) {
-                $this->logger->info('Adding options: ' . json_encode($itemOptions));
-                $lineItem->attributes = [
-                    'options' => json_encode($itemOptions)
-                ];
-            }
+            $lineItem->attributes['options'] = $this->getItemOptionsSerialized($item);
             $orderForm->items[] = $lineItem;
         }
 
@@ -399,5 +402,20 @@ class SessionManager implements SessionManagementInterface
     private function isUpdateSession()
     {
         return (bool)$this->cookieManagerInterface->getCookie(self::FLOW_SESSION_UPDATE_COOKIE_FLAG);
+    }
+
+    /**
+     * Return item options as json serialized string
+     * @return string
+     */
+    public function getItemOptionsSerialized ($item) {
+        $itemOptions = $item->getOptions();
+        $optionsArray = [];
+        if (is_array($itemOptions)) {
+            foreach ($itemOptions as $option) {
+                    $optionsArray[] = $option->getData();
+            }
+        }
+        return $this->jsonSerializer->serialize($optionsArray);
     }
 }

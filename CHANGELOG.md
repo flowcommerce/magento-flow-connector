@@ -1,14 +1,13 @@
 # Flow Connector for Magento 2 Change Log
 
-## 2.2.2
-- Update options on order item import support to include more than just options available on the buy request
+## 2.2.3
+- Adding support for buy requests on order items which are required to properly track product custom options
 - Update tests to reflect expanded support and modified model of expected options object
 
 ## 2.2.1
 - Payment capture webhook events will be marked for reprocessing when the order is not yet eligable to be invoiced
 
 ## 2.2.0
-- Adding support for buy requests on order items which are required to properly track product custom options
 - Update documentation for completeness and ease of use
 - Removing Kubernetes deployment configuration from repo
 

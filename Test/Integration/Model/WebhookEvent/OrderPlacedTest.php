@@ -403,24 +403,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                                 );
                             }
                         }
-                    } else {
-                        $test = [];
-                        $test[] = $flowOrderId;
-                        $test[] = $item->getSku();
-                        $test[] = $item->getProduct()->getId();
-                        foreach ($item->getProductOptions() as $option) {
-                            $test[] = $option;
-                        }
-                        $searchCriteria = $this->searchCriteriaBuilder
-                                   ->addFilter('type_id', 'simple', 'eq')
-                                   ->create();
-                        foreach ($this->productRepository->getList($searchCriteria) as $product) {
-                            $test[] = $product->getId();
-                        }
-                        $this->assertEquals(
-                            $this->jsonSerializer->serialize($test),
-                            ''
-                        );
                     }
                 }
 

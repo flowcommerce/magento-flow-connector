@@ -166,6 +166,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      */
     public function testSyncsSuccessfullyWhenFlowModuleEnabled()

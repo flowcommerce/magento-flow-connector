@@ -142,6 +142,7 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/default_center_key center-1
      * @magentoConfigFixture current_store flowcommerce/flowconnector/api_token 0123456789
@@ -255,6 +256,7 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
         }
         return $return;
     }
+
     /**
      * Validates given url
      * @param $url
@@ -275,6 +277,7 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 0
      */
     public function testDoesNotEnqueueWhenFlowModuleDisabled()
@@ -288,6 +291,7 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      */
     public function testEnqueuesWhenFlowModuleEnabled()

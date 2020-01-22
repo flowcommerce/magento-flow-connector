@@ -8,7 +8,10 @@ use FlowCommerce\FlowConnector\Model\WebhookEvent as Subject;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateProductsWithCategories;
 use FlowCommerce\FlowConnector\Test\Integration\Fixtures\CreateWebhookEvents;
+use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Directory\Model\CountryFactory;
+use Magento\Framework\Api\Filter;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
@@ -20,7 +23,6 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
 use Magento\Sales\Model\Order\ItemRepository as OrderItemRepository;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Customer\Model\ResourceModel\CustomerRepository;
 use Magento\Sales\Model\Order\Item as OrderItem;
 
@@ -52,6 +54,11 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
      * @var SessionManager
      */
     private $sessionManager;
+
+    /**
+     * @var ProductRepository
+     */
+    private $productRepository;
 
     /**
      * @var CountryFactory
@@ -133,6 +140,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         $this->createWebhookEventsFixture = $this->objectManager->create(CreateWebhookEvents::class);
         $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);
         $this->sessionManager = $this->objectManager->create(SessionManager::class);
+        $this->productRepository = $this->objectManager->create(ProductRepository::class);
         $this->countryFactory = $this->objectManager->create(CountryFactory::class);
         $this->customerRepository = $this->objectManager->create(CustomerRepository::class);
         $this->mageOrderFactory = $this->objectManager->create(OrderFactory::class);
@@ -402,6 +410,12 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                         $test[] = $item->getProduct()->getId();
                         foreach ($item->getProductOptions() as $option) {
                             $test[] = $option;
+                        }
+                        $searchCriteria = $this->searchCriteriaBuilder
+                                   ->addFilter('type_id', 'simple', 'eq')
+                                   ->create();
+                        foreach ($this->productRepository->getList($searchCriteria) as $product) {
+                            $test[] = $product->getId();
                         }
                         $this->assertEquals(
                             $this->jsonSerializer->serialize($test),

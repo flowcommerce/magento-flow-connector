@@ -56,6 +56,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @throws Exception
+     * @magentoDbIsolation enabled
      */
     public function testCreateFlowOrderFormAddsOptions()
     {

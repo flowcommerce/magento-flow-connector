@@ -49,6 +49,7 @@ class SyncSkuManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 0
      */
     public function testDoesNotEnqueueWhenFlowModuleDisabled()
@@ -60,6 +61,7 @@ class SyncSkuManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store flowcommerce/flowconnector/enabled 1
      */
     public function testEnqueuesSuccessfullyWhenFlowModuleEnabled()

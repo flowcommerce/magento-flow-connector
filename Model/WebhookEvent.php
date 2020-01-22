@@ -1824,7 +1824,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setBasePrice($line['price']['base']['amount']);
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
 
-            if ($this->addProductWithOptions($quote, $product, $line)) {
+            if (is_null($this->addProductWithOptions($quote, $product, $line))) {
                 throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number could not be added: ' . $line['item_number']);
                 continue;
             }
@@ -2497,6 +2497,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     public function addProductWithOptions ($quote, $product, $line) {
+        $item = null;
         if (isset($line['attributes']['options'])) {
             $formOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
             foreach ($formOptions as $option) {

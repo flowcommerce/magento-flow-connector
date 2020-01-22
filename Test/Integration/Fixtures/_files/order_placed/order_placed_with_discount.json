@@ -52,7 +52,7 @@
                 "name": "Desiree Fitness Tee-XL-Yellow",
                 "quantity": 4,
                 "attributes": {
-                    "options": "[{\"product_id\":\"4\",\"product\":{},\"code\":\"info_buyRequest\",\"value\":\"{\\\"qty\\\":4}\",\"item_id\":\"22\",\"option_id\":\"1\"},{\"code\":\"option_4\",\"value\":\"This one is just for dave\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"2\"},{\"code\":\"option_ids\",\"value\":\"4\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"3\"}]"
+                    "options": "[{\"option_id\":\"38\",\"item_id\":\"13\",\"product_id\":\"4\",\"code\":\"info_buyRequest\",\"value\":\"{\\\"uenc\\\":\\\"aHR0cDovLzItMS0zLXRlc3QtNzRnNW40eS1qbHFhdjZnZzJlNGZrLnVzLTQubWFnZW50b3NpdGUuY2xvdWQvam91c3QtZHVmZmxlLWJhZy5odG1s\\\",\\\"product\\\":\\\"4\\\",\\\"selected_configurable_option\\\":\\\"\\\",\\\"related_product\\\":\\\"\\\",\\\"item\\\":\\\"1\\\",\\\"options\\\":{\\\"4\\\":\\\"Testing personalization text\\\"},\\\"qty\\\":\\\"1\\\"}\"},{\"option_id\":\"39\",\"item_id\":\"13\",\"product_id\":\"4\",\"code\":\"option_ids\",\"value\":\"1\"},{\"option_id\":\"40\",\"item_id\":\"13\",\"product_id\":\"4\",\"code\":\"option_1\",\"value\":\"Testing personalization text\"}]"
                 },
                 "local": {
                     "experience": {
@@ -549,7 +549,7 @@
                 "item_number": "simple_4",
                 "quantity": 4,
                 "attributes": {
-                    "options": "[{\"product_id\":\"4\",\"product\":{},\"code\":\"info_buyRequest\",\"value\":\"{\\\"qty\\\":4}\",\"item_id\":\"22\",\"option_id\":\"1\"},{\"code\":\"option_4\",\"value\":\"This one is just for dave\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"2\"},{\"code\":\"option_ids\",\"value\":\"4\",\"product_id\":\"4\",\"item_id\":\"22\",\"option_id\":\"3\"}]"
+                    "options": "[{\"option_id\":\"38\",\"item_id\":\"13\",\"product_id\":\"4\",\"code\":\"info_buyRequest\",\"value\":\"{\\\"uenc\\\":\\\"aHR0cDovLzItMS0zLXRlc3QtNzRnNW40eS1qbHFhdjZnZzJlNGZrLnVzLTQubWFnZW50b3NpdGUuY2xvdWQvam91c3QtZHVmZmxlLWJhZy5odG1s\\\",\\\"product\\\":\\\"4\\\",\\\"selected_configurable_option\\\":\\\"\\\",\\\"related_product\\\":\\\"\\\",\\\"item\\\":\\\"1\\\",\\\"options\\\":{\\\"4\\\":\\\"Testing personalization text\\\"},\\\"qty\\\":\\\"1\\\"}\"},{\"option_id\":\"39\",\"item_id\":\"13\",\"product_id\":\"4\",\"code\":\"option_ids\",\"value\":\"1\"},{\"option_id\":\"40\",\"item_id\":\"13\",\"product_id\":\"4\",\"code\":\"option_1\",\"value\":\"Testing personalization text\"}]"
                 },
                 "price": {
                     "currency": "CAD",

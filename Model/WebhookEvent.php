@@ -1824,7 +1824,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setBasePrice($line['price']['base']['amount']);
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
 
-            $this->addProductWithOptions($quote, $product, $line);
+            if (is_null($this->addProductWithOptions($quote, $product, $line))) {
+                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number could not be added: ' . $line['item_number']);
+                continue;
+            }
         }
 
         ////////////////////////////////////////////////////////////
@@ -2494,51 +2497,19 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     public function addProductWithOptions ($quote, $product, $line) {
-        $item = $quote->addProduct($product, $line['quantity']);
-        $quote->save();
         if (isset($line['attributes']['options'])) {
             $formOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
-            $this->setOptionValues($quote, $product, $item, $formOptions);
-        }
-        return $item;
-    }
-
-    public function setOptionValues($quote = null, $product = null, $item = null, $options = null)
-    {
-        if (is_array($options) && $product && $quote && $item) {
-            foreach ($options as $option) {
+            foreach ($formOptions as $option) {
                 if ($option['code'] === 'info_buyRequest') {
-                    $newBuyRequestOptions = $this->jsonSerializer->unserialize($option['value']);
-                    $buyRequest = $item->getBuyRequest();
-                    $buyRequestOptions = $buyRequest->getData('options');
-                    if (is_array($buyRequestOptions)) {
-                        $newBuyRequestOptions = array_merge($buyRequestOptions, $newBuyRequestOptions);
+                    if ($buyRequest = $this->jsonSerializer->unserialize($option['value'])) {
+                        $item = $quote->addProduct($product, new \Magento\Framework\DataObject($buyRequest));
                     }
-                    $buyRequest->setData('options', new \Magento\Framework\DataObject($newBuyRequestOptions));
-                    $quote->updateItem($item->getId(), $buyRequest);
-                    $quote->save();
-                } else {
-                    $item->addOption(
-                        $this->optionFactory->create()
-                             ->setCode($option['code'])
-                             ->setProduct($product)
-                             ->setValue($option['value'])
-                     );
                 }
             }
-            $item->saveItemOptions();
-            $quote->save();
+        } else {
+            $item = $quote->addProduct($product, $line['quantity']);
         }
+        $quote->save();
         return $item;
-    }
-
-
-    public function getOption($product, $identifier)
-    {
-        foreach ($product->getOptions() as $option) {
-            if ($option->getTitle() == $identifier) {
-                return $option;
-            }
-        }
     }
 }

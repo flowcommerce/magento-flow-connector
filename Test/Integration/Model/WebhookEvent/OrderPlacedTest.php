@@ -172,8 +172,9 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
         foreach ($orderPlacedEvents as $orderPlacedEvent) {
             $payload = $orderPlacedEvent->getPayloadData();
             $flowOrderId = $payload['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
             $searchCriteria = $this->searchCriteriaBuilder
-                                   ->addFilter(Order::EXT_ORDER_ID, $this->subject->getTrimExtOrderId($flowOrderId), 'eq')
+                                   ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                                    ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);

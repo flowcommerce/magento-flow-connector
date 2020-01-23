@@ -2494,7 +2494,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
         }
 
-        $this->webhookEventManager->markWebhookEventAsDone($this, 'Succesfully imported Flow order number: ' . $data['order']['number']);
+        $this->webhookEventManager->markWebhookEventAsDone($this, 'Successfully imported Flow order number: ' . $data['order']['number']);
     }
 
     public function addProductWithOptions ($quote, $product, $line) {

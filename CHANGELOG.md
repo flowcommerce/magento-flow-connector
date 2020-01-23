@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.2.4
+- Fix for ext_order_id 32 char limit
+- Better logging for webhooks event messaging
+
 ## 2.2.3
 - Adding support for buy requests on order items which are required to properly track product custom options
 - Update tests to reflect expanded support and modified model of expected options object

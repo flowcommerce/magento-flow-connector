@@ -119,9 +119,10 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
             $authorizationInfo = $payload['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -194,9 +195,10 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
             $authorizationInfo = $payload['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -268,9 +270,10 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
             $authorizationInfo = $payload['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -343,9 +346,10 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
             $authorizationInfo = $payload['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -417,9 +421,10 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
             $authorizationInfo = $payload['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -492,9 +497,10 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
             $authorizationInfo = $payload['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);

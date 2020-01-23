@@ -173,7 +173,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             $payload = $orderPlacedEvent->getPayloadData();
             $flowOrderId = $payload['order']['number'];
             $searchCriteria = $this->searchCriteriaBuilder
-                                   ->addFilter(Order::EXT_ORDER_ID, $subject->getTrimExtOrderId($flowOrderId), 'eq')
+                                   ->addFilter(Order::EXT_ORDER_ID, $this->subject->getTrimExtOrderId($flowOrderId), 'eq')
                                    ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);

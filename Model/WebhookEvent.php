@@ -1193,7 +1193,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $order->save();
             }
 
-            $this->webhookEventManager->markWebhookEventAsDone($this, '');
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Status set to:' . $data['status']);
 
         } else {
             $this->requeue('Unable to find order right now, reprocess.');
@@ -1345,7 +1345,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      */
     private function getOrderByFlowOrderNumber($number)
     {
-        $order = $this->orderFactory->create()->loadByAttribute('ext_order_id', $number);
+        $order = $this->orderFactory->create()->loadByAttribute('ext_order_id', $this->getTrimExtOrderId($number));
         return ($order->getExtOrderId()) ? $order : null;
     }
 
@@ -2072,8 +2072,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $order->setState(OrderModel::STATE_NEW);
         $order->setEmailSent(0);
 
+        $trimExtOrderId = $this->getTrimExtOrderId($receivedOrder['number']);
         // Store Flow order number
-        $order->setExtOrderId($receivedOrder['number']);
+        $order->setExtOrderId($trimExtOrderId);
 
         // Set order total
         // https://docs.flow.io/type/localized-total
@@ -2512,5 +2513,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
         $quote->save();
         return $item;
+    }
+
+    // Remove initial 'ord-' from Flow order numbers and ensure the length matches expected 32 char in ext_order_id field
+    public function getTrimExtOrderId ($orderNumber) {
+        return substr($orderNumber, 4, 32);
     }
 }

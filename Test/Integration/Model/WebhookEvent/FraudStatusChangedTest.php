@@ -115,8 +115,9 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
         foreach ($fraudStatusChangedEvents as $fraudStatusChangedEvent) {
             $payload = $fraudStatusChangedEvent->getPayloadData();
             $flowOrderId = $payload['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);

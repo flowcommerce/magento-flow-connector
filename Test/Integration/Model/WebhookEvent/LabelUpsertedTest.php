@@ -123,8 +123,9 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
         foreach ($labelUpsertedEvents as $labelUpsertedEvent) {
             $payload = $labelUpsertedEvent->getPayloadData();
             $flowOrderId = $payload['order'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);

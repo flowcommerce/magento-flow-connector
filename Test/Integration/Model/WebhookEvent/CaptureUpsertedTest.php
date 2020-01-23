@@ -118,9 +118,10 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         foreach ($orderPlacedEvents as $orderPlacedEvent) {
             $payload = $orderPlacedEvent->getPayloadData();
             $flowOrderId = $payload['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId); 
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -128,7 +129,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             /** @var Order $order */
             $order = $orders->getFirstItem();
 
-            $this->assertEquals($flowOrderId, $order->getExtOrderId(), 'Order could not be found with number:' . $flowOrderId);
+            $this->assertEquals($trimExtOrderId, $order->getExtOrderId(), 'Order could not be found with number:' . $flowOrderId);
             $this->assertEquals(1, $orders->count());
         }
         
@@ -171,9 +172,10 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $captureInfo = $payload['capture'];
             $authorizationInfo = $captureInfo['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId); 
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -255,9 +257,10 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $captureInfo = $payload['capture'];
             $authorizationInfo = $captureInfo['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -340,9 +343,10 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $captureInfo = $payload['capture'];
             $authorizationInfo = $captureInfo['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -421,9 +425,10 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $captureInfo = $payload['capture'];
             $authorizationInfo = $captureInfo['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -493,9 +498,10 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $captureInfo = $payload['capture'];
             $authorizationInfo = $captureInfo['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);
@@ -503,7 +509,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             /** @var Order $order */
             $order = $orders->getFirstItem();
 
-            $this->assertEquals($flowOrderId, $order->getExtOrderId(), 'Order could not be found with number:' . $flowOrderId);
+            $this->assertEquals($trimExtOrderId, $order->getExtOrderId(), 'Order could not be found with number:' . $flowOrderId);
             $this->assertEquals(1, $orders->count());
         }
     }
@@ -540,9 +546,10 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $captureInfo = $payload['capture'];
             $authorizationInfo = $captureInfo['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
-                ->addFilter(Order::EXT_ORDER_ID, $flowOrderId, 'eq')
+                ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
                 ->create();
             /** @var OrderCollection $orders */
             $orders = $this->mageOrderRepository->getList($searchCriteria);

@@ -1193,7 +1193,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $order->save();
             }
 
-            $this->webhookEventManager->markWebhookEventAsDone($this, 'Status set to:' . $data['status']);
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Fraud status set to: ' . $data['status']);
 
         } else {
             $this->requeue('Unable to find order right now, reprocess.');

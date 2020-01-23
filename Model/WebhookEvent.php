@@ -2491,10 +2491,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // Save order after sending order confirmation email
             $order->save();
         } catch (LocalizedException $e) {
-            $this->webhookEventManager->markWebhookEventAsDone($this, $e->getMessage());
+            $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
         }
 
-        $this->webhookEventManager->markWebhookEventAsDone($this);
+        $this->webhookEventManager->markWebhookEventAsDone($this, 'Succesfully imported Flow order number: ' . $data['order']['number']);
     }
 
     public function addProductWithOptions ($quote, $product, $line) {

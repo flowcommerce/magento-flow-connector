@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.2.5
+- Updated logging for webhooks event messaging
+- Support forced pricing display overrides (pricebook and item overlay)
+
 ## 2.2.4
 - Fix for ext_order_id 32 char limit
 - Better logging for webhooks event messaging

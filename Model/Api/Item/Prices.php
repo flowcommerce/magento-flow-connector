@@ -118,6 +118,9 @@ class Prices
                 }
                 $item['items'][0]['local']['price_attributes']['sku'] = $item['value'];
                 $labels[$localizationKey][$productId] = $item['items'][0]['local']['price_attributes'];
+                foreach($item['items'][0]['local']['prices'] as $price) {
+                    $labels[$localizationKey][$productId][$price['key']] = $price;
+                }
             }
         }
         return $labels;

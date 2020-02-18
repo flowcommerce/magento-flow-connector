@@ -1193,7 +1193,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $order->save();
             }
 
-            $this->webhookEventManager->markWebhookEventAsDone($this, 'Status set to:' . $data['status']);
+            $this->webhookEventManager->markWebhookEventAsDone($this, 'Fraud status set to: ' . $data['status']);
 
         } else {
             $this->requeue('Unable to find order right now, reprocess.');
@@ -2491,10 +2491,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // Save order after sending order confirmation email
             $order->save();
         } catch (LocalizedException $e) {
-            $this->webhookEventManager->markWebhookEventAsDone($this, $e->getMessage());
+            $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
         }
 
-        $this->webhookEventManager->markWebhookEventAsDone($this);
+        $this->webhookEventManager->markWebhookEventAsDone($this, 'Successfully imported Flow order number: ' . $data['order']['number']);
     }
 
     public function addProductWithOptions ($quote, $product, $line) {

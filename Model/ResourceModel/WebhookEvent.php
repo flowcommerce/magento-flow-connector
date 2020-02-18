@@ -184,7 +184,7 @@ class WebhookEvent extends AbstractDb
 
             $object = $this->dataObjectFactory->create();
             $object->setData(WebhookEventInterface::DATA_KEY_STATUS, $newStatus);
-            $object->setData(WebhookEventInterface::DATA_KEY_MESSAGE, 'This event type action was resolved by another webhook event payload for this order.');
+            $object->setData(WebhookEventInterface::DATA_KEY_MESSAGE, 'Webhook event type resolved.');
             $preparedData = $this->_prepareDataForTable($object, $tableName);
 
             $batches = array_chunk($ids, self::UPDATE_MULTIPLE_STATUSES_BATCH_SIZE);

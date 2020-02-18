@@ -22,6 +22,7 @@ define([
             FLOWREGULARPRICEKEY = 'regular_price',
             FLOWBASEPRICEKEY = 'base_price',
             FLOWFINALPRICEKEY = 'final_price';
+            FLOWACTUALPRICEKEY = 'localized_item_price';
 
         $.widget('mage.priceBox', widget, {
             options: globalOptions,
@@ -71,7 +72,7 @@ define([
 
                         if (!template.data.flowLocalized) {
                             if (template.data.productSku) {
-                                if (template.data.flowPriceCode == FLOWFINALPRICEKEY) {
+                                if (template.data.flowPriceCode == FLOWACTUALPRICEKEY) {
                                     priceTemplate = mageTemplate(this.options.flowPriceTemplateBySku);
                                 } else {
                                     priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
@@ -120,7 +121,8 @@ define([
                             break;
 
                         case MAGENTOFINALPRICEKEY:
-                            flowPriceCode = FLOWFINALPRICEKEY;
+                            // Use localized_item_price instead of final_price from Flow, localized_item_price is always what the final price in checkout will be
+                            flowPriceCode = FLOWACTUALPRICEKEY;
                             break;
                     }
                 }
@@ -167,7 +169,7 @@ define([
                 }
 
                 try {
-                    this.flowFormattedPrice = localizedPricingKeyedOnProductId[template.data.productId][FLOWFINALPRICEKEY].label;
+                    this.flowFormattedPrice = localizedPricingKeyedOnProductId[template.data.productId][FLOWACTUALPRICEKEY].label;
                 } catch (e) {
                     // Final price label is not localized for this item, do nothing
                 }

@@ -21,7 +21,7 @@ define([
             FLOWMINPRICEKEY = 'minimal_price',
             FLOWREGULARPRICEKEY = 'regular_price',
             FLOWBASEPRICEKEY = 'base_price',
-            FLOWFINALPRICEKEY = 'final_price';
+            FLOWFINALPRICEKEY = 'final_price',
             FLOWACTUALPRICEKEY = 'localized_item_price';
 
         $.widget('mage.priceBox', widget, {

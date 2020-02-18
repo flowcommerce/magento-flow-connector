@@ -59,6 +59,12 @@
     font-size: 0;
 }
 
+#flow-accepted-payment-methods img {
+    margin-left: 5px;
+    vertical-align: middle;
+    height: 24px;
+}
+
 /* Country Picker dropdown container (Name depends on element being used as a container) */
 #flow-country-picker {
     font-size: 0;

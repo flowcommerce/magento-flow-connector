@@ -1188,7 +1188,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 } elseif ($data['status'] == 'approved') {
                     $order->setState(OrderModel::STATE_PROCESSING);
                 } elseif ($data['status'] == 'declined') {
-                    $order->setStatus(OrderModel::STATUS_FRAUD);
+                    $order->cancel();
                 }
                 $order->save();
             }

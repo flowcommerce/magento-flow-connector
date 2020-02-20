@@ -10,17 +10,12 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- Adding container for flow-accepted-payment-methods -->
+        <!-- Adding block for additional product information -->
         <referenceContainer name="product.info.type">
-            <container name="flow.payment.methods.wrapper" htmlTag="div" htmlClass="flow-accepted-payment-methods" htmlId="flow-accepted-payment-methods" after="-">
-                <block class="Magento\Framework\View\Element\Text">
-                    <arguments>
-                        <argument name="text" xsi:type="string"><![CDATA[&nbsp;]]></argument>
-                    </arguments>
-                </block>
-            </container>
+            <block class="FlowCommerce\FlowConnector\Block\FlowProductInfo" name="flowcommerce.flowconnector.product.info"
+                   template="FlowCommerce_FlowConnector::flow-product-info.phtml" after="-"/>
         </referenceContainer>
-        <!-- Adding container for flow-accepted-payment-methods -->
+        <!-- Adding block for additional product information -->
     </body>
 </page>
 

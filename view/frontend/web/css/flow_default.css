@@ -72,6 +72,10 @@
     color: grey;
 }
 
+[data-flow-localize="item-tax-duty-message"] span {
+    display: block;
+}
+
 /* Country Picker dropdown container (Name depends on element being used as a container) */
 #flow-country-picker {
     font-size: 0;

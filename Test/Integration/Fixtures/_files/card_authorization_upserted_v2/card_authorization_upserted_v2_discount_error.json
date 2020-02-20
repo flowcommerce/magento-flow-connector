@@ -1,0 +1,117 @@
+{
+    "event_id": "evt-ddd7e2e22a964027afae1ad2f6a1e6db",
+    "timestamp": "2020-02-20T14:10:22.109Z",
+    "organization": "magento-integration-sandbox",
+    "id": "aut-q6aQClO6S2GhMmMUzQGNNYsc81RrGJ0g",
+    "authorization": {
+        "id": "aut-q6aQClO6S2GhMmMUzQGNNYsc81RrGJ0g",
+        "key": "aut-q6aQClO6S2GhMmMUzQGNNYsc81RrGJ0g",
+        "merchant_of_record": "flow",
+        "card": {
+            "id": "crd-8a034b735a0f4f39aff7d7ec706d2600",
+            "token": "XXX",
+            "type": "visa",
+            "expiration": {
+                "month": 12,
+                "year": 2022
+            },
+            "iin": "411111",
+            "last4": "1111",
+            "name": "David Mancuso",
+            "issuer": {
+                "iin": "411111",
+                "name": "JPMORGAN CHASE BANK, N.A.",
+                "country": "USA"
+            },
+            "address": {
+                "name": {
+                    "first": "David",
+                    "last": "Mancuso"
+                },
+                "streets": [
+                    "14 Ratchaprarop RdKhwaeng Makkasan"
+                ],
+                "city": "Khet Ratchathewi",
+                "province": "Krung Thep Maha Nakhon",
+                "postal": "10400",
+                "country": "THA"
+            },
+            "discriminator": "card"
+        },
+        "amount": 2753.67,
+        "currency": "THB",
+        "customer": {
+            "name": {
+                "first": "David",
+                "last": "Mancuso"
+            },
+            "phone": "5555555555",
+            "email": "david@flow.io"
+        },
+        "attributes": {},
+        "result": {
+            "status": "authorized"
+        },
+        "created_at": "2020-02-20T14:10:14.113Z",
+        "method": {
+            "id": "visa",
+            "type": "card",
+            "name": "VISA",
+            "images": {
+                "small": {
+                    "url": "https://flowcdn.io/util/logos/payment-methods/visa/30/original.png",
+                    "width": 65,
+                    "height": 41
+                },
+                "medium": {
+                    "url": "https://flowcdn.io/util/logos/payment-methods/visa/60/original.png",
+                    "width": 100,
+                    "height": 60
+                },
+                "large": {
+                    "url": "https://flowcdn.io/util/logos/payment-methods/visa/120/original.png",
+                    "width": 256,
+                    "height": 256
+                }
+            },
+            "regions": [
+                "world"
+            ]
+        },
+        "requested": {
+            "amount": 2753.67,
+            "currency": "THB"
+        },
+        "destination": {
+            "streets": [
+                "14 Ratchaprarop RdKhwaeng Makkasan"
+            ],
+            "city": "Khet Ratchathewi",
+            "province": "Krung Thep Maha Nakhon",
+            "postal": "10400",
+            "country": "THA"
+        },
+        "billing_address": {
+            "name": {
+                "first": "David",
+                "last": "Mancuso"
+            },
+            "streets": [
+                "14 Ratchaprarop RdKhwaeng Makkasan"
+            ],
+            "city": "Khet Ratchathewi",
+            "province": "Krung Thep Maha Nakhon",
+            "postal": "10400",
+            "country": "THA"
+        },
+        "order": {
+            "number": "ord-443c22e6935846da93f75a95c509f1c7"
+        },
+        "base": {
+            "amount": 84.22,
+            "currency": "USD"
+        },
+        "discriminator": "card_authorization"
+    },
+    "discriminator": "card_authorization_upserted_v2"
+}

@@ -554,7 +554,7 @@
         "type": "card",
         "merchant_of_record": "flow",
         "reference": "aut-s4bLUxVM6xpRNxyxuuAp5OQ2vnCyPRBa",
-        "description": "VISA ending with 1111",
+        "description": "VISA 1111",
         "total": {
           "currency": "JPY",
           "amount": 4382,

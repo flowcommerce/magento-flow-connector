@@ -667,7 +667,7 @@
         "type": "card",
         "merchant_of_record": "flow",
         "reference": "aut-B7K4oZolooBfBY6Qc91Zuf2bMJCspx1v",
-        "description": "VISA ending with 1111",
+        "description": "VISA 1111",
         "total": {
           "currency": "EUR",
           "amount": 31.9,

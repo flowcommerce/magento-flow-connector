@@ -64,7 +64,7 @@ class PriceBox
         } else {
             $result = substr_replace($result, ' data-flow-localize="item-price" ', $position, 0);
         }
-        $taxDutyMessaging = '<span data-flow-localize="item-tax-duty-message"></span>';
+        $taxDutyMessaging = ($this->configuration->isTaxDutyMessagingEnabled() ? '<span data-flow-localize="item-tax-duty-message"></span>' : '');
         $result = '<span data-flow-item-number="'.$saleableSku.'">' . $result . $taxDutyMessaging . '</span>';
         return $result;
     }

@@ -56,6 +56,15 @@ class Configuration
     // Store configuration key for max cart hide ms
     const FLOW_MAX_CART_HIDE_MS = 'flowcommerce/flowconnector/max_cart_hide_ms';
 
+    // Store configuration key for payment methods pdp
+    const FLOW_PAYMENT_METHODS_PDP = 'flowcommerce/flowconnector/payment_methods_pdp';
+
+    // Store configuration key for shipping window pdp
+    const FLOW_SHIPPING_WINDOW_PDP = 'flowcommerce/flowconnector/shipping_window_pdp';
+
+    // Store configuration key for tax duty messaging
+    const FLOW_TAX_DUTY_MESSAGING = 'flowcommerce/flowconnector/tax_duty_messaging';
+
     // Store configuration key for checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'flowcommerce/flowconnector/checkout_base_url';
     
@@ -420,6 +429,63 @@ class Configuration
 
         return (int) $this->scopeConfig->getValue(
             self::FLOW_MAX_CART_HIDE_MS,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if payment methods pdp is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isPaymentMethodsPDPEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_PAYMENT_METHODS_PDP,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if shipping window pdp is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isShippingWindowPDPEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_SHIPPING_WINDOW_PDP,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if tax duty messaging is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isTaxDutyMessagingEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_TAX_DUTY_MESSAGING,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

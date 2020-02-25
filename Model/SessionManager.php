@@ -287,15 +287,16 @@ class SessionManager implements SessionManagementInterface
             $addresses = $customer->getAddresses();
             if (count($addresses)) {
                 foreach($addresses as $address) {
-                $addressBook->contacts[] = (object)[
-                    'address' => (object)[
-                        'streets' => $address->getStreet(),
-                        'city' => $address->getCity(),
-                        'province' => $address->getRegion()->getRegionCode(),
-                        'postal' => $address->getPostcode(),
-                        'country' => $address->getCountryId()
-                    ]
-                ];
+                    $addressBook->contacts[] = (object)[
+                        'address' => (object)[
+                            'streets' => $address->getStreet(),
+                            'city' => $address->getCity(),
+                            'province' => $address->getRegion()->getRegionCode(),
+                            'postal' => $address->getPostcode(),
+                            'country' => $address->getCountryId()
+                        ]
+                    ];
+                }
             }
         }
         return $addressBook;

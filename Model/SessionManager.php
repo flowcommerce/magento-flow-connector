@@ -221,21 +221,23 @@ class SessionManager implements SessionManagementInterface
             return $result;
         }
 
-        $query = [
-            'country' => $country,
-            'currency' => $currency,
-            'flow_session_id' => $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE),
-            'experience' => $this->getSessionExperienceKey()
-        ];
+        // TODO REIMPLEMENT IF NOT USING ORDER CREATION
+        /* $query = [ */
+        /*     'country' => $country, */
+        /*     'currency' => $currency, */
+        /*     'flow_session_id' => $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE), */
+        /*     'experience' => $this->getSessionExperienceKey() */
+        /* ]; */
 
-        $orderForm = $this->createFlowOrderForm();
+        $orderForm = $this->createFlowOrderForm($country);
+        $customerForm = $this->createFlowCustomerForm();
+        $addressBook = $this->createFlowAddressBook();
 
         $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
 
         if ($sessionId) {
-            $createdOrder = json_decode($this->orderSave->execute($orderForm, $query, $sessionId));
-            $tokenId = $this->orderSave->createCheckoutToken($createdOrder->number, $sessionId);
-            if (isset($createdOrder->number) && $tokenId) {
+            $tokenId = $this->orderSave->createCheckoutToken($orderForm, $sessionId, $customerForm, $addressBook);
+            if ($tokenId) {
                 $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
 
             }
@@ -245,13 +247,69 @@ class SessionManager implements SessionManagementInterface
     }
 
     /**
-     * Create Flow Order Form from Magento Quote
+     * Create Flow Customer Form
      * @return object|null
      * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
      */
-    public function createFlowOrderForm() {
+    public function createFlowCustomerForm() {
+        $customer = $this->customerSession->getCustomer();
+        $customerForm = null;
+        if ($customer->getId()) {
+            $customerForm = (object)[
+                'name' => (object)[
+                    'first' => $customer->getFirstname(),
+                    'last' => $customer->getLastname(),
+                ],
+                'number' => (string)$customer->getId(),
+                'phone' => $customer->getTelephone(),
+                'email' => $customer->getEmail()
+            ];
+        }
+        return $customerForm;
+    }
+
+    /**
+     * Create Flow Address Book
+     * @return object|null
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
+     */
+    public function createFlowAddressBook() {
+        $customer = $this->customerSession->getCustomer();
+        $addressBook = null;
+        if ($customer->getId()) {
+            $addressBook = (object)[
+                'contacts' => []
+            ];
+            $addresses = $customer->getAddresses();
+            if (count($addresses)) {
+                foreach($addresses as $address) {
+                $addressBook->contacts[] = (object)[
+                    'address' => (object)[
+                        'streets' => $address->getStreet(),
+                        'city' => $address->getCity(),
+                        'province' => $address->getRegion()->getRegionCode(),
+                        'postal' => $address->getPostcode(),
+                        'country' => $address->getCountryId()
+                    ]
+                ];
+            }
+        }
+        return $addressBook;
+    }
+
+    /**
+     * Create Flow Order Form from Magento Quote
+     * @return object|null
+     * @param $country
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Stdlib\Cookie\FailureToSendException
+     */
+    public function createFlowOrderForm($country = null) {
         $quote = $this->checkoutSession->getQuote();
         $items = $quote->getAllVisibleItems();
         if (!$items) {

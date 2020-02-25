@@ -159,11 +159,12 @@ class Save
         ]]);
         $url = $this->urlBuilder->getFlowApiEndpoint('/checkout/tokens', $storeId);
         $body = (object)[
-            "order_form" => $orderForm,
-            "session_id" => $sessionId,
-            "customer" => $customer,
-            "address_book" => $addressBook,
-            "urls" => (object)[
+            'order_form' => $orderForm,
+            'session_id' => $sessionId,
+            'customer' => $customer,
+            'address_book' => $addressBook,
+            'discriminator' => 'checkout_token_order_form',
+            'urls' => (object)[
                 /* "continue_shopping" => $this->storeManager->getStore()->getBaseUrl() */
             ]
         ];

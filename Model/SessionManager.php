@@ -291,7 +291,7 @@ class SessionManager implements SessionManagementInterface
                         'address' => (object)[
                             'streets' => $address->getStreet(),
                             'city' => $address->getCity(),
-                            'province' => $address->getRegion()->getRegionCode(),
+                            'province' => (gettype($address->getRegion()) == 'string' ? $address->getRegion() : $address->getRegion()->getRegionCode()),
                             'postal' => $address->getPostcode(),
                             'country' => $address->getCountryId()
                         ]
@@ -349,7 +349,7 @@ class SessionManager implements SessionManagementInterface
                     $orderForm->destination = (object)[
                         'streets' => $shippingAddress->getStreet(),
                         'city' => $shippingAddress->getCity(),
-                        'province' => $shippingAddress->getRegion()->getRegionCode(),
+                        'province' => (gettype($address->getRegion()) == 'string' ? $address->getRegion() : $address->getRegion()->getRegionCode()),
                         'postal' => $shippingAddress->getPostcode(),
                         'country' => $country,
                         'contact' => (object)[

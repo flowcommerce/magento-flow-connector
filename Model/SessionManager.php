@@ -221,19 +221,10 @@ class SessionManager implements SessionManagementInterface
             return $result;
         }
 
-        // TODO REIMPLEMENT IF NOT USING ORDER CREATION
-        /* $query = [ */
-        /*     'country' => $country, */
-        /*     'currency' => $currency, */
-        /*     'flow_session_id' => $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE), */
-        /*     'experience' => $this->getSessionExperienceKey() */
-        /* ]; */
-
         $orderForm = $this->createFlowOrderForm($country);
+        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
         $customerForm = $this->createFlowCustomerForm();
         $addressBook = $this->createFlowAddressBook();
-
-        $sessionId = $this->cookieManagerInterface->getCookie(self::FLOW_SESSION_COOKIE);
 
         if ($sessionId) {
             $tokenId = $this->orderSave->createCheckoutToken($orderForm, $sessionId, $customerForm, $addressBook);
@@ -338,6 +329,7 @@ class SessionManager implements SessionManagementInterface
                 'number' => (string)$customer->getId(),
                 'phone' => $customer->getTelephone(),
                 'email' => $customer->getEmail()
+
             ];
 
             // Add default shipping address

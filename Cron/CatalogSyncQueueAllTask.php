@@ -3,8 +3,8 @@
 namespace FlowCommerce\FlowConnector\Cron;
 
 use \Psr\Log\LoggerInterface as Logger;
+use \FlowCommerce\FlowConnector\Model\Configuration;
 use \FlowCommerce\FlowConnector\Model\SyncSkuManager;
-use \FlowCommerce\FlowConnector\Model\Api\Auth;
 
 /**
  * Cron Task wrapper class to run catalog sync queue all.
@@ -12,6 +12,11 @@ use \FlowCommerce\FlowConnector\Model\Api\Auth;
  */
 class CatalogSyncQueueAllTask
 {
+    /**
+     * @var Configuration
+     */
+    private $configuration;
+
     /**
      * @var Logger
      */
@@ -23,11 +28,6 @@ class CatalogSyncQueueAllTask
     private $syncSkuManager;
 
     /**
-     * @var Auth
-     */
-    private $auth;
-
-    /**
      * CatalogSyncQueueAllTask constructor.
      * @param Logger $logger
      * @param SyncSkuManager $syncSkuManager
@@ -35,11 +35,11 @@ class CatalogSyncQueueAllTask
     public function __construct(
         Logger $logger,
         SyncSkuManager $syncSkuManager,
-        Auth $auth
+        Configuration $configuration
     ) {
         $this->logger = $logger;
         $this->syncSkuManager = $syncSkuManager;
-        $this->auth = $auth;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -48,7 +48,7 @@ class CatalogSyncQueueAllTask
      */
     public function execute()
     {
-        if ($this->auth->isFlowProductionOrganization()) {
+        if ($this->configuration->isDailyCatalogSyncEnabled()) {
             $this->logger->info('Running CatalogSyncQueueAllTask execute.');
             $this->syncSkuManager->enqueueAllProducts();
         } else {

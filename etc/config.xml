@@ -37,6 +37,7 @@
                 <payment_methods_pdp>1</payment_methods_pdp>
                 <shipping_window_pdp>1</shipping_window_pdp>
                 <tax_duty_messaging>1</tax_duty_messaging>
+                <daily_catalog_sync>0</daily_catalog_sync>
             </flowconnector>
         </flowcommerce>
     </default>

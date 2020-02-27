@@ -65,6 +65,9 @@ class Configuration
     // Store configuration key for tax duty messaging
     const FLOW_TAX_DUTY_MESSAGING = 'flowcommerce/flowconnector/tax_duty_messaging';
 
+    // Store configuration key for daily catalog syncing
+    const FLOW_DAILY_CATALOG_SYNC = 'flowcommerce/flowconnector/daily_catalog_sync';
+
     // Store configuration key for checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'flowcommerce/flowconnector/checkout_base_url';
     
@@ -486,6 +489,25 @@ class Configuration
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_TAX_DUTY_MESSAGING,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if daily catalog syncing is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isDailyCatalogSyncEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_DAILY_CATALOG_SYNC,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

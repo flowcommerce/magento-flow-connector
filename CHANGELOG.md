@@ -1,5 +1,16 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.0
+- Localized default shipping window estimates on PDP, display toggle
+- Localized payment method logos on PDP, display toggle
+- Localized tax and duty breakouts under priceboxes, display toggle
+- Returning user data in checkout
+- Daily catalog sync toggle
+- Import and display customer's selected shipping method estimated delivery window in orders
+- Checkout token redirect optimization
+- Automatically cancel orders with Flow fraud status of "declined"
+- Updated README links to the new Flow documentation website
+
 ## 2.2.5
 - Updated logging for webhooks event messaging
 - Support forced pricing display overrides (pricebook and item overlay)

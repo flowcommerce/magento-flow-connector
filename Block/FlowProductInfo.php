@@ -52,5 +52,15 @@ class FlowProductInfo extends Template
     {
         return $this->configuration->isShippingWindowPDPEnabled();
     }
+
+    /**
+     * Check if tax and duty messaging is enabled
+     * @return boolean
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isTaxDutyMessagingEnabled()
+    {
+        return $this->configuration->isTaxDutyMessagingEnabled();
+    }
 }
 

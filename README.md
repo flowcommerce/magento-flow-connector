@@ -156,6 +156,8 @@ Alternatively, you can implement your own solution by refering to the documentat
 ### Enable Default Estimated Shipping Window on PDP
 This toggle controls display of the estimated shipping window for the default shipping option on the PDP. This is injected via the layout reference container "product.info.type" which appears on catalog product view pages (PDP). This toggle defaults to "Yes".  
 
+Alternatively, you can implement your own solution by refering to the documentation: [Display Delivery Window](https://docs.flow.io/docs/display-delivery-window)
+
 ### Enable Tax and Duty Messaging
 This toggle controls display of local tax and duties for all catalog item priceboxes. This toggle defaults to "Yes".
 

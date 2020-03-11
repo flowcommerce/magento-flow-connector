@@ -6,6 +6,7 @@ use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Api\Item\Save\ProductDataMapper;
 use FlowCommerce\FlowConnector\Model\SyncSku;
+use FlowCommerce\FlowConnector\Model\SyncSkuManager;
 use GuzzleHttp\Client as HttpClient;
 use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFactory;
 use GuzzleHttp\PoolFactory as HttpPoolFactory;
@@ -60,6 +61,11 @@ class Save
     private $productDataMapper;
 
     /**
+     * @var SyncSkuManager
+     */
+    private $syncSkuManager;
+
+    /**
      * @var UrlBuilder
      */
     private $urlBuilder;
@@ -72,6 +78,7 @@ class Save
      * @param HttpPoolFactory $httpPoolFactory
      * @param HttpRequestFactory $httpRequestFactory
      * @param Logger $logger
+     * @param SyncSkuManager $syncSkuManager
      * @param ProductDataMapper $productDataMapper
      * @param UrlBuilder $urlBuilder
      */
@@ -82,6 +89,7 @@ class Save
         HttpRequestFactory $httpRequestFactory,
         JsonSerializer $jsonSerializer,
         Logger $logger,
+        SyncSkuManager $syncSkuManager,
         ProductDataMapper $productDataMapper,
         UrlBuilder $urlBuilder
     ) {
@@ -91,6 +99,7 @@ class Save
         $this->httpPoolFactory = $httpPoolFactory;
         $this->httpRequestFactory = $httpRequestFactory;
         $this->logger = $logger;
+        $this->syncSkuManager = $syncSkuManager;
         $this->productDataMapper = $productDataMapper;
         $this->urlBuilder = $urlBuilder;
     }

@@ -1,0 +1,26 @@
+<?php
+/**
+ * FlowCommerce
+ *
+ * FlowCommerce_FlowConnector
+ * @category    FlowCommerce
+ * @package     FlowCommerce_FlowConnector
+ * @author      FlowCommerce
+ * @copyright   Copyright (c) 2020 FlowCommerce
+ */
+
+/** @var $block \FlowCommerce\FlowConnector\Block\FlowProductInfo */
+?>
+<?php if ($block->isPaymentMethodsPDPEnabled()): ?>
+    <span class="flow-accepted-payment-methods" id="flow-accepted-payment-methods"></span>
+<?php endif; ?>
+
+<?php if ($block->isShippingWindowPDPEnabled()): ?>
+    <span class="flow-shipping-window" id="flow-shipping-window" flow-shipping-window></span>
+<?php endif; ?>
+
+<script type="text/javascript">
+    window.flow_payment_methods_enabled = <?= (int)$block->isPaymentMethodsPDPEnabled(); ?>;
+    window.flow_shipping_window_enabled = <?= (int)$block->isShippingWindowPDPEnabled(); ?>;
+    window.flow_tax_duty_messaging_enabled = <?= (int)$block->isTaxDutyMessagingEnabled(); ?>;
+</script>

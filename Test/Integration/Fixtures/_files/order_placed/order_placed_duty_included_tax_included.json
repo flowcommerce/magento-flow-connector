@@ -645,7 +645,7 @@
         "type": "card",
         "merchant_of_record": "flow",
         "reference": "aut-kW9W5V0vBA4J508IcFL19ihtYfEUYCRD",
-        "description": "VISA ending with 1111",
+        "description": "VISA 1111",
         "total": {
           "currency": "BRL",
           "amount": 171,

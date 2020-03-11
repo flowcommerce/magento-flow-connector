@@ -1,0 +1,1090 @@
+{
+    "event_id": "evt-bff8e8748f8e4cbdae91f1b3e9139931",
+    "timestamp": "2020-02-20T14:10:58.535Z",
+    "organization": "magento-integration-sandbox",
+    "order_number": "ord-443c22e6935846da93f75a95c509f1c7",
+    "order": {
+        "id": "ior-2aa99977dd524c6bae43b23a034184b0",
+        "number": "ord-443c22e6935846da93f75a95c509f1c7",
+        "customer": {
+            "name": {
+                "first": "David",
+                "last": "Mancuso"
+            },
+            "phone": "5555555555",
+            "email": "david@flow.io",
+            "address": {
+                "name": {
+                    "first": "David",
+                    "last": "Mancuso"
+                },
+                "streets": [
+                    "14 Ratchaprarop RdKhwaeng Makkasan"
+                ],
+                "city": "Khet Ratchathewi",
+                "province": "Krung Thep Maha Nakhon",
+                "postal": "10400",
+                "country": "THA"
+            }
+        },
+        "delivered_duty": "paid",
+        "destination": {
+            "streets": [
+                "14 Ratchaprarop RdKhwaeng Makkasan"
+            ],
+            "city": "Khet Ratchathewi",
+            "province": "Krung Thep Maha Nakhon",
+            "postal": "10400",
+            "country": "THA",
+            "contact": {
+                "name": {
+                    "first": "David",
+                    "last": "Mancuso"
+                },
+                "email": "david@flow.io",
+                "phone": "5555555555"
+            }
+        },
+        "expires_at": "2020-02-20T15:10:13.359Z",
+        "items": [
+            {
+                "number": "simple_1",
+                "name": "Beaumont Summit Kit-S-Yellow",
+                "quantity": 1,
+                "local": {
+                    "experience": {
+                        "id": "exp-4d6d2d4d985442e8a137e6858a50d66b",
+                        "key": "thailand",
+                        "name": "Thailand"
+                    },
+                    "prices": [
+                        {
+                            "currency": "THB",
+                            "amount": 1499,
+                            "label": "1,499.00 THB",
+                            "base": {
+                                "amount": 45.84,
+                                "currency": "USD",
+                                "label": "US$45.84"
+                            },
+                            "includes": {
+                                "key": "vat",
+                                "label": "Includes VAT"
+                            },
+                            "key": "localized_item_price"
+                        },
+                        {
+                            "currency": "THB",
+                            "amount": 412.19,
+                            "label": "412.19 THB",
+                            "base": {
+                                "amount": 12.61,
+                                "currency": "USD",
+                                "label": "US$12.61"
+                            },
+                            "key": "localized_item_duty"
+                        }
+                    ],
+                    "rates": [],
+                    "spot_rates": [],
+                    "status": "included",
+                    "attributes": {
+                        "eco_collection": "No",
+                        "weight": "1.0000",
+                        "quantity_and_stock_status": "In Stock",
+                        "country_of_manufacture": " ",
+                        "image": "/m/j/mj01-yellow_main_1.jpg",
+                        "description": "<p>The smooth nylon shell around the Beaumont Summit Kit combats wind, reinforced with a cold-fighting brushed fleece layer. The jacket is reversible, giving you a new look for the return trek. Ample pocket space rounds out this hiker's paradise package.</p>\n<p>&bull; Yellow full zip rain jacket.<br />&bull; Full-zip front. <br />&bull; Stand-up collar. <br />&bull; Elasticized cuffs. <br />&bull; Machine wash/dry.</p>",
+                        "user_agent": "Flow-M2-2.0.4",
+                        "product_id": "267",
+                        "shipment_type": "Together",
+                        "visibility": "Not Visible Individually",
+                        "sku": "simple_1",
+                        "name": "Beaumont Summit Kit-S-Yellow",
+                        "small_image": "/m/j/mj01-yellow_main_1.jpg",
+                        "magento_version": "2.3.2",
+                        "size": "S",
+                        "sale": "No",
+                        "price": "42.0000",
+                        "options_container": "Block after Info Column",
+                        "regular_price": "1499.0",
+                        "parent_entity_id": "277",
+                        "color": "Yellow",
+                        "minimal_price": "42.0000",
+                        "thumbnail": "/m/j/mj01-yellow_main_1.jpg",
+                        "attribute_set_id": "16",
+                        "final_price": "1499.0",
+                        "page_layout": "No layout updates",
+                        "performance_fabric": "No",
+                        "entity_id": "267",
+                        "gift_message_available": "No",
+                        "custom_design": "-- Please Select --",
+                        "status": "Enabled",
+                        "new": "No",
+                        "url_key": "beaumont-summit-kit-s-yellow",
+                        "tax_class_id": "Taxable Goods",
+                        "type_id": "simple",
+                        "created_at": "2019-07-15 17:28:16",
+                        "custom_layout": "No layout updates",
+                        "erin_recommends": "No",
+                        "msrp_display_actual_price_type": "Use config",
+                        "updated_at": "2019-07-15 17:28:16",
+                        "price_view": "Price Range",
+                        "parent_sku": "configurable"
+                    },
+                    "price_attributes": {
+                        "regular_price": {
+                            "currency": "THB",
+                            "amount": 1499,
+                            "label": "1,499.00 THB",
+                            "base": {
+                                "amount": 45.84,
+                                "currency": "USD",
+                                "label": "US$45.84"
+                            }
+                        },
+                        "final_price": {
+                            "currency": "THB",
+                            "amount": 1499,
+                            "label": "1,499.00 THB",
+                            "base": {
+                                "amount": 45.84,
+                                "currency": "USD",
+                                "label": "US$45.84"
+                            }
+                        }
+                    }
+                },
+                "attributes": {
+                    "options": "[{\"option_id\":\"52\",\"item_id\":\"28\",\"product_id\":\"276\",\"code\":\"info_buyRequest\",\"value\":\"{\\\"uenc\\\":\\\"aHR0cDovL3Rlc3QtMi0yLTYtaGFiaXRncS1qbHFhdjZnZzJlNGZrLnVzLTQubWFnZW50b3NpdGUuY2xvdWQvbWVuL3RvcHMtbWVuL2phY2tldHMtbWVuLmh0bWw,\\\",\\\"product\\\":\\\"276\\\",\\\"super_attribute\\\":{\\\"187\\\":\\\"177\\\",\\\"93\\\":\\\"69\\\"},\\\"qty\\\":1}\"},{\"option_id\":\"53\",\"item_id\":\"28\",\"product_id\":\"276\",\"code\":\"attributes\",\"value\":\"{\\\"187\\\":\\\"177\\\",\\\"93\\\":\\\"69\\\"}\"},{\"option_id\":\"54\",\"item_id\":\"28\",\"product_id\":\"266\",\"code\":\"product_qty_266\",\"value\":\"1\",\"stock_state_result\":{}},{\"option_id\":\"55\",\"item_id\":\"28\",\"product_id\":\"266\",\"code\":\"simple_product\",\"value\":\"266\"}]"
+                },
+                "price_source": {
+                    "price": {
+                        "amount": 42,
+                        "currency": "USD"
+                    },
+                    "discriminator": "catalog"
+                }
+            }
+        ],
+        "deliveries": [
+            {
+                "id": "del-3a7abae64dc54679896775329371208d",
+                "items": [
+                    {
+                        "number": "simple_1",
+                        "quantity": 1,
+                        "price": {
+                            "currency": "THB",
+                            "amount": 1499,
+                            "base": {
+                                "amount": 45.84,
+                                "currency": "USD"
+                            }
+                        },
+                        "line_number": 0
+                    }
+                ],
+                "options": [
+                    {
+                        "id": "opt-c4679e79bcb44a4cb06d38af9d73e790",
+                        "cost": {
+                            "currency": "THB",
+                            "amount": 648.06,
+                            "label": "648.06 THB",
+                            "base": {
+                                "amount": 19.8198,
+                                "currency": "USD",
+                                "label": "US$19.82"
+                            },
+                            "details": [
+                                {
+                                    "source": "ratecard",
+                                    "currency": "THB",
+                                    "amount": 648.06,
+                                    "label": "648.06 THB",
+                                    "components": [
+                                        {
+                                            "key": "ratecard_fuel_surcharge",
+                                            "currency": "THB",
+                                            "amount": 43.81,
+                                            "label": "43.81 THB",
+                                            "base": {
+                                                "amount": 1.3398,
+                                                "currency": "USD",
+                                                "label": "US$1.34"
+                                            }
+                                        },
+                                        {
+                                            "key": "ratecard_base_cost",
+                                            "currency": "THB",
+                                            "amount": 604.25,
+                                            "label": "604.25 THB",
+                                            "base": {
+                                                "amount": 18.48,
+                                                "currency": "USD",
+                                                "label": "US$18.48"
+                                            }
+                                        }
+                                    ],
+                                    "base": {
+                                        "amount": 19.8198,
+                                        "currency": "USD",
+                                        "label": "US$19.82"
+                                    }
+                                }
+                            ]
+                        },
+                        "delivered_duty": "unpaid",
+                        "price": {
+                            "currency": "THB",
+                            "amount": 648.06,
+                            "label": "648.06 THB",
+                            "base": {
+                                "amount": 19.8198,
+                                "currency": "USD",
+                                "label": "US$19.82"
+                            }
+                        },
+                        "service": {
+                            "id": "dhl-express-worldwide",
+                            "carrier": {
+                                "id": "dhl"
+                            },
+                            "name": "Express Worldwide"
+                        },
+                        "tier": {
+                            "id": "tie-6dbee311efc6458d8a91a4f161ab8796",
+                            "integration": "information",
+                            "name": "Shipping",
+                            "services": [
+                                "dhl-express-worldwide"
+                            ],
+                            "strategy": "fastest",
+                            "visibility": "public",
+                            "currency": "THB",
+                            "display": {
+                                "estimate": {
+                                    "type": "calculated",
+                                    "label": "1-2 Business Days"
+                                }
+                            }
+                        },
+                        "window": {
+                            "from": "2020-02-21T00:00:00.000Z",
+                            "to": "2020-02-24T00:00:00.000Z",
+                            "timezone": "UTC",
+                            "label": "1-2 Business Days"
+                        },
+                        "rule_outcome": {
+                            "discriminator": "at_cost"
+                        },
+                        "weight": {
+                            "gravitational": {
+                                "value": "1.25",
+                                "units": "pound"
+                            },
+                            "dimensional": {
+                                "value": "1.76",
+                                "units": "inch"
+                            }
+                        },
+                        "ratecard_owner": "flow"
+                    },
+                    {
+                        "id": "opt-ef74a17c6119425a9921be03557b6f5e",
+                        "cost": {
+                            "currency": "THB",
+                            "amount": 648.06,
+                            "label": "648.06 THB",
+                            "base": {
+                                "amount": 19.8198,
+                                "currency": "USD",
+                                "label": "US$19.82"
+                            },
+                            "details": [
+                                {
+                                    "source": "ratecard",
+                                    "currency": "THB",
+                                    "amount": 648.06,
+                                    "label": "648.06 THB",
+                                    "components": [
+                                        {
+                                            "key": "ratecard_fuel_surcharge",
+                                            "currency": "THB",
+                                            "amount": 43.81,
+                                            "label": "43.81 THB",
+                                            "base": {
+                                                "amount": 1.3398,
+                                                "currency": "USD",
+                                                "label": "US$1.34"
+                                            }
+                                        },
+                                        {
+                                            "key": "ratecard_base_cost",
+                                            "currency": "THB",
+                                            "amount": 604.25,
+                                            "label": "604.25 THB",
+                                            "base": {
+                                                "amount": 18.48,
+                                                "currency": "USD",
+                                                "label": "US$18.48"
+                                            }
+                                        }
+                                    ],
+                                    "base": {
+                                        "amount": 19.8198,
+                                        "currency": "USD",
+                                        "label": "US$19.82"
+                                    }
+                                }
+                            ]
+                        },
+                        "delivered_duty": "paid",
+                        "price": {
+                            "currency": "THB",
+                            "amount": 648.06,
+                            "label": "648.06 THB",
+                            "base": {
+                                "amount": 19.8198,
+                                "currency": "USD",
+                                "label": "US$19.82"
+                            }
+                        },
+                        "service": {
+                            "id": "dhl-express-worldwide",
+                            "carrier": {
+                                "id": "dhl"
+                            },
+                            "name": "Express Worldwide"
+                        },
+                        "tier": {
+                            "id": "tie-6dbee311efc6458d8a91a4f161ab8796",
+                            "integration": "information",
+                            "name": "Shipping",
+                            "services": [
+                                "dhl-express-worldwide"
+                            ],
+                            "strategy": "fastest",
+                            "visibility": "public",
+                            "currency": "THB",
+                            "display": {
+                                "estimate": {
+                                    "type": "calculated",
+                                    "label": "1-2 Business Days"
+                                }
+                            }
+                        },
+                        "window": {
+                            "from": "2020-02-21T00:00:00.000Z",
+                            "to": "2020-02-24T00:00:00.000Z",
+                            "timezone": "UTC",
+                            "label": "1-2 Business Days"
+                        },
+                        "rule_outcome": {
+                            "discriminator": "at_cost"
+                        },
+                        "weight": {
+                            "gravitational": {
+                                "value": "1.25",
+                                "units": "pound"
+                            },
+                            "dimensional": {
+                                "value": "1.76",
+                                "units": "inch"
+                            }
+                        },
+                        "ratecard_owner": "flow"
+                    }
+                ],
+                "key": "ord-443c22e6935846da93f75a95c509f1c7",
+                "center": {
+                    "id": "cen-6f8b247bf7004c2e9dfa0bd2970d91eb",
+                    "key": "center-1",
+                    "address": {
+                        "contact": {
+                            "name": {}
+                        },
+                        "location": {
+                            "streets": [
+                                "88 East Broad Street"
+                            ],
+                            "city": "Columbus",
+                            "province": "OH",
+                            "postal": "43215",
+                            "country": "USA"
+                        }
+                    }
+                },
+                "prices": [
+                    {
+                        "key": "subtotal",
+                        "currency": "THB",
+                        "amount": 1499,
+                        "label": "1,499.00 THB",
+                        "base": {
+                            "amount": 45.84,
+                            "currency": "USD",
+                            "label": "US$45.84"
+                        },
+                        "components": [
+                            {
+                                "key": "vat_item_price",
+                                "currency": "THB",
+                                "amount": 96.18,
+                                "label": "96.18 THB",
+                                "base": {
+                                    "amount": 2.94,
+                                    "currency": "USD",
+                                    "label": "US$2.94"
+                                },
+                                "name": "VAT on item price"
+                            },
+                            {
+                                "key": "vat_duties_item_price",
+                                "currency": "THB",
+                                "amount": 28.85,
+                                "label": "28.85 THB",
+                                "base": {
+                                    "amount": 0.88,
+                                    "currency": "USD",
+                                    "label": "US$0.88"
+                                },
+                                "name": "VAT on duties on item price"
+                            },
+                            {
+                                "key": "item_price",
+                                "currency": "THB",
+                                "amount": 1373.3,
+                                "label": "1,373.30 THB",
+                                "base": {
+                                    "amount": 42,
+                                    "currency": "USD",
+                                    "label": "US$42.00"
+                                },
+                                "name": "Item price"
+                            },
+                            {
+                                "key": "rounding",
+                                "currency": "THB",
+                                "amount": 0.67,
+                                "label": "0.67 THB",
+                                "base": {
+                                    "amount": 0.02,
+                                    "currency": "USD",
+                                    "label": "US$0.02"
+                                },
+                                "name": "Rounding"
+                            }
+                        ],
+                        "accuracy": "calculated",
+                        "name": "Subtotal"
+                    },
+                    {
+                        "key": "duty",
+                        "currency": "THB",
+                        "amount": 606.61,
+                        "label": "606.61 THB",
+                        "base": {
+                            "amount": 18.56,
+                            "currency": "USD",
+                            "label": "US$18.56"
+                        },
+                        "components": [
+                            {
+                                "key": "duties_item_price",
+                                "currency": "THB",
+                                "amount": 412.19,
+                                "label": "412.19 THB",
+                                "base": {
+                                    "amount": 12.61,
+                                    "currency": "USD",
+                                    "label": "US$12.61"
+                                },
+                                "name": "Duties on item price"
+                            },
+                            {
+                                "key": "duties_freight",
+                                "currency": "THB",
+                                "amount": 194.42,
+                                "label": "194.42 THB",
+                                "base": {
+                                    "amount": 5.95,
+                                    "currency": "USD",
+                                    "label": "US$5.95"
+                                },
+                                "name": "Duties on freight"
+                            }
+                        ],
+                        "accuracy": "calculated",
+                        "name": "Duties"
+                    },
+                    {
+                        "key": "shipping",
+                        "currency": "THB",
+                        "amount": 648.06,
+                        "label": "648.06 THB",
+                        "base": {
+                            "amount": 19.82,
+                            "currency": "USD",
+                            "label": "US$19.82"
+                        },
+                        "components": [
+                            {
+                                "key": "vat_freight",
+                                "currency": "THB",
+                                "amount": 45.36,
+                                "label": "45.36 THB",
+                                "base": {
+                                    "amount": 1.39,
+                                    "currency": "USD",
+                                    "label": "US$1.39"
+                                },
+                                "name": "VAT on freight"
+                            },
+                            {
+                                "key": "vat_duties_freight",
+                                "currency": "THB",
+                                "amount": 13.61,
+                                "label": "13.61 THB",
+                                "base": {
+                                    "amount": 0.42,
+                                    "currency": "USD",
+                                    "label": "US$0.42"
+                                },
+                                "name": "VAT on duties on freight"
+                            },
+                            {
+                                "key": "shipping",
+                                "currency": "THB",
+                                "amount": 648.06,
+                                "label": "648.06 THB",
+                                "base": {
+                                    "amount": 19.82,
+                                    "currency": "USD",
+                                    "label": "US$19.82"
+                                },
+                                "name": "Shipping"
+                            },
+                            {
+                                "key": "vat_subsidy",
+                                "currency": "THB",
+                                "amount": -58.97,
+                                "label": "-58.97 THB",
+                                "base": {
+                                    "amount": -1.81,
+                                    "currency": "USD",
+                                    "label": "-US$1.81"
+                                },
+                                "name": "VAT subsidy"
+                            }
+                        ],
+                        "accuracy": "calculated",
+                        "name": "Shipping"
+                    }
+                ],
+                "total": {
+                    "currency": "THB",
+                    "amount": 2753.67,
+                    "label": "2,753.67 THB",
+                    "base": {
+                        "amount": 84.22,
+                        "currency": "USD",
+                        "label": "US$84.22"
+                    },
+                    "key": "localized_total"
+                },
+                "goods_supply": "export",
+                "discriminator": "physical_delivery"
+            }
+        ],
+        "selections": [
+            "opt-ef74a17c6119425a9921be03557b6f5e"
+        ],
+        "prices": [
+            {
+                "key": "subtotal",
+                "currency": "THB",
+                "amount": 1499,
+                "label": "1,499.00 THB",
+                "base": {
+                    "amount": 45.84,
+                    "currency": "USD",
+                    "label": "US$45.84"
+                },
+                "components": [
+                    {
+                        "key": "item_price",
+                        "currency": "THB",
+                        "amount": 1373.3,
+                        "label": "1,373.30 THB",
+                        "base": {
+                            "amount": 42,
+                            "currency": "USD",
+                            "label": "US$42.00"
+                        },
+                        "name": "Item price"
+                    },
+                    {
+                        "key": "rounding",
+                        "currency": "THB",
+                        "amount": 0.67,
+                        "label": "0.67 THB",
+                        "base": {
+                            "amount": 0.02,
+                            "currency": "USD",
+                            "label": "US$0.02"
+                        },
+                        "name": "Rounding"
+                    },
+                    {
+                        "key": "vat_duties_item_price",
+                        "currency": "THB",
+                        "amount": 28.85,
+                        "label": "28.85 THB",
+                        "base": {
+                            "amount": 0.88,
+                            "currency": "USD",
+                            "label": "US$0.88"
+                        },
+                        "name": "VAT on duties on item price"
+                    },
+                    {
+                        "key": "vat_item_price",
+                        "currency": "THB",
+                        "amount": 96.18,
+                        "label": "96.18 THB",
+                        "base": {
+                            "amount": 2.94,
+                            "currency": "USD",
+                            "label": "US$2.94"
+                        },
+                        "name": "VAT on item price"
+                    }
+                ],
+                "accuracy": "calculated",
+                "name": "Subtotal"
+            },
+            {
+                "key": "duty",
+                "currency": "THB",
+                "amount": 606.61,
+                "label": "606.61 THB",
+                "base": {
+                    "amount": 18.56,
+                    "currency": "USD",
+                    "label": "US$18.56"
+                },
+                "components": [
+                    {
+                        "key": "duties_freight",
+                        "currency": "THB",
+                        "amount": 194.42,
+                        "label": "194.42 THB",
+                        "base": {
+                            "amount": 5.95,
+                            "currency": "USD",
+                            "label": "US$5.95"
+                        },
+                        "name": "Duties on freight"
+                    },
+                    {
+                        "key": "duties_item_price",
+                        "currency": "THB",
+                        "amount": 412.19,
+                        "label": "412.19 THB",
+                        "base": {
+                            "amount": 12.61,
+                            "currency": "USD",
+                            "label": "US$12.61"
+                        },
+                        "name": "Duties on item price"
+                    }
+                ],
+                "accuracy": "calculated",
+                "name": "Duties"
+            },
+            {
+                "key": "shipping",
+                "currency": "THB",
+                "amount": 648.06,
+                "label": "648.06 THB",
+                "base": {
+                    "amount": 19.82,
+                    "currency": "USD",
+                    "label": "US$19.82"
+                },
+                "components": [
+                    {
+                        "key": "shipping",
+                        "currency": "THB",
+                        "amount": 648.06,
+                        "label": "648.06 THB",
+                        "base": {
+                            "amount": 19.82,
+                            "currency": "USD",
+                            "label": "US$19.82"
+                        },
+                        "name": "Shipping"
+                    },
+                    {
+                        "key": "vat_duties_freight",
+                        "currency": "THB",
+                        "amount": 13.61,
+                        "label": "13.61 THB",
+                        "base": {
+                            "amount": 0.42,
+                            "currency": "USD",
+                            "label": "US$0.42"
+                        },
+                        "name": "VAT on duties on freight"
+                    },
+                    {
+                        "key": "vat_freight",
+                        "currency": "THB",
+                        "amount": 45.36,
+                        "label": "45.36 THB",
+                        "base": {
+                            "amount": 1.39,
+                            "currency": "USD",
+                            "label": "US$1.39"
+                        },
+                        "name": "VAT on freight"
+                    },
+                    {
+                        "key": "vat_subsidy",
+                        "currency": "THB",
+                        "amount": -58.97,
+                        "label": "-58.97 THB",
+                        "base": {
+                            "amount": -1.81,
+                            "currency": "USD",
+                            "label": "-US$1.81"
+                        },
+                        "name": "VAT subsidy"
+                    }
+                ],
+                "accuracy": "calculated",
+                "name": "Shipping"
+            }
+        ],
+        "total": {
+            "currency": "THB",
+            "amount": 2753.67,
+            "label": "2,753.67 THB",
+            "base": {
+                "amount": 84.22,
+                "currency": "USD",
+                "label": "US$84.22"
+            },
+            "key": "localized_total"
+        },
+        "attributes": {
+            "customer_session_id": "9fc08cdf5c3ca94f2ea146b1849b8245",
+            "pricing_key": "{\"vat\":\"included\",\"duty\":\"displayed\",\"rounding\":{\"type\":\"pattern\",\"method\":\"up\",\"value\":0}}",
+            "quote_id": "26",
+            "flow_checkout_behavior_customer_email_prompt": "incomplete",
+            "flow_checkout_behavior_shipping_method_prompt": "multiple",
+            "flow_checkout_behavior_shipping_address_prompt": "incomplete",
+            "checkout_session_id": "9fc08cdf5c3ca94f2ea146b1849b8245"
+        },
+        "experience": {
+            "key": "thailand",
+            "discriminator": "experience_reference"
+        },
+        "submitted_at": "2020-02-20T14:10:14.237Z",
+        "lines": [
+            {
+                "item_number": "simple_1",
+                "quantity": 1,
+                "price": {
+                    "currency": "THB",
+                    "amount": 1499,
+                    "label": "1,499.00 THB",
+                    "base": {
+                        "amount": 45.84,
+                        "currency": "USD",
+                        "label": "US$45.84"
+                    }
+                },
+                "total": {
+                    "currency": "THB",
+                    "amount": 1499,
+                    "label": "1,499.00 THB",
+                    "base": {
+                        "amount": 45.84,
+                        "currency": "USD",
+                        "label": "US$45.84"
+                    }
+                },
+                "attributes": {
+                    "options": "[{\"option_id\":\"52\",\"item_id\":\"28\",\"product_id\":\"276\",\"code\":\"info_buyRequest\",\"value\":\"{\\\"uenc\\\":\\\"aHR0cDovL3Rlc3QtMi0yLTYtaGFiaXRncS1qbHFhdjZnZzJlNGZrLnVzLTQubWFnZW50b3NpdGUuY2xvdWQvbWVuL3RvcHMtbWVuL2phY2tldHMtbWVuLmh0bWw,\\\",\\\"product\\\":\\\"276\\\",\\\"super_attribute\\\":{\\\"187\\\":\\\"177\\\",\\\"93\\\":\\\"69\\\"},\\\"qty\\\":1}\"},{\"option_id\":\"53\",\"item_id\":\"28\",\"product_id\":\"276\",\"code\":\"attributes\",\"value\":\"{\\\"187\\\":\\\"177\\\",\\\"93\\\":\\\"69\\\"}\"},{\"option_id\":\"54\",\"item_id\":\"28\",\"product_id\":\"266\",\"code\":\"product_qty_266\",\"value\":\"1\",\"stock_state_result\":{}},{\"option_id\":\"55\",\"item_id\":\"28\",\"product_id\":\"266\",\"code\":\"simple_product\",\"value\":\"266\"}]"
+                }
+            }
+        ],
+        "payments": [
+            {
+                "id": "opm-1904995b33e24d01a117087aff4bb355",
+                "type": "card",
+                "merchant_of_record": "flow",
+                "reference": "aut-q6aQClO6S2GhMmMUzQGNNYsc81RrGJ0g",
+                "description": "VISA 1111",
+                "total": {
+                    "currency": "THB",
+                    "amount": 2753.67,
+                    "label": "2,753.67 THB",
+                    "base": {
+                        "amount": 84.22,
+                        "currency": "USD",
+                        "label": "US$84.22"
+                    }
+                },
+                "attributes": {},
+                "address": {
+                    "name": {
+                        "first": "David",
+                        "last": "Mancuso"
+                    },
+                    "streets": [
+                        "14 Ratchaprarop RdKhwaeng Makkasan"
+                    ],
+                    "city": "Khet Ratchathewi",
+                    "province": "Krung Thep Maha Nakhon",
+                    "postal": "10400",
+                    "country": "THA"
+                },
+                "date": "2020-02-20T14:10:14.113Z"
+            }
+        ],
+        "geo": {
+            "country": "THA",
+            "ip": "35.160.142.96",
+            "currency": "THB",
+            "language": "en"
+        },
+        "discriminator": "order"
+    },
+    "allocation": {
+        "id": "evt-9ae67481fa094f7a857e621542ae0988",
+        "order": {
+            "id": "ior-2aa99977dd524c6bae43b23a034184b0",
+            "number": "ord-443c22e6935846da93f75a95c509f1c7",
+            "submitted_at": "2020-02-20T14:10:14.237Z"
+        },
+        "details": [
+            {
+                "number": "simple_1",
+                "quantity": 1,
+                "key": "subtotal",
+                "price": {
+                    "currency": "THB",
+                    "amount": 1499,
+                    "label": "1,499.00 THB",
+                    "base": {
+                        "amount": 45.84,
+                        "currency": "USD",
+                        "label": "US$45.84"
+                    }
+                },
+                "total": {
+                    "currency": "THB",
+                    "amount": 1499,
+                    "label": "1,499.00 THB",
+                    "base": {
+                        "amount": 45.84,
+                        "currency": "USD",
+                        "label": "US$45.84"
+                    }
+                },
+                "included": [
+                    {
+                        "key": "item_price",
+                        "total": {
+                            "currency": "THB",
+                            "amount": 1373.3,
+                            "label": "1,373.30 THB",
+                            "base": {
+                                "amount": 42,
+                                "currency": "USD",
+                                "label": "US$42.00"
+                            }
+                        },
+                        "price": {
+                            "currency": "THB",
+                            "amount": 1373.3,
+                            "label": "1,373.30 THB",
+                            "base": {
+                                "amount": 42,
+                                "currency": "USD",
+                                "label": "US$42.00"
+                            }
+                        },
+                        "discriminator": "allocation_detail_component"
+                    },
+                    {
+                        "key": "rounding",
+                        "total": {
+                            "currency": "THB",
+                            "amount": 0.67,
+                            "label": "0.67 THB",
+                            "base": {
+                                "amount": 0.02,
+                                "currency": "USD",
+                                "label": "US$0.02"
+                            }
+                        },
+                        "price": {
+                            "currency": "THB",
+                            "amount": 0.67,
+                            "label": "0.67 THB",
+                            "base": {
+                                "amount": 0.02,
+                                "currency": "USD",
+                                "label": "US$0.02"
+                            }
+                        },
+                        "discriminator": "allocation_detail_component"
+                    },
+                    {
+                        "key": "vat_item_price",
+                        "total": {
+                            "currency": "THB",
+                            "amount": 125.03,
+                            "label": "125.03 THB",
+                            "base": {
+                                "amount": 3.82,
+                                "currency": "USD",
+                                "label": "US$3.82"
+                            }
+                        },
+                        "rate": 0.07,
+                        "name": "VAT",
+                        "accuracy": "calculated",
+                        "price": {
+                            "currency": "THB",
+                            "amount": 125.03,
+                            "label": "125.03 THB",
+                            "base": {
+                                "amount": 3.82,
+                                "currency": "USD",
+                                "label": "US$3.82"
+                            }
+                        },
+                        "discriminator": "allocation_levy_component"
+                    }
+                ],
+                "not_included": [
+                    {
+                        "key": "duties_item_price",
+                        "total": {
+                            "currency": "THB",
+                            "amount": 412.19,
+                            "label": "412.19 THB",
+                            "base": {
+                                "amount": 12.61,
+                                "currency": "USD",
+                                "label": "US$12.61"
+                            }
+                        },
+                        "rate": 0.3,
+                        "name": "Duty",
+                        "accuracy": "calculated",
+                        "price": {
+                            "currency": "THB",
+                            "amount": 412.19,
+                            "label": "412.19 THB",
+                            "base": {
+                                "amount": 12.61,
+                                "currency": "USD",
+                                "label": "US$12.61"
+                            }
+                        },
+                        "discriminator": "allocation_levy_component"
+                    }
+                ],
+                "discriminator": "allocation_line_detail"
+            },
+            {
+                "key": "shipping",
+                "total": {
+                    "currency": "THB",
+                    "amount": 648.06,
+                    "label": "648.06 THB",
+                    "base": {
+                        "amount": 19.82,
+                        "currency": "USD",
+                        "label": "US$19.82"
+                    }
+                },
+                "included": [
+                    {
+                        "key": "shipping",
+                        "total": {
+                            "currency": "THB",
+                            "amount": 648.06,
+                            "label": "648.06 THB",
+                            "base": {
+                                "amount": 19.82,
+                                "currency": "USD",
+                                "label": "US$19.82"
+                            }
+                        },
+                        "price": {
+                            "currency": "THB",
+                            "amount": 648.06,
+                            "label": "648.06 THB",
+                            "base": {
+                                "amount": 19.82,
+                                "currency": "USD",
+                                "label": "US$19.82"
+                            }
+                        },
+                        "discriminator": "allocation_detail_component"
+                    }
+                ],
+                "not_included": [
+                    {
+                        "key": "duties_freight",
+                        "total": {
+                            "currency": "THB",
+                            "amount": 194.42,
+                            "label": "194.42 THB",
+                            "base": {
+                                "amount": 5.95,
+                                "currency": "USD",
+                                "label": "US$5.95"
+                            }
+                        },
+                        "rate": 0.3,
+                        "name": "Duty",
+                        "accuracy": "calculated",
+                        "price": {
+                            "currency": "THB",
+                            "amount": 194.42,
+                            "label": "194.42 THB",
+                            "base": {
+                                "amount": 5.95,
+                                "currency": "USD",
+                                "label": "US$5.95"
+                            }
+                        },
+                        "discriminator": "allocation_levy_component"
+                    }
+                ],
+                "discriminator": "allocation_order_detail"
+            }
+        ],
+        "total": {
+            "currency": "THB",
+            "amount": 2753.67,
+            "label": "2,753.67 THB",
+            "base": {
+                "amount": 84.22,
+                "currency": "USD",
+                "label": "US$84.22"
+            },
+            "key": "localized_total"
+        }
+    },
+    "discriminator": "order_placed"
+} 

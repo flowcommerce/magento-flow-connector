@@ -540,7 +540,7 @@
         "type": "card",
         "merchant_of_record": "flow",
         "reference": "aut-V5krgLRCGhwvgWsW3CJdrAhGoZjm0q6D",
-        "description": "VISA ending with 1111",
+        "description": "VISA 1111",
         "total": {
           "currency": "ARS",
           "amount": 1438.64,

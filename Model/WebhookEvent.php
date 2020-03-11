@@ -74,6 +74,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const FLOW_PAYMENT_TYPE = 'flow_payment_type';
     const FLOW_PAYMENT_DESCRIPTION = 'flow_payment_description';
     const FLOW_PAYMENT_ORDER_NUMBER = 'flow_payment_order_number';
+    const FLOW_SHIPPING_ESTIMATE = 'flow_shipping_estimate';
 
     /**
      * Flow shipment track title
@@ -1188,7 +1189,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 } elseif ($data['status'] == 'approved') {
                     $order->setState(OrderModel::STATE_PROCESSING);
                 } elseif ($data['status'] == 'declined') {
-                    $order->setStatus(OrderModel::STATUS_FRAUD);
+                    $order->cancel();
                 }
                 $order->save();
             }
@@ -1905,6 +1906,22 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // https://docs.flow.io/type/order-payment
         ////////////////////////////////////////////////////////////
 
+        $deliveryEstimates = [];
+        $flowShippingEstimate = 'None';
+        $deliveries = $receivedOrder['deliveries'];
+        foreach ($deliveries as $delivery) {
+            if (array_key_exists('options', $delivery)) {
+                foreach ($delivery['options'] as $option) {
+                    $deliveryEstimates[$option['id']] = $option['tier']['display']['estimate']['label'];
+                }
+            }
+        }
+        foreach ($receivedOrder['selections'] as $selectionId) {
+            if (array_key_exists($selectionId, $deliveryEstimates)) {
+                $flowShippingEstimate = $deliveryEstimates[$selectionId];
+            }
+        }
+
         if (array_key_exists('payments', $receivedOrder)) {
             $this->logger->info('Adding payment data');
             foreach ($receivedOrder['payments'] as $flowPayment) {
@@ -1926,6 +1943,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $payment->setAdditionalInformation(
                     self::FLOW_PAYMENT_ORDER_NUMBER,
                     $receivedOrder['number']
+                );
+                $payment->setAdditionalInformation(
+                    self::FLOW_SHIPPING_ESTIMATE,
+                    $flowShippingEstimate
                 );
 
                 // NOTE: only supporting 1 payment for now
@@ -2252,26 +2273,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         $order->setShippingAmount($shippingAmount);
         $order->setBaseShippingAmount($baseShippingAmount);
-
-        ////////////////////////////////////////////////////////////
-        // Deliveries
-        // https://docs.flow.io/type/delivery
-        ////////////////////////////////////////////////////////////
-
-        // NOTE: Only 1 delivery is supported at this time.
-        $deliveries = $receivedOrder['deliveries'];
-        foreach ($deliveries as $delivery) {
-            if (array_key_exists('options', $delivery)) {
-                foreach ($delivery['options'] as $option) {
-                    $order->setShippingDescription(
-                        $option['service']['carrier']['id'] .
-                        ': ' .
-                        $option['service']['name']
-                    );
-                    break;
-                }
-            }
-        }
 
         ////////////////////////////////////////////////////////////
         // Persist order changes

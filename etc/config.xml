@@ -34,6 +34,10 @@
                 <max_catalog_hide_ms>0</max_catalog_hide_ms>
                 <cart_localization>1</cart_localization>
                 <max_cart_hide_ms>0</max_cart_hide_ms>
+                <payment_methods_pdp>1</payment_methods_pdp>
+                <shipping_window_pdp>1</shipping_window_pdp>
+                <tax_duty_messaging>1</tax_duty_messaging>
+                <daily_catalog_sync>0</daily_catalog_sync>
             </flowconnector>
         </flowcommerce>
     </default>

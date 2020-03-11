@@ -741,7 +741,7 @@
         "type": "card",
         "merchant_of_record": "flow",
         "reference": "aut-rI0hX08UWjnapIS3WsSflywTL1Nsi02d",
-        "description": "VISA ending with 1111",
+        "description": "VISA 1111",
         "total": {
           "currency": "THB",
           "amount": 2623.84,

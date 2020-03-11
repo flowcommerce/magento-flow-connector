@@ -63,7 +63,7 @@ Then, we will use the settings we just configured to register webhooks for impor
 ```plaintext
 $ php bin/magento flow:connector:initialize
 ```
-For more detail about how Flow Webhooks work please refer to this guide: [Flow Webhook](https://docs.flow.io/docs/webhooks)
+For more detail about how Flow Webhooks work please refer to this guide: [Flow Webhook](https://docs.flow.io/docs/create-webhooks)
 
 Then, enqueue your Magento catalog to be synced:
 ```plaintext
@@ -103,9 +103,9 @@ This text field indicates the base url which is used for redirection to Flow Che
 ### Redirect to Flow Checkout
 This toggle controls an automated redirection of international users to Flow Checkout UI via controller interception. At this point of redirect, Magento's cart is converted to a Flow order, including item discounts, and the user is sent Flow Checkout UI to complete their purchase. Discounts are calculated and applied according to the rules of your Magento store's base currency and applied as a percentage of the line item row total. Magento discounts applied to shipping costs are not applied to Flow orders. Following this purchase, webhooks are sent from Flow back to Magento to import the order data and empty the user's Magento cart. It is recommended that you select "Yes" for ease and consistency of the integration. This field defaults to "No".  
 
-Alternatively, you can use the same functionality as the automated path to build a valid Flow order by sending users to the redirect controller manually `{BASE_URL}/flowconnector/checkout/redirecttoflow?country=FRA` or implement your own integration by following this guide: [Flow Checkout UI](https://docs.flow.io/docs/redirecting-users-to-checkout-ui)
+Alternatively, you can use the same functionality as the automated path to build a valid Flow order by sending users to the redirect controller manually `{BASE_URL}/flowconnector/checkout/redirecttoflow?country=FRA` or implement your own integration by following this guide: [Flow Checkout UI](https://docs.flow.io/docs/redirect-users-to-checkout-ui)
 
-For more information on customizing Flow Checkout UI please refer to this guide: [Customizing Checkout UI](https://docs.flow.io/docs/customizing-with-css-and-javascript).  
+For more information on customizing Flow Checkout UI please refer to this guide: [Customizing Checkout UI](https://docs.flow.io/docs/customize-checkout-ui).  
 
 ### Create Invoice
 This dropdown indicates how invoices are imported in Magento from Flow:
@@ -130,12 +130,12 @@ This toggle controls the use of a secret key which is generated to protect Magen
 ### Enable Country Picker
 This toggle controls the initialization of the Flow Country Picker. By default, the Flow Country Picker is included via Magento layout xml to the header panel and receives default styling and options. This toggle defaults to "Yes".
 
-Alternatively, you can customize the initialization options by following our custom integration guide: [Flow Country Picker](https://docs.flow.io/docs/flow-country-picker). 
+Alternatively, you can customize the initialization options by following our custom integration guide: [Flow Country Picker](https://docs.flow.io/docs/enable-a-country-picker). 
 
 ### Enable Catalog Price Localization
 This toggle controls the initialization of catalog price localization. This feature involves server-side API calls to Flow prior to page load as well as JavaScript mixins to complete the visual integration with catalog items. Selecting "Yes" will enable Flow API calls on Magento cache-miss events for product blocks to get all localized prices for this product dynamically. In this way, it loads the cache with every Flow experience price available to expedite page load time. When the browser page loads, JavaScript mixins are used to determine which prices should be shown to the user based on their geolocated IP address or Flow Country Picker selection. This toggle defaults to "Yes".
 
-Alternatively, you can implement your own customized price localization solution by refering to our custom integration guide: [Flow.js Product Localization](https://docs.flow.io/docs/localizing-product-prices-with-html-attributes)
+Alternatively, you can implement your own customized price localization solution by refering to our custom integration guide: [Flow.js Product Localization](https://docs.flow.io/docs/localize-product-prices)
 
 ### Maximum Time to Hide Catalog Prices
 This text field controls the amount of time in milliseconds that catalog prices will remain hidden while waiting for the JavaScript mixins to determine which prices are to be displayed. This is a valuable tool to prevent the base currency price from displaying briefly before the local currency is displayed to the user. It is recommended to use a value of "5000" which means that regardless of the length of time it takes for the page to load, prices will never remain hidden by Flow for longer than 5 seconds. This field accepts integers and defaults to 0.
@@ -143,10 +143,28 @@ This text field controls the amount of time in milliseconds that catalog prices 
 ### Enable Cart Localization
 This toggle controls the initialization of cart localization. This feature employs JavaScript mixins to observe international cart updates and localizes their amounts to match the local currency of the user. This localization occurs on both the core Magento minicart and dedicated cart page. This toggle defaults to "Yes".
 
-Alternatively, you can implement your own customized price localization solution by refering to the documentation: [Flow.js Cart Localization](https://docs.flow.io/docs/localizing-cart-with-html-attributes)
+Alternatively, you can implement your own customized price localization solution by refering to the documentation: [Flow.js Cart Localization](https://docs.flow.io/docs/localize-product-prices)
 
 ### Maximum Time to Hide Carts
 This text field controls the amount of time in milliseconds that cart prices will remain hidden while waiting for the JavaScript mixins to localize the Magento cart to a valid Flow open order. This is a valuable tool to prevent the base currency cart totals from displaying briefly before the local currency is displayed to the user. It is recommended to use a value of "5000" which means that regardless of the length of time it takes for the page to load, cart totals will never remain hidden by Flow for longer than 5 seconds. This field accepts integers and defaults to 0.
+
+### Enable Local Payment Methods on PDP
+This toggle controls display of the local payment method logos which are available in Flow Checkout UI on the PDP. This is injected via the layout reference container "product.info.type" which appears on catalog product view pages (PDP). This toggle defaults to "Yes".
+
+Alternatively, you can implement your own solution by refering to the documentation: [Display Payment Method Logos](https://docs.flow.io/docs/display-payment-method-logos)
+
+### Enable Default Estimated Shipping Window on PDP
+This toggle controls display of the estimated shipping window for the default shipping option on the PDP. This is injected via the layout reference container "product.info.type" which appears on catalog product view pages (PDP). This toggle defaults to "Yes".  
+
+Alternatively, you can implement your own solution by refering to the documentation: [Display Delivery Window](https://docs.flow.io/docs/display-delivery-windows)
+
+### Enable Tax and Duty Messaging
+This toggle controls display of local tax and duties for all catalog item priceboxes. This toggle defaults to "Yes".
+
+Alternatively, you can implement your own solution by refering to the documentation: [Display Tax and Duty](https://docs.flow.io/docs/display-tax-and-duty)
+
+### Enable Daily Catalog Sync
+This toggle controls the automatic enqueue of all skus daily at 1:15AM (timezone is dependent on your server configuration). Items will still be synced when their data has been updated and when using the flow:connector:catalog-sync shell command. This toggle defaults to "No".
 
 ### Shell Commands Available
 Save product attributes needed for catalog integration to Flow:

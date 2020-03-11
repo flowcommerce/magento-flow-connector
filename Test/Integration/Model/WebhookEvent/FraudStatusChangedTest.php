@@ -136,7 +136,7 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
                     $this->assertEquals(Order::STATE_PROCESSING, $order->getState());
                     break;
                 case 'declined':
-                    $this->assertEquals(Order::STATUS_FRAUD, $order->getState());
+                    $this->assertEquals(Order::STATE_CANCELED, $order->getState());
                     break;
                 case 'review':
                     break;

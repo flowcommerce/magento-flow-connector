@@ -1,0 +1,31 @@
+{
+    "event_id": "evt-f25016243b084334b2699ab74b9b2735",
+    "timestamp": "2020-02-20T14:10:27.593Z",
+    "organization": "magento-integration-sandbox",
+    "id": "cap-f40314deba5541cf9af4a238acceb36a",
+    "capture": {
+        "id": "cap-f40314deba5541cf9af4a238acceb36a",
+        "key": "cap-f40314deba5541cf9af4a238acceb36a",
+        "authorization": {
+            "id": "aut-q6aQClO6S2GhMmMUzQGNNYsc81RrGJ0g",
+            "key": "aut-q6aQClO6S2GhMmMUzQGNNYsc81RrGJ0g",
+            "order": {
+                "number": "ord-443c22e6935846da93f75a95c509f1c7"
+            }
+        },
+        "amount": 2753.67,
+        "currency": "THB",
+        "created_at": "2020-02-20T14:10:27.593Z",
+        "status": "succeeded",
+        "requested": {
+            "amount": 2753.67,
+            "currency": "THB"
+        },
+        "attributes": {},
+        "base": {
+            "amount": 84.22,
+            "currency": "USD"
+        }
+    },
+    "discriminator": "capture_upserted_v2"
+}

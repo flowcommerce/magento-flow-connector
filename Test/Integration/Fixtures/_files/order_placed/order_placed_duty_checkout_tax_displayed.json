@@ -529,7 +529,7 @@
         "type": "card",
         "merchant_of_record": "flow",
         "reference": "aut-ak61YLcrX6ZiigqoNsmpCgHnCA28Q0M3",
-        "description": "VISA ending with 1111",
+        "description": "VISA 1111",
         "total": {
           "currency": "COP",
           "amount": 126970.43,

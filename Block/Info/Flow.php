@@ -54,6 +54,13 @@ class Flow extends \Magento\Payment\Block\Info
             $transportData[(string)__('Flow Order Number')] = $flowPaymentOrderNumber;
         }
 
+        $flowShippingEstimate = $info->getAdditionalInformation(
+            WebhookEvent::FLOW_SHIPPING_ESTIMATE
+        );
+        if ($flowPaymentOrderNumber) {
+            $transportData[(string)__('Flow Shipping Estimate')] = $flowShippingEstimate;
+        }
+
         $transport = new \Magento\Framework\DataObject($transportData);
         $transport = parent::_prepareSpecificInformation($transport);
 

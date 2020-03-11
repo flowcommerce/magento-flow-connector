@@ -477,10 +477,10 @@ class ProductDataMapper
         $data['magento_version'] = $this->getMagentoVersion();
 
         // Add server IP
-        $data['server_address'] = $_SERVER['SERVER_ADDR'];
+        $data['local_ip'] = getHostByName(getHostName());
 
         // Add base url
-        $data['base_url'] = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB, true);
+        $data['base_url'] = $this->storeManager->getStore($product->getStoreId())->getBaseUrl(UrlInterface::URL_TYPE_WEB, true);
 
         // Add all pricing information
         if ($product->getPriceInfo()) {

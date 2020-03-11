@@ -140,12 +140,14 @@ class Save
 
     /**
      * Create secure checkout redirect token
-     * @param string $flowOrderNumber
+     * @param $orderForm
      * @param string $sessionId
+     * @param $customer
+     * @param $addressBook
      * @return string|null
      * @throws NoSuchEntityException
      */
-    public function createCheckoutToken($flowOrderNumber, $sessionId)
+    public function createCheckoutToken($orderForm, $sessionId, $customer, $addressBook)
     {
         $storeId = $this->getCurrentStoreId();
 
@@ -157,9 +159,12 @@ class Save
         ]]);
         $url = $this->urlBuilder->getFlowApiEndpoint('/checkout/tokens', $storeId);
         $body = (object)[
-            "order_number" => $flowOrderNumber,
-            "session_id" => $sessionId,
-            "urls" => (object)[
+            'order_form' => $orderForm,
+            'session_id' => $sessionId,
+            'customer' => $customer,
+            'address_book' => $addressBook,
+            'discriminator' => 'checkout_token_order_form',
+            'urls' => (object)[
                 /* "continue_shopping" => $this->storeManager->getStore()->getBaseUrl() */
             ]
         ];

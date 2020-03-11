@@ -7,6 +7,6 @@
         "id": "ior-db97260769374a01a1dab78e85998eb2",
         "number": "ord-2a12e176b3e440289a0320600abe2c93"
     },
-    "status": "approved",
+    "status": "declined",
     "discriminator": "fraud_status_changed"
 }

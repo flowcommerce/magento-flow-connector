@@ -931,7 +931,7 @@
         "type": "card",
         "merchant_of_record": "flow",
         "reference": "aut-lD3KjtA7hKzwXvsi8EpDAuO7xlhMRypH",
-        "description": "VISA ending with 1111",
+        "description": "VISA 1111",
         "total": {
           "currency": "CAD",
           "amount": 1971.79,

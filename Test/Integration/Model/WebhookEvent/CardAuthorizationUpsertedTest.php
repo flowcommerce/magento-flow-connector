@@ -146,7 +146,7 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
                 $cardInformation = $authorizationInfo['card'];
                 $methodInformation = $authorizationInfo['method'];
                 $this->assertEquals($methodInformation['type'], $flowPaymentType);
-                $paymentDescription = $methodInformation['name'] . ' ending with ' . $cardInformation['last4'];
+                $paymentDescription = $methodInformation['name'] . ' ' . $cardInformation['last4'];
                 $this->assertEquals($paymentDescription, $flowPaymentDescription);
 
                 //Amounts

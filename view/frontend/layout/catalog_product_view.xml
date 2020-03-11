@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    FlowCommerce
+ * @package     FlowCommerce_FlowConnector
+ * @author      FlowCommerce
+ * @copyright   Copyright (c) 2019 FlowCommerce
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Adding block for additional product information -->
+        <referenceContainer name="product.info.type">
+            <block class="FlowCommerce\FlowConnector\Block\FlowProductInfo" name="flowcommerce.flowconnector.product.info"
+                   template="FlowCommerce_FlowConnector::flow-product-info.phtml" after="-"/>
+        </referenceContainer>
+        <!-- Adding block for additional product information -->
+    </body>
+</page>
+

@@ -10,12 +10,6 @@ define([
             (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
         n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
     }(window,document,'script',window.flow_flowjs_url,'flow');
-
-    window.flow.cmd('set', 'organization', window.flow_organization_id);
-    window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
-    window.flow.cmd('init');
-    window.flow.cmd('localize');
-
     window.flow.session = window.flow.session || {};
     window.flow.cart = window.flow.cart || {};
     window.flow.magento2 = window.flow.magento2 || {};
@@ -24,6 +18,9 @@ define([
     window.flow.magento2.cart_localize = window.flow_cart_localize;
     window.flow.magento2.catalog_localize = window.flow_catalog_localize;
     window.flow.magento2.pricing_timeout = window.flow_pricing_timeout;
+    window.flow.magento2.payment_methods_enabled = window.flow_payment_methods_enabled;
+    window.flow.magento2.shipping_window_enabled = window.flow_shipping_window_enabled;
+    window.flow.magento2.tax_duty_enabled = window.flow_tax_duty_messaging_enabled;
     window.flow.magento2.hasExperience = false;
     window.flow.magento2.hasLocalizedCatalog = false;
     window.flow.magento2.hasLocalizedCart = false;
@@ -72,6 +69,21 @@ define([
             document.getElementsByTagName('body')[0].classList.remove('flow-cart-totals-localized');
         }
     }
+
+    window.flow.cmd('set', 'organization', window.flow_organization_id);
+    window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
+    if (window.flow.magento2.shipping_window_enabled) {
+        window.flow.cmd('set', 'shippingWindow', {
+            'all': function (minDate, maxDate) {
+                const minFormattedDate = moment(minDate).utc().format('MMM Do');
+                const maxFormattedDate = moment(maxDate).utc().format('MMM Do');
+
+                return `Delivery estimate: ${minFormattedDate} - ${maxFormattedDate}`;
+            }
+        });
+    }
+    window.flow.cmd('init');
+    window.flow.cmd('localize');
 
     window.flow.cmd('on', 'ready', function() {
         window.flow.magento2.hasExperience = typeof(window.flow.session.getExperience()) == "string";

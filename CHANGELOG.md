@@ -6,6 +6,7 @@
 - Localized tax and duty breakouts under priceboxes, display toggle
 - Returning user data in checkout
 - Daily catalog sync toggle
+- Added catalog sync attributes to identify item source in Flow
 - Import and display customer's selected shipping method estimated delivery window in orders
 - Checkout token redirect optimization
 - Automatically cancel orders with Flow fraud status of "declined"

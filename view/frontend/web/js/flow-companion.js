@@ -73,7 +73,14 @@ define([
     window.flow.cmd('set', 'organization', window.flow_organization_id);
     window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
     if (window.flow.magento2.shipping_window_enabled) {
-        window.flow.cmd('set', 'shippingWindow', {});
+        window.flow.cmd('set', 'shippingWindow', {
+            'all': (minDate, maxDate) = > {
+                const minFormattedDate = moment(minDate).utc().format('MMM Do');
+                const maxFormattedDate = moment(maxDate).utc().format('MMM Do');
+
+                return `Delivery estimate: ${minFormattedDate} - ${maxFormattedDate}`;
+            }
+        });
     }
     window.flow.cmd('init');
     window.flow.cmd('localize');

@@ -19,6 +19,7 @@ use \Magento\Framework\Exception\LocalizedException;
 use \Magento\Framework\Exception\NoSuchEntityException;
 use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use \Magento\Framework\Locale\Resolver as LocaleResolver;
+use \Magento\Framework\UrlInterface;
 use \Magento\Framework\View\Element\BlockFactory;
 use \Magento\Store\Model\App\Emulation as AppEmulation;
 use \Magento\Store\Model\StoreManagerInterface as StoreManager;
@@ -474,6 +475,12 @@ class ProductDataMapper
 
         // Add magento version
         $data['magento_version'] = $this->getMagentoVersion();
+
+        // Add server IP
+        $data['server_address'] = $_SERVER['SERVER_ADDR'];
+
+        // Add base url
+        $data['base_url'] = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB, true);
 
         // Add all pricing information
         if ($product->getPriceInfo()) {

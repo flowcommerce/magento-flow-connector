@@ -74,7 +74,7 @@ define([
     window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
     if (window.flow.magento2.shipping_window_enabled) {
         window.flow.cmd('set', 'shippingWindow', {
-            'all': (minDate, maxDate) = > {
+            'all': function (minDate, maxDate) {
                 const minFormattedDate = moment(minDate).utc().format('MMM Do');
                 const maxFormattedDate = moment(maxDate).utc().format('MMM Do');
 

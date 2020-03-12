@@ -1,8 +1,9 @@
 define([
     'jquery',
+    'day',
     'flowCountryPicker',
     'mage/cookies'
-], function ($) {
+], function ($, day) {
     'use strict'; 
 
     !function (f, l, o, w, i, n, g) {
@@ -74,11 +75,13 @@ define([
     window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
     if (window.flow.magento2.shipping_window_enabled) {
         window.flow.cmd('set', 'shippingWindow', {
-            'all': function (minDate, maxDate) {
-                const minFormattedDate = moment(minDate).utc().format('MMM Do');
-                const maxFormattedDate = moment(maxDate).utc().format('MMM Do');
+            formatters: {
+                all: function (minDate, maxDate) {
+                    const minFormattedDate = day(minDate).format('MMM D');
+                    const maxFormattedDate = day(maxDate).format('MMM D');
 
-                return `Delivery estimate: ${minFormattedDate} - ${maxFormattedDate}`;
+                    return `Delivery estimate: ${minFormattedDate} - ${maxFormattedDate}`;
+                }
             }
         });
     }

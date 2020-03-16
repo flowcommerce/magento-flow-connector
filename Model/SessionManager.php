@@ -229,7 +229,7 @@ class SessionManager implements SessionManagementInterface
         if ($sessionId) {
             $tokenId = $this->orderSave->createCheckoutToken($orderForm, $sessionId, $customerForm, $addressBook);
             if ($tokenId) {
-                $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
+                $result = $this->configuration->getFlowCheckoutBaseUrl() . 'tokens/' . $tokenId;
 
             }
         }

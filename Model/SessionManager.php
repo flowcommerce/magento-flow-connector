@@ -284,16 +284,16 @@ class SessionManager implements SessionManagementInterface
                             'city' => $address->getCity(),
                             'province' => (gettype($address->getRegion()) == 'string' ? $address->getRegion() : $address->getRegion()->getRegionCode()),
                             'postal' => $address->getPostcode(),
-                            'country' => $address->getCountryId(),
-                            'contact' => (object)[
-                                'name' => (object)[
-                                    'first' => $address->getFirstname(),
-                                    'last' => $address->getLastname(),
-                                ],
-                                'company' => $address->getCompany(),
-                                'email' => $customer->getEmail(),
-                                'phone' => $address->getTelephone()
-                            ]
+                            'country' => $address->getCountryId()
+                        ],
+                        'contact' => (object)[
+                            'name' => (object)[
+                                'first' => $address->getFirstname(),
+                                'last' => $address->getLastname(),
+                            ],
+                            'company' => $address->getCompany(),
+                            'email' => $customer->getEmail(),
+                            'phone' => $address->getTelephone()
                         ]
                     ];
                 }

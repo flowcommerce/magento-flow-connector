@@ -10,7 +10,8 @@
 var config = {
     paths: {
         'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker',
-        'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion'
+        'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion',
+        'day': 'FlowCommerce_FlowConnector/js/day.min'
     },
     deps: [
         'flowCountryPicker',
@@ -18,7 +19,7 @@ var config = {
     ],
     shim: {
         'flowCountryPicker': ['es6-collections'],
-        'flowCompanion': ['jquery', 'flowCountryPicker', 'mage/cookies']
+        'flowCompanion': ['jquery', 'day', 'flowCountryPicker', 'mage/cookies']
     },
     config: {
         mixins: {

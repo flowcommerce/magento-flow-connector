@@ -229,7 +229,7 @@ class SessionManager implements SessionManagementInterface
         if ($sessionId) {
             $tokenId = $this->orderSave->createCheckoutToken($orderForm, $sessionId, $customerForm, $addressBook);
             if ($tokenId) {
-                $result = $this->configuration->getFlowCheckoutBaseUrl() . '/tokens/' . $tokenId;
+                $result = $this->configuration->getFlowCheckoutBaseUrl() . 'tokens/' . $tokenId;
 
             }
         }
@@ -285,6 +285,15 @@ class SessionManager implements SessionManagementInterface
                             'province' => (gettype($address->getRegion()) == 'string' ? $address->getRegion() : $address->getRegion()->getRegionCode()),
                             'postal' => $address->getPostcode(),
                             'country' => $address->getCountryId()
+                        ],
+                        'contact' => (object)[
+                            'name' => (object)[
+                                'first' => $address->getFirstname(),
+                                'last' => $address->getLastname(),
+                            ],
+                            'company' => $address->getCompany(),
+                            'email' => $customer->getEmail(),
+                            'phone' => $address->getTelephone()
                         ]
                     ];
                 }

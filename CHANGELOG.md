@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.1
+- Shipping window configuration corrected
+- Returning user address book now pulls contact info
+
 ## 2.3.0
 - Localized default shipping window estimates on PDP, display toggle
 - Localized payment method logos on PDP, display toggle

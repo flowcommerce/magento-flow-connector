@@ -80,7 +80,7 @@ define([
                     const minFormattedDate = day(minDate).format('MMM D');
                     const maxFormattedDate = day(maxDate).format('MMM D');
 
-                    return `Delivery estimate: ${minFormattedDate} - ${maxFormattedDate}`;
+                    return `Estimated delivery: ${minFormattedDate} - ${maxFormattedDate}`;
                 }
             }
         });

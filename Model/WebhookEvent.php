@@ -547,7 +547,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         // Do not process allocations until their order has submitted_at date
         if (!array_key_exists('submitted_at', $receivedOrder)) {
-            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order data incomplete, skipping');
+            $this->webhookEventManager->markWebhookEventAsError($this, 'Order data incomplete, skipping');
             return;
         }
 
@@ -701,9 +701,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             // Save order after sending order confirmation email
             $order->save();
-
-            $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
         } else {
             $this->requeue('Unable to find order right now, reprocess.');
         }

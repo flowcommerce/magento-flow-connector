@@ -94,23 +94,38 @@ class Prices
         $experiences = $this->getAllExperiences->execute($storeId);
         $client = $this->httpClientFactory->create();
         foreach ($experiences as $experience) {
-            $key = $experience['key'];
-            $currency = $experience['currency'];
-            $country = $experience['country'];
-            $localizationKey = $key . $country . $currency;
-            $filter = "number";
-            $urlParams  = "?experience=" . $key . "&country=" . $country . "&currency=" . $currency;
-            $url = $this->urlBuilder->getFlowApiEndpoint(self::EXPERIENCE_ITEMS_PREFIX.$filter.$urlParams);
-            $serializedBody = $this->jsonSerializer->serialize((object)[
-                "filter" => $filter,
-                "values" => $skus
-            ]);
-            $response = $client->post($url, ['body' => $serializedBody]);
-            $contents = $this->jsonSerializer->unserialize($response->getBody()->getContents());
-            if (!isset($labels[$localizationKey])) {
-                $labels[$localizationKey] = [];
+            try {
+                $key = $experience['key'];
+                $currency = $experience['currency'];
+                $country = $experience['country'];
+                $localizationKey = $key . $country . $currency;
+                $filter = "number";
+                $urlParams  = "?experience=" . $key . "&country=" . $country . "&currency=" . $currency;
+                $url = $this->urlBuilder->getFlowApiEndpoint(self::EXPERIENCE_ITEMS_PREFIX.$filter.$urlParams);
+                $serializedBody = $this->jsonSerializer->serialize((object)[
+                    "filter" => $filter,
+                    "values" => $skus
+                ]);
+                $response = $client->post($url, ['body' => $serializedBody]);
+                $contents = $this->jsonSerializer->unserialize($response->getBody()->getContents());
+                if (!is_array($contents['responses'])) {
+                    continue;
+                }
+                if (!isset($labels[$localizationKey])) {
+                    $labels[$localizationKey] = [];
+                }
+            } catch (\Exception $e) {
+                $this->logger->warn('Error syncing pricing: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+                continue;
             }
             foreach ($contents['responses'] as $item) {
+                if (!is_array($item['items'][0]['local']['prices']) || 
+                    !$item['items'][0]['local']['price_attributes']['sku'] ||
+                    !$item['value']
+                ) 
+                {
+                    continue;
+                }
                 $product = $this->productRepository->get($item['value']);
                 $productId = $product->getId();
                 if (!isset($labels[$localizationKey][$productId])) {

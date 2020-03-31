@@ -221,7 +221,7 @@ class ProductDataMapper
             'name' => $product->getName(),
             'description' => $product->getDescription(),
             'locale' => $this->localeResolver->getLocale(),
-            'price' => round($this->getProductPrice($product), 4),
+            'price' => round((float)$this->getProductPrice($product), 4),
             'currency' => $this->storeManager->getStore()->getCurrentCurrencyCode(),
             'categories' => $this->getProductCategoryNames($product),
             'attributes' => $this->getProductAttributeMap($product, $parentProduct),
@@ -366,9 +366,9 @@ class ProductDataMapper
         $product->setPriceCalculation(false);
 
         if ($product->getTypeId() == ConfigurableType::TYPE_CODE) {
-            return round($product->getMinimalPrice(), 4);
+            return round((float)$product->getMinimalPrice(), 4);
         } else {
-            return round($product->getFinalPrice(), 4);
+            return round((float)$product->getFinalPrice(), 4);
         }
     }
 
@@ -496,7 +496,7 @@ class ProductDataMapper
         if ($product->getPriceInfo()) {
             foreach ($product->getPriceInfo()->getPrices() as $price) {
                 if ($price->getValue()) {
-                    $roundedAmount = round($price->getAmount(), 4);
+                    $roundedAmount = round((float)$price->getAmount(), 4);
                     $data[$price->getPriceCode()] = "{$roundedAmount}";
                 }
             }

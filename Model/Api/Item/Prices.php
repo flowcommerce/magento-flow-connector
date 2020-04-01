@@ -120,8 +120,8 @@ class Prices
             }
             foreach ($contents['responses'] as $item) {
                 if (!is_array($item['items'][0]['local']['prices']) || 
-                    !$item['items'][0]['local']['price_attributes']['sku'] ||
-                    !$item['value']
+                    !isset($item['items'][0]['local']['price_attributes']['sku']) ||
+                    !isset($item['value'])
                 ) 
                 {
                     continue;

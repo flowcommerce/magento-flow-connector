@@ -1728,7 +1728,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
         // Check if this order has already been processed
         if ($this->getOrderByFlowOrderNumber($receivedOrder['number'])) {
-            throw new LocalizedException(__('Order previously processed, skipping'));
+            throw new LocalizedException(__('Order previously processed, skipping.'));
         }
 
         if ($storeId = $this->getStoreId()) {
@@ -2489,7 +2489,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // Save order after sending order confirmation email
             $order->save();
 
-            $this->webhookEventManager->markWebhookEventAsDone($this, 'Successfully imported Flow order number: ' . $data['order']['number']);
+            if ($orderIncrementId = $order->getIncrementId()) {
+                $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId);
+            } else {
+                $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+            }
         } catch (LocalizedException $e) {
             $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
         }

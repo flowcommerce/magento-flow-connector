@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.2
+- Round pricing to 4 decimal places before syncing
+- Update order_placed done requirements and logging
+- Gracefully degrade to FlowJS localization when cache-miss cannot localize
+
 ## 2.3.1
 - Shipping window configuration corrected
 - Returning user address book now pulls contact info

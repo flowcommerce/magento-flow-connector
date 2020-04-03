@@ -733,11 +733,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $salesSetup = $this->salesSetupFactory->create();
 
         $attributes = [
-            'flow_connector_label_id' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0]
-            'flow_connector_label_pdf' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0]
-            'flow_connector_label_zpl' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0]
-            'flow_connector_label_commercial_invoice' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0]
-            'flow_connector_label_center_key' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0]
+            'flow_connector_label_id' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
+            'flow_connector_label_pdf' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
+            'flow_connector_label_zpl' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
+            'flow_connector_label_commercial_invoice' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
+            'flow_connector_label_center_key' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
         ];
 
         foreach ($attributes as $attributeCode => $attributeParams) {

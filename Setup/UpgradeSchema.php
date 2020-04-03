@@ -94,7 +94,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addFlowOrderIdToQuote($setup);
         }
 
-        if (version_compare($context->getVersion(), '2.3.3', '<')) {
+        if (version_compare($context->getVersion(), '2.3.3', '<=')) {
             $this->addOrderLatestLabelData($setup);
         }
 
@@ -733,11 +733,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $salesSetup = $this->salesSetupFactory->create();
 
         $attributes = [
-            'flow_connector_label_id' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
-            'flow_connector_label_pdf' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
-            'flow_connector_label_zpl' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
-            'flow_connector_label_commercial_invoice' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
-            'flow_connector_label_center_key' => ['type' => Table::TYPE_TEXT, 'visible' => false, 'required' => false, 'default' => 0],
+            'flow_connector_label_id' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_pdf' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_zpl' => ['type' => 'text', 'visible' => false, 'required' => false],
+            'flow_connector_label_commercial_invoice' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_center_key' => ['type' => 'varchar', 'visible' => false, 'required' => false],
         ];
 
         foreach ($attributes as $attributeCode => $attributeParams) {

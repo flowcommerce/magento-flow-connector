@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.3
+- Import latest label_id, commerical_invoice, pdf, zpl, and center to orders on label_upserted event
+
 ## 2.3.2
 - Round pricing to 4 decimal places before syncing
 - Update order_placed done requirements and logging

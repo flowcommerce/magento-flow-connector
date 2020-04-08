@@ -1327,6 +1327,24 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     }
                 }
 
+                // Import latest label data
+                $order->setFlowConnectorLabelId(
+                    isset($data['label_id']) ? $data['label_id'] : null
+                );
+                $order->setFlowConnectorLabelPdf(
+                    isset($data['pdf']) ? $data['pdf'] : null
+                );
+                $order->setFlowConnectorLabelZpl(
+                    isset($data['zpl']) ? $data['zpl'] : null
+                );
+                $order->setFlowConnectorLabelCommercialInvoice(
+                    isset($data['commercial_invoice']) ? $data['commercial_invoice'] : null
+                );
+                $order->setFlowConnectorLabelCenterKey(
+                    isset($data['center_key']) ? $data['center_key'] : null
+                );
+                $order->save();
+
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');
             } else {
                 $this->requeue('Unable to find order right now, reprocess.');

@@ -148,9 +148,14 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
                     $this->assertEquals($payload['carrier_tracking_number'], $track->getTrackNumber());
                 }
             }
+            $this->assertEquals($payload['label_id'], $order->getFlowConnectorLabelId());
+            $this->assertEquals($payload['pdf'], $order->getFlowConnectorLabelPdf());
+            $this->assertEquals($payload['zpl'], $order->getFlowConnectorLabelZpl());
+            $this->assertEquals($payload['commercial_invoice'], $order->getFlowConnectorLabelCommercialInvoice());
+            $this->assertEquals($payload['center_key'], $order->getFlowConnectorLabelCenterKey());
         }
 
-        //Validade all "done" events
+        //Validate all "done" events
         $webhookCollection = $this->webhookEventCollectionFactory->create();
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();

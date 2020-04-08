@@ -94,6 +94,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addFlowOrderIdToQuote($setup);
         }
 
+        if (version_compare($context->getVersion(), '2.3.3', '<=')) {
+            $this->addOrderLatestLabelData($setup);
+        }
+
         $installer->endSetup();
     }
 
@@ -716,6 +720,28 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $quoteSetup->addAttribute('quote', $attributeCode, $attributeParams);
             $quoteSetup->addAttribute('quote', $attributeCode, $attributeParams);
             $quoteSetup->addAttribute('quote', $attributeCode, $attributeParams);
+        }
+    }
+
+    /**
+     * Add Latest Label Data Created to Order
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    private function addOrderLatestLabelData(SchemaSetupInterface $setup)
+    {
+        $salesSetup = $this->salesSetupFactory->create();
+
+        $attributes = [
+            'flow_connector_label_id' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_pdf' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_zpl' => ['type' => 'text', 'visible' => false, 'required' => false],
+            'flow_connector_label_commercial_invoice' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_center_key' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+        ];
+
+        foreach ($attributes as $attributeCode => $attributeParams) {
+            $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
         }
     }
 }

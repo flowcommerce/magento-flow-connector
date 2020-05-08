@@ -41,7 +41,7 @@ class View
     public function afterGetJsonConfig(\Magento\Catalog\Block\Product\View $view, $result)
     {
         $config = $this->jsonSerializer->unserialize($result);
-        if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled()) {
+        if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled() || !$this->configuration->isPreloadLocalizedCatalogCacheEnabled()) {
             return $this->jsonSerializer->serialize($config);
         }
         $skus = [];

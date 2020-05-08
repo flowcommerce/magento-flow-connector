@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.4
+- Allow disabling of cache preloaded localized pricing
+
 ## 2.3.3
 - Import latest label_id, commerical_invoice, pdf, zpl, and center to orders on label_upserted event
 

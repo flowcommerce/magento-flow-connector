@@ -38,6 +38,7 @@
                 <shipping_window_pdp>1</shipping_window_pdp>
                 <tax_duty_messaging>1</tax_duty_messaging>
                 <daily_catalog_sync>0</daily_catalog_sync>
+                <preload_localized_catalog_cache>0</preload_localized_catalog_cache>
             </flowconnector>
         </flowcommerce>
     </default>

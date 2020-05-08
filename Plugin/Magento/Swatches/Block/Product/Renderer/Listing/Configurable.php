@@ -43,7 +43,7 @@ class Configurable
         $result
     ) {
         $config = $this->jsonSerializer->unserialize($result);
-        if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled()) {
+        if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled() || !$this->configuration->isPreloadLocalizedCatalogCacheEnabled()) {
             return $this->jsonSerializer->serialize($config);
         }
         $skus = [];

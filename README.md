@@ -101,11 +101,14 @@ This text field indicates which version of the Flow.js library is used for the f
 This text field indicates the base url which is used for redirection to Flow Checkout UI. The value provided must have a CNAME DNS record mapped to https://checkout.flow.io/ which must be validated by Flow. By default, this field has no value and checkout redirection to Flow uses the standard https://checkout.flow.io/.
 
 ### Redirect to Flow Checkout
-This toggle controls an automated redirection of international users to Flow Checkout UI via controller interception. At this point of redirect, Magento's cart is converted to a Flow order, including item discounts, and the user is sent Flow Checkout UI to complete their purchase. Discounts are calculated and applied according to the rules of your Magento store's base currency and applied as a percentage of the line item row total. Magento discounts applied to shipping costs are not applied to Flow orders. Following this purchase, webhooks are sent from Flow back to Magento to import the order data and empty the user's Magento cart. It is recommended that you select "Yes" for ease and consistency of the integration. This field defaults to "No".  
+This toggle controls an automated redirection of international users to Flow Checkout UI via controller interception. At this point of redirect, Magento's cart is converted to a Flow order, including item discounts if enabled, and the user is sent Flow Checkout UI to complete their purchase. Following this purchase, webhooks are sent from Flow back to Magento to import the order data and empty the user's Magento cart. It is recommended that you select "Yes" for ease and consistency of the integration. This field defaults to "No".  
 
 Alternatively, you can use the same functionality as the automated path to build a valid Flow order by sending users to the redirect controller manually `{BASE_URL}/flowconnector/checkout/redirecttoflow?country=FRA` or implement your own integration by following this guide: [Flow Checkout UI](https://docs.flow.io/docs/redirect-users-to-checkout-ui)
 
 For more information on customizing Flow Checkout UI please refer to this guide: [Customizing Checkout UI](https://docs.flow.io/docs/customize-checkout-ui).  
+
+### Support Magento Discounts
+Discounts are calculated and applied according to the rules of your Magento store's base currency and applied as a percentage of the line item row total. Magento discounts applied to shipping costs are not applied to Flow orders. This field defaults to "Yes".
 
 ### Create Invoice
 This dropdown indicates how invoices are imported in Magento from Flow:

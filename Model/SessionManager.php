@@ -375,24 +375,27 @@ class SessionManager implements SessionManagementInterface
                 'quantity' => $item->getQty(),
             ];
             $itemRowTotal = $item->getRowTotal();
-            $itemDiscountAmount = $item->getDiscountAmount();
-            $itemDiscountPercentage = 0.0;
-            if ($itemRowTotal > 0 && $itemDiscountAmount > 0) {
-                $itemDiscountPercentage = (float)(($itemDiscountAmount / $itemRowTotal) * 100);
-            }
 
-            if ($itemDiscountPercentage > 0) {
-                $lineItem->discounts = (object)[
-                    'discounts' => [
-                        (object)[
-                            'offer' => (object)[
-                                'discriminator' => 'discount_offer_percent',
-                                'percent' => $itemDiscountPercentage
-                            ],
-                            'label' => 'Discount'
+            if ($this->configuration->isSupportMagentoDiscounts()) {
+                $itemDiscountAmount = $item->getDiscountAmount();
+                $itemDiscountPercentage = 0.0;
+                if ($itemRowTotal > 0 && $itemDiscountAmount > 0) {
+                    $itemDiscountPercentage = (float)(($itemDiscountAmount / $itemRowTotal) * 100);
+                }
+
+                if ($itemDiscountPercentage > 0) {
+                    $lineItem->discounts = (object)[
+                        'discounts' => [
+                            (object)[
+                                'offer' => (object)[
+                                    'discriminator' => 'discount_offer_percent',
+                                    'percent' => $itemDiscountPercentage
+                                ],
+                                'label' => 'Discount'
+                            ]
                         ]
-                    ]
-                ];
+                    ];
+                }
             }
 
             $lineItem->attributes['options'] = $this->getItemOptionsSerialized($item);

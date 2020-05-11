@@ -16,11 +16,15 @@ define([
             shippingEstimator = $('#block-shipping');
             subtotal = totals.find('[data-th=\'Subtotal\']').first();
             grandtotal = totals.find('[data-th=\'Order Total\'] span.price').first();
-            discount = totals.find('[data-th=\'Discount\'] span.price').first();
+            if (window.flow.magento2.support_discounts) {
+                discount = totals.find('[data-th=\'Discount\'] span.price').first();
+            }
 
             subtotal.attr('data-flow-localize','cart-subtotal'); 
             grandtotal.attr('data-flow-localize','cart-total'); 
-            discount.attr('data-flow-localize','cart-discount'); 
+            if (window.flow.magento2.support_discounts) {
+                discount.attr('data-flow-localize','cart-discount'); 
+            }
             if (totals.find('[data-th="Flow Tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
                 flowFields = $(`<tr class="totals vat">\
                     <th data-bind="i18n: title" class="mark" scope="row" data-flow-localize="cart-tax-name">Tax</th>\

@@ -24,6 +24,7 @@
                 <enabled>0</enabled>
                 <flowjs_version>latest</flowjs_version>
                 <redirect_enabled>0</redirect_enabled>
+                <support_magento_discounts>1</support_magento_discounts>
                 <invoice_event>1</invoice_event>
                 <invoice_email>1</invoice_email>
                 <shipment_event>1</shipment_event>

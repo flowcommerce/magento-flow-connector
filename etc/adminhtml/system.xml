@@ -171,6 +171,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="regular_pricing_override" translate="label" type="select" sortOrder="22" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Enable Regular Pricing Override</label>
+                    <comment>Use regular_price rather than final_price when syncing prices to Flow</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
         <section id="payment">

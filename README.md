@@ -169,6 +169,9 @@ Alternatively, you can implement your own solution by refering to the documentat
 ### Enable Daily Catalog Sync
 This toggle controls the automatic enqueue of all skus daily at 1:15AM (timezone is dependent on your server configuration). Items will still be synced when their data has been updated and when using the flow:connector:catalog-sync shell command. This toggle defaults to "No".
 
+### Enable Regular Pricing Override
+This toggle controls whether to use final_price or regular_price when syncing item prices with Flow and for Flow Checkout UI. The connector will always sync all available Magento item prices as additional attributes. This toggle defaults to "No".
+
 ### Shell Commands Available
 Save product attributes needed for catalog integration to Flow:
 ```plaintext

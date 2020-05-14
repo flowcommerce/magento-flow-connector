@@ -3,6 +3,7 @@
 ## 2.3.4
 - Allow disabling of cache preloaded localized pricing
 - Allow disabling of Magento discount support in Flow Checkout
+- Toggle configuration of item price, final vs regular
 - Address bug in daily sync configuration
 
 ## 2.3.3

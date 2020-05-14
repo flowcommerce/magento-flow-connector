@@ -74,6 +74,9 @@ class Configuration
     // Store configuration key for preloading localized catalog cache
     const FLOW_PRELOAD_LOCALIZED_CATALOG_CACHE = 'flowcommerce/flowconnector/preload_localized_catalog_cache';
 
+    // Store configuration key for overriding final prices with regular prices
+    const FLOW_REGULAR_PRICING_OVERRIDE = 'flowcommerce/flowconnector/regular_pricing_override';
+
     // Store configuration key for checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'flowcommerce/flowconnector/checkout_base_url';
     
@@ -551,6 +554,25 @@ class Configuration
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_PRELOAD_LOCALIZED_CATALOG_CACHE,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if preload localized catalog cache is enabled
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isRegularPricingOverride($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_REGULAR_PRICING_OVERRIDE,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

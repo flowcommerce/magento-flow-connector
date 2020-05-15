@@ -98,7 +98,7 @@ define([
             window.flow.magento2.showPrices();
         });
 
-        window.flow.events.on('cartLocalized', function() {
+        window.flow.events.on('cartLocalized', function(data) {
             window.flow.magento2.showCart();
             if (window.flow.magento2.installedFlowTotalsFields) {
                 window.flow.magento2.showCartTotals();

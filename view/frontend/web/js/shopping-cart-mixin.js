@@ -36,8 +36,8 @@ define([
                     itemContainer = $(items[i]).closest('.cart.item');
                     itemContainer.attr('data-flow-cart-item-number', number);
                     itemContainer.attr('data-flow-cart-item-quantity', qty);
-                    itemContainer.find('.price .cart-price > span.price').first().attr('data-flow-localize','cart-item-price');
-                    itemContainer.find('.subtotal .cart-price > span.price').first().attr('data-flow-localize','cart-item-line-total');
+                    itemContainer.find('.price .cart-price > span.price').attr('data-flow-localize','cart-item-price');
+                    itemContainer.find('.subtotal .cart-price > span.price').attr('data-flow-localize','cart-item-line-total');
                     try {
                         if (lineItemDiscount[number].percent > 0 && window.flow.magento.support_discounts) {
                             itemContainer.attr('data-flow-cart-item-discount-percent', lineItemDiscount[number].percent);

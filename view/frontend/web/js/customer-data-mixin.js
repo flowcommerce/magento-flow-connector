@@ -14,10 +14,10 @@ define([
             var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator;
             totals = $('#cart-totals');
             shippingEstimator = $('#block-shipping');
-            subtotal = totals.find('[data-th=\'Subtotal\']').first();
-            grandtotal = totals.find('[data-th=\'Order Total\'] span.price').first();
+            subtotal = totals.find('[data-th=\'Subtotal\']');
+            grandtotal = totals.find('[data-th=\'Order Total\'] span.price');
             if (window.flow.magento2.support_discounts) {
-                discount = totals.find('[data-th=\'Discount\'] span.price').first();
+                discount = totals.find('[data-th=\'Discount\'] span.price');
             }
 
             subtotal.attr('data-flow-localize','cart-subtotal'); 

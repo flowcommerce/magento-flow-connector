@@ -8,8 +8,13 @@ define([
     return function (customerData) {
         function reloadFlowCart() {
             if (!window.flow.magento2.shouldLocalizeCart) {
+                window.flow.magento2.showCart();
+                window.flow.magento2.showCartTotals();
                 return false;
             }
+
+            window.flow.magento2.hideCart();
+            window.flow.magento2.hideCartTotals();
 
             var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator;
             totals = $('#cart-totals');
@@ -53,6 +58,12 @@ define([
             window.flow.cart.localize();
             return true;
         }
+
+        customerData.init = wrapper.wrap(customerData.init, function (_super) {
+            var result = _super();
+            reloadFlowCart();
+            return result;
+        });
 
         customerData.set = wrapper.wrap(customerData.set, function (_super, sectionName, sectionData) {
             var result = _super(sectionName, sectionData);

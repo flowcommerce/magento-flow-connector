@@ -9,7 +9,7 @@
  */
 var config = {
     paths: {
-        'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker',
+        'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion',
         'day': 'FlowCommerce_FlowConnector/js/day.min'
     },

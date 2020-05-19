@@ -3,8 +3,10 @@
 ## 2.3.4
 - Allow disabling of cache preloaded localized pricing
 - Allow disabling of Magento discount support in Flow Checkout
-- Toggle configuration of item price, final vs regular
+- Toggle configuration of item price, regular or final
 - Address bug in daily sync configuration
+- Address bug in cart localization
+- Use minified Flow country-picker.js
 
 ## 2.3.3
 - Import latest label_id, commerical_invoice, pdf, zpl, and center to orders on label_upserted event

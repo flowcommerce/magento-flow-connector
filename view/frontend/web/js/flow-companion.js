@@ -16,6 +16,7 @@ define([
     window.flow.magento2 = window.flow.magento2 || {};
     window.flow.magento2.enabled = window.flow_enabled;
     window.flow.magento2.production = window.flow_production;
+    window.flow.magento2.support_discounts = window.flow_support_magento_discounts;
     window.flow.magento2.cart_localize = window.flow_cart_localize;
     window.flow.magento2.catalog_localize = window.flow_catalog_localize;
     window.flow.magento2.pricing_timeout = window.flow_pricing_timeout;
@@ -97,7 +98,7 @@ define([
             window.flow.magento2.showPrices();
         });
 
-        window.flow.events.on('cartLocalized', function() {
+        window.flow.events.on('cartLocalized', function(data) {
             window.flow.magento2.showCart();
             if (window.flow.magento2.installedFlowTotalsFields) {
                 window.flow.magento2.showCartTotals();

@@ -103,4 +103,14 @@ class FlowJS extends Template
     {
         return $this->configuration->getMaxCartHideMs();
     }
+
+    /**
+     * Return flow support magento discounts
+     * @return int
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isFlowSupportMagentoDiscounts()
+    {
+        return $this->configuration->isSupportMagentoDiscounts();
+    }
 }

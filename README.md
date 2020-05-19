@@ -101,11 +101,14 @@ This text field indicates which version of the Flow.js library is used for the f
 This text field indicates the base url which is used for redirection to Flow Checkout UI. The value provided must have a CNAME DNS record mapped to https://checkout.flow.io/ which must be validated by Flow. By default, this field has no value and checkout redirection to Flow uses the standard https://checkout.flow.io/.
 
 ### Redirect to Flow Checkout
-This toggle controls an automated redirection of international users to Flow Checkout UI via controller interception. At this point of redirect, Magento's cart is converted to a Flow order, including item discounts, and the user is sent Flow Checkout UI to complete their purchase. Discounts are calculated and applied according to the rules of your Magento store's base currency and applied as a percentage of the line item row total. Magento discounts applied to shipping costs are not applied to Flow orders. Following this purchase, webhooks are sent from Flow back to Magento to import the order data and empty the user's Magento cart. It is recommended that you select "Yes" for ease and consistency of the integration. This field defaults to "No".  
+This toggle controls an automated redirection of international users to Flow Checkout UI via controller interception. At this point of redirect, Magento's cart is converted to a Flow order, including item discounts if enabled, and the user is sent Flow Checkout UI to complete their purchase. Following this purchase, webhooks are sent from Flow back to Magento to import the order data and empty the user's Magento cart. It is recommended that you select "Yes" for ease and consistency of the integration. This field defaults to "No".  
 
 Alternatively, you can use the same functionality as the automated path to build a valid Flow order by sending users to the redirect controller manually `{BASE_URL}/flowconnector/checkout/redirecttoflow?country=FRA` or implement your own integration by following this guide: [Flow Checkout UI](https://docs.flow.io/docs/redirect-users-to-checkout-ui)
 
 For more information on customizing Flow Checkout UI please refer to this guide: [Customizing Checkout UI](https://docs.flow.io/docs/customize-checkout-ui).  
+
+### Support Magento Discounts
+Discounts are calculated and applied according to the rules of your Magento store's base currency and applied as a percentage of the line item row total. Magento discounts applied to shipping costs are not applied to Flow orders. This field defaults to "Yes".
 
 ### Create Invoice
 This dropdown indicates how invoices are imported in Magento from Flow:
@@ -137,6 +140,9 @@ This toggle controls the initialization of catalog price localization. This feat
 
 Alternatively, you can implement your own customized price localization solution by refering to our custom integration guide: [Flow.js Product Localization](https://docs.flow.io/docs/localize-product-prices)
 
+### Enable Preload Localized Catalog Cache
+This toggle controls whether or not server-side API calls will be used to preload localized experience pricing into Magento's page cache. This feature trades longer times on product cache-miss for a faster time to localized pricing. For this reason, it works best with a low amount of experiences and/or when paired with thorough and periodic cache warming. This toggle defaults to "No".
+
 ### Maximum Time to Hide Catalog Prices
 This text field controls the amount of time in milliseconds that catalog prices will remain hidden while waiting for the JavaScript mixins to determine which prices are to be displayed. This is a valuable tool to prevent the base currency price from displaying briefly before the local currency is displayed to the user. It is recommended to use a value of "5000" which means that regardless of the length of time it takes for the page to load, prices will never remain hidden by Flow for longer than 5 seconds. This field accepts integers and defaults to 0.
 
@@ -165,6 +171,9 @@ Alternatively, you can implement your own solution by refering to the documentat
 
 ### Enable Daily Catalog Sync
 This toggle controls the automatic enqueue of all skus daily at 1:15AM (timezone is dependent on your server configuration). Items will still be synced when their data has been updated and when using the flow:connector:catalog-sync shell command. This toggle defaults to "No".
+
+### Enable Regular Pricing Override
+This toggle controls whether to use final_price or regular_price when syncing item prices with Flow and for Flow Checkout UI. The connector will always sync all available Magento item prices as additional attributes. This toggle defaults to "No".
 
 ### Shell Commands Available
 Save product attributes needed for catalog integration to Flow:

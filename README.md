@@ -140,6 +140,9 @@ This toggle controls the initialization of catalog price localization. This feat
 
 Alternatively, you can implement your own customized price localization solution by refering to our custom integration guide: [Flow.js Product Localization](https://docs.flow.io/docs/localize-product-prices)
 
+### Enable Preload Localized Catalog Cache
+This toggle controls whether or not server-side API calls will be used to preload localized experience pricing into Magento's page cache. This feature trades longer times on product cache-miss for a faster time to localized pricing. For this reason, it works best with a low amount of experiences and/or when paired with thorough and periodic cache warming. This toggle defaults to "No".
+
 ### Maximum Time to Hide Catalog Prices
 This text field controls the amount of time in milliseconds that catalog prices will remain hidden while waiting for the JavaScript mixins to determine which prices are to be displayed. This is a valuable tool to prevent the base currency price from displaying briefly before the local currency is displayed to the user. It is recommended to use a value of "5000" which means that regardless of the length of time it takes for the page to load, prices will never remain hidden by Flow for longer than 5 seconds. This field accepts integers and defaults to 0.
 

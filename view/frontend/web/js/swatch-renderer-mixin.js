@@ -90,6 +90,20 @@ define([
                 return this._super($this, $widget);
             },
 
+            _Rebuild: function ($this, $widget) {
+                if (window.flow.magento2.shouldLocalizeCatalog) {
+                    window.flow.magento2.hidePrices();
+                }
+                return this._super($this, $widget);
+            },
+
+            _UpdatePrice: function ($this, $widget) {
+                if (window.flow.magento2.shouldLocalizeCatalog) {
+                    window.flow.magento2.hidePrices();
+                }
+                return this._super($this, $widget);
+            },
+
         });
 
         return $.mage.SwatchRenderer;

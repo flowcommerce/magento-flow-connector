@@ -365,11 +365,15 @@ class ProductDataMapper
     {
         $product->setPriceCalculation(false);
 
+        if ($this->configuration->isRegularPricingOverride()) {
+            return round($product->getPrice(), 4);
+        }
+
         if ($product->getTypeId() == ConfigurableType::TYPE_CODE) {
             return round($product->getMinimalPrice(), 4);
-        } else {
-            return round($product->getFinalPrice(), 4);
-        }
+        } 
+
+        return round($product->getFinalPrice(), 4);
     }
 
     /**

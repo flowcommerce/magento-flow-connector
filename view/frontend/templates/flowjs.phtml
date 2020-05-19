@@ -17,38 +17,26 @@
     window.flow_organization_id = "<?= $block->getFlowOrganizationId(); ?>";
     window.flow_production = "<?= (int)$block->isFlowProduction(); ?>";
     window.flow_flowjs_url = "<?= $block->getFlowJsUrl(); ?>";
+    window.flow_support_magento_discounts = "<?= (int)$block->isFlowSupportMagentoDiscounts(); ?>";
     window.flow_cart_localize = <?= (int)$block->isFlowCartLocalize(); ?>;
     window.flow_catalog_localize = <?= (int)$block->isFlowCatalogLocalize(); ?>;
     window.flow_pricing_timeout = "<?= (int)$block->getFlowMaxCatalogHideMs(); ?>";
     window.flow_cart_timeout = "<?= (int)$block->getFlowMaxCartHideMs(); ?>";
     setTimeout(function(){
-        if (window.flow == undefined) {
-            document.getElementsByTagName('body')[0].classList.add('flow-catalog-localized');
-            return false;
-        } 
-        if (window.flow.magento2 == undefined) {
-            document.getElementsByTagName('body')[0].classList.add('flow-catalog-localized');
-            return false;
-        }
-        if (!window.flow.magento2.hasLocalizedCatalog) {
-            document.getElementsByTagName('body')[0].classList.add('flow-catalog-localized');
-        }
+        document.head.append(`
+            [data-role="priceBox"] span.price {
+                opacity: 1;
+            } 
+        `);
     }, window.flow_pricing_timeout);
     setTimeout(function(){
-        if (window.flow == undefined) {
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-localized');
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-totals-localized');
-            return false;
-        } 
-        if (window.flow.magento2 == undefined) {
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-localized');
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-totals-localized');
-            return false;
-        }
-        if (!window.flow.magento2.hasLocalizedCart || !window.flow.magento2.hasLocalizedCartTotals) {
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-localized');
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-totals-localized');
-        }
+        document.head.append(`
+            body.checkout-cart-index .cart-container span.price,
+            body.checkout-cart-index #cart-totals span.price,
+            body #minicart-content-wrapper span.price {
+                opacity: 1;
+            }
+        `);
     }, window.flow_cart_timeout);
     </script>
     <?php if ($block->getFlowMaxCatalogHideMs() > 0) : ?>
@@ -63,14 +51,14 @@
     <?php endif; ?>
     <?php if ((int)$block->getFlowMaxCartHideMs() > 0) : ?>
         <style>
-        body.checkout-cart-index .cart-container span.price,
-        body.checkout-cart-index #cart-totals span.price,
+        .checkout-cart-index .cart-container span.price,
+        .checkout-cart-index #cart-totals span.price,
         #minicart-content-wrapper span.price {
             opacity: 0;
         } 
-        body.flow-cart-localized.checkout-cart-index .cart-container span.price,
-        body.flow-cart-totals-localized.checkout-cart-index #cart-totals span.price,
-        body.flow-cart-localized #minicart-content-wrapper span.price {
+        .flow-cart-localized.checkout-cart-index .cart-container span.price,
+        .flow-cart-totals-localized.checkout-cart-index #cart-totals span.price[data-flow-localize],
+        .flow-cart-localized #minicart-content-wrapper span.price {
             opacity: 1;
         }
         </style>

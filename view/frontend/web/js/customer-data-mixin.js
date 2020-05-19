@@ -8,19 +8,28 @@ define([
     return function (customerData) {
         function reloadFlowCart() {
             if (!window.flow.magento2.shouldLocalizeCart) {
+                window.flow.magento2.showCart();
+                window.flow.magento2.showCartTotals();
                 return false;
             }
+
+            window.flow.magento2.hideCart();
+            window.flow.magento2.hideCartTotals();
 
             var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator;
             totals = $('#cart-totals');
             shippingEstimator = $('#block-shipping');
-            subtotal = totals.find('[data-th=\'Subtotal\']').first();
-            grandtotal = totals.find('[data-th=\'Order Total\'] span.price').first();
-            discount = totals.find('[data-th=\'Discount\'] span.price').first();
+            subtotal = totals.find('[data-th=\'Subtotal\']');
+            grandtotal = totals.find('[data-th=\'Order Total\'] span.price');
+            if (window.flow.magento2.support_discounts) {
+                discount = totals.find('[data-th=\'Discount\'] span.price');
+            }
 
             subtotal.attr('data-flow-localize','cart-subtotal'); 
             grandtotal.attr('data-flow-localize','cart-total'); 
-            discount.attr('data-flow-localize','cart-discount'); 
+            if (window.flow.magento2.support_discounts) {
+                discount.attr('data-flow-localize','cart-discount'); 
+            }
             if (totals.find('[data-th="Flow Tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
                 flowFields = $(`<tr class="totals vat">\
                     <th data-bind="i18n: title" class="mark" scope="row" data-flow-localize="cart-tax-name">Tax</th>\
@@ -49,6 +58,12 @@ define([
             window.flow.cart.localize();
             return true;
         }
+
+        customerData.init = wrapper.wrap(customerData.init, function (_super) {
+            var result = _super();
+            reloadFlowCart();
+            return result;
+        });
 
         customerData.set = wrapper.wrap(customerData.set, function (_super, sectionName, sectionData) {
             var result = _super(sectionName, sectionData);

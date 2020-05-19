@@ -344,6 +344,10 @@
     display: inline-block;
 }
 
+.flow-cart .cart-totals .loading-mask {
+    background: white;
+}
+
 @media (max-width: 768px) {
     .flow-country-picker-modal {
         left: 0;

@@ -3,6 +3,7 @@
 namespace FlowCommerce\FlowConnector\Cron;
 
 use \Psr\Log\LoggerInterface as Logger;
+use \FlowCommerce\FlowConnector\Model\Configuration;
 use \FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface as InventorySyncManager;
 
 /**
@@ -11,6 +12,11 @@ use \FlowCommerce\FlowConnector\Api\InventorySyncManagementInterface as Inventor
  */
 class InventorySyncQueueAllTask
 {
+    /**
+     * @var Configuration
+     */
+    private $configuration;
+
     /**
      * @var InventorySyncManager
      */
@@ -28,10 +34,12 @@ class InventorySyncQueueAllTask
      */
     public function __construct(
         Logger $logger,
-        InventorySyncManager $inventorySyncManager
+        InventorySyncManager $inventorySyncManager,
+        Configuration $configuration
     ) {
         $this->logger = $logger;
         $this->inventorySyncManager = $inventorySyncManager;
+        $this->configuration = $configuration;
     }
 
     /**

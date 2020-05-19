@@ -13,9 +13,9 @@
         <css src="FlowCommerce_FlowConnector::css/flow_default.css" />
     </head>
     <body>
-        <!-- Adding container for opt-in -->
         <referenceContainer name="root">
-            <container name="flow.optin.wrapper" htmlTag="div" htmlClass="flow-optin" htmlId="flow-optin" after="-">
+            <!-- Adding container for opt-in -->
+            <container name="flow.optin.wrapper" htmlTag="div" htmlClass="flow-optin" htmlId="flow-optin" before="flow.error.wrapper">
                 <block class="Magento\Framework\View\Element\Text">
                     <arguments>
                         <argument name="text" xsi:type="string"><![CDATA[&nbsp;]]></argument>

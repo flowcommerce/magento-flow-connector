@@ -184,7 +184,7 @@ class Save
                     $result = $tokenResponse->id;
                 } 
             } else {
-                throw new Exception(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
+                $this->logger->info(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
             }
         } catch (Exception $e) {
             $this->logger->info(sprintf('Checkout token creation failed due to: %s', $e->getMessage()));

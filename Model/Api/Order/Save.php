@@ -150,6 +150,7 @@ class Save
     public function createCheckoutToken($orderForm, $sessionId, $customer, $addressBook)
     {
         $storeId = $this->getCurrentStoreId();
+        $result = null;
 
         /** @var HttpClient $client */
         $client = $this->httpClientFactory->create(['options' => [
@@ -177,7 +178,11 @@ class Save
 
             if ((int) $response->getStatusCode() === 201) {
                 $this->logger->info('Checkout token created: ' . $response->getBody());
-                $return = (string) $response->getBody();
+                $body = (string) $response->getBody();
+                $tokenResponse = json_decode($body);
+                if (isset($tokenResponse->id)) {
+                    $result = $tokenResponse->id;
+                } 
             } else {
                 throw new Exception(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
             }
@@ -187,12 +192,7 @@ class Save
             throw $e;
         }
 
-        $tokenResponse = json_decode($return);
-        if (isset($tokenResponse->id)) {
-            return $tokenResponse->id;
-        } else {
-            return null;
-        }
+        return $result;
     }
 
     /**

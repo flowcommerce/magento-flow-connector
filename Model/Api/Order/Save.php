@@ -117,12 +117,10 @@ class Save
                 $this->logger->info('Order created: ' . $response->getBody());
                 $return = (string) $response->getBody();
             } else {
-                throw new Exception(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
+                $this->logger->info(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
             }
         } catch (Exception $e) {
             $this->logger->info(sprintf('Order creation failed due to: %s', $e->getMessage()));
-
-            throw $e;
         }
 
         return $return;
@@ -188,8 +186,6 @@ class Save
             }
         } catch (Exception $e) {
             $this->logger->info(sprintf('Checkout token creation failed due to: %s', $e->getMessage()));
-
-            throw $e;
         }
 
         return $result;
@@ -228,12 +224,10 @@ class Save
                 $this->logger->info('Order updated: ' . $response->getBody());
                 $return = (string) $response->getBody();
             } else {
-                throw new Exception(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
+                $this->logger->info(sprintf('Status code %s: %s', $response->getStatusCode(), $response->getBody()));
             }
         } catch (Exception $e) {
             $this->logger->info(sprintf('Order update failed due to: %s', $e->getMessage()));
-
-            throw $e;
         }
 
         return $return;

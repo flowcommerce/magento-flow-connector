@@ -6,7 +6,39 @@ define([
     'use strict';
 
     return function (customerData) {
-        function reloadFlowCart() {
+        function bindTotalsObserver() {
+            var targetTotals = document.getElementById('cart-totals');
+            if (targetTotals == null) {
+                return false;
+            }
+
+            console.log('Binding new totals observer...');
+            var config = {childList: true, subtree: true };
+
+            var callback = function(mutationsList, observer) {
+                var shouldUpdate = false;
+                for (var i = 0; i < mutationsList.length; i++) {
+                    if (mutationsList[i].type === 'childList') {
+                        console.log('A child node has been added or removed.');
+                        shouldUpdate = true;
+                    }
+                }
+                if (shouldUpdate) {
+                    console.log('At least one node was added or remove, localizing cart...');
+                    reloadFlowCart(observer);
+                }
+            };
+
+            var observer = new MutationObserver(callback);
+
+            observer.observe(targetTotals, config);
+        }
+
+        function reloadFlowCart(observer = null) {
+            if (observer) {
+                console.log('Disconnecting totals observer...');
+                observer.disconnect();
+            }
             if (!window.flow.magento2.shouldLocalizeCart) {
                 window.flow.magento2.showCart();
                 window.flow.magento2.showCartTotals();
@@ -55,25 +87,14 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
+            window.flow.events.on('cartLocalized', bindTotalsObserver);
             window.flow.cart.localize();
             return true;
         }
 
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
-            reloadFlowCart();
-            return result;
-        });
-
-        customerData.set = wrapper.wrap(customerData.set, function (_super, sectionName, sectionData) {
-            var result = _super(sectionName, sectionData);
-            reloadFlowCart();
-            return result;
-        });
-
-        customerData.reload = wrapper.wrap(customerData.reload, function (_super, sectionNames, updateSectionId) {
-            var result = _super(sectionNames, updateSectionId);
-            reloadFlowCart();
+            bindTotalsObserver();
             return result;
         });
 

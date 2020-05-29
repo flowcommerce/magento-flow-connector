@@ -46,19 +46,6 @@ define([
                         // Can not calculate line item discount due to insufficient data at this time
                     }
                 }
-                
-                window.flow.events.on('cartError', function(data) {
-                    data.each(function (i) {
-                        switch (this.code) {
-                            case 'order_item_not_available':
-                                // TODO
-                                break;
-                            
-                            default:
-                                
-                        }
-                    });
-                });
 
                 window.flow.cart.localize();
 

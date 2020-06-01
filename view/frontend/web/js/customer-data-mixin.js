@@ -18,25 +18,21 @@ define([
                 var shouldUpdate = false;
                 for (var i = 0; i < mutationsList.length; i++) {
                     if (mutationsList[i].type === 'childList') {
-                        console.log('A child node has been added or removed.');
                         shouldUpdate = true;
                     }
                 }
                 if (shouldUpdate) {
-                    console.log('At least one node was added or remove, triggering flow cart reload...');
                     reloadFlowCart(observer);
                 }
             };
 
             var observer = new MutationObserver(callback);
 
-            console.log('Binding new totals observer...');
             observer.observe(targetTotals, config);
         }
 
         function reloadFlowCart(observer = null) {
             if (observer) {
-                console.log('Disconnecting totals observer...');
                 observer.disconnect();
             }
             if (!window.flow.magento2.shouldLocalizeCart) {
@@ -87,7 +83,6 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
-            console.log('Localizing cart...');
             window.flow.events.on('cartLocalized', bindTotalsObserver);
             window.flow.cart.localize();
             return true;

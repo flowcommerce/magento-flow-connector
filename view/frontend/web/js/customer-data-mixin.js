@@ -99,17 +99,6 @@ define([
             return result;
         });
 
-        var cart = customerData.get('cart');
-        var count = cart().summary_count;
-
-        cart.subscribe(function () {
-            if (cart().summary_count !== count) {
-                count = cart().summary_count;
-                // do something here
-                console.log('Number of items in cart is now: ' + count);
-            }
-        });
-
         return customerData;
     };
 });

@@ -125,4 +125,9 @@ define([
             window.flow.countryPicker.createCountryPicker(window.flow.magento2.countryPickerOptions);
         }
     });
+
+    $(document).on('ajax:addToCart', function (event, data) {
+        console.log(event);
+        console.log(data);
+    });
 });

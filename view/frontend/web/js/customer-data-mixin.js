@@ -12,7 +12,6 @@ define([
                 return false;
             }
 
-            console.log('Binding new totals observer...');
             var config = {childList: true, subtree: true };
 
             var callback = function(mutationsList, observer) {
@@ -24,13 +23,14 @@ define([
                     }
                 }
                 if (shouldUpdate) {
-                    console.log('At least one node was added or remove, localizing cart...');
+                    console.log('At least one node was added or remove, triggering flow cart reload...');
                     reloadFlowCart(observer);
                 }
             };
 
             var observer = new MutationObserver(callback);
 
+            console.log('Binding new totals observer...');
             observer.observe(targetTotals, config);
         }
 
@@ -87,6 +87,7 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
+            console.log('Localizing cart...');
             window.flow.events.on('cartLocalized', bindTotalsObserver);
             window.flow.cart.localize();
             return true;
@@ -96,6 +97,17 @@ define([
             var result = _super();
             bindTotalsObserver();
             return result;
+        });
+
+        var cart = customerData.get('cart');
+        var count = cart().summary_count;
+
+        cart.subscribe(function () {
+            if (cart().summary_count !== count) {
+                count = cart().summary_count;
+                // do something here
+                console.log('Number of items in cart is now: ' + count);
+            }
         });
 
         return customerData;

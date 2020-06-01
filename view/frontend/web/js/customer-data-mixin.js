@@ -63,19 +63,19 @@ define([
                 discount.attr('data-flow-localize','cart-discount'); 
             }
             if (totals.find('[data-th="Flow Tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
-                flowFields = $(`<tr class="totals vat">\
+                flowFields = $(`<tr class="totals vat flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row" data-flow-localize="cart-tax-name">Tax</th>\
                     <td class="amount">\
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Tax" data-flow-localize="cart-tax"></span>\
                     </td>\
                     </tr>\
-                    <tr class="totals duty">\
+                    <tr class="totals duty flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row">Duty</th>\
                     <td class="amount">\
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Duty" data-flow-localize="cart-duty"></span>\
                     </td>\
                     </tr>\
-                    <tr class="totals shipping">\
+                    <tr class="totals shipping flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row">Estimated Shipping</th>\
                     <td class="amount">\
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Shipping" data-flow-localize="cart-shipping"></span>\

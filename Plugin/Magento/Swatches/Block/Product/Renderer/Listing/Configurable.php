@@ -53,7 +53,7 @@ class Configurable
             $relatedSimples = $product->getTypeInstance()->getUsedProducts($product);
             foreach ($relatedSimples as $simple) {
                 $skus[] = $simple->getSku();
-                $config['flow_product_id_sku_map'][$simple->getSku()] = $simple->getId();
+                $config['flow_product_id_sku_map'][$simple->getId()] = $simple->getSku();
             }
         }
         if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isPreloadLocalizedCatalogCacheEnabled()) {

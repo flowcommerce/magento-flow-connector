@@ -32,8 +32,8 @@ define([
                     window.flow.magento2.product_id_sku_map = [];
                 }
 
-                if (this.options.priceConfig.flow_product_id_sku_map != undefined) { 
-                    window.flow.magento2.product_id_sku_map.concat(this.options.priceConfig.flow_product_id_sku_map);
+                if (this.options.prices.flow_product_id_sku_map != undefined) { 
+                    window.flow.magento2.product_id_sku_map.concat(this.options.prices.flow_product_id_sku_map);
                 }
 
                 if (!window.flow.magento2.shouldLocalizeCatalog) {

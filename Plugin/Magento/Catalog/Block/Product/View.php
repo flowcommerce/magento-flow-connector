@@ -51,6 +51,7 @@ class View
             $relatedSimples = $product->getTypeInstance()->getUsedProducts($product);
             foreach ($relatedSimples as $simple) {
                 $skus[] = $simple->getSku();
+                $config['flow_product_id_sku_map'][$simple->getSku()] = $simple->getId();
             }
         }
         $config['flow_localized_prices'] = $this->flowPrices->localizePrices($skus);

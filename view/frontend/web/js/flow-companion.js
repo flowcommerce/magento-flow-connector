@@ -127,7 +127,13 @@ define([
     });
 
     $(document).on('ajax:addToCart', function (event, data) {
-        console.log(event);
-        console.log(data);
+        const cartAddEvent = {
+            item_number: data.sku,
+            quantity: 1
+        };
+
+        window.flow.cmd('on', 'ready', function() {
+            window.flow.beacon.processEvent('cart_add', cartAddEvent);
+        });
     });
 });

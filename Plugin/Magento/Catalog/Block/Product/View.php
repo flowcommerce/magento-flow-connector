@@ -41,7 +41,7 @@ class View
     public function afterGetJsonConfig(\Magento\Catalog\Block\Product\View $view, $result)
     {
         $config = $this->jsonSerializer->unserialize($result);
-        if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isFlowEnabled() || !$this->configuration->isPreloadLocalizedCatalogCacheEnabled()) {
+        if (!$this->configuration->isFlowEnabled()) {
             return $this->jsonSerializer->serialize($config);
         }
         $skus = [];
@@ -54,7 +54,9 @@ class View
                 $config['flow_product_id_sku_map'][$simple->getSku()] = $simple->getId();
             }
         }
-        $config['flow_localized_prices'] = $this->flowPrices->localizePrices($skus);
+        if (!$this->configuration->isCatalogPriceLocalizationEnabled() || !$this->configuration->isPreloadLocalizedCatalogCacheEnabled()) {
+            $config['flow_localized_prices'] = $this->flowPrices->localizePrices($skus);
+        }
         return $this->jsonSerializer->serialize($config);
     }
 }

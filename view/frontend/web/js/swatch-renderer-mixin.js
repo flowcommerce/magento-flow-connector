@@ -35,56 +35,52 @@ define([
             },
 
             _OnClick: function ($this, $widget, eventName) {
-                if (window.flow.magento2.shouldLocalizeCatalog) {
-                    var productId = $widget.options.jsonConfig.productId,
-                        selectedOptionId = $this["context"].attributes["option-id"].value,
-                        optionsMap = _.toArray($widget.optionsMap);
-                    if (window.flow.magento2.optionsSelected == undefined) {
-                        window.flow.magento2.optionsSelected = [];
-                    }
-                    if (window.flow.magento2.optionsSelected[productId] == undefined) {
-                        window.flow.magento2.optionsSelected[productId] = [];
-                        _.each(_.toArray($widget.optionsMap), function(option, key) {
-                            window.flow.magento2.optionsSelected[productId].push(false);
-                        });
-                    }
-                    _.each(optionsMap, function(options, key) {
-                        if (typeof(options[selectedOptionId]) == "object") {
-                            if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
-                                window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
-                            } else {
-                                window.flow.magento2.optionsSelected[productId][key] = false;
-                            }
-                        }
+                var productId = $widget.options.jsonConfig.productId,
+                    selectedOptionId = $this["context"].attributes["option-id"].value,
+                    optionsMap = _.toArray($widget.optionsMap);
+                if (window.flow.magento2.optionsSelected == undefined) {
+                    window.flow.magento2.optionsSelected = [];
+                }
+                if (window.flow.magento2.optionsSelected[productId] == undefined) {
+                    window.flow.magento2.optionsSelected[productId] = [];
+                    _.each(_.toArray($widget.optionsMap), function(option, key) {
+                        window.flow.magento2.optionsSelected[productId].push(false);
                     });
                 }
+                _.each(optionsMap, function(options, key) {
+                    if (typeof(options[selectedOptionId]) == "object") {
+                        if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
+                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
+                        } else {
+                            window.flow.magento2.optionsSelected[productId][key] = false;
+                        }
+                    }
+                });
                 return this._super($this, $widget, eventName);
             },
 
             _OnChange: function ($this, $widget) {
-                if (window.flow.magento2.shouldLocalizeCatalog) {
-                    var productId = $widget.options.jsonConfig.productId,
-                        selectedOptionId = $this["context"].value,
-                        optionsMap = _.toArray($widget.optionsMap);
-                    if (window.flow.magento2.optionsSelected == undefined) {
-                        window.flow.magento2.optionsSelected = [];
-                    }
-                    if (window.flow.magento2.optionsSelected[productId] == undefined) {
-                        window.flow.magento2.optionsSelected[productId] = [];
-                        _.each(_.toArray($widget.optionsMap), function(option, key) {
-                            window.flow.magento2.optionsSelected[productId].push(false);
-                        });
-                    }
-                    _.each(optionsMap, function(options, key) {
-                        if (typeof(options[selectedOptionId]) == "object") {
-                            if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
-                                window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
-                            } else {
-                                window.flow.magento2.optionsSelected[productId][key] = false;
-                            }
-                        }
+                var productId = $widget.options.jsonConfig.productId,
+                    selectedOptionId = $this["context"].value,
+                    optionsMap = _.toArray($widget.optionsMap);
+                if (window.flow.magento2.optionsSelected == undefined) {
+                    window.flow.magento2.optionsSelected = [];
+                }
+                if (window.flow.magento2.optionsSelected[productId] == undefined) {
+                    window.flow.magento2.optionsSelected[productId] = [];
+                    _.each(_.toArray($widget.optionsMap), function(option, key) {
+                        window.flow.magento2.optionsSelected[productId].push(false);
                     });
                 }
+                _.each(optionsMap, function(options, key) {
+                    if (typeof(options[selectedOptionId]) == "object") {
+                        if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
+                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
+                        } else {
+                            window.flow.magento2.optionsSelected[productId][key] = false;
+                        }
+                    }
+                });
                 return this._super($this, $widget);
             },
 

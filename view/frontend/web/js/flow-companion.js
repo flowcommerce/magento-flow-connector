@@ -75,9 +75,7 @@ define([
 
     window.flow.cmd('set', 'organization', window.flow_organization_id);
     window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
-    if (window.flow.magento2.shipping_window_enabled && 
-        !document.getElementsByTagName('body')[0].classList.contains('catalog-category-view')
-    ) {
+    if (window.flow.magento2.shipping_window_enabled) {
         window.flow.cmd('set', 'shippingWindow', {
             formatters: {
                 all: function (minDate, maxDate) {

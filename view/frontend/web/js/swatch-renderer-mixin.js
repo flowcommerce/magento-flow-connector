@@ -15,24 +15,22 @@ define([
     return function (widget) {
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
-                if (window.flow.magento2.shouldLocalizeCatalog) {
-                    if (window.flow.magento2.optionsIndex == undefined) {
-                        window.flow.magento2.optionsIndex = {};
-                    }
-                    var productId = this.options.jsonConfig.productId;
-                    var optionIndex = [];
-                    _.each(this.options.jsonConfig.index, function (option, key) {
-                        var optionData = {
-                            productId: key,
-                            optionIds: []
-                        };
-                        _.each(option, function(value) {
-                            optionData.optionIds.push(value);
-                        });
-                        optionIndex.push(optionData);
-                    });
-                    window.flow.magento2.optionsIndex[productId] = optionIndex;
+                if (window.flow.magento2.optionsIndex == undefined) {
+                    window.flow.magento2.optionsIndex = {};
                 }
+                var productId = this.options.jsonConfig.productId;
+                var optionIndex = [];
+                _.each(this.options.jsonConfig.index, function (option, key) {
+                    var optionData = {
+                        productId: key,
+                        optionIds: []
+                    };
+                    _.each(option, function(value) {
+                        optionData.optionIds.push(value);
+                    });
+                    optionIndex.push(optionData);
+                });
+                window.flow.magento2.optionsIndex[productId] = optionIndex;
                 return this._super();
             },
 

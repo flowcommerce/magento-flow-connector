@@ -103,6 +103,8 @@ define([
                 }, this);
                 if (!this.flowFormattedPrice) {
                     window.flow.cmd('localize');
+                } else {
+                    window.flow.magento2.showPrices();
                 }
             },
 

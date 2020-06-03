@@ -6,7 +6,35 @@ define([
     'use strict';
 
     return function (customerData) {
-        function reloadFlowCart() {
+        function bindTotalsObserver() {
+            var targetTotals = document.getElementById('cart-totals');
+            if (targetTotals == null) {
+                return false;
+            }
+
+            var config = {childList: true, subtree: true };
+
+            var callback = function(mutationsList, observer) {
+                var shouldUpdate = false;
+                for (var i = 0; i < mutationsList.length; i++) {
+                    if (mutationsList[i].type === 'childList') {
+                        shouldUpdate = true;
+                    }
+                }
+                if (shouldUpdate) {
+                    reloadFlowCart(observer);
+                }
+            };
+
+            var observer = new MutationObserver(callback);
+
+            observer.observe(targetTotals, config);
+        }
+
+        function reloadFlowCart(observer = null) {
+            if (observer) {
+                observer.disconnect();
+            }
             if (!window.flow.magento2.shouldLocalizeCart) {
                 window.flow.magento2.showCart();
                 window.flow.magento2.showCartTotals();
@@ -31,19 +59,19 @@ define([
                 discount.attr('data-flow-localize','cart-discount'); 
             }
             if (totals.find('[data-th="Flow Tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
-                flowFields = $(`<tr class="totals vat">\
+                flowFields = $(`<tr class="totals vat flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row" data-flow-localize="cart-tax-name">Tax</th>\
                     <td class="amount">\
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Tax" data-flow-localize="cart-tax"></span>\
                     </td>\
                     </tr>\
-                    <tr class="totals duty">\
+                    <tr class="totals duty flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row">Duty</th>\
                     <td class="amount">\
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Duty" data-flow-localize="cart-duty"></span>\
                     </td>\
                     </tr>\
-                    <tr class="totals shipping">\
+                    <tr class="totals shipping flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row">Estimated Shipping</th>\
                     <td class="amount">\
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Shipping" data-flow-localize="cart-shipping"></span>\
@@ -55,25 +83,14 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
+            window.flow.events.on('cartLocalized', bindTotalsObserver);
             window.flow.cart.localize();
             return true;
         }
 
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
-            reloadFlowCart();
-            return result;
-        });
-
-        customerData.set = wrapper.wrap(customerData.set, function (_super, sectionName, sectionData) {
-            var result = _super(sectionName, sectionData);
-            reloadFlowCart();
-            return result;
-        });
-
-        customerData.reload = wrapper.wrap(customerData.reload, function (_super, sectionNames, updateSectionId) {
-            var result = _super(sectionNames, updateSectionId);
-            reloadFlowCart();
+            bindTotalsObserver();
             return result;
         });
 

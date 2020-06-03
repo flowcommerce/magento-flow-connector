@@ -148,7 +148,7 @@ define([
             });
         }
 
-        if (productId) {
+        if (productId && window.flow.magento2.product_id_sku_map[productId]) {
             sku = window.flow.magento2.product_id_sku_map[productId];
         }
 

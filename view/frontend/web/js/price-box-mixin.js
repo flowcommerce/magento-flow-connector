@@ -39,6 +39,13 @@ define([
                     );
                 }
 
+                if (this.options.priceConfig.flow_product_id_sku_map != undefined) { 
+                    Object.assign(
+                        window.flow.magento2.product_id_sku_map,
+                        this.options.prices.flow_product_id_sku_map
+                    );
+                }
+
                 if (!window.flow.magento2.shouldLocalizeCatalog) {
                     return this._super();
                 }

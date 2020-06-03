@@ -129,8 +129,7 @@ define([
 
     $(document).on('ajax:addToCart', function (event, data) {
         if (window.flow.magento2.product_id_sku_map == undefined) {
-            console.log('SKUs keyed on product ids not available, skipping beacon event');
-            debugger;
+            return false;
         }
 
         var sku = data.sku,
@@ -152,13 +151,15 @@ define([
             sku = window.flow.magento2.product_id_sku_map[productId];
         }
 
-        const cartAddEvent = {
-            item_number: sku,
-            quantity: qty
-        };
+        if (sku && qty) {
+            const cartAddEvent = {
+                item_number: sku,
+                quantity: qty
+            };
 
-        window.flow.cmd('on', 'ready', function() {
-            window.flow.beacon.processEvent('cart_add', cartAddEvent);
-        });
+            window.flow.cmd('on', 'ready', function() {
+                window.flow.beacon.processEvent('cart_add', cartAddEvent);
+            });
+        }
     });
 });

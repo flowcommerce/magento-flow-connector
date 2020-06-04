@@ -13,18 +13,10 @@ define([
                 return false;
             }
 
-            var config = {childList: true, subtree: true };
+            var config = {childList: true, subtree: true, characterData: true };
 
             var callback = function(mutationsList, observer) {
-                var shouldUpdate = false;
-                for (var i = 0; i < mutationsList.length; i++) {
-                    if (mutationsList[i].type === 'childList') {
-                        shouldUpdate = true;
-                    }
-                }
-                if (shouldUpdate) {
-                    reloadFlowCart(observer);
-                }
+                reloadFlowCart(observer);
             };
 
             var observer = new MutationObserver(callback);

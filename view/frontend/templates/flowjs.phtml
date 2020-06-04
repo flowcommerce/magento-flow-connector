@@ -24,7 +24,7 @@
     window.flow_cart_timeout = "<?= (int)$block->getFlowMaxCartHideMs(); ?>";
     setTimeout(function(){
         document.head.append(`
-            [data-role="priceBox"] span.price {
+            body [data-role="priceBox"] span.price {
                 opacity: 1;
             } 
         `);

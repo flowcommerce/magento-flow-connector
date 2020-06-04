@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.5
+- Flow Beacon Add to Cart event recorded
+- Address bug in checkout redirect with excluded items
+- Address bug in cart localization when third parties update summary fields
+- Address bug in catalog syncing when triggered by batch product imports
+
 ## 2.3.4
 - Allow disabling of cache preloaded localized pricing
 - Allow disabling of Magento discount support in Flow Checkout

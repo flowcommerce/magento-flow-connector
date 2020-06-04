@@ -1,9 +1,10 @@
 define([
     'jquery',
     'day',
+    'underscore',
     'flowCountryPicker',
     'mage/cookies'
-], function ($, day) {
+], function ($, day, _) {
     'use strict'; 
 
     !function (f, l, o, w, i, n, g) {
@@ -123,6 +124,42 @@ define([
             };
 
             window.flow.countryPicker.createCountryPicker(window.flow.magento2.countryPickerOptions);
+        }
+    });
+
+    $(document).on('ajax:addToCart', function (event, data) {
+        if (window.flow.magento2.product_id_sku_map == undefined) {
+            return false;
+        }
+
+        var sku = data.sku,
+            qty = 1,
+            options,
+            productId;
+
+        if (!_.contains(window.flow.magento2.optionsSelected[data.productIds[0]], false) &&
+            window.flow.magento2.optionsIndex[data.productIds[0]] != undefined
+        ) {
+            _.each(window.flow.magento2.optionsIndex[data.productIds[0]], function (optionData) {
+                if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[data.productIds[0]]).length == 0) {
+                    productId = optionData.productId;
+                }
+            });
+        }
+
+        if (productId && window.flow.magento2.product_id_sku_map[productId]) {
+            sku = window.flow.magento2.product_id_sku_map[productId];
+        }
+
+        if (sku && qty) {
+            const cartAddEvent = {
+                item_number: sku,
+                quantity: qty
+            };
+
+            window.flow.cmd('on', 'ready', function() {
+                window.flow.beacon.processEvent('cart_add', cartAddEvent);
+            });
         }
     });
 });

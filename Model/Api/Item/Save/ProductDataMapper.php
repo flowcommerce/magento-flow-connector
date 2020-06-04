@@ -245,9 +245,11 @@ class ProductDataMapper
             $children = $this->linkManagement->getChildren($product->getSku());
             $childSkus = [];
             foreach ($children as $child) {
-                $childSkus = array_merge($childSkus, $child->getSku());
+                $childSkus = array_push($childSkus, $child->getSku());
             }
-            $this->syncSkuManager->enqueueMultipleProductsByProductSku($childSkus, $storeId);
+            if (count($childSkus) > 0) {
+                $this->syncSkuManager->enqueueMultipleProductsByProductSku($childSkus, $storeId);
+            }
         }
 
         return $data;

@@ -90,7 +90,7 @@ define([
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
             window.flow.events.on('cartLocalized', bindTotalsObserver); 
-            bindTotalsObserver();
+            reloadFlowCart();
             return result;
         });
 

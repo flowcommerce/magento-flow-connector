@@ -3,6 +3,7 @@
 namespace FlowCommerce\FlowConnector\Model\Api\Item\Save;
 
 use \FlowCommerce\FlowConnector\Model\SyncSku;
+use \FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface as SyncSkuManager;
 use \Magento\Catalog\Api\Data\ProductInterface;
 use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use \Magento\Catalog\Block\Product\ListProduct as ListProductBlock;
@@ -133,6 +134,11 @@ class ProductDataMapper
     private $configuration;
 
     /**
+     * @var SyncSkuManager
+     */
+    private $syncSkuManager;
+
+    /**
      * ProductDataMapper constructor.
      * @param Logger $logger
      * @param JsonSerializer $jsonSerializer
@@ -150,6 +156,7 @@ class ProductDataMapper
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param ProductMetaData $productMetadata
      * @param Configuration $configuration
+     * @param SyncSkuManager $syncSkuManager
      */
     public function __construct(
         Logger $logger,
@@ -167,7 +174,8 @@ class ProductDataMapper
         ProductRepository $productRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         ProductMetaData $productMetadata,
-        Configuration $configuration
+        Configuration $configuration,
+        SyncSkuManager $syncSkuManager
     ) {
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
@@ -185,6 +193,7 @@ class ProductDataMapper
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->productMetaData = $productMetadata;
         $this->configuration = $configuration;
+        $this->syncSkuManager = $syncSkuManager;
     }
 
     /**
@@ -232,10 +241,13 @@ class ProductDataMapper
         $data = [$itemData];
 
         if ($product->getTypeId() === ConfigurableType::TYPE_CODE && $syncSku->isShouldSyncChildren()) {
+            $storeId = $syncSku->getStoreId();
             $children = $this->linkManagement->getChildren($product->getSku());
+            $childSkus = [];
             foreach ($children as $child) {
-                $data = array_merge($data, $this->map($syncSku, $child, $product));
+                $childSkus = array_merge($childSkus $child->getSku());
             }
+            $this->syncSkuManager->enqueueMultipleProductsByProductSku($childSkus, $storeId);
         }
 
         return $data;

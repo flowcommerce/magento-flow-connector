@@ -243,12 +243,8 @@ class ProductDataMapper
         if ($product->getTypeId() === ConfigurableType::TYPE_CODE && $syncSku->isShouldSyncChildren()) {
             $storeId = $syncSku->getStoreId();
             $children = $this->linkManagement->getChildren($product->getSku());
-            $childSkus = [];
             foreach ($children as $child) {
-                $childSkus = array_push($childSkus, $child->getSku());
-            }
-            if (count($childSkus) > 0) {
-                $this->syncSkuManager->enqueueMultipleProductsByProductSku($childSkus, $storeId);
+                $this->syncSkuManager->enqueueMultipleProductsByProductSku(array($child->getSku()), $storeId);
             }
         }
 

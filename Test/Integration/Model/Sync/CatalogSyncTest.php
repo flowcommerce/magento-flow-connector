@@ -182,6 +182,8 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
 
         $this->syncSkuManager->enqueueAllProducts();
         $this->subject->process();
+        // Re-process because now configs re-queue simples
+        $this->subject->process();
 
         $this->syncSkuCollection->load();
         $this->assertEquals($products->getTotalCount(), $this->syncSkuCollection->count());

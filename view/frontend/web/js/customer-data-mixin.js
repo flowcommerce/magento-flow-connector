@@ -83,13 +83,13 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
-            window.flow.events.on('cartLocalized', bindTotalsObserver);
             window.flow.cart.localize();
             return true;
         }
 
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
+            window.flow.events.on('cartLocalized', bindTotalsObserver); 
             bindTotalsObserver();
             return result;
         });

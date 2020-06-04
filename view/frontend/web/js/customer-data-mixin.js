@@ -7,6 +7,7 @@ define([
 
     return function (customerData) {
         function bindTotalsObserver() {
+            window.flow.events.off('cartLocalized', bindTotalsObserver); 
             var targetTotals = document.getElementById('cart-totals');
             if (targetTotals == null) {
                 return false;
@@ -83,14 +84,14 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
+            window.flow.events.on('cartLocalized', bindTotalsObserver); 
             window.flow.cart.localize();
             return true;
         }
 
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
-            window.flow.events.on('cartLocalized', bindTotalsObserver); 
-            reloadFlowCart();
+            bindTotalsObserver();
             return result;
         });
 

@@ -39,7 +39,7 @@ define([
             window.flow.magento2.hideCart();
             window.flow.magento2.hideCartTotals();
 
-            var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator;
+            var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator, localTax;
             totals = $('#cart-totals');
             shippingEstimator = $('#block-shipping');
             localTax = totals.find('.totals-tax');
@@ -75,8 +75,12 @@ define([
                     </tr>\
                     `);
                 totals.find('.totals.sub').after(flowFields);
-                shippingEstimator.hide();
-                localTax.hide();
+                if (shippingEstimator) {
+                    shippingEstimator.hide();
+                }
+                if (localTax) {
+                    localTax.hide();
+                }
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 

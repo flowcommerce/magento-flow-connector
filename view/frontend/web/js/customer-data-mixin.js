@@ -42,6 +42,7 @@ define([
             var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator;
             totals = $('#cart-totals');
             shippingEstimator = $('#block-shipping');
+            localTax = totals.find('.totals-tax');
             subtotal = totals.find('[data-th=\'Subtotal\']');
             grandtotal = totals.find('[data-th=\'Order Total\'] span.price');
             if (window.flow.magento2.support_discounts) {
@@ -75,6 +76,7 @@ define([
                     `);
                 totals.find('.totals.sub').after(flowFields);
                 shippingEstimator.hide();
+                localTax.hide();
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 

@@ -7,7 +7,9 @@ define([
 
     return function (customerData) {
         function bindTotalsObserver() {
-            window.flow.events.off('cartLocalized', bindTotalsObserver); 
+            if (window.flow.events != undefined) {
+                window.flow.events.off('cartLocalized', bindTotalsObserver); 
+            }
             var targetTotals = document.getElementById('cart-totals');
             if (targetTotals == null) {
                 return false;
@@ -37,9 +39,10 @@ define([
             window.flow.magento2.hideCart();
             window.flow.magento2.hideCartTotals();
 
-            var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator;
+            var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator, localTax;
             totals = $('#cart-totals');
             shippingEstimator = $('#block-shipping');
+            localTax = totals.find('.totals-tax');
             subtotal = totals.find('[data-th=\'Subtotal\']');
             grandtotal = totals.find('[data-th=\'Order Total\'] span.price');
             if (window.flow.magento2.support_discounts) {
@@ -72,7 +75,12 @@ define([
                     </tr>\
                     `);
                 totals.find('.totals.sub').after(flowFields);
-                shippingEstimator.hide();
+                if (shippingEstimator) {
+                    shippingEstimator.hide();
+                }
+                if (localTax) {
+                    localTax.hide();
+                }
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 

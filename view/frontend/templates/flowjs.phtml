@@ -31,8 +31,8 @@
     }, window.flow_pricing_timeout);
     setTimeout(function(){
         document.head.append(`
-            body.checkout-cart-index .cart-container span.price,
-            body.checkout-cart-index #cart-totals span.price,
+            body.checkout-cart-index .form-cart span.price,
+            body.checkout-cart-index .cart-summary span.price,
             body #minicart-content-wrapper span.price {
                 opacity: 1;
             }
@@ -51,13 +51,13 @@
     <?php endif; ?>
     <?php if ((int)$block->getFlowMaxCartHideMs() > 0) : ?>
         <style>
-        .checkout-cart-index .cart-container span.price,
-        .checkout-cart-index #cart-totals span.price,
+        .checkout-cart-index .form-cart span.price,
+        .checkout-cart-index .cart-summary span.price,
         #minicart-content-wrapper span.price {
             opacity: 0;
         } 
-        .flow-cart-localized.checkout-cart-index .cart-container span.price,
-        .flow-cart-totals-localized.checkout-cart-index #cart-totals span.price[data-flow-localize],
+        .flow-cart-localized.checkout-cart-index .form-cart span.price,
+        .flow-cart-totals-localized.checkout-cart-index .cart-summary span.price,
         .flow-cart-localized #minicart-content-wrapper span.price {
             opacity: 1;
         }

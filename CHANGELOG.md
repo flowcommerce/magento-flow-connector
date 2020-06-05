@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.6
+- Address bug in cart localization when viewing domestic cart
+
 ## 2.3.5
 - Flow Beacon Add to Cart event recorded
 - Address bug in checkout redirect with excluded items

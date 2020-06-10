@@ -149,8 +149,8 @@ define([
             } 
         } 
 
-        if (window.flow.magento2.product_id_sku_map != undefined) {
-            if (productId && window.flow.magento2.product_id_sku_map[productId]) {
+        if (window.flow.magento2.product_id_sku_map != undefined && productId) {
+            if (window.flow.magento2.product_id_sku_map[productId]) {
                 sku = window.flow.magento2.product_id_sku_map[productId];
             }
         }

@@ -128,18 +128,12 @@ define([
     });
 
     $(document).on('ajax:addToCart', function (event, data) {
-        if (window.flow.magento2.product_id_sku_map == undefined ||
-            typeof data.productIds != 'object'
-        ) {
-            return false;
-        }
-
         var sku = data.sku,
             qty = 1,
             options,
             productId;
 
-        if (typeof window.flow.magento2.optionsSelected == 'object') {
+        if (typeof window.flow.magento2.optionsSelected == 'object' && typeof data.productIds != 'object') {
             if (!_.contains(window.flow.magento2.optionsSelected[data.productIds[0]], false) &&
                 window.flow.magento2.optionsIndex[data.productIds[0]] != undefined
             ) {
@@ -153,7 +147,10 @@ define([
             productId = window.flow.magento2.simpleProduct;
         }
 
-        if (productId && window.flow.magento2.product_id_sku_map[productId]) {
+        if (productId &&
+            window.flow.magento2.product_id_sku_map[productId] &&
+            window.flow.magento2.product_id_sku_map != undefined
+        ) {
             sku = window.flow.magento2.product_id_sku_map[productId];
         }
 

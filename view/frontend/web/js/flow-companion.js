@@ -133,7 +133,7 @@ define([
             options,
             productId;
 
-        if (typeof window.flow.magento2.optionsSelected == 'object' && typeof data.productIds != 'object') {
+        if (typeof window.flow.magento2.optionsSelected == 'object' && typeof data.productIds == 'object') {
             if (!_.contains(window.flow.magento2.optionsSelected[data.productIds[0]], false) &&
                 window.flow.magento2.optionsIndex[data.productIds[0]] != undefined
             ) {
@@ -143,7 +143,9 @@ define([
                     }
                 });
             } 
-        } else if (typeof window.flow.magento2.simpleProduct == 'string') {
+        } 
+
+        if (typeof window.flow.magento2.simpleProduct == 'string') {
             productId = window.flow.magento2.simpleProduct;
         }
 

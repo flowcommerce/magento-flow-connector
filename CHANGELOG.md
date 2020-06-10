@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.3.7
+- Address bug in beacon add to cart event for simple products
+
 ## 2.3.6
 - Address bug in cart localization when viewing domestic cart
 

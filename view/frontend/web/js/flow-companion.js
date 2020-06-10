@@ -128,27 +128,31 @@ define([
     });
 
     $(document).on('ajax:addToCart', function (event, data) {
-        if (window.flow.magento2.product_id_sku_map == undefined) {
-            return false;
-        }
-
         var sku = data.sku,
             qty = 1,
             options,
             productId;
 
-        if (!_.contains(window.flow.magento2.optionsSelected[data.productIds[0]], false) &&
-            window.flow.magento2.optionsIndex[data.productIds[0]] != undefined
-        ) {
-            _.each(window.flow.magento2.optionsIndex[data.productIds[0]], function (optionData) {
-                if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[data.productIds[0]]).length == 0) {
-                    productId = optionData.productId;
-                }
-            });
+        if (typeof window.flow.magento2.simpleProduct == 'string') {
+            productId = window.flow.magento2.simpleProduct;
         }
 
-        if (productId && window.flow.magento2.product_id_sku_map[productId]) {
-            sku = window.flow.magento2.product_id_sku_map[productId];
+        if (typeof window.flow.magento2.optionsSelected == 'object' && typeof data.productIds == 'object') {
+            if (!_.contains(window.flow.magento2.optionsSelected[data.productIds[0]], false) &&
+                window.flow.magento2.optionsIndex[data.productIds[0]] != undefined
+            ) {
+                _.each(window.flow.magento2.optionsIndex[data.productIds[0]], function (optionData) {
+                    if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[data.productIds[0]]).length == 0) {
+                        productId = optionData.productId;
+                    }
+                });
+            } 
+        } 
+
+        if (window.flow.magento2.product_id_sku_map != undefined && productId) {
+            if (window.flow.magento2.product_id_sku_map[productId]) {
+                sku = window.flow.magento2.product_id_sku_map[productId];
+            }
         }
 
         if (sku && qty) {

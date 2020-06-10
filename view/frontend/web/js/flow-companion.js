@@ -151,8 +151,6 @@ define([
             } 
         } else if (typeof window.flow.magento2.simpleProduct == 'string') {
             productId = window.flow.magento2.simpleProduct;
-        } else {
-            return false;
         }
 
         if (productId && window.flow.magento2.product_id_sku_map[productId]) {

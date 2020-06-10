@@ -128,7 +128,9 @@ define([
     });
 
     $(document).on('ajax:addToCart', function (event, data) {
-        if (window.flow.magento2.product_id_sku_map == undefined) {
+        if (window.flow.magento2.product_id_sku_map == undefined ||
+            typeof data.productIds != 'object'
+        ) {
             return false;
         }
 
@@ -137,14 +139,20 @@ define([
             options,
             productId;
 
-        if (!_.contains(window.flow.magento2.optionsSelected[data.productIds[0]], false) &&
-            window.flow.magento2.optionsIndex[data.productIds[0]] != undefined
-        ) {
-            _.each(window.flow.magento2.optionsIndex[data.productIds[0]], function (optionData) {
-                if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[data.productIds[0]]).length == 0) {
-                    productId = optionData.productId;
-                }
-            });
+        if (typeof window.flow.magento2.optionsSelected == 'object') {
+            if (!_.contains(window.flow.magento2.optionsSelected[data.productIds[0]], false) &&
+                window.flow.magento2.optionsIndex[data.productIds[0]] != undefined
+            ) {
+                _.each(window.flow.magento2.optionsIndex[data.productIds[0]], function (optionData) {
+                    if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[data.productIds[0]]).length == 0) {
+                        productId = optionData.productId;
+                    }
+                });
+            } 
+        } else if (typeof window.flow.magento2.simpleProduct == 'string') {
+            productId = window.flow.magento2.simpleProduct;
+        } else {
+            return false;
         }
 
         if (productId && window.flow.magento2.product_id_sku_map[productId]) {

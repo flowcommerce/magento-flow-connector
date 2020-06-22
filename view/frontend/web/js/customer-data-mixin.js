@@ -27,9 +27,7 @@ define([
         }
 
         function reloadFlowCart(observer = null) {
-            if (observer) {
-                observer.disconnect();
-            }
+            observer ? observer.disconnect();
             if (!window.flow.magento2.shouldLocalizeCart) {
                 window.flow.magento2.showCart();
                 window.flow.magento2.showCartTotals();
@@ -39,22 +37,25 @@ define([
             window.flow.magento2.hideCart();
             window.flow.magento2.hideCartTotals();
 
-            var totals, subtotal, grandtotal, discount, flowFields, shippingEstimator, localTax;
+            var totals, subtotal, grandTotal, discount, flowFields, shippingEstimator, giftCard, localTax;
             totals = $('#cart-totals');
             shippingEstimator = $('#block-shipping');
+            giftCard = $('#block-giftcard');
             localTax = totals.find('.totals-tax');
-            subtotal = totals.find('[data-th=\'Subtotal\']');
-            grandtotal = totals.find('[data-th=\'Order Total\'] span.price');
-            if (window.flow.magento2.support_discounts) {
-                discount = totals.find('[data-th=\'Discount\'] span.price');
-            }
+            subtotal = totals.find('.totals.sub');
+            grandTotal = totals.find('.totals.grand');
+            discount = totals.find('[data-th=\'Discount\']');
 
-            subtotal.attr('data-flow-localize','cart-subtotal'); 
-            grandtotal.attr('data-flow-localize','cart-total'); 
-            if (window.flow.magento2.support_discounts) {
-                discount.attr('data-flow-localize','cart-discount'); 
+            subtotal.find('span.price').attr('data-flow-localize','cart-subtotal'); 
+            grandTotal.find('span.price').attr('data-flow-localize','cart-total'); 
+            if (discount) {
+                if (window.flow.magento2.support_discounts) {
+                    discount.find('span.price').attr('data-flow-localize','cart-discount'); 
+                } else {
+                    discount.hide();
+                }
             }
-            if (totals.find('[data-th="Flow Tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
+            if (totals.find('[data-flow-localize="cart-tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
                 flowFields = $(`<tr class="totals vat flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row" data-flow-localize="cart-tax-name">Tax</th>\
                     <td class="amount">\
@@ -67,20 +68,17 @@ define([
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Duty" data-flow-localize="cart-duty"></span>\
                     </td>\
                     </tr>\
-                    <tr class="totals shipping flow-localize">\
+                    <tr class="totals shipping flow-shipping flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row">Estimated Shipping</th>\
                     <td class="amount">\
                     <span class="price" data-bind="text: getValue(), attr: {'data-th': title}" data-th="Flow Shipping" data-flow-localize="cart-shipping"></span>\
                     </td>\
                     </tr>\
                     `);
-                totals.find('.totals.sub').after(flowFields);
-                if (shippingEstimator) {
-                    shippingEstimator.hide();
-                }
-                if (localTax) {
-                    localTax.hide();
-                }
+                subtotal ? subtotal.after(flowFields);
+                shippingEstimator ? shippingEstimator.hide();
+                giftCard ? giftCard.hide();
+                localTax ? localTax.hide();
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 

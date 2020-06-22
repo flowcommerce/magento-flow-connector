@@ -97,11 +97,11 @@ define([
         window.flow.magento2.shouldLocalizeCatalog = window.flow.magento2.hasExperience && window.flow.magento2.catalog_localize;
         window.flow.magento2.shouldLocalizeCart = window.flow.magento2.hasExperience && window.flow.magento2.cart_localize;
 
-        window.flow.events.on('catalogLocalized', function() {
+        window.flow.cmd('on', 'catalogLocalized', function() {
             window.flow.magento2.showPrices();
         });
 
-        window.flow.events.on('cartLocalized', function(data) {
+        window.flow.cmd('on', 'cartLocalized', function(data) {
             window.flow.magento2.showCart();
             if (window.flow.magento2.installedFlowTotalsFields) {
                 window.flow.magento2.showCartTotals();

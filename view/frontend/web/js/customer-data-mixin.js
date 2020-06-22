@@ -7,9 +7,7 @@ define([
 
     return function (customerData) {
         function bindTotalsObserver() {
-            if (window.flow.events != undefined) {
-                window.flow.events.off('cartLocalized', bindTotalsObserver); 
-            }
+            window.flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
             var targetTotals = document.getElementById('cart-totals');
             if (targetTotals == null) {
                 return false;
@@ -82,7 +80,7 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
-            window.flow.events.on('cartLocalized', bindTotalsObserver); 
+            window.flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
             window.flow.cart.localize();
             return true;
         }

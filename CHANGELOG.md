@@ -3,6 +3,8 @@
 ## 2.3.8
 - Cart localization discount display bug addressed
 - Cart localization grand total display bug addressed
+- FlowJS include optimization
+- FlowJS events bug addressed
 
 ## 2.3.7
 - Address bug in beacon add to cart event for simple products

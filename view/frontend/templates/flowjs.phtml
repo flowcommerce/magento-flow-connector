@@ -22,6 +22,11 @@
     window.flow_catalog_localize = <?= (int)$block->isFlowCatalogLocalize(); ?>;
     window.flow_pricing_timeout = "<?= (int)$block->getFlowMaxCatalogHideMs(); ?>";
     window.flow_cart_timeout = "<?= (int)$block->getFlowMaxCartHideMs(); ?>";
+    !function (f, l, o, w, i, n, g) {
+        f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
+            (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
+        n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
+    }(window,document,'script',window.flow_flowjs_url,'flow');
     setTimeout(function(){
         document.head.append(`
             body [data-role="priceBox"] span.price {

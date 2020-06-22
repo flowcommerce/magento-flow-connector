@@ -7,11 +7,13 @@ define([
 ], function ($, day, _) {
     'use strict'; 
 
-    !function (f, l, o, w, i, n, g) {
-        f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
-            (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
-        n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
-    }(window,document,'script',window.flow_flowjs_url,'flow');
+    if (window.flow == undefined) {
+        !function (f, l, o, w, i, n, g) {
+            f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
+                (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
+            n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
+        }(window,document,'script',window.flow_flowjs_url,'flow');
+    }
     window.flow.session = window.flow.session || {};
     window.flow.cart = window.flow.cart || {};
     window.flow.magento2 = window.flow.magento2 || {};

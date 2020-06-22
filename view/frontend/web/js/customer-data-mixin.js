@@ -27,7 +27,7 @@ define([
         }
 
         function reloadFlowCart(observer = null) {
-            observer ? observer.disconnect();
+            if (observer) observer.disconnect();
             if (!window.flow.magento2.shouldLocalizeCart) {
                 window.flow.magento2.showCart();
                 window.flow.magento2.showCartTotals();
@@ -75,10 +75,10 @@ define([
                     </td>\
                     </tr>\
                     `);
-                subtotal ? subtotal.after(flowFields);
-                shippingEstimator ? shippingEstimator.hide();
-                giftCard ? giftCard.hide();
-                localTax ? localTax.hide();
+                if (subtotal) subtotal.after(flowFields);
+                if (shippingEstimator) shippingEstimator.hide();
+                if (giftCard) giftCard.hide();
+                if (localTax) localTax.hide();
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 

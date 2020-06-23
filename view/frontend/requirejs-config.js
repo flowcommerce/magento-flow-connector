@@ -18,11 +18,9 @@ var config = {
         'flowCompanion',
         'flow',
         'flowCountryPicker',
-        'day'
+        'day',
+        'es6-collections'
     ],
-    shim: {
-        'flowCompanion': ['jquery', 'day', 'mage/cookies', 'es6-collections', 'flow', 'flowCountryPicker']
-    },
     config: {
         mixins: {
             'Magento_ConfigurableProduct/js/configurable': {

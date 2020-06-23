@@ -7,6 +7,11 @@ define([
 ], function ($, day, _) {
     'use strict'; 
 
+    !function (f, l, o, w, i, n, g) {
+        f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
+            (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
+        n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
+    }(window,document,'script',window.flow_flowjs_url,'flow');
     window.flow.session = window.flow.session || {};
     window.flow.cart = window.flow.cart || {};
     window.flow.magento2 = window.flow.magento2 || {};
@@ -85,42 +90,42 @@ define([
     window.flow.cmd('init');
     window.flow.cmd('localize');
 
-    window.flow.cmd('on', 'ready', function() {
-        window.flow.magento2.hasExperience = typeof(window.flow.session.getExperience()) == "string";
-        window.flow.magento2.shouldLocalizeCatalog = window.flow.magento2.hasExperience && window.flow.magento2.catalog_localize;
-        window.flow.magento2.shouldLocalizeCart = window.flow.magento2.hasExperience && window.flow.magento2.cart_localize;
+    window.flow.magento2.hasExperience = typeof(window.flow.session.getExperience()) == "string";
+    window.flow.magento2.shouldLocalizeCatalog = window.flow.magento2.hasExperience && window.flow.magento2.catalog_localize;
+    window.flow.magento2.shouldLocalizeCart = window.flow.magento2.hasExperience && window.flow.magento2.cart_localize;
 
-        window.flow.cmd('on', 'catalogLocalized', function() {
-            window.flow.magento2.showPrices();
-        });
+    window.flow.cmd('on', 'catalogLocalized', function() {
+        window.flow.magento2.showPrices();
+    });
 
-        window.flow.cmd('on', 'cartLocalized', function(data) {
-            window.flow.magento2.showCart();
-            if (window.flow.magento2.installedFlowTotalsFields) {
-                window.flow.magento2.showCartTotals();
-            }
-        });
-
-        if (!window.flow.magento2.hasExperience) {
-            window.flow.magento2.showPrices();
-            window.flow.magento2.showCart();
+    window.flow.cmd('on', 'cartLocalized', function(data) {
+        window.flow.magento2.showCart();
+        if (window.flow.magento2.installedFlowTotalsFields) {
             window.flow.magento2.showCartTotals();
         }
+    });
 
-        if (window.flow_country_picker_enabled) {
-            window.flow.magento2.countryPickerOptions = window.flow.magento2.countryPickerOptions || {};
-            window.flow.magento2.countryPickerOptions.containerId = 'flow-country-picker';
-            window.flow.magento2.countryPickerOptions.type = 'dropdown';
-            window.flow.magento2.countryPickerOptions.logo = true;
-            window.flow.magento2.countryPickerOptions.isDestination = true;
-            window.flow.magento2.countryPickerOptions.onSessionUpdate = function (status, session) {
-                $.cookie('flow_mage_session_update', 1,  {domain: null});
-                window.location.reload();
-            };
+    if (!window.flow.magento2.hasExperience) {
+        window.flow.magento2.showPrices();
+        window.flow.magento2.showCart();
+        window.flow.magento2.showCartTotals();
+    }
 
-            window.flow.countryPicker.createCountryPicker(window.flow.magento2.countryPickerOptions);
-        }
+    if (window.flow_country_picker_enabled) {
+        window.flow.magento2.countryPickerOptions = window.flow.magento2.countryPickerOptions || {};
+        window.flow.magento2.countryPickerOptions.containerId = 'flow-country-picker';
+        window.flow.magento2.countryPickerOptions.type = 'dropdown';
+        window.flow.magento2.countryPickerOptions.logo = true;
+        window.flow.magento2.countryPickerOptions.isDestination = true;
+        window.flow.magento2.countryPickerOptions.onSessionUpdate = function (status, session) {
+            $.cookie('flow_mage_session_update', 1,  {domain: null});
+            window.location.reload();
+        };
 
+        window.flow.countryPicker.createCountryPicker(window.flow.magento2.countryPickerOptions);
+    }
+
+    window.flow.cmd('on', 'ready', function() {
         $(document).on('ajax:addToCart', function (event, data) {
             var sku = data.sku,
                 qty = 1,

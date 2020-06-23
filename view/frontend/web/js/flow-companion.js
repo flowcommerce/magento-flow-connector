@@ -1,1 +1,1 @@
-define([ 'jquery', 'day', 'underscore', 'flowCountryPicker', 'mage/cookies' ], function ($, day, _) { 'use strict'; });
+define([ 'jquery', 'day', 'underscore', 'mage/cookies' ], function ($, day, _) { 'use strict'; });

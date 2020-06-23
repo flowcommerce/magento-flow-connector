@@ -70,22 +70,22 @@ define([
 
     window.flow.cmd('set', 'organization', window.flow_organization_id);
     window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
-    window.flow.cmd('on', 'ready', function() {
-        if (window.flow.magento2.shipping_window_enabled) {
-            window.flow.cmd('set', 'shippingWindow', {
-                formatters: {
-                    all: function (minDate, maxDate) {
-                        const minFormattedDate = day(minDate).format('MMM D');
-                        const maxFormattedDate = day(maxDate).format('MMM D');
+    if (window.flow.magento2.shipping_window_enabled) {
+        window.flow.cmd('set', 'shippingWindow', {
+            formatters: {
+                all: function (minDate, maxDate) {
+                    const minFormattedDate = day(minDate).format('MMM D');
+                    const maxFormattedDate = day(maxDate).format('MMM D');
 
-                        return `Estimated delivery: ${minFormattedDate} - ${maxFormattedDate}`;
-                    }
+                    return `Estimated delivery: ${minFormattedDate} - ${maxFormattedDate}`;
                 }
-            });
-        }
-        window.flow.cmd('init');
-        window.flow.cmd('localize');
+            }
+        });
+    }
+    window.flow.cmd('init');
+    window.flow.cmd('localize');
 
+    window.flow.cmd('on', 'ready', function() {
         window.flow.magento2.hasExperience = typeof(window.flow.session.getExperience()) == "string";
         window.flow.magento2.shouldLocalizeCatalog = window.flow.magento2.hasExperience && window.flow.magento2.catalog_localize;
         window.flow.magento2.shouldLocalizeCart = window.flow.magento2.hasExperience && window.flow.magento2.cart_localize;

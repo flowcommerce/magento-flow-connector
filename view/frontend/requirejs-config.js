@@ -10,16 +10,15 @@
 var config = {
     paths: {
         'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion',
-        'flow': '//cdn.flow.io/flowjs/latest/flow.min',
+        'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
         'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min'
     },
     deps: [
         'flowCompanion',
-        'flow',
+        'flowJs',
         'flowCountryPicker',
         'day',
-        'es6-collections'
     ],
     config: {
         mixins: {

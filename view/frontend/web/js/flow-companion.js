@@ -1,19 +1,14 @@
 define([
-'flow',
 'jquery',
 'day',
 'underscore',
 'mage/cookies',
 'flowCountryPicker',
+'flowJs',
 'es6-collections'
-], function (flow, $, day, _) {
+], function ($, day, _) {
     'use strict'; 
 
-    !function (f, l, o, w, i, n, g) {
-        f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
-            (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
-    }(window,document,'script',flow,'flow');
-    
     flow.cmd('set', 'organization', flow_organization_id);
     flow.cmd('set', 'optinContainerSelector', '#flow-optin');
     if (flow.magento2.shipping_window_enabled) {

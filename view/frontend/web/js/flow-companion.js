@@ -9,6 +9,10 @@ define([
 ], function ($, day, _) {
     'use strict'; 
 
+    flow = flow || {};
+    flow.cmd = flow.cmd || function () {
+        (flow.q = flow.q || []).push(arguments);
+    }
     flow.cmd('set', 'organization', flow_organization_id);
     flow.cmd('set', 'optinContainerSelector', '#flow-optin');
     if (flow.magento2.shipping_window_enabled) {

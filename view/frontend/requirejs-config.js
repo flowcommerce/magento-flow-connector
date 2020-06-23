@@ -10,17 +10,18 @@
 var config = {
     paths: {
         'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion',
-        'flowJs': '//cdn.flow.io/flowjs/latest/flow.min';
+        'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
         'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min'
     },
     deps: [
         'flowCompanion',
         'flowJs',
-        'flowCountryPicker'
+        'flowCountryPicker',
+        'day'
     ],
     shim: {
-        'flowCompanion': ['jquery', 'day', 'mage/cookies', 'es6-collections']
+        'flowCompanion': ['jquery', 'day', 'mage/cookies', 'es6-collections', 'flowJs', 'flowCountryPicker']
     },
     config: {
         mixins: {

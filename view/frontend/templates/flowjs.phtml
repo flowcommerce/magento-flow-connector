@@ -12,6 +12,7 @@
 /** @var $block \FlowCommerce\FlowConnector\Block\FlowJS */
 ?>
 <?php if ($block->isFlowJsEnabled()) : ?>
+    <script type="text/javascript" src="https://cdn.flow.io/country-picker/js/v0/country-picker.min.js">
     <script type="text/javascript">
     window.flow_flowjs_url = "<?= $block->getFlowJsUrl(); ?>";
     !function (f, l, o, w, i, n, g) {

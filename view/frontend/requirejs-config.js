@@ -16,7 +16,7 @@ var config = {
     },
     deps: [
         'flowCompanion',
-        'flowJs',
+        'flow',
         'flowCountryPicker',
         'day'
     ],

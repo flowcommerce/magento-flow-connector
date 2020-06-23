@@ -10,10 +10,14 @@
 var config = {
     paths: {
         'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion',
+        'flowJs': '//cdn.flow.io/flowjs/latest/flow.min';
+        'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min'
     },
     deps: [
-        'flowCompanion'
+        'flowCompanion',
+        'flowJs',
+        'flowCountryPicker'
     ],
     shim: {
         'flowCompanion': ['jquery', 'day', 'mage/cookies', 'es6-collections']

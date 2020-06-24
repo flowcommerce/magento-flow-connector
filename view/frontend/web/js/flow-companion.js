@@ -161,5 +161,4 @@ define([
             }
         });
     });
-    flow = flow;
 });

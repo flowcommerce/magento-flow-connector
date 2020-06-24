@@ -33,13 +33,6 @@
                     </depends>
                     <frontend_class>required-entry</frontend_class>
                 </field>
-                <field id="flowjs_version" translate="label" type="text" sortOrder="4" showInDefault="0" showInWebsite="0" showInStore="1">
-                    <label>Flow.js Version</label>
-                    <comment>Recommended version: "latest"</comment>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
-                </field>
                 <field id="checkout_base_url" translate="label" type="text" sortOrder="5" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Checkout Base Url</label>
                     <comment>Value provided must have a CNAME DNS record mapped to https://checkout.flow.io/ which must be validated by Flow</comment>

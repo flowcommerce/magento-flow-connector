@@ -11,8 +11,12 @@
 
 /** @var $block \FlowCommerce\FlowConnector\Block\FlowJS */
 ?>
-<?php if ($block->isFlowJsEnabled()) : ?>
+<?php if ($block->isFlowEnabled()) : ?>
     <script type="text/javascript">
+    window['flow'] = window['flow'] || {};
+    window['flow'].cmd = window['flow'].cmd || function () {
+        (window['flow'].q = window['flow'].q || []).push(arguments);
+    };
     window.flow_enabled = true;
     window.flow_organization_id = "<?= $block->getFlowOrganizationId(); ?>";
     window.flow_production = "<?= (int)$block->isFlowProduction(); ?>";
@@ -21,66 +25,6 @@
     window.flow_catalog_localize = <?= (int)$block->isFlowCatalogLocalize(); ?>;
     window.flow_pricing_timeout = "<?= (int)$block->getFlowMaxCatalogHideMs(); ?>";
     window.flow_cart_timeout = "<?= (int)$block->getFlowMaxCartHideMs(); ?>";
-    window.flow.session = window.flow.session || {};
-    window.flow.cart = window.flow.cart || {};
-    window.flow.magento2 = window.flow.magento2 || {};
-    window.flow.magento2.enabled = window.flow_enabled;
-    window.flow.magento2.production = window.flow_production;
-    window.flow.magento2.support_discounts = window.flow_support_magento_discounts;
-    window.flow.magento2.cart_localize = window.flow_cart_localize;
-    window.flow.magento2.catalog_localize = window.flow_catalog_localize;
-    window.flow.magento2.pricing_timeout = window.flow_pricing_timeout;
-    window.flow.magento2.payment_methods_enabled = window.flow_payment_methods_enabled;
-    window.flow.magento2.shipping_window_enabled = window.flow_shipping_window_enabled;
-    window.flow.magento2.tax_duty_enabled = window.flow_tax_duty_messaging_enabled;
-    window.flow.magento2.hasExperience = false;
-    window.flow.magento2.hasLocalizedCatalog = false;
-    window.flow.magento2.hasLocalizedCart = false;
-    window.flow.magento2.hasLocalizedCartTotals = false;
-    window.flow.magento2.shouldLocalizeCatalog = false;
-    window.flow.magento2.shouldLocalizeCart = false;
-    window.flow.magento2.installedFlowTotalsFields = false;
-    window.flow.magento2.showPrices = function () {
-        if (!window.flow.magento2.hasLocalizedCatalog) {
-            window.flow.magento2.hasLocalizedCatalog = true;
-            document.getElementsByTagName('body')[0].classList.add('flow-catalog-localized');
-        }
-    }
-
-    window.flow.magento2.hidePrices = function () {
-        if (window.flow.magento2.hasLocalizedCatalog) {
-            window.flow.magento2.hasLocalizedCatalog = false;
-            document.getElementsByTagName('body')[0].classList.remove('flow-catalog-localized');
-        }
-    }
-
-    window.flow.magento2.showCart = function () {
-        if (!window.flow.magento2.hasLocalizedCart) {
-            window.flow.magento2.hasLocalizedCart = true;
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-localized');
-        }
-    }
-
-    window.flow.magento2.hideCart = function () {
-        if (window.flow.magento2.hasLocalizedCart) {
-            window.flow.magento2.hasLocalizedCart = false;
-            document.getElementsByTagName('body')[0].classList.remove('flow-cart-localized');
-        }
-    }
-
-    window.flow.magento2.showCartTotals = function () {
-        if (!window.flow.magento2.hasLocalizedCartTotals) {
-            window.flow.magento2.hasLocalizedCartTotals = true;
-            document.getElementsByTagName('body')[0].classList.add('flow-cart-totals-localized');
-        }
-    }
-
-    window.flow.magento2.hideCartTotals = function () {
-        if (window.flow.magento2.hasLocalizedCartTotals) {
-            window.flow.magento2.hasLocalizedCartTotals = false;
-            document.getElementsByTagName('body')[0].classList.remove('flow-cart-totals-localized');
-        }
-    }
 
     setTimeout(function(){
         document.head.append(`
@@ -89,6 +33,7 @@
             } 
         `);
     }, window.flow_pricing_timeout);
+
     setTimeout(function(){
         document.head.append(`
             body.checkout-cart-index .form-cart span.price,

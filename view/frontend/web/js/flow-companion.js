@@ -9,10 +9,6 @@ define([
 ], function ($, day, _) {
     'use strict'; 
 
-    flow.cmd('set', 'organization', flow_organization_id);
-    flow.cmd('set', 'optinContainerSelector', '#flow-optin');
-    flow.cmd('init');
-
     flow.magento2 = flow.magento2 || {};
     flow.magento2.enabled = window.flow_enabled || false;
     flow.magento2.production = window.flow_production || false;
@@ -30,6 +26,7 @@ define([
     flow.magento2.shouldLocalizeCatalog = false;
     flow.magento2.shouldLocalizeCart = false;
     flow.magento2.installedFlowTotalsFields = false;
+
     flow.magento2.showPrices = function () {
         if (!flow.magento2.hasLocalizedCatalog) {
             flow.magento2.hasLocalizedCatalog = true;

@@ -3,4 +3,8 @@ define([], function () {
     window['flow'].cmd = window['flow'].cmd || function () {
         (window['flow'].q = window['flow'].q || []).push(arguments);
     };
+
+    flow.cmd('set', 'organization', flow_organization_id);
+    flow.cmd('set', 'optinContainerSelector', '#flow-optin');
+    flow.cmd('init');
 });

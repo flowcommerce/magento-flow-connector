@@ -13,8 +13,8 @@ define([
     return function (widget) {
         $.widget('mage.configurable', widget, {
             _configureElement: function (element) {
-                if (window.flow.magento2.shouldLocalizeCatalog) {
-                    window.flow.magento2.simpleProduct = this._getSimpleProductId(element);
+                if (flow.magento2.shouldLocalizeCatalog) {
+                    flow.magento2.simpleProduct = this._getSimpleProductId(element);
                 }
                 return this._super(element);
             }

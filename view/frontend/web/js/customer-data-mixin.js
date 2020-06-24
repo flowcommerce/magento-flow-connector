@@ -7,7 +7,7 @@ define([
 
     return function (customerData) {
         function bindTotalsObserver() {
-            window.flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
+            flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
             var targetTotals = document.getElementById('cart-totals');
             if (targetTotals == null) {
                 return false;
@@ -26,14 +26,14 @@ define([
 
         function reloadFlowCart(observer = null) {
             if (observer) observer.disconnect();
-            if (!window.flow.magento2.shouldLocalizeCart) {
-                window.flow.magento2.showCart();
-                window.flow.magento2.showCartTotals();
+            if (!flow.magento2.shouldLocalizeCart) {
+                flow.magento2.showCart();
+                flow.magento2.showCartTotals();
                 return false;
             }
 
-            window.flow.magento2.hideCart();
-            window.flow.magento2.hideCartTotals();
+            flow.magento2.hideCart();
+            flow.magento2.hideCartTotals();
 
             var totals, subtotal, grandTotal, discount, flowFields, shippingEstimator, giftCard, localTax;
             totals = $('#cart-totals');
@@ -47,13 +47,13 @@ define([
             subtotal.find('span.price').attr('data-flow-localize','cart-subtotal'); 
             grandTotal.find('span.price').attr('data-flow-localize','cart-total'); 
             if (discount) {
-                if (window.flow.magento2.support_discounts) {
+                if (flow.magento2.support_discounts) {
                     discount.find('span.price').attr('data-flow-localize','cart-discount'); 
                 } else {
                     discount.hide();
                 }
             }
-            if (totals.find('[data-flow-localize="cart-tax"]').length <= 0 && !window.flow.magento2.miniCartAvailable) {
+            if (totals.find('[data-flow-localize="cart-tax"]').length <= 0 && !flow.magento2.miniCartAvailable) {
                 flowFields = $(`<tr class="totals vat flow-localize">\
                     <th data-bind="i18n: title" class="mark" scope="row" data-flow-localize="cart-tax-name">Tax</th>\
                     <td class="amount">\
@@ -77,11 +77,11 @@ define([
                 if (shippingEstimator) shippingEstimator.hide();
                 if (giftCard) giftCard.hide();
                 if (localTax) localTax.hide();
-                window.flow.magento2.installedFlowTotalsFields = true;
+                flow.magento2.installedFlowTotalsFields = true;
             }
 
-            window.flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
-            window.flow.cart.localize();
+            flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
+            flow.cart.localize();
             return true;
         }
 

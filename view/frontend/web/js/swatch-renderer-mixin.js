@@ -15,9 +15,7 @@ define([
     return function (widget) {
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {
-                if (window.flow.magento2.optionsIndex == undefined) {
-                    window.flow.magento2.optionsIndex = {};
-                }
+                flow.magento2.optionsIndex = flow.magento2.optionsIndex || {};
                 var productId = this.options.jsonConfig.productId;
                 var optionIndex = [];
                 _.each(this.options.jsonConfig.index, function (option, key) {
@@ -30,7 +28,7 @@ define([
                     });
                     optionIndex.push(optionData);
                 });
-                window.flow.magento2.optionsIndex[productId] = optionIndex;
+                flow.magento2.optionsIndex[productId] = optionIndex;
                 return this._super();
             },
 
@@ -38,21 +36,19 @@ define([
                 var productId = $widget.options.jsonConfig.productId,
                     selectedOptionId = $this["context"].attributes["option-id"].value,
                     optionsMap = _.toArray($widget.optionsMap);
-                if (window.flow.magento2.optionsSelected == undefined) {
-                    window.flow.magento2.optionsSelected = [];
-                }
-                if (window.flow.magento2.optionsSelected[productId] == undefined) {
-                    window.flow.magento2.optionsSelected[productId] = [];
+                flow.magento2.optionsSelected = flow.magento2.optionsSelected || [];
+                if (flow.magento2.optionsSelected[productId] == undefined) {
+                    flow.magento2.optionsSelected[productId] = [];
                     _.each(_.toArray($widget.optionsMap), function(option, key) {
-                        window.flow.magento2.optionsSelected[productId].push(false);
+                        flow.magento2.optionsSelected[productId].push(false);
                     });
                 }
                 _.each(optionsMap, function(options, key) {
                     if (typeof(options[selectedOptionId]) == "object") {
-                        if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
-                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
+                        if (flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
+                            flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
                         } else {
-                            window.flow.magento2.optionsSelected[productId][key] = false;
+                            flow.magento2.optionsSelected[productId][key] = false;
                         }
                     }
                 });
@@ -63,21 +59,19 @@ define([
                 var productId = $widget.options.jsonConfig.productId,
                     selectedOptionId = $this["context"].value,
                     optionsMap = _.toArray($widget.optionsMap);
-                if (window.flow.magento2.optionsSelected == undefined) {
-                    window.flow.magento2.optionsSelected = [];
-                }
-                if (window.flow.magento2.optionsSelected[productId] == undefined) {
-                    window.flow.magento2.optionsSelected[productId] = [];
+                flow.magento2.optionsSelected = flow.magento2.optionsSelected || [];
+                if (flow.magento2.optionsSelected[productId] == undefined) {
+                    flow.magento2.optionsSelected[productId] = [];
                     _.each(_.toArray($widget.optionsMap), function(option, key) {
-                        window.flow.magento2.optionsSelected[productId].push(false);
+                        flow.magento2.optionsSelected[productId].push(false);
                     });
                 }
                 _.each(optionsMap, function(options, key) {
                     if (typeof(options[selectedOptionId]) == "object") {
-                        if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
-                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
+                        if (flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
+                            flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
                         } else {
-                            window.flow.magento2.optionsSelected[productId][key] = false;
+                            flow.magento2.optionsSelected[productId][key] = false;
                         }
                     }
                 });
@@ -85,15 +79,15 @@ define([
             },
 
             _Rebuild: function ($this, $widget) {
-                if (window.flow.magento2.shouldLocalizeCatalog) {
-                    window.flow.magento2.hidePrices();
+                if (flow.magento2.shouldLocalizeCatalog) {
+                    flow.magento2.hidePrices();
                 }
                 return this._super($this, $widget);
             },
 
             _UpdatePrice: function ($this, $widget) {
-                if (window.flow.magento2.shouldLocalizeCatalog) {
-                    window.flow.magento2.hidePrices();
+                if (flow.magento2.shouldLocalizeCatalog) {
+                    flow.magento2.hidePrices();
                 }
                 return this._super($this, $widget);
             },

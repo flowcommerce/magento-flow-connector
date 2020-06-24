@@ -28,25 +28,23 @@ define([
             options: globalOptions,
 
             reloadPrice: function reDrawPrices() {
-                if (window.flow.magento2.product_id_sku_map == undefined) {
-                    window.flow.magento2.product_id_sku_map = {};
-                }
+                flow.magento2.product_id_sku_map = flow.magento2.product_id_sku_map || {};
 
                 if (this.options.prices.flow_product_id_sku_map != undefined) { 
                     Object.assign(
-                        window.flow.magento2.product_id_sku_map,
+                        flow.magento2.product_id_sku_map,
                         this.options.prices.flow_product_id_sku_map
                     );
                 }
 
                 if (this.options.priceConfig.flow_product_id_sku_map != undefined) { 
                     Object.assign(
-                        window.flow.magento2.product_id_sku_map,
+                        flow.magento2.product_id_sku_map,
                         this.options.priceConfig.flow_product_id_sku_map
                     );
                 }
 
-                if (!window.flow.magento2.shouldLocalizeCatalog) {
+                if (!flow.magento2.shouldLocalizeCatalog) {
                     return this._super();
                 }
 
@@ -102,18 +100,18 @@ define([
                     }
                 }, this);
                 if (!this.flowFormattedPrice) {
-                    window.flow.cmd('localize');
+                    flow.cmd('localize');
                 } else {
-                    window.flow.magento2.showPrices();
+                    flow.magento2.showPrices();
                 }
             },
 
             getFlowLocalizationKey: function () {
                 var flowLocalizationKey = false;
                 try {
-                    var flowExperience = window.flow.session.getExperience(),
-                        flowCountry = window.flow.session.getCountry(),
-                        flowCurrency = window.flow.session.getCurrency();
+                    var flowExperience = flow.session.getExperience(),
+                        flowCountry = flow.session.getCountry(),
+                        flowCurrency = flow.session.getCurrency();
 
                     if (flowExperience && flowCountry && flowCurrency) {
                         flowLocalizationKey = flowExperience+flowCountry+flowCurrency;
@@ -151,11 +149,11 @@ define([
 
             getCurrentProductId: function (productId) {
                 try {
-                    if (window.flow.magento2.simpleProduct != undefined) {
-                        productId = window.flow.magento2.simpleProduct;
-                    } else if (!_.contains(window.flow.magento2.optionsSelected[productId], false) && window.flow.magento2.optionsIndex[productId] != undefined) {
-                        _.each(window.flow.magento2.optionsIndex[productId], function (optionData) {
-                            if (_.difference(optionData.optionIds, window.flow.magento2.optionsSelected[productId]).length == 0) {
+                    if (flow.magento2.simpleProduct != undefined) {
+                        productId = flow.magento2.simpleProduct;
+                    } else if (!_.contains(flow.magento2.optionsSelected[productId], false) && flow.magento2.optionsIndex[productId] != undefined) {
+                        _.each(flow.magento2.optionsIndex[productId], function (optionData) {
+                            if (_.difference(optionData.optionIds, flow.magento2.optionsSelected[productId]).length == 0) {
                                 productId = optionData.productId;
                             }
                         });

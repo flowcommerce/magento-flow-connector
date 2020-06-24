@@ -14,13 +14,13 @@
 <?php if ($block->isFlowEnabled()) : ?>
     <script type="text/javascript">
     window.flow_enabled = true;
-    window.flow_organization_id = "<?= $block->getFlowOrganizationId(); ?>";
-    window.flow_production = "<?= (int)$block->isFlowProduction(); ?>";
-    window.flow_support_magento_discounts = "<?= (int)$block->isFlowSupportMagentoDiscounts(); ?>";
-    window.flow_cart_localize = <?= (int)$block->isFlowCartLocalize(); ?>;
-    window.flow_catalog_localize = <?= (int)$block->isFlowCatalogLocalize(); ?>;
-    window.flow_pricing_timeout = "<?= (int)$block->getFlowMaxCatalogHideMs(); ?>";
-    window.flow_cart_timeout = "<?= (int)$block->getFlowMaxCartHideMs(); ?>";
+    window.flow_organization_id = "<?= $block->getFlowOrganizationId(); ?>" || false;
+    window.flow_production = "<?= (int)$block->isFlowProduction(); ?>" || false;
+    window.flow_support_magento_discounts = "<?= (int)$block->isFlowSupportMagentoDiscounts(); ?>" || false;
+    window.flow_cart_localize = <?= (int)$block->isFlowCartLocalize(); ?> || false;
+    window.flow_catalog_localize = <?= (int)$block->isFlowCatalogLocalize(); ?> || false;
+    window.flow_pricing_timeout = "<?= (int)$block->getFlowMaxCatalogHideMs(); ?>" || 0;
+    window.flow_cart_timeout = "<?= (int)$block->getFlowMaxCartHideMs(); ?>" || 0;
 
     setTimeout(function(){
         document.head.append(`

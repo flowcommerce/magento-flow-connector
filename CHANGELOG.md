@@ -1,11 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
 ## 2.4.0
-- Cart localization discount display bug addressed
-- Cart localization grand total display bug addressed
-- Removing optional FlowJS version configuration
-- FlowJS include optimization
+- Cart localization bug addressed
 - FlowJS events bug addressed
+- FlowJS include optimization
+- Removing optional FlowJS version configuration
 
 ## 2.3.7
 - Address bug in beacon add to cart event for simple products

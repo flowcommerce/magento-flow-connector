@@ -7,7 +7,6 @@ define([
 
     return function (customerData) {
         function bindTotalsObserver() {
-            flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
             var targetTotals = document.getElementById('cart-totals');
             if (targetTotals == null) {
                 return false;

@@ -87,6 +87,10 @@ define([
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
             bindTotalsObserver();
+            flow.cmd('on', 'cartError', function() {
+                flow.magento2.showCart();
+                flow.magento2.showCartTotals();
+            }); 
             return result;
         });
 

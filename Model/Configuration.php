@@ -151,12 +151,6 @@ class Configuration
     }
 
     /**
-     * Returns true if Flow is enabled in the Admin Store Configuration.
-     * @param int|null $storeId
-     * @return bool
-     * @throws NoSuchEntityException
-     */
-    /**
      * Returns true if Redirect to Flow Checkout is enabled in the Admin Store Configuration.
      * @param int|null $storeId
      * @return bool

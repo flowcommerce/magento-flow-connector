@@ -44,24 +44,14 @@ class FlowJS extends Template
         return $this->auth->getFlowOrganizationId();
     }
 
-    public function isFlowJsEnabled()
+    public function isFlowEnabled()
     {
-        return $this->auth->getFlowOrganizationId() && $this->configuration->getFlowJsVersion();
+        return $this->configuration->isFlowEnabled();
     }
 
     public function isFlowProduction()
     {
         return $this->auth->isFlowProductionOrganization();
-    }
-
-    /**
-     * Return flowjs version
-     * @return string
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function getFlowJsUrl()
-    {
-        return 'https://cdn.flow.io/flowjs/' . $this->configuration->getFlowJsVersion() . '/flow.min.js';
     }
 
     /**

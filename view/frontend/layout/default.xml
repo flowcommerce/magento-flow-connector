@@ -24,11 +24,11 @@
             </container>
         </referenceContainer>
         <!-- Adding container for opt-in -->
-        <referenceContainer name="before.body.end">
-            <block class="FlowCommerce\FlowConnector\Block\FlowCountryPicker" name="flowcommerce.flowconnector.country.picker"
-                   template="FlowCommerce_FlowConnector::flow-country-picker.phtml" after="-"/>
+        <referenceContainer name="head.additional">
             <block class="FlowCommerce\FlowConnector\Block\FlowJS" name="flowcommerce.flowconnector.flowjs"
-                   template="FlowCommerce_FlowConnector::flowjs.phtml" after="-"/>
+                   template="FlowCommerce_FlowConnector::flowjs.phtml" before="-"/>
+            <block class="FlowCommerce\FlowConnector\Block\FlowCountryPicker" name="flowcommerce.flowconnector.country.picker"
+                   template="FlowCommerce_FlowConnector::flow-country-picker.phtml" after="flowcommerce.flowconnector.flowjs"/>
         </referenceContainer>
         <!-- Adding container for country-picker -->
         <referenceContainer name="header.panel">

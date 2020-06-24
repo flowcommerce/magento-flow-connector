@@ -19,9 +19,6 @@ class Configuration
 {
     // Store configuration key for Flow Enabled
     const FLOW_ENABLED = 'flowcommerce/flowconnector/enabled';
-    
-    // Store configuration key for Flow.js Version
-    const FLOW_JS_VERSION = 'flowcommerce/flowconnector/flowjs_version';
 
     // Store configuration key for Redirect to Flow Checkout
     const FLOW_REDIRECT_ENABLED = 'flowcommerce/flowconnector/redirect_enabled';
@@ -151,20 +148,6 @@ class Configuration
             $storeId = $this->getCurrentStoreId();
         }
         return (bool) $this->scopeConfig->getValue(self::FLOW_ENABLED, ScopeInterface::SCOPE_STORE, $storeId);
-    }
-
-    /**
-     * Returns true if Flow is enabled in the Admin Store Configuration.
-     * @param int|null $storeId
-     * @return bool
-     * @throws NoSuchEntityException
-     */
-    public function getFlowJsVersion($storeId = null)
-    {
-        if ($storeId === null) {
-            $storeId = $this->getCurrentStoreId();
-        }
-        return (string) $this->scopeConfig->getValue(self::FLOW_JS_VERSION, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**

@@ -14,15 +14,15 @@ define([
     flow.cmd('init');
 
     flow.magento2 = flow.magento2 || {};
-    flow.magento2.enabled = flow_enabled || false;
-    flow.magento2.production = flow_production || false;
-    flow.magento2.support_discounts = flow_support_magento_discounts || false;
-    flow.magento2.cart_localize = flow_cart_localize || false;
-    flow.magento2.catalog_localize = flow_catalog_localize || false;
-    flow.magento2.pricing_timeout = flow_pricing_timeout || false;
-    flow.magento2.payment_methods_enabled = flow_payment_methods_enabled || false;
-    flow.magento2.shipping_window_enabled = flow_shipping_window_enabled || false;
-    flow.magento2.tax_duty_enabled = flow_tax_duty_messaging_enabled || false;
+    flow.magento2.enabled = window.flow_enabled || false;
+    flow.magento2.production = window.flow_production || false;
+    flow.magento2.support_discounts = window.flow_support_magento_discounts || false;
+    flow.magento2.cart_localize = window.flow_cart_localize || false;
+    flow.magento2.catalog_localize = window.flow_catalog_localize || false;
+    flow.magento2.pricing_timeout = window.flow_pricing_timeout || false;
+    flow.magento2.payment_methods_enabled = window.flow_payment_methods_enabled || false;
+    flow.magento2.shipping_window_enabled = window.flow_shipping_window_enabled || false;
+    flow.magento2.tax_duty_enabled = window.flow_tax_duty_messaging_enabled || false;
     flow.magento2.hasExperience = false;
     flow.magento2.hasLocalizedCatalog = false;
     flow.magento2.hasLocalizedCart = false;

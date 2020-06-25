@@ -94,9 +94,6 @@ This text field indicates which Flow organization should be integrated with the 
 ### API Token
 This text field indicates the Flow organization secret API key which is used for authorization and communication with Flow's API. This is a required field.
 
-### Flow.js Version
-This text field indicates which version of the Flow.js library is used for the front end portion of this integration. This field defaults to the value "latest" and it is recommended to continue to use this default value unless otherwise discussed with a representative from Flow.
-
 ### Checkout Base Url
 This text field indicates the base url which is used for redirection to Flow Checkout UI. The value provided must have a CNAME DNS record mapped to https://checkout.flow.io/ which must be validated by Flow. By default, this field has no value and checkout redirection to Flow uses the standard https://checkout.flow.io/.
 

@@ -659,7 +659,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
                             $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
                             $item->setFlowConnectorVatRatePercent($vatPct);
-                            $item->setFlowConnectorDutytRatePercent($dutyPct);
+                            $item->setFlowConnectorDutyRatePercent($dutyPct);
                             $item->save();
                         }
                         break;
@@ -2450,7 +2450,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                         $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
                         $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
                         $item->setFlowConnectorVatRatePercent($vatPct);
-                        $item->setFlowConnectorDutytRatePercent($dutyPct);
+                        $item->setFlowConnectorDutyRatePercent($dutyPct);
                         $item->setDiscountAmount($itemDiscountAmount * $detail['quantity']);
                         $item->setBaseDiscountAmount($itemBaseDiscountAmount * $detail['quantity']);
                         $item->save();

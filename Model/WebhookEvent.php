@@ -643,7 +643,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setBasePrice($baseItemPrice);
                             $item->setRowTotal($itemPrice * $detail['quantity']);
                             $item->setBaseRowTotal($baseItemPrice * $detail['quantity']);
-                            $item->setTaxPercent(($vatPrice + $dutyPrice) * $detail['quantity'] / $itemPrice);
+                            $item->setTaxPercent(($vatPrice + $dutyPrice) * $detail['quantity'] / $itemPrice * 100);
                             $item->setTaxAmount(($vatPrice + $dutyPrice) * $detail['quantity']);
                             $item->setBaseTaxAmount(($baseVatPrice+$baseDutyPrice) * $detail['quantity']);
                             $item->setPriceInclTax($itemPriceInclTax);
@@ -658,8 +658,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $item->setFlowConnectorBaseDuty($baseDutyPrice * $detail['quantity']);
                             $item->setFlowConnectorRounding($roundingPrice * $detail['quantity']);
                             $item->setFlowConnectorBaseRounding($baseRoundingPrice * $detail['quantity']);
-                            $item->setFlowConnectorVatRatePercent($vatPct);
-                            $item->setFlowConnectorDutyRatePercent($dutyPct);
+                            $item->setFlowConnectorVatRatePercent($vatPct * 100);
+                            $item->setFlowConnectorDutyRatePercent($dutyPct * 100);
                             $item->save();
                         }
                         break;

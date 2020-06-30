@@ -2377,7 +2377,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         return substr($orderNumber, 4, 32);
     }
 
-    private function initializeSubtotalAmounts() {
+    public function initializeSubtotalAmounts() {
         return [
             'rawItemPrice' => 0.0,
             'baseRawItemPrice' => 0.0,
@@ -2398,7 +2398,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ];
     }
 
-    private function allocateSubtotalAmounts($subtotalAmounts, $sources) {
+    public function allocateSubtotalAmounts($subtotalAmounts, $sources) {
         foreach ($sources as $source) {
             switch ($source['key']) {
             case 'item_price':
@@ -2444,7 +2444,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         return $subtotalAmounts;
     }
 
-    private function applySubtotalAmountsToItem($item, $subtotalAmounts) {
+    public function applySubtotalAmountsToItem($item, $subtotalAmounts) {
         $item->setOriginalPrice($subtotalAmounts['itemPrice']);
         $item->setBaseOriginalPrice($subtotalAmounts['baseItemPrice']);
         $item->setPrice($subtotalAmounts['itemPrice']);

@@ -577,8 +577,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     case 'subtotal':
                         if ($item) {
                             $subtotalAmounts = $this->initializeSubtotalAmounts();
-                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included']);
-                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included']);
+                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included'], $detail['quantity']);
+                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included'], $detail['quantity']);
                             $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts);
                         }
                         break;
@@ -2284,8 +2284,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 case 'subtotal':
                     if ($item) {
                         $subtotalAmounts = $this->initializeSubtotalAmounts();
-                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included']);
-                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included']);
+                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included'], $detail['quantity']);
+                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included'], $detail['quantity']);
                         $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts);
                     }
                     break;
@@ -2444,32 +2444,32 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         return $subtotalAmounts;
     }
 
-    public function applySubtotalAmountsToItem($item, $subtotalAmounts) {
+    public function applySubtotalAmountsToItem($item, $subtotalAmounts, $quantity) {
         $item->setOriginalPrice($subtotalAmounts['itemPrice']);
         $item->setBaseOriginalPrice($subtotalAmounts['baseItemPrice']);
         $item->setPrice($subtotalAmounts['itemPrice']);
         $item->setBasePrice($subtotalAmounts['baseItemPrice']);
-        $item->setRowTotal($subtotalAmounts['itemPrice'] * $detail['quantity']);
-        $item->setBaseRowTotal($subtotalAmounts['baseItemPrice'] * $detail['quantity']);
-        $item->setTaxPercent(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $detail['quantity'] / $subtotalAmounts['itemPrice'] * 100);
-        $item->setTaxAmount(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $detail['quantity']);
-        $item->setBaseTaxAmount(($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']) * $detail['quantity']);
+        $item->setRowTotal($subtotalAmounts['itemPrice'] * $quantity);
+        $item->setBaseRowTotal($subtotalAmounts['baseItemPrice'] * $quantity);
+        $item->setTaxPercent(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity / $subtotalAmounts['itemPrice'] * 100);
+        $item->setTaxAmount(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity);
+        $item->setBaseTaxAmount(($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']) * $quantity);
         $item->setPriceInclTax($subtotalAmounts['itemPriceInclTax']);
         $item->setBasePriceInclTax($subtotalAmounts['baseItemPriceInclTax']);
-        $item->setRowTotalInclTax($subtotalAmounts['itemPriceInclTax'] * $detail['quantity']);
-        $item->setBaseRowTotalInclTax($subtotalAmounts['baseItemPriceInclTax'] * $detail['quantity']);
-        $item->setFlowConnectorItemPrice($subtotalAmounts['rawItemPrice'] * $detail['quantity']);
-        $item->setFlowConnectorBaseItemPrice($subtotalAmounts['baseRawItemPrice'] * $detail['quantity']);
-        $item->setFlowConnectorVat($subtotalAmounts['vatPrice'] * $detail['quantity']);
-        $item->setFlowConnectorBaseVat($subtotalAmounts['baseVatPrice'] * $detail['quantity']);
-        $item->setFlowConnectorDuty($subtotalAmounts['dutyPrice'] * $detail['quantity']);
-        $item->setFlowConnectorBaseDuty($subtotalAmounts['baseDutyPrice'] * $detail['quantity']);
-        $item->setFlowConnectorRounding($subtotalAmounts['roundingPrice'] * $detail['quantity']);
-        $item->setFlowConnectorBaseRounding($subtotalAmounts['baseRoundingPrice'] * $detail['quantity']);
+        $item->setRowTotalInclTax($subtotalAmounts['itemPriceInclTax'] * $quantity);
+        $item->setBaseRowTotalInclTax($subtotalAmounts['baseItemPriceInclTax'] * $quantity);
+        $item->setFlowConnectorItemPrice($subtotalAmounts['rawItemPrice'] * $quantity);
+        $item->setFlowConnectorBaseItemPrice($subtotalAmounts['baseRawItemPrice'] * $quantity);
+        $item->setFlowConnectorVat($subtotalAmounts['vatPrice'] * $quantity);
+        $item->setFlowConnectorBaseVat($subtotalAmounts['baseVatPrice'] * $quantity);
+        $item->setFlowConnectorDuty($subtotalAmounts['dutyPrice'] * $quantity);
+        $item->setFlowConnectorBaseDuty($subtotalAmounts['baseDutyPrice'] * $quantity);
+        $item->setFlowConnectorRounding($subtotalAmounts['roundingPrice'] * $quantity);
+        $item->setFlowConnectorBaseRounding($subtotalAmounts['baseRoundingPrice'] * $quantity);
         $item->setFlowConnectorVatRatePercent($subtotalAmounts['vatPct'] * 100);
         $item->setFlowConnectorDutyRatePercent($subtotalAmounts['dutyPct'] * 100);
-        $item->setDiscountAmount($subtotalAmounts['itemDiscountAmount'] * $detail['quantity']);
-        $item->setBaseDiscountAmount($subtotalAmounts['itemBaseDiscountAmount'] * $detail['quantity']);
+        $item->setDiscountAmount($subtotalAmounts['itemDiscountAmount'] * $quantity);
+        $item->setBaseDiscountAmount($subtotalAmounts['itemBaseDiscountAmount'] * $quantity);
         $item->save();
         return $item;
     }

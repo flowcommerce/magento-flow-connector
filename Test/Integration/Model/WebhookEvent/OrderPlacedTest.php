@@ -312,8 +312,8 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $orderItemSku = $item->getSku();
                 $quantity = $allocationItems[$item->getSku()]['quantity'] * 1;
                 $subtotalAmounts = $this->subject->initializeSubtotalAmounts();
-                $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['included']);
-                $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['not_included']);
+                $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['included'], $quantity);
+                $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['not_included'], $quantity);
                 /* $this->assertEquals($quantity, $item->getQtyOrdered()); */
                 $this->assertEquals($subtotalAmounts['itemPrice'], $item->getOriginalPrice());
                 $this->assertEquals($subtotalAmounts['baseItemPrice'], $item->getBaseOriginalPrice());

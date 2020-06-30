@@ -577,8 +577,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     case 'subtotal':
                         if ($item) {
                             $subtotalAmounts = $this->initializeSubtotalAmounts();
-                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included'], $detail['quantity']);
-                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included'], $detail['quantity']);
+                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included']);
+                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included']);
                             $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts, $detail['quantity']);
                         }
                         break;
@@ -2284,9 +2284,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 case 'subtotal':
                     if ($item) {
                         $subtotalAmounts = $this->initializeSubtotalAmounts();
-                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included'], $detail['quantity']);
-                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included'], $detail['quantity']);
-                        $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts);
+                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included']);
+                        $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included']);
+                        $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts, $detail['quantity']);
                     }
                     break;
 

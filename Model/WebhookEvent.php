@@ -579,7 +579,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                             $subtotalAmounts = $this->initializeSubtotalAmounts();
                             $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included'], $detail['quantity']);
                             $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included'], $detail['quantity']);
-                            $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts);
+                            $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts, $detail['quantity']);
                         }
                         break;
 

@@ -2362,6 +2362,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 if ($option['code'] === 'info_buyRequest') {
                     if ($buyRequest = $this->jsonSerializer->unserialize($option['value'])) {
                         $item = $quote->addProduct($product, new \Magento\Framework\DataObject($buyRequest));
+                        $item->setQty($line['quantity']);
                     }
                 }
             }
@@ -2445,15 +2446,15 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     public function applySubtotalAmountsToItem($item, $subtotalAmounts, $quantity) {
-        $item->setOriginalPrice($subtotalAmounts['itemPrice']);
-        $item->setBaseOriginalPrice($subtotalAmounts['baseItemPrice']);
+        $item->setOriginalPrice($subtotalAmounts['rawItemPrice']);
+        $item->setBaseOriginalPrice($subtotalAmounts['baseRawItemPrice']);
         $item->setPrice($subtotalAmounts['itemPrice']);
         $item->setBasePrice($subtotalAmounts['baseItemPrice']);
         $item->setRowTotal($subtotalAmounts['itemPrice'] * $quantity);
         $item->setBaseRowTotal($subtotalAmounts['baseItemPrice'] * $quantity);
         $item->setTaxPercent(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) / $subtotalAmounts['itemPrice'] * 100);
-        $item->setTaxAmount(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity);
-        $item->setBaseTaxAmount(($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']) * $quantity);
+        $item->setTaxAmount($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']);
+        $item->setBaseTaxAmount($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']);
         $item->setPriceInclTax($subtotalAmounts['itemPriceInclTax']);
         $item->setBasePriceInclTax($subtotalAmounts['baseItemPriceInclTax']);
         $item->setRowTotalInclTax($subtotalAmounts['itemPriceInclTax'] * $quantity);

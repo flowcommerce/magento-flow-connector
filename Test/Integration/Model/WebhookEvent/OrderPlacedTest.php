@@ -314,16 +314,16 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $subtotalAmounts = $this->subject->initializeSubtotalAmounts();
                 $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['included'], $quantity);
                 $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['not_included'], $quantity);
-                /* $this->assertEquals($quantity, $item->getQtyOrdered()); */
-                $this->assertEquals($subtotalAmounts['itemPrice'], $item->getOriginalPrice());
-                $this->assertEquals($subtotalAmounts['baseItemPrice'], $item->getBaseOriginalPrice());
+                $this->assertEquals($quantity, $item->getQtyOrdered());
+                $this->assertEquals($subtotalAmounts['rawItemPrice'], $item->getOriginalPrice());
+                $this->assertEquals($subtotalAmounts['baseRawItemPrice'], $item->getBaseOriginalPrice());
                 $this->assertEquals($subtotalAmounts['itemPrice'], $item->getPrice());
                 $this->assertEquals($subtotalAmounts['baseItemPrice'], $item->getBasePrice());
                 $this->assertEquals($subtotalAmounts['itemPrice'] * $quantity, $item->getRowTotal());
                 $this->assertEquals($subtotalAmounts['baseItemPrice'] * $quantity, $item->getBaseRowTotal());
                 $this->assertEquals(round(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) / $subtotalAmounts['itemPrice'] * 100, 4), $item->getTaxPercent());
-                $this->assertEquals(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity, $item->getTaxAmount());
-                $this->assertEquals(($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']) * $quantity, $item->getBaseTaxAmount());
+                $this->assertEquals($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice'], $item->getTaxAmount());
+                $this->assertEquals($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice'], $item->getBaseTaxAmount());
                 $this->assertEquals($subtotalAmounts['itemPriceInclTax'], $item->getPriceInclTax());
                 $this->assertEquals($subtotalAmounts['baseItemPriceInclTax'], $item->getBasePriceInclTax());
                 $this->assertEquals($subtotalAmounts['itemPriceInclTax'] * $quantity, $item->getRowTotalInclTax());

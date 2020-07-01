@@ -30,10 +30,10 @@ define([
 
             setDefault: function setDefaultPrices(prices) {
                 flow.cmd('on','ready', function () {
-                    this.element.trigger('reloadPrice')
+                    this.element.trigger('reloadPrice');
                 });
                 return this._super();
-            }
+            },
 
             reloadPrice: function reDrawPrices() {
                 flow.magento2.product_id_sku_map = flow.magento2.product_id_sku_map || {};

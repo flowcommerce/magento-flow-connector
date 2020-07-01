@@ -2457,7 +2457,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $item->setBaseRowTotal($subtotalAmounts['baseItemPrice'] * $quantity);
         $item->setTaxPercent(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) / $subtotalAmounts['itemPrice'] * 100);
         $item->setTaxAmount(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity);
-        $item->setBaseTaxAmount($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']);
+        $item->setBaseTaxAmount(($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']) * $quantity);
         $item->setPriceInclTax($subtotalAmounts['itemPriceInclTax']);
         $item->setBasePriceInclTax($subtotalAmounts['baseItemPriceInclTax']);
         $item->setRowTotalInclTax($subtotalAmounts['itemPriceInclTax'] * $quantity);

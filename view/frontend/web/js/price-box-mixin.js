@@ -28,82 +28,85 @@ define([
             options: globalOptions,
 
             reloadPrice: function reDrawPrices() {
-                flow.magento2.product_id_sku_map = flow.magento2.product_id_sku_map || {};
+                var self = this;
+                flow.cmd('on', 'ready', function () {
+                    flow.magento2.product_id_sku_map = flow.magento2.product_id_sku_map || {};
 
-                if (this.options.prices.flow_product_id_sku_map != undefined) { 
-                    Object.assign(
-                        flow.magento2.product_id_sku_map,
-                        this.options.prices.flow_product_id_sku_map
-                    );
-                }
-
-                if (this.options.priceConfig.flow_product_id_sku_map != undefined) { 
-                    Object.assign(
-                        flow.magento2.product_id_sku_map,
-                        this.options.priceConfig.flow_product_id_sku_map
-                    );
-                }
-
-                if (!flow.magento2.shouldLocalizeCatalog) {
-                    return this._super();
-                }
-
-                var flowLocalizationKey = this.getFlowLocalizationKey();
-
-                if (!flowLocalizationKey) {
-                    return this._super();
-                }
-
-                var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
-                    priceTemplate = mageTemplate(this.options.priceTemplate),
-                    flowLocalizedPrices = false; 
-                this.flowFormattedPrice = false; 
-
-                if (this.options.priceConfig.flow_localized_prices != undefined) {
-                    flowLocalizedPrices = this.options.priceConfig.flow_localized_prices;
-                } else if (this.options.priceConfig.prices != undefined) {
-                    if (this.options.priceConfig.prices.flow_localized_prices != undefined) {
-                        flowLocalizedPrices = this.options.priceConfig.prices.flow_localized_prices;
+                    if (self.options.prices.flow_product_id_sku_map != undefined) { 
+                        Object.assign(
+                            flow.magento2.product_id_sku_map,
+                            self.options.prices.flow_product_id_sku_map
+                        );
                     }
-                }
 
-                _.each(this.cache.displayPrices, function (price, priceCode) {
-                    if (price.amount != undefined) {
-                        price.final = _.reduce(price.adjustments, function (memo, amount) {
-                            return memo + amount;
-                        }, price.amount);
+                    if (self.options.priceConfig.flow_product_id_sku_map != undefined) { 
+                        Object.assign(
+                            flow.magento2.product_id_sku_map,
+                            self.options.priceConfig.flow_product_id_sku_map
+                        );
+                    }
 
-                        price.formatted = utils.formatPrice(price.final, priceFormat);
+                    if (!flow.magento2.shouldLocalizeCatalog()) {
+                        return self._super();
+                    }
 
-                        var template = { data: price };
-                        
-                        template.data.flowLocalized = false;
-                        template.data.flowPriceCode = this.getFlowPriceCode(priceCode);
-                        template.data.productId = this.getCurrentProductId(this.options.productId); 
+                    var flowLocalizationKey = self.getFlowLocalizationKey();
 
-                        if (flowLocalizedPrices) {
-                            template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
-                            template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
-                        } 
+                    if (!flowLocalizationKey) {
+                        return self._super();
+                    }
 
-                        if (!template.data.flowLocalized) {
-                            if (template.data.productSku) {
-                                if (template.data.flowPriceCode == FLOWACTUALPRICEKEY) {
-                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySku);
-                                } else {
-                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                    var priceFormat = (self.options.priceConfig && self.options.priceConfig.priceFormat) || {},
+                        priceTemplate = mageTemplate(self.options.priceTemplate),
+                        flowLocalizedPrices = false; 
+                    self.flowFormattedPrice = false; 
+
+                    if (self.options.priceConfig.flow_localized_prices != undefined) {
+                        flowLocalizedPrices = self.options.priceConfig.flow_localized_prices;
+                    } else if (self.options.priceConfig.prices != undefined) {
+                        if (self.options.priceConfig.prices.flow_localized_prices != undefined) {
+                            flowLocalizedPrices = self.options.priceConfig.prices.flow_localized_prices;
+                        }
+                    }
+
+                    _.each(self.cache.displayPrices, function (price, priceCode) {
+                        if (price.amount != undefined) {
+                            price.final = _.reduce(price.adjustments, function (memo, amount) {
+                                return memo + amount;
+                            }, price.amount);
+
+                            price.formatted = utils.formatPrice(price.final, priceFormat);
+
+                            var template = { data: price };
+
+                            template.data.flowLocalized = false;
+                            template.data.flowPriceCode = self.getFlowPriceCode(priceCode);
+                            template.data.productId = self.getCurrentProductId(self.options.productId); 
+
+                            if (flowLocalizedPrices) {
+                                template.data.productSku = self.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
+                                template = self.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
+                            } 
+
+                            if (!template.data.flowLocalized) {
+                                if (template.data.productSku) {
+                                    if (template.data.flowPriceCode == FLOWACTUALPRICEKEY) {
+                                        priceTemplate = mageTemplate(self.options.flowPriceTemplateBySku);
+                                    } else {
+                                        priceTemplate = mageTemplate(self.options.flowPriceTemplateBySkuPriceCode);
+                                    }
                                 }
                             }
-                        }
 
-                        $('[data-price-type="' + priceCode + '"]', this.element).html(priceTemplate(template));
+                            $('[data-price-type="' + priceCode + '"]', self.element).html(priceTemplate(template));
+                        }
+                    }, self);
+                    if (!self.flowFormattedPrice) {
+                        flow.cmd('localize');
+                    } else {
+                        flow.magento2.showPrices();
                     }
-                }, this);
-                if (!this.flowFormattedPrice) {
-                    flow.cmd('localize');
-                } else {
-                    flow.magento2.showPrices();
-                }
+                });
             },
 
             getFlowLocalizationKey: function () {

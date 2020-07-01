@@ -25,7 +25,7 @@ define([
 
         function reloadFlowCart(observer = null) {
             if (observer) observer.disconnect();
-            if (!flow.magento2.shouldLocalizeCart) {
+            if (!flow.magento2.shouldLocalizeCart()) {
                 flow.magento2.showCart();
                 flow.magento2.showCartTotals();
                 return false;
@@ -86,25 +86,27 @@ define([
 
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
-            bindTotalsObserver();
-            flow.cmd('on', 'cartError', function() {
-                flow.magento2.showCart();
-                flow.magento2.showCartTotals();
+            flow.cmd('on', 'ready', function () {
+                bindTotalsObserver();
+                flow.cmd('on', 'cartError', function () {
+                    flow.magento2.showCart();
+                    flow.magento2.showCartTotals();
 
-                var totals, subtotal, grandTotal, discount, flowFields, shippingEstimator, giftCard, localTax;
-                totals = $('#cart-totals');
-                shippingEstimator = $('#block-shipping');
-                giftCard = $('#block-giftcard');
-                localTax = totals.find('.totals-tax');
-                subtotal = totals.find('.totals.sub');
-                grandTotal = totals.find('.totals.grand');
-                discount = totals.find('[data-th=\'Discount\']');
+                    var totals, subtotal, grandTotal, discount, flowFields, shippingEstimator, giftCard, localTax;
+                    totals = $('#cart-totals');
+                    shippingEstimator = $('#block-shipping');
+                    giftCard = $('#block-giftcard');
+                    localTax = totals.find('.totals-tax');
+                    subtotal = totals.find('.totals.sub');
+                    grandTotal = totals.find('.totals.grand');
+                    discount = totals.find('[data-th=\'Discount\']');
 
-                if (discount) discount.show();
-                if (shippingEstimator) shippingEstimator.show();
-                if (giftCard) giftCard.show();
-                if (localTax) localTax.show();
-            }); 
+                    if (discount) discount.show();
+                    if (shippingEstimator) shippingEstimator.show();
+                    if (giftCard) giftCard.show();
+                    if (localTax) localTax.show();
+                }); 
+            });
             return result;
         });
 

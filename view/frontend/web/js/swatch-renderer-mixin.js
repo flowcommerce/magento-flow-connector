@@ -79,16 +79,20 @@ define([
             },
 
             _Rebuild: function ($this, $widget) {
-                if (flow.magento2.shouldLocalizeCatalog) {
-                    flow.magento2.hidePrices();
-                }
+                flow.cmd('on', 'ready', function() {
+                    if (flow.magento2.shouldLocalizeCatalog()) {
+                        flow.magento2.hidePrices();
+                    }
+                });
                 return this._super($this, $widget);
             },
 
             _UpdatePrice: function ($this, $widget) {
-                if (flow.magento2.shouldLocalizeCatalog) {
-                    flow.magento2.hidePrices();
-                }
+                flow.cmd('on', 'ready', function() {
+                    if (flow.magento2.shouldLocalizeCatalog()) {
+                        flow.magento2.hidePrices();
+                    }
+                });
                 return this._super($this, $widget);
             },
 

@@ -2404,7 +2404,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         foreach ($sources as $source) {
             $sourceAmount = $source['price']['amount'];
             $sourceBaseAmount = $source['price']['base']['amount'];
-            $sourceRate = $source['rate'];
             switch ($source['key']) {
             case 'item_price':
                 $subtotalAmounts['rawItemPrice'] += $sourceAmount;
@@ -2427,7 +2426,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             case 'vat_item_price':
                 $subtotalAmounts['itemPriceInclTax'] += $sourceAmount;
                 $subtotalAmounts['baseItemPriceInclTax'] += $sourceBaseAmount;
-                $subtotalAmounts['vatPct'] += $sourceRate;
+                $subtotalAmounts['vatPct'] += $source['rate'];
                 $subtotalAmounts['vatPrice'] += $sourceAmount;
                 $subtotalAmounts['baseVatPrice'] += $sourceBaseAmount;
                 break;
@@ -2435,7 +2434,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             case 'duties_item_price':
                 $subtotalAmounts['itemPriceInclTax'] += $sourceAmount;
                 $subtotalAmounts['baseItemPriceInclTax'] += $sourceBaseAmount;
-                $subtotalAmounts['dutyPct'] += $sourceRate;
+                $subtotalAmounts['dutyPct'] += $source['rate'];
                 $subtotalAmounts['dutyPrice'] += $sourceAmount;
                 $subtotalAmounts['baseDutyPrice'] += $sourceBaseAmount;
                 break;

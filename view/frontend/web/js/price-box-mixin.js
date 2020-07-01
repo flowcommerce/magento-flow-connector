@@ -47,13 +47,13 @@ define([
                     }
 
                     if (!flow.magento2.shouldLocalizeCatalog()) {
-                        return self._super();
+                        return;
                     }
 
                     var flowLocalizationKey = self.getFlowLocalizationKey();
 
                     if (!flowLocalizationKey) {
-                        return self._super();
+                        return;
                     }
 
                     var priceFormat = (self.options.priceConfig && self.options.priceConfig.priceFormat) || {},
@@ -107,6 +107,8 @@ define([
                         flow.magento2.showPrices();
                     }
                 });
+
+                return self._super();
             },
 
             getFlowLocalizationKey: function () {

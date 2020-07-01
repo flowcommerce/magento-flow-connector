@@ -19,19 +19,22 @@ define([
     flow.magento2.payment_methods_enabled = window.flow_payment_methods_enabled || false;
     flow.magento2.shipping_window_enabled = window.flow_shipping_window_enabled || false;
     flow.magento2.tax_duty_enabled = window.flow_tax_duty_messaging_enabled || false;
-    flow.magento2.hasExperience = function () {
-         return typeof(flow.session.getExperience()) == "string";
-    }
     flow.magento2.hasLocalizedCatalog = false;
     flow.magento2.hasLocalizedCart = false;
     flow.magento2.hasLocalizedCartTotals = false;
+    flow.magento2.installedFlowTotalsFields = false;
+
+    flow.magento2.hasExperience = function () {
+         return typeof(flow.session.getExperience()) == "string";
+    }
+
     flow.magento2.shouldLocalizeCatalog = function () {
         return flow.magento2.hasExperience() && flow.magento2.catalog_localize;
     }
+
     flow.magento2.shouldLocalizeCart = function () {
         return flow.magento2.hasExperience() && flow.magento2.cart_localize;
     }
-    flow.magento2.installedFlowTotalsFields = false;
 
     flow.magento2.showPrices = function () {
         if (!flow.magento2.hasLocalizedCatalog) {

@@ -104,7 +104,7 @@ define([
             }
         });
 
-        if (!flow.magento2.hasExperience) {
+        if (!flow.magento2.hasExperience()) {
             flow.magento2.showPrices();
             flow.magento2.showCart();
             flow.magento2.showCartTotals();

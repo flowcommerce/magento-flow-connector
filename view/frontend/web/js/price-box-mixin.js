@@ -48,7 +48,7 @@ define([
 
                 if (!flowLocalizationKey || !flow.magento2.shouldLocalizeCatalog()) {
                     flow.magento2.showPrices();
-                    return;
+                    return this._super();
                 }
 
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
@@ -101,7 +101,6 @@ define([
                 } else {
                     flow.magento2.showPrices();
                 }
-                return this._super();
             },
 
             getFlowLocalizationKey: function () {

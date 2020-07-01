@@ -24,16 +24,8 @@ define([
             FLOWFINALPRICEKEY = 'final_price',
             FLOWACTUALPRICEKEY = 'localized_item_price';
 
-
         $.widget('mage.priceBox', widget, {
             options: globalOptions,
-
-            setDefault: function setDefaultPrices(prices) {
-                flow.cmd('on','ready', function () {
-                    this.element.trigger('reloadPrice');
-                });
-                return this._super();
-            },
 
             reloadPrice: function reDrawPrices() {
                 flow.magento2.product_id_sku_map = flow.magento2.product_id_sku_map || {};

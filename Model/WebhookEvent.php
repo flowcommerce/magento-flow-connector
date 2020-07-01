@@ -2402,44 +2402,47 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
     public function allocateSubtotalAmounts($subtotalAmounts, $sources) {
         foreach ($sources as $source) {
+            $sourceAmount = $source['price']['amount'];
+            $sourceBaseAmount = $source['price']['base']['amount'];
+            $sourceRate = $source['rate'];
             switch ($source['key']) {
             case 'item_price':
-                $subtotalAmounts['rawItemPrice'] += $source['price']['amount'];
-                $subtotalAmounts['baseRawItemPrice'] += $source['price']['base']['amount'];
-                $subtotalAmounts['itemPrice'] += $source['price']['amount'];
-                $subtotalAmounts['baseItemPrice'] += $source['price']['base']['amount'];
-                $subtotalAmounts['itemPriceInclTax'] += $source['price']['amount'];
-                $subtotalAmounts['baseItemPriceInclTax'] += $source['price']['base']['amount'];
+                $subtotalAmounts['rawItemPrice'] += $sourceAmount;
+                $subtotalAmounts['baseRawItemPrice'] += $sourceBaseAmount;
+                $subtotalAmounts['itemPrice'] += $sourceAmount;
+                $subtotalAmounts['baseItemPrice'] += $sourceBaseAmount;
+                $subtotalAmounts['itemPriceInclTax'] += $sourceAmount;
+                $subtotalAmounts['baseItemPriceInclTax'] += $sourceBaseAmount;
                 break;
 
             case 'rounding':
-                $subtotalAmounts['itemPrice'] += $source['price']['amount'];
-                $subtotalAmounts['baseItemPrice'] += $source['price']['base']['amount'];
-                $subtotalAmounts['itemPriceInclTax'] += $source['price']['amount'];
-                $subtotalAmounts['baseItemPriceInclTax'] += $source['price']['base']['amount'];
-                $subtotalAmounts['roundingPrice'] += $source['price']['amount'];
-                $subtotalAmounts['baseRoundingPrice'] += $source['price']['base']['amount'];
+                $subtotalAmounts['itemPrice'] += $sourceAmount;
+                $subtotalAmounts['baseItemPrice'] += $sourceBaseAmount;
+                $subtotalAmounts['itemPriceInclTax'] += $sourceAmount;
+                $subtotalAmounts['baseItemPriceInclTax'] += $sourceBaseAmount;
+                $subtotalAmounts['roundingPrice'] += $sourceAmount;
+                $subtotalAmounts['baseRoundingPrice'] += $sourceBaseAmount;
                 break;
 
             case 'vat_item_price':
-                $subtotalAmounts['itemPriceInclTax'] += $source['price']['amount'];
-                $subtotalAmounts['baseItemPriceInclTax'] += $source['price']['base']['amount'];
-                $subtotalAmounts['vatPct'] += $source['rate'];
-                $subtotalAmounts['vatPrice'] += $source['price']['amount'];
-                $subtotalAmounts['baseVatPrice'] += $source['price']['base']['amount'];
+                $subtotalAmounts['itemPriceInclTax'] += $sourceAmount;
+                $subtotalAmounts['baseItemPriceInclTax'] += $sourceBaseAmount;
+                $subtotalAmounts['vatPct'] += $sourceRate;
+                $subtotalAmounts['vatPrice'] += $sourceAmount;
+                $subtotalAmounts['baseVatPrice'] += $sourceBaseAmount;
                 break;
 
             case 'duties_item_price':
-                $subtotalAmounts['itemPriceInclTax'] += $source['price']['amount'];
-                $subtotalAmounts['baseItemPriceInclTax'] += $source['price']['base']['amount'];
-                $subtotalAmounts['dutyPct'] += $source['rate'];
-                $subtotalAmounts['dutyPrice'] += $source['price']['amount'];
-                $subtotalAmounts['baseDutyPrice'] += $source['price']['base']['amount'];
+                $subtotalAmounts['itemPriceInclTax'] += $sourceAmount;
+                $subtotalAmounts['baseItemPriceInclTax'] += $sourceBaseAmount;
+                $subtotalAmounts['dutyPct'] += $sourceRate;
+                $subtotalAmounts['dutyPrice'] += $sourceAmount;
+                $subtotalAmounts['baseDutyPrice'] += $sourceBaseAmount;
                 break;
 
             case 'item_discount':
-                $subtotalAmounts['itemDiscountAmount'] -= $source['price']['amount'];
-                $subtotalAmounts['itemBaseDiscountAmount'] -= $source['price']['base']['amount'];
+                $subtotalAmounts['itemDiscountAmount'] -= $sourceAmount;
+                $subtotalAmounts['itemBaseDiscountAmount'] -= $sourceBaseAmount;
                 break;
             }
         }
@@ -2454,7 +2457,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $item->setRowTotal($subtotalAmounts['itemPrice'] * $quantity);
         $item->setBaseRowTotal($subtotalAmounts['baseItemPrice'] * $quantity);
         $item->setTaxPercent(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) / $subtotalAmounts['itemPrice'] * 100);
-        $item->setTaxAmount($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']);
+        $item->setTaxAmount(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity);
         $item->setBaseTaxAmount($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']);
         $item->setPriceInclTax($subtotalAmounts['itemPriceInclTax']);
         $item->setBasePriceInclTax($subtotalAmounts['baseItemPriceInclTax']);

@@ -322,7 +322,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($subtotalAmounts['itemPrice'] * $quantity, $item->getRowTotal());
                 $this->assertEquals($subtotalAmounts['baseItemPrice'] * $quantity, $item->getBaseRowTotal());
                 $this->assertEquals(round(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) / $subtotalAmounts['itemPrice'] * 100, 4), $item->getTaxPercent());
-                $this->assertEquals($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice'], $item->getTaxAmount());
+                $this->assertEquals(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity, $item->getTaxAmount());
                 $this->assertEquals($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice'], $item->getBaseTaxAmount());
                 $this->assertEquals($subtotalAmounts['itemPriceInclTax'], $item->getPriceInclTax());
                 $this->assertEquals($subtotalAmounts['baseItemPriceInclTax'], $item->getBasePriceInclTax());

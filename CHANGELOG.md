@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.4.1
+- Address race condition on FlowJS initialization
+- Update pricing allocation on order import
+- Add new Vat rate and Duty rate order and item attributes
+
 ## 2.4.0
 - Cart localization bug addressed
 - FlowJS events bug addressed

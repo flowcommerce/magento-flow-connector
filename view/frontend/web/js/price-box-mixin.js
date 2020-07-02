@@ -44,13 +44,10 @@ define([
                     );
                 }
 
-                if (!flow.magento2.shouldLocalizeCatalog) {
-                    return this._super();
-                }
-
                 var flowLocalizationKey = this.getFlowLocalizationKey();
 
-                if (!flowLocalizationKey) {
+                if (!flowLocalizationKey || !flow.magento2.shouldLocalizeCatalog()) {
+                    flow.magento2.showPrices();
                     return this._super();
                 }
 
@@ -76,7 +73,7 @@ define([
                         price.formatted = utils.formatPrice(price.final, priceFormat);
 
                         var template = { data: price };
-                        
+
                         template.data.flowLocalized = false;
                         template.data.flowPriceCode = this.getFlowPriceCode(priceCode);
                         template.data.productId = this.getCurrentProductId(this.options.productId); 

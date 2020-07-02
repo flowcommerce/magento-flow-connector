@@ -98,6 +98,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addOrderLatestLabelData($setup);
         }
 
+        if (version_compare($context->getVersion(), '2.4.1', '<=')) {
+            $this->addDutyRateAndVatRateToOrderItem($setup);
+        }
+
         $installer->endSetup();
     }
 
@@ -744,4 +748,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
         }
     }
+
+    /**
+     * Add Duty, VAT and Rounding attributes to order item.
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    private function addDutyRateAndVatRateToOrderItem(SchemaSetupInterface $setup)
+    {
+        $salesSetup = $this->salesSetupFactory->create();
+
+        $attributes = [
+            'flow_connector_vat_rate_percent' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+            'flow_connector_duty_rate_percent' => ['type' => 'decimal', 'visible' => false, 'required' => false],
+        ];
+
+        foreach ($attributes as $attributeCode => $attributeParams) {
+            $salesSetup->addAttribute('order_item', $attributeCode, $attributeParams);
+        }
+    }
+
 }

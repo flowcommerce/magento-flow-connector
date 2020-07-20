@@ -376,7 +376,7 @@ class ProductDataMapper
         $product->setPriceCalculation(false);
 
         if ($this->configuration->isRegularPricingOverride()) {
-            return round($product->getPrice(), 4);
+            return round($product->getRegularPrice(), 4);
         }
 
         if ($product->getTypeId() == ConfigurableType::TYPE_CODE) {

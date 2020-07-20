@@ -144,8 +144,12 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
             foreach ($shipment->getTracks() as $track) {
                 if ($track->getTitle()==WebhookEvent::FLOW_TRACK_TITLE) {
                     $this->assertEquals($payload['flow_tracking_number'], $track->getTrackNumber());
+                    $this->assertEquals($payload['flow_tracking_number'], $order->getFlowConnectorLabelFlowTrackingNumber());
+                    $this->assertEquals($payload['flow_tracking_number_url'], $order->getFlowConnectorLabelFlowTrackingNumberUrl());
                 } else {
                     $this->assertEquals($payload['carrier_tracking_number'], $track->getTrackNumber());
+                    $this->assertEquals($payload['carrier_tracking_number'], $order->getFlowConnectorLabelFlowCarrierTrackingNumber());
+                    $this->assertEquals($payload['carrier_tracking_number_url'], $order->getFlowConnectorLabelFlowCarrierTrackingNumberUrl());
                 }
             }
             $this->assertEquals($payload['label_id'], $order->getFlowConnectorLabelId());

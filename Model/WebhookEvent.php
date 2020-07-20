@@ -21,7 +21,6 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Catalog\Model\Product\OptionFactory;
 use Magento\Quote\Model\QuoteFactory;
-use Magento\Quote\Model\Quote\ItemFactory as QuoteItemFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
@@ -157,11 +156,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var QuoteFactory
      */
     protected $quoteFactory;
-
-    /**
-     * @var QuoteItemFactory
-     */
-    protected $quoteItemFactory;
 
     /**
      * @var OptionFactory
@@ -326,7 +320,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param ProductFactory $productFactory
      * @param ProductRepository $productRepository
      * @param QuoteFactory $quoteFactory
-     * @param QuoteItemFactory $quoteItemFactory
      * @param OptionFactory $optionFactory
      * @param QuoteManagement $quoteManagement
      * @param CustomerFactory $customerFactory
@@ -372,7 +365,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ProductFactory $productFactory,
         ProductRepository $productRepository,
         QuoteFactory $quoteFactory,
-        QuoteItemFactory $quoteItemFactory,
         OptionFactory $optionFactory,
         QuoteManagement $quoteManagement,
         CustomerFactory $customerFactory,
@@ -422,7 +414,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->quoteFactory = $quoteFactory;
-        $this->quoteItemFactory = $quoteItemFactory;
         $this->optionFactory = $optionFactory;
         $this->quoteManagement = $quoteManagement;
         $this->customerFactory = $customerFactory;

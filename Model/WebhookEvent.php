@@ -2258,8 +2258,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $allItems = $userQuote->getAllVisibleItems();
                     foreach ($allItems as $item) {
                         $itemId = $item->getItemId();
-                        $quoteItem = $this->quoteItemFactory->create->load($itemId);
-                        $quoteItem->delete();
+                        $cart->removeItem($itemId)->save();
                     }
                 }
             }

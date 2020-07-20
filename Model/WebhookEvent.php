@@ -21,7 +21,7 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Catalog\Model\Product\OptionFactory;
 use Magento\Quote\Model\QuoteFactory;
-use Magento\Quote\Model\QuoteItemFactory;
+use Magento\Quote\Model\Quote\ItemFactory as QuoteItemFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;

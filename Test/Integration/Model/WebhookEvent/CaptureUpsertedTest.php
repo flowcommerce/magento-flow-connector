@@ -380,7 +380,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         $webhookCollection->load();
         $this->assertEquals(
             count($orderPlacedEvents) +
-            count($cardAuthorizationUpsertedEvents)+ count($captureEvents)+ count($onlineAuthorizationUpsertedEvents),
+            count($cardAuthorizationUpsertedEvents) + count($captureEvents) + count($onlineAuthorizationUpsertedEvents),
             $webhookCollection->count()
         );
     }

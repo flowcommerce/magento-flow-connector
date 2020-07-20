@@ -2255,12 +2255,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $quoteId = $receivedOrder['attributes'][self::QUOTE_ID];
                 if ($userQuote = $this->quoteFactory->create()->load($quoteId)) {
                     $this->logger->info('Clearing cart for quote id: ' . $quoteId);
-                    $allItems = $userQuote->getAllVisibleItems();
-                    $cart = $this->objectManager->get('\Magento\Checkout\Model\Cart');
-                    foreach ($allItems as $item) {
-                        $itemId = $item->getItemId();
-                        $cart->removeItem($itemId)->save();
-                    }
+                    $userQuote->removeAllItems();
+                    $userQuote->setTotalsCollectedFlag(false);
+                    $userQuote->save();
                 }
             }
         }

@@ -422,6 +422,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->quoteFactory = $quoteFactory;
+        $this->quoteItemFactory = $quoteItemFactory;
         $this->optionFactory = $optionFactory;
         $this->quoteManagement = $quoteManagement;
         $this->customerFactory = $customerFactory;

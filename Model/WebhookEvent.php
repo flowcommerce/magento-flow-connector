@@ -10,6 +10,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\DataObject\Factory;
+use Magento\Framework\App\ObjectManager;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface as Order;
 use Magento\Sales\Api\Data\OrderItemInterface as OrderItem;
@@ -121,6 +122,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var string
      */
     protected $_eventPrefix = 'flow_connector_webhook_events';
+
+    /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
 
     /**
      * @var Factory
@@ -313,6 +319,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
+     * @param ObjectManager $objectManager
      * @param Factory $objectFactory
      * @param Logger $logger
      * @param JsonSerializer $jsonSerializer
@@ -358,6 +365,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function __construct(
         Context $context,
         Registry $registry,
+        ObjectManager $objectManager,
         Factory $objectFactory,
         Logger $logger,
         JsonSerializer $jsonSerializer,
@@ -407,6 +415,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $resourceCollection,
             $data
         );
+        $this->objectManager = $objectManager;
         $this->objectFactory = $objectFactory;
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
@@ -2247,6 +2256,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 if ($userQuote = $this->quoteFactory->create()->load($quoteId)) {
                     $this->logger->info('Clearing cart for quote id: ' . $quoteId);
                     $allItems = $userQuote->getAllVisibleItems();
+                    $cart = $objectManager->get('\Magento\Checkout\Model\Cart');
                     foreach ($allItems as $item) {
                         $itemId = $item->getItemId();
                         $cart->removeItem($itemId)->save();

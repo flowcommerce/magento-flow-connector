@@ -21,6 +21,7 @@ use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Catalog\Model\Product\OptionFactory;
 use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Model\QuoteItemFactory;
 use Magento\Quote\Model\QuoteManagement;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
@@ -156,6 +157,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var QuoteFactory
      */
     protected $quoteFactory;
+
+    /**
+     * @var QuoteItemFactory
+     */
+    protected $quoteItemFactory;
 
     /**
      * @var OptionFactory
@@ -320,6 +326,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param ProductFactory $productFactory
      * @param ProductRepository $productRepository
      * @param QuoteFactory $quoteFactory
+     * @param QuoteItemFactory $quoteItemFactory
      * @param OptionFactory $optionFactory
      * @param QuoteManagement $quoteManagement
      * @param CustomerFactory $customerFactory
@@ -365,6 +372,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ProductFactory $productFactory,
         ProductRepository $productRepository,
         QuoteFactory $quoteFactory,
+        QuoteItemFactory $quoteItemFactory,
         OptionFactory $optionFactory,
         QuoteManagement $quoteManagement,
         CustomerFactory $customerFactory,
@@ -2249,7 +2257,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     $allItems = $userQuote->getAllVisibleItems();
                     foreach ($allItems as $item) {
                         $itemId = $item->getItemId();
-                        $quoteItem = $this->getItemModel()->load($itemId);
+                        $quoteItem = $this->quoteItemFactory->create->load($itemId);
                         $quoteItem->delete();
                     }
                 }

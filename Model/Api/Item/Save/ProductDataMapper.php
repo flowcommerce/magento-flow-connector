@@ -382,7 +382,7 @@ class ProductDataMapper
         if ($product->getTypeId() == ConfigurableType::TYPE_CODE && isset($attributes['minimal_price'])) {
             $price = $attributes['minimal_price'];
         } 
-        if ($attributes['final_price']) {
+        if (isset($attributes['final_price'])) {
             $price = $attributes['final_price'];
         }
         return $price;

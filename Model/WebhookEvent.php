@@ -1264,6 +1264,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $order->setFlowConnectorLabelCenterKey(
                     isset($data['center_key']) ? $data['center_key'] : null
                 );
+                $order->setFlowConnectorLabelFlowTrackingNumber(
+                    isset($data['flow_tracking_number']) ? $data['flow_tracking_number'] : null
+                );
+                $order->setFlowConnectorLabelFlowTrackingNumberUrl(
+                    isset($data['flow_tracking_number_url']) ? $data['flow_tracking_number_url'] : null
+                );
+                $order->setFlowConnectorLabelFlowCarrierTrackingNumber(
+                    isset($data['carrier_tracking_number']) ? $data['carrier_tracking_number'] : null
+                );
+                $order->setFlowConnectorLabelFlowCarrierTrackingNumberUrl(
+                    isset($data['carrier_tracking_number_url']) ? $data['carrier_tracking_number_url'] : null
+                );
                 $order->save();
 
                 $this->webhookEventManager->markWebhookEventAsDone($this, '');
@@ -2233,10 +2245,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             if (array_key_exists(self::QUOTE_ID, $receivedOrder['attributes'])) {
                 $quoteId = $receivedOrder['attributes'][self::QUOTE_ID];
                 if ($userQuote = $this->quoteFactory->create()->load($quoteId)) {
-                    $userQuote->removeAllItems()->save();
+                    $userQuote->removeAllItems();
                 }
             }
         }
+
 
         return $order;
     }

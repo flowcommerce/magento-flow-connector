@@ -102,6 +102,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addDutyRateAndVatRateToOrderItem($setup);
         }
 
+        if (version_compare($context->getVersion(), '2.4.2', '<=')) {
+            $this->addOrderLatestTrackingData($setup);
+        }
+
         $installer->endSetup();
     }
 
@@ -768,4 +772,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
         }
     }
 
+    /**
+     * Add Latest Tracking Data Created to Order
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    private function addOrderLatestTrackingData(SchemaSetupInterface $setup)
+    {
+        $salesSetup = $this->salesSetupFactory->create();
+
+        $attributes = [
+            'flow_connector_label_flow_tracking_number' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_flow_tracking_number_url' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_flow_carrier_tracking_number' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+            'flow_connector_label_flow_carrier_tracking_number_url' => ['type' => 'varchar', 'visible' => false, 'required' => false],
+        ];
+
+        foreach ($attributes as $attributeCode => $attributeParams) {
+            $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
+        }
+    }
 }

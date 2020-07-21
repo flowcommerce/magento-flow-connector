@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.4.2
+- Add tracking numbers and URLs directly to orders on label webhook processing
+- Clear carts via Continue Shopping redirect
+- Address bug with regular pricing override
+
 ## 2.4.1
 - Address race condition on FlowJS initialization
 - Update pricing allocation on order import

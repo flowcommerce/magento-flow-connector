@@ -378,11 +378,9 @@ class ProductDataMapper
         $price = 0.0;
         if ($this->configuration->isRegularPricingOverride() && isset($attributes['regular_price'])) {
             $price = $attributes['regular_price'];
-        }
-        if ($product->getTypeId() == ConfigurableType::TYPE_CODE && isset($attributes['minimal_price'])) {
+        } else if ($product->getTypeId() == ConfigurableType::TYPE_CODE && isset($attributes['minimal_price'])) {
             $price = $attributes['minimal_price'];
-        } 
-        if (isset($attributes['final_price'])) {
+        } else if (isset($attributes['final_price'])) {
             $price = $attributes['final_price'];
         }
         return $price;

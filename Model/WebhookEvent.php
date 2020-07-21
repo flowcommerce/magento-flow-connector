@@ -2245,10 +2245,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             if (array_key_exists(self::QUOTE_ID, $receivedOrder['attributes'])) {
                 $quoteId = $receivedOrder['attributes'][self::QUOTE_ID];
                 if ($userQuote = $this->quoteFactory->create()->load($quoteId)) {
-                    $this->logger->info('Clearing cart for quote id: ' . $quoteId);
                     $userQuote->removeAllItems();
-                    $userQuote->setTotalsCollectedFlag(false);
-                    $userQuote->save();
                 }
             }
         }

@@ -2,6 +2,7 @@
 
 namespace FlowCommerce\FlowConnector\Controller\Cart;
 
+use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\App\Action\Action;

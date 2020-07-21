@@ -225,15 +225,16 @@ class ProductDataMapper
     {
         $this->logger->info('Converting product to Flow data: ' . $product->getSku());
 
+        $attributes = $this->getProductAttributeMap($product, $parentProduct);
         $itemData = [
             'number' => $product->getSku(),
             'name' => $product->getName(),
             'description' => $product->getDescription(),
             'locale' => $this->localeResolver->getLocale(),
-            'price' => round($this->getProductPrice($product), 4),
+            'price' => round($this->getProductPrice($product, $attributes), 4),
             'currency' => $this->storeManager->getStore()->getCurrentCurrencyCode(),
             'categories' => $this->getProductCategoryNames($product),
-            'attributes' => $this->getProductAttributeMap($product, $parentProduct),
+            'attributes' => $attributes,
             'images' => $this->getProductImageData($syncSku, $product),
             'dimensions' => $this->getProductDimensionData($product),
         ];
@@ -369,21 +370,22 @@ class ProductDataMapper
      * Returns the price for the product or the min price of children if the
      * product is configurable.
      * @param ProductInterface $product
+     * @param array $attributes
      * @return float|null
      */
-    private function getProductPrice(ProductInterface $product)
+    private function getProductPrice(ProductInterface $product, $attributes)
     {
-        $product->setPriceCalculation(false);
-
-        if ($this->configuration->isRegularPricingOverride()) {
-            return round($product->getRegularPrice(), 4);
+        $price = 0.0;
+        if ($this->configuration->isRegularPricingOverride() && isset($attributes['regular_price'])) {
+            $price = $attributes['regular_price'];
         }
-
-        if ($product->getTypeId() == ConfigurableType::TYPE_CODE) {
-            return round($product->getMinimalPrice(), 4);
+        if ($product->getTypeId() == ConfigurableType::TYPE_CODE && isset($attributes['minimal_price'])) {
+            $price = $attributes['minimal_price'];
         } 
-
-        return round($product->getFinalPrice(), 4);
+        if ($attributes['final_price']) {
+            $price = $attributes['final_price'];
+        }
+        return $price;
     }
 
     /**

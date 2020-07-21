@@ -164,7 +164,7 @@ class Save
             'address_book' => $addressBook,
             'discriminator' => 'checkout_token_order_form',
             'urls' => (object)[
-                /* "continue_shopping" => $this->storeManager->getStore()->getBaseUrl() */
+                'continue_shopping' => $this->storeManager->getStore()->getBaseUrl() . 'flowconnector/cart/clear';
             ]
         ];
 

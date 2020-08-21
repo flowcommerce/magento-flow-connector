@@ -28,8 +28,8 @@ interface SyncManagementInterface
      * Puts a sync stream record to Flow
      * @param $storeId
      * @param $type
-     * @param $record
+     * @param $value
      */
-    public function putSyncStreamRecord($storeId, $type, $record);
+    public function putSyncStreamRecord($storeId, $type, $value);
 }
 

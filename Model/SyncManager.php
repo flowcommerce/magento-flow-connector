@@ -121,10 +121,10 @@ class SyncManager implements SyncManagementInterface
      * {@inheritdoc}
      * @throws NoSuchEntityException
      */
-    public function putSyncStreamRecord($storeId, $type, $record)
+    public function putSyncStreamRecord($storeId, $type, $value)
     {
-        $this->logger->info('Recording value: ' . $record['value'] . ' Sync Stream key : ' . $type);
-        return $this->syncStreamRecordPutApiClient->execute($storeId, $type, $record);
+        $this->logger->info('Recording value: ' . $value . ' Sync Stream key : ' . $type);
+        return $this->syncStreamRecordPutApiClient->execute($storeId, $type, $value);
     }
 }
 

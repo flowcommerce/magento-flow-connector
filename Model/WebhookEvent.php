@@ -2359,6 +2359,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             if ($orderIncrementId = $order->getIncrementId()) {
                 $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId);
+                $this->syncManager->putSyncStreamRecord($storeId, $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
             } else {
                 $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
             }

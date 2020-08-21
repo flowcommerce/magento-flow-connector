@@ -6,6 +6,7 @@ use FlowCommerce\FlowConnector\Api\IntegrationManagementInterface;
 use FlowCommerce\FlowConnector\Api\InventoryCenterManagementInterface as InventoryCenterManager;
 use FlowCommerce\FlowConnector\Api\SyncSkuPriceAttributesManagementInterface as SyncSkuPriceAttributesManager;
 use FlowCommerce\FlowConnector\Api\WebhookManagementInterface as WebhookManager;
+use FlowCommerce\FlowConnector\Api\SyncManagementInterface as SyncManager;
 
 /**
  * Class IntegrationManager
@@ -29,19 +30,27 @@ class IntegrationManager implements IntegrationManagementInterface
     private $webhookManager;
 
     /**
+     * @var SyncManager
+     */
+    private $syncManager;
+
+    /**
      * IntegrationManager constructor.
      * @param InventoryCenterManager $inventoryCenterManager
      * @param SyncSkuPriceAttributesManager $syncSkuPriceAttributesManager
      * @param WebhookManager $webhookManager
+     * @param SyncManager $syncManager
      */
     public function __construct(
         InventoryCenterManager $inventoryCenterManager,
         SyncSkuPriceAttributesManager $syncSkuPriceAttributesManager,
-        WebhookManager $webhookManager
+        WebhookManager $webhookManager,
+        SyncManager $syncManager
     ) {
         $this->inventoryCenterManager = $inventoryCenterManager;
         $this->syncSkuPriceAttributesManager = $syncSkuPriceAttributesManager;
         $this->webhookManager = $webhookManager;
+        $this->syncManager = $syncManager;
     }
 
     /**
@@ -53,6 +62,7 @@ class IntegrationManager implements IntegrationManagementInterface
         $resultSyncSkuPriceAttributes = $this->syncSkuPriceAttributesManager->createPriceAttributesInFlow($storeId);
         $resultWebhookRegistration = $this->webhookManager->registerAllWebhooks($storeId);
         $resultWebhookSettings = $this->webhookManager->updateWebhookSettings($storeId);
+        $resultSyncStreamRegistration = $this->syncManager->registerAllSyncStreams($storeId);
         return $resultInventoryCenterFetchKeys && $resultSyncSkuPriceAttributes
             && $resultWebhookRegistration && $resultWebhookSettings;
     }

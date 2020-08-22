@@ -24,7 +24,7 @@ class SyncManager implements SyncManagementInterface
     /**
      * Array of expected streams
      */
-    const STREAMS = [ PLACED_ORDER_TYPE ];
+    const STREAMS = [ self::PLACED_ORDER_TYPE ];
 
     /**
      * @var SyncStreamPutApiClient
@@ -63,7 +63,8 @@ class SyncManager implements SyncManagementInterface
         StoreManager $storeManager,
         Configuration $configuration
     ) {
-        $this->notification = $notification;
+        $this->syncStreamPutApiClient = $syncStreamPutApiClient;
+        $this->syncStreamRecordPutApiClient = $syncStreamRecordPutApiClient;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->configuration = $configuration;

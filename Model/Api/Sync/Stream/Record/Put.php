@@ -96,7 +96,6 @@ class Put
 
         $payload = [
             'auth' => $this->auth->getAuthHeader($storeId),
-            'body' => $this->jsonSerializer->serialize($syncStreamForm)
         ];
 
         try {

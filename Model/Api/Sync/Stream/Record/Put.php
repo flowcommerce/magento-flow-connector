@@ -39,11 +39,6 @@ class Put
     private $httpClientFactory;
 
     /**
-     * @var HttpRequestFactory
-     */
-    private $httpRequestFactory;
-
-    /**
      * @var JsonSerializer
      */
     private $jsonSerializer;
@@ -62,7 +57,6 @@ class Put
      * Delete constructor.
      * @param Auth $auth
      * @param HttpClientFactory $httpClientFactory
-     * @param HttpRequestFactory $httpRequestFactory
      * @param JsonSerializer $jsonSerializer
      * @param Logger $logger
      * @param UrlBuilder $urlBuilder

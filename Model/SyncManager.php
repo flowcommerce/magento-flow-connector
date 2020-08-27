@@ -76,7 +76,7 @@ class SyncManager implements SyncManagementInterface
      */
     public function registerAllSyncStreams($storeId)
     {
-        $return = false;
+        $return = null;
 
         $enabled = $this->configuration->isFlowEnabled($storeId);
 

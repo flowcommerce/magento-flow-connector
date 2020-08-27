@@ -58,6 +58,7 @@ use Magento\Shipping\Model\ShipmentNotifier;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
 use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
+use FlowCommerce\FlowConnector\Model\SyncManager;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use \Magento\Sales\Model\Order\Shipment\Track;
 use GuzzleHttp\Client as GuzzleClient;
@@ -310,6 +311,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private $configuration;
 
     /**
+     * @var SyncManager
+     */
+    private $syncManager;
+
+    /**
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
@@ -351,6 +357,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param InvoiceSender $invoiceSender
      * @param TrackFactory $trackFactory
      * @param Configuration $configuration
+     * @param SyncManager $syncManager
      * @param AbstractResource|null $resource
      * @param ResourceCollection|null $resourceCollection
      * @param array $data
@@ -396,6 +403,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         InvoiceSender $invoiceSender,
         TrackFactory $trackFactory,
         Configuration $configuration,
+        SyncManager $syncManager,
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
         array $data = []
@@ -445,6 +453,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->shipmentNotifier = $shipmentNotifier;
         $this->trackFactory = $trackFactory;
         $this->configuration = $configuration;
+        $this->syncManager = $syncManager;
     }
 
     protected function _construct()

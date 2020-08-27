@@ -93,13 +93,12 @@ class Put
             self::RECORDS_STREAMS_URL_STUB . '/' . $type . self::SYSTEMS_URL_STUB . '/m2' . self::VALUES_URL_STUB . '/' . $value,
             $storeId
         );
-
         $payload = [
-            'auth' => $this->auth->getAuthHeader($storeId),
+            'auth' => $this->auth->getAuthHeader($storeId)
         ];
 
         try {
-            $response = $client->put($url);
+            $response = $client->put($url, $payload);
             $statusCode = (int) $response->getStatusCode();
             if ($statusCode === 201 || $statusCode === 200) {
                 $this->logger->info('Sync Stream Record registered: ' . $response->getBody());

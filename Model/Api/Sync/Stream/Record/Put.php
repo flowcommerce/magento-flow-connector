@@ -64,14 +64,12 @@ class StreamRecordPut
     public function __construct(
         Auth $auth,
         HttpClientFactory $httpClientFactory,
-        HttpRequestFactory $httpRequestFactory,
         JsonSerializer $jsonSerializer,
         Logger $logger,
         UrlBuilder $urlBuilder
     ) {
         $this->auth = $auth;
         $this->httpClientFactory = $httpClientFactory;
-        $this->httpRequestFactory = $httpRequestFactory;
         $this->jsonSerializer = $jsonSerializer;
         $this->logger = $logger;
         $this->urlBuilder = $urlBuilder;

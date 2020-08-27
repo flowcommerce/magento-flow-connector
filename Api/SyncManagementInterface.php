@@ -2,8 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Api;
 
-use Psr\Log\LoggerInterface as Logger;
-
 /**
  * Interface Sync Management Interface
  * @package FlowCommerce\FlowConnector\Api

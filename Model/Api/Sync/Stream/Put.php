@@ -11,7 +11,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
 
-class Put
+class StreamPut
 {
     /**
      * Url Stub of this API endpoint

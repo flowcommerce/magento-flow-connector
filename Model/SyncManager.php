@@ -3,8 +3,8 @@
 namespace FlowCommerce\FlowConnector\Model;
 
 use FlowCommerce\FlowConnector\Api\SyncManagementInterface;
-use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Put as SyncStreamPutApiClient;
-use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Record\Put as SyncStreamRecordPutApiClient;
+use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Put as StreamPutApiClient;
+use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Record\Put as StreamRecordPutApiClient;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
@@ -27,14 +27,14 @@ class SyncManager implements SyncManagementInterface
     const STREAMS = [ self::PLACED_ORDER_TYPE ];
 
     /**
-     * @var SyncStreamPutApiClient
+     * @var StreamPutApiClient
      */
-    private $syncStreamPutApiClient;
+    private $streamPutApiClient;
 
     /**
-     * @var SyncStreamRecordPutApiClient
+     * @var StreamRecordPutApiClient
      */
-    private $syncStreamRecordPutApiClient;
+    private $streamRecordPutApiClient;
 
     /**
      * @var Logger
@@ -57,14 +57,14 @@ class SyncManager implements SyncManagementInterface
      * @param StoreManager $storeManager
      */
     public function __construct(
-        SyncStreamPutApiClient $syncStreamPutApiClient,
-        SyncStreamRecordPutApiClient $syncStreamRecordPutApiClient,
+        StreamPutApiClient $streamPutApiClient,
+        StreamRecordPutApiClient $streamRecordPutApiClient,
         Logger $logger,
         StoreManager $storeManager,
         Configuration $configuration
     ) {
-        $this->syncStreamPutApiClient = $syncStreamPutApiClient;
-        $this->syncStreamRecordPutApiClient = $syncStreamRecordPutApiClient;
+        $this->streamPutApiClient = $streamPutApiClient;
+        $this->streamRecordPutApiClient = $streamRecordPutApiClient;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->configuration = $configuration;
@@ -115,7 +115,7 @@ class SyncManager implements SyncManagementInterface
     public function putSyncStream($storeId, $type)
     {
         $this->logger->info('Registering Sync Stream key: ' . $type);
-        return $this->syncStreamPutApiClient->execute($storeId, $type);
+        return $this->streamPutApiClient->execute($storeId, $type);
     }
 
     /**
@@ -125,7 +125,7 @@ class SyncManager implements SyncManagementInterface
     public function putSyncStreamRecord($storeId, $type, $value)
     {
         $this->logger->info('Recording value: ' . $value . ' Sync Stream key : ' . $type);
-        return $this->syncStreamRecordPutApiClient->execute($storeId, $type, $value);
+        return $this->streamRecordPutApiClient->execute($storeId, $type, $value);
     }
 }
 

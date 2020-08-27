@@ -1,6 +1,6 @@
 <?php
 
-namespace FlowCommerce\FlowConnector\Model\Api\Webhook;
+namespace FlowCommerce\FlowConnector\Model\Api\Sync\Stream;
 
 use Exception;
 use FlowCommerce\FlowConnector\Model\Api\Auth;
@@ -11,7 +11,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
 
-class StreamPut
+class Put
 {
     /**
      * Url Stub of this API endpoint

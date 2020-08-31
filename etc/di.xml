@@ -7,6 +7,7 @@
     <preference for="FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface" type="FlowCommerce\FlowConnector\Model\WebhookEvent" />
     <preference for="FlowCommerce\FlowConnector\Api\Data\SyncSkuSearchResultsInterface" type="Magento\Framework\Api\Search\SearchResult" />
     <preference for="FlowCommerce\FlowConnector\Api\Data\InventorySyncSearchResultsInterface" type="Magento\Framework\Api\Search\SearchResult" />
+    <preference for="FlowCommerce\FlowConnector\Api\SyncManagementInterface" type="FlowCommerce\FlowConnector\Model\SyncManager" />
     <preference for="FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface" type="FlowCommerce\FlowConnector\Model\SyncSkuManager" />
     <preference for="FlowCommerce\FlowConnector\Api\SyncSkuPriceAttributesManagementInterface" type="FlowCommerce\FlowConnector\Model\SyncSkuPriceAttributesManager" />
     <preference for="FlowCommerce\FlowConnector\Api\LockManagerInterface" type="FlowCommerce\FlowConnector\Model\LockManager\Flag" />

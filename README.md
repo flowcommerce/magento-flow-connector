@@ -59,10 +59,11 @@ First, login to your Magento Back Office. From the left hand menu, click on Stor
 
 Then, enable the connector and fill out your Flow Organization ID, Flow API Key, and Save Config.
 
-Then, we will use the settings we just configured to register webhooks for importing orders from Flow and prepare Flow's catalog to sync Magento's catalog attributes:
+Then, we will use the settings we just configured to register webhooks for importing orders from Flow, register Sync Streams, and prepare Flow's catalog to sync Magento's catalog attributes:
 ```plaintext
 $ php bin/magento flow:connector:initialize
 ```
+A Sync Stream is a Flow service which tracks data syncing between two parties, in this case Flow and Magento 2.
 For more detail about how Flow Webhooks work please refer to this guide: [Flow Webhook](https://docs.flow.io/docs/create-webhooks)
 
 Then, enqueue your Magento catalog to be synced:
@@ -193,7 +194,7 @@ Remove Flow cron tasks older than 5 minutes and still marked as running:
 $ php bin/magento flow:connector:cron-cleanup
 ```
 
-Initialize integration with Flow. Includes webhook registration, attributes creation, inventory center key fetching, and creating secret for webhook payload verification:
+Initialize integration with Flow. Includes webhook registration, sync stream registration, attributes creation, inventory center key fetching, and creating secret for webhook payload verification:
 ```plaintext
 $ php bin/magento flow:connector:initialize
 ```

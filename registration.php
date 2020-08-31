@@ -4,4 +4,3 @@
     'FlowCommerce_FlowConnector',
     __DIR__
 );
-

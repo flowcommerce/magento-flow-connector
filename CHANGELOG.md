@@ -3,6 +3,8 @@
 ## 2.5.0
 - Add Sync Stream registration to intialization command
 - Add Sync Stream Record registration for order import events
+- Remove deprecated Model/Util class
+- Remove deprecated Model/GuzzleHttp/Client class
 
 ## 2.4.2
 - Add tracking numbers and URLs directly to orders on label webhook processing

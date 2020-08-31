@@ -6,7 +6,6 @@ use FlowCommerce\FlowConnector\Helper\Data;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;
 use FlowCommerce\FlowConnector\Model\Config\Source\DataSource;
 use FlowCommerce\FlowConnector\Model\SessionManager;
-use FlowCommerce\FlowConnector\Model\Util;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use Magento\Checkout\Model\Session;
 use Magento\Customer\Api\AddressRepositoryInterface;
@@ -44,11 +43,6 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
      * @var Data
      */
     private $flowHelper;
-
-    /**
-     * @var Util
-     */
-    private $util;
 
     /**
      * @var StoreManagerInterface
@@ -92,7 +86,6 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
      * @param SessionManager $sessionManager
      * @param StoreManagerInterface $storeManager
      * @param UrlBuilder $urlBuilder
-     * @param Util $util
      * @param Context $context
      */
     public function __construct(
@@ -106,7 +99,6 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         SessionManager $sessionManager,
         StoreManagerInterface $storeManager,
         UrlBuilder $urlBuilder,
-        Util $util,
         Context $context
     ) {
         $this->addressRepository = $addressRepository;
@@ -119,7 +111,6 @@ class RedirectToFlow extends \Magento\Framework\App\Action\Action
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->urlBuilder = $urlBuilder;
-        $this->util = $util;
         parent::__construct($context);
     }
 

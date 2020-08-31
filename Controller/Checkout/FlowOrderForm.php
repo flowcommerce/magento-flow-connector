@@ -34,11 +34,6 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action
     private $jsonHelper;
 
     /**
-     * @var Util
-     */
-    private $util;
-
-    /**
      * @var StoreManagerInterface
      */
     private $storeManager;
@@ -73,7 +68,6 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action
      * @param Data $jsonHelper
      * @param LoggerInterface $logger
      * @param StoreManagerInterface $storeManager
-     * @param Util $util
      * @param Context $context
      */
     public function __construct(
@@ -85,7 +79,6 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action
         Data $jsonHelper,
         LoggerInterface $logger,
         StoreManagerInterface $storeManager,
-        \FlowCommerce\FlowConnector\Model\Util $util,
         Context $context
     ) {
         $this->addressRepository = $addressRepository;
@@ -96,7 +89,6 @@ class FlowOrderForm extends \Magento\Framework\App\Action\Action
         $this->jsonHelper = $jsonHelper;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
-        $this->util = $util;
         parent::__construct($context);
     }
 

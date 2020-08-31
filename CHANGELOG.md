@@ -3,6 +3,7 @@
 ## 2.5.0
 - Add Sync Stream registration to intialization command
 - Add Sync Stream Record registration for order import events
+- Remove deprecated Helper/Data class
 - Remove deprecated Model/Util class
 - Remove deprecated Model/GuzzleHttp/Client class
 

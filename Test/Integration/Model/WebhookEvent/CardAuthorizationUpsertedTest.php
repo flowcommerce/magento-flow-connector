@@ -98,7 +98,7 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $this->createProductsFixture->execute();
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process(100, 1);
         
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
 
@@ -111,7 +111,7 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing card authorization upserted event
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process(100, 1);
 
         foreach ($cardAuthorizationUpsertedEvents as $cardAuthorizationUpsertedEvent) {
             $payload = $cardAuthorizationUpsertedEvent->getPayloadData();

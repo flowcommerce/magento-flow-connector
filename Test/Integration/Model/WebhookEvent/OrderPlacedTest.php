@@ -166,7 +166,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             ->createOrderPlacedWebhooks();
 
         //Process
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process(100, 1);
 
         //Test values in magento orders
         foreach ($orderPlacedEvents as $orderPlacedEvent) {

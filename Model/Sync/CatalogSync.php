@@ -160,7 +160,7 @@ class CatalogSync
      * @return void
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function process($numToProcess = 1000, $keepAlive = 60)
+    public function process($numToProcess = 100, $keepAlive = 60)
     {
         try {
             $this->logger->info('Starting sync sku processing');

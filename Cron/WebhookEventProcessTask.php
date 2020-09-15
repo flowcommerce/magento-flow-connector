@@ -16,7 +16,7 @@ class WebhookEventProcessTask
     /**
      * Number of jobs to be processed at every run
      */
-    const NUMBER_OF_JOBS_TO_PROCESS = 1000;
+    const NUMBER_OF_JOBS_TO_PROCESS = 100;
 
     /**
      * Number of seconds to wait after existing queue is processed

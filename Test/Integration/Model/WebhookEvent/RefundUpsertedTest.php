@@ -108,13 +108,13 @@ class RefundUpsertedTest extends \PHPUnit\Framework\TestCase
         $this->createProductsFixture->execute();
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process(100, 1);
         
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process(100, 1);
 
         $captureEvents = $this->createWebhookEventsFixture->createCaptureUpsertedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process(100, 1);
 
         $refundEvents = $this->createWebhookEventsFixture->createRefundUpsertedWebhooks();
 
@@ -127,7 +127,7 @@ class RefundUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing refund capture event
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process(100, 1);
 
         foreach ($refundEvents as $refundEvent) {
             $payload = $refundEvent->getPayloadData();

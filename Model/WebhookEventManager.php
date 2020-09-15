@@ -122,7 +122,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
      * @param $keepAlive - Number of seconds to keep alive after/between processing.
      * @throws LocalizedException
      */
-    public function process($numToProcess = 1000, $keepAlive = 60)
+    public function process($numToProcess = 100, $keepAlive = 60)
     {
         $this->logger->info('Starting webhook event processing');
 

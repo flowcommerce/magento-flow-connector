@@ -41,10 +41,9 @@ interface InventorySyncManagementInterface
     /**
      * Processes the inventory sync queue
      * @param int $numToProcess
-     * @param int $keepAlive
      * @return InventorySync
      */
-    public function process($numToProcess = 100, $keepAlive = 60);
+    public function process($numToProcess = 100);
 
     /**
      * Marks Inventory Sync entry as done

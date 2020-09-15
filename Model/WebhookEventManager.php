@@ -119,32 +119,24 @@ class WebhookEventManager implements WebhookEventManagementInterface
     /**
      * Process the webhook event queue.
      * @param $numToProcess - Number of records to process.
-     * @param $keepAlive - Number of seconds to keep alive after/between processing.
      * @throws LocalizedException
      */
-    public function process($numToProcess = 100, $keepAlive = 60)
+    public function process($numToProcess = 100)
     {
         $this->logger->info('Starting webhook event processing');
 
         $this->deleteOldProcessedEvents();
         $this->resetOldErrorEvents();
 
-        while ($keepAlive > 0) {
-            while ($numToProcess > 0) {
-                $webhookEvent = $this->getNextUnprocessedEvent();
-                if ($webhookEvent == null) {
-                    break;
-                }
-
-                $this->logger->info('Processing webhook event: ' . $webhookEvent->getType());
-                $webhookEvent->process();
-
-                $numToProcess--;
+        while ($numToProcess > 0) {
+            $webhookEvent = $this->getNextUnprocessedEvent();
+            if ($webhookEvent == null) {
+                break;
             }
 
-            // $this->logger->info('Webhook keep alive remaining: ' . $keepAlive);
-            $keepAlive--;
-            sleep(1);
+            $this->logger->info('Processing webhook event: ' . $webhookEvent->getType());
+            $webhookEvent->process();
+            $numToProcess--;
         }
 
         $this->logger->info('Done processing webhook events');

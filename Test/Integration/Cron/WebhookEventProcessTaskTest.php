@@ -49,7 +49,7 @@ class WebhookEventProcessTaskTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->webhookEventManager = $this->createPartialMock(WebhookEventManager::class, ['process']);
+        $this->webhookEventManager = $this->createPartialMock(WebhookEventManager::class, ['processAll']);
         $this->lockManager = $this->objectManager->create(LockManager::class);
         $this->lockManagerFixture = $this->objectManager->create(LockManagerFixture::class);
         $this->subject = $this->objectManager->create(Subject::class, [
@@ -64,7 +64,7 @@ class WebhookEventProcessTaskTest extends \PHPUnit\Framework\TestCase
     {
         $this->webhookEventManager
             ->expects($this->once())
-            ->method('process');
+            ->method('processAll');
 
         $this->subject->execute();
 
@@ -84,7 +84,7 @@ class WebhookEventProcessTaskTest extends \PHPUnit\Framework\TestCase
 
         $this->webhookEventManager
             ->expects($this->once())
-            ->method('process');
+            ->method('processAll');
 
         $this->subject->execute();
 
@@ -101,7 +101,7 @@ class WebhookEventProcessTaskTest extends \PHPUnit\Framework\TestCase
 
         $this->webhookEventManager
             ->expects($this->never())
-            ->method('process');
+            ->method('processAll');
 
         $this->subject->execute();
 
@@ -118,7 +118,7 @@ class WebhookEventProcessTaskTest extends \PHPUnit\Framework\TestCase
 
         $this->webhookEventManager
             ->expects($this->once())
-            ->method('process');
+            ->method('processAll');
 
         $this->subject->execute();
 

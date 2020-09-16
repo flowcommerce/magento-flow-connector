@@ -138,7 +138,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
         $this->resetOldErrorEvents();
 
         $webhookEvents = $this->getNextUnprocessedEvents();
-        if ((int) $webhookEvents->getTotalCount() === 0) {
+        if ((int) count($webhookEvents) === 0) {
             $this->logger->info('No webhook events to process.');
             return false;
         }

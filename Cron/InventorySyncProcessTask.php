@@ -68,7 +68,7 @@ class InventorySyncProcessTask
         try {
             $this->acquireLock();
             $this->logger->info('Running InventorySyncProcessTask execute.');
-            $this->inventorySyncManager->processAll();
+            $this->inventorySyncManager->process();
             $this->releaseLock();
         } catch (CantAcquireLockException $e) {
             $this->logger->info($e->getMessage());

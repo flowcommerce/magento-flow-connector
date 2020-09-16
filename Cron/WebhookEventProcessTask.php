@@ -68,7 +68,7 @@ class WebhookEventProcessTask
         try {
             $this->acquireLock();
             $this->logger->info('Running WebhookEventProcessTask execute');
-            $this->webhookEventManager->processAll();
+            $this->webhookEventManager->process();
             $this->releaseLock();
         } catch (CantAcquireLockException $e) {
             $this->logger->info($e->getMessage());

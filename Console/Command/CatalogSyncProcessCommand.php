@@ -51,6 +51,6 @@ class CatalogSyncProcessCommand extends BaseCommand
         $logger = new FlowConsoleLogger($output);
         $this->initCLI();
         $this->catalogSync->setLogger($logger);
-        $this->catalogSync->process();
+        $this->catalogSync->processAll();
     }
 }

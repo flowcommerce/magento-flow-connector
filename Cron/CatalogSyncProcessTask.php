@@ -74,7 +74,7 @@ class CatalogSyncProcessTask
             $this->lockManager->setCustomLockTtl(self::LOCK_TTL);
             $this->acquireLock();
             $this->logger->info('Running CatalogSyncProcessTask execute.');
-            $this->catalogSync->processAll();
+            $this->catalogSync->process();
             $this->releaseLock();
         } catch (CantAcquireLockException $e) {
             $this->logger->info($e->getMessage());

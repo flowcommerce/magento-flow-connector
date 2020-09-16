@@ -52,6 +52,6 @@ class InventorySyncProcessCommand extends BaseCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->initCLI();
-        $this->inventoryManager->process();
+        $this->inventoryManager->processAll();
     }
 }

@@ -48,7 +48,7 @@ class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->catalogSync = $this->createPartialMock(CatalogSync::class, ['processAll']);
+        $this->catalogSync = $this->createPartialMock(CatalogSync::class, ['process']);
         $this->lockManager = $this->objectManager->create(LockManager::class);
         $this->lockManagerFixture = $this->objectManager->create(LockManagerFixture::class);
         $this->subject = $this->objectManager->create(Subject::class, [
@@ -63,7 +63,7 @@ class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase
     {
         $this->catalogSync
             ->expects($this->once())
-            ->method('processAll');
+            ->method('process');
 
         $this->subject->execute();
 
@@ -83,7 +83,7 @@ class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase
 
         $this->catalogSync
             ->expects($this->once())
-            ->method('processAll');
+            ->method('process');
 
         $this->subject->execute();
 
@@ -100,7 +100,7 @@ class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase
 
         $this->catalogSync
             ->expects($this->never())
-            ->method('processAll');
+            ->method('process');
 
         $this->subject->execute();
 
@@ -117,7 +117,7 @@ class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase
 
         $this->catalogSync
             ->expects($this->once())
-            ->method('processAll');
+            ->method('process');
 
         $this->subject->execute();
 

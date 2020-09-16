@@ -39,9 +39,14 @@ interface InventorySyncManagementInterface
     public function enqueueStockItem(StockItemInterface $stockItem);
 
     /**
+     * Processes entire inventory sync queue
+     * @return void
+     */
+    public function processAll();
+
+    /**
      * Processes the inventory sync queue
-     * @param int $numToProcess
-     * @return InventorySync
+     * @return boolean
      */
     public function process();
 

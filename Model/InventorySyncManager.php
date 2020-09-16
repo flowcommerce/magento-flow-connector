@@ -441,6 +441,17 @@ class InventorySyncManager implements InventorySyncManagementInterface
     /**
      * {@inheritdoc}
      */
+    public function processAll()
+    {
+        $stillProcessing = true; 
+        do {
+            $stillProcesing = $this->process();
+        } while ($stillProcessing);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function process()
     {
         try {
@@ -452,7 +463,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
 
             if ((int) $inventorySyncs->getTotalCount() === 0) {
                 $this->logger->info('No records to process.');
-                return;
+                return false;
             }
 
             $this->inventorySyncsToUpdate = [];
@@ -485,6 +496,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
             $this->logger->warning('Error syncing inventory: '
                 . $e->getMessage() . '\n' . $e->getTraceAsString());
         }
+        return true;
     }
 
     /**

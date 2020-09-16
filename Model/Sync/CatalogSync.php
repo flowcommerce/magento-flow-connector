@@ -144,9 +144,18 @@ class CatalogSync
     }
 
     /**
-     * Processes the SyncSku queue.
-     * @return void
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * {@inheritdoc}
+     */
+    public function processAll()
+    {
+        $stillProcessing = true; 
+        do {
+            $stillProcesing = $this->process();
+        } while ($stillProcessing);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function process()
     {
@@ -159,7 +168,7 @@ class CatalogSync
 
             if ((int)$syncSkus->getTotalCount() === 0) {
                 $this->logger->info('No records to process.');
-                return;
+                return false;
             }
             $this->syncSkusToUpdate = [];
             $this->syncSkusToDelete = [];
@@ -213,6 +222,7 @@ class CatalogSync
             $this->logger->warning('Error syncing products: '
                 . $e->getMessage() . '\n' . $e->getTraceAsString());
         }
+        return true;
     }
 
     /**

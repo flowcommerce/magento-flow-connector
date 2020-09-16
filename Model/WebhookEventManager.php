@@ -117,8 +117,18 @@ class WebhookEventManager implements WebhookEventManagementInterface
     }
 
     /**
-     * Process the webhook event queue.
-     * @throws LocalizedException
+     * {@inheritdoc}
+     */
+    public function processAll()
+    {
+        $stillProcessing = true; 
+        do {
+            $stillProcesing = $this->process();
+        } while ($stillProcessing);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function process()
     {
@@ -128,11 +138,17 @@ class WebhookEventManager implements WebhookEventManagementInterface
         $this->resetOldErrorEvents();
 
         $webhookEvents = $this->getNextUnprocessedEvents();
+        if ((int) $webhookEvents->getTotalCount() === 0) {
+            $this->logger->info('No webhook events to process.');
+            return false;
+        }
+
         foreach ($webhookEvents as $webhookEvent) {
             $this->logger->info('Processing webhook event: ' . $webhookEvent->getType());
             $webhookEvent->process();
         }
         $this->logger->info('Done processing webhook events');
+        return true;
     }
 
     /**

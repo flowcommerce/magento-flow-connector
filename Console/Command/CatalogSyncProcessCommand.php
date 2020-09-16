@@ -37,12 +37,7 @@ class CatalogSyncProcessCommand extends BaseCommand
     public function configure()
     {
         $this->setName('flow:connector:catalog-sync')
-            ->setDescription('Sync queued items to Flow catalog.')
-            ->addArgument(
-                'num-to-process',
-                InputArgument::OPTIONAL,
-                'Number of records to process. Defaults to processing all records.'
-            );
+            ->setDescription('Sync queued items to Flow catalog.');
     }
 
     /**
@@ -53,14 +48,9 @@ class CatalogSyncProcessCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $numToProcess = $input->getArgument('num-to-process');
-        if (!isset($numToProcess)) {
-            $numToProcess = -1;
-        }
-
         $logger = new FlowConsoleLogger($output);
         $this->initCLI();
         $this->catalogSync->setLogger($logger);
-        $this->catalogSync->process($numToProcess, 1);
+        $this->catalogSync->process();
     }
 }

@@ -154,7 +154,7 @@ class CatalogSync
             $this->logger->info('Starting sync sku processing');
 
             $ts = microtime(true);
-            $syncSkus = $this->syncSkuManager->getNextSyncSkuBatchToBeProcessed(100);
+            $syncSkus = $this->syncSkuManager->getNextSyncSkuBatchToBeProcessed(1000);
             $this->logger->info('Time to load products to sync: ' . (microtime(true) - $ts));
 
             if ((int)$syncSkus->getTotalCount() === 0) {

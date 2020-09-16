@@ -447,7 +447,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
             $this->logger->info('Starting inventory sync processing');
 
             $ts = microtime(true);
-            $inventorySyncs = $this->getNextInventorySyncBatchToBeProcessed(100);
+            $inventorySyncs = $this->getNextInventorySyncBatchToBeProcessed(1000);
             $this->logger->info('Time to load inventory syncs batch: ' . (microtime(true) - $ts));
 
             if ((int) $inventorySyncs->getTotalCount() === 0) {

@@ -118,49 +118,36 @@ class WebhookEventManager implements WebhookEventManagementInterface
 
     /**
      * Process the webhook event queue.
-     * @param $numToProcess - Number of records to process.
      * @throws LocalizedException
      */
-    public function process($numToProcess = 100)
+    public function process()
     {
         $this->logger->info('Starting webhook event processing');
 
         $this->deleteOldProcessedEvents();
         $this->resetOldErrorEvents();
 
-        while ($numToProcess > 0) {
-            $webhookEvent = $this->getNextUnprocessedEvent();
-            if ($webhookEvent == null) {
-                break;
-            }
-
+        $webhookEvents = $this->getNextUnprocessedEvents();
+        foreach ($webhookEvents as $webhookEvent) {
             $this->logger->info('Processing webhook event: ' . $webhookEvent->getType());
             $webhookEvent->process();
-            $numToProcess--;
         }
-
         $this->logger->info('Done processing webhook events');
     }
 
     /**
      * Returns the next unprocessed event.
-     * @return WebhookEvent|null
+     * @return WebhookEvent[]
      */
-    private function getNextUnprocessedEvent()
+    private function getNextUnprocessedEvents()
     {
         $collection = $this->webhookEventCollectionFactory->create();
         $collection->addFieldToFilter('status', WebhookEvent::STATUS_NEW);
         $collection->addFieldToFilter('triggered_at', ['lteq' => (new \DateTime())->format('Y-m-d H:i:s')]);
         $collection->setOrder('updated_at', 'ASC');
         $collection->setOrder('id', 'ASC');
-        $collection->setPageSize(1);
-        if ($collection->getSize() == 0) {
-            $return =  null;
-        } else {
-            /** @var WebhookEvent $return */
-            $return = $collection->getFirstItem();
-        }
-        return $return;
+        $collection->setPageSize(100);
+        return $collection;
     }
 
     /**

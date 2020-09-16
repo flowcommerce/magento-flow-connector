@@ -441,51 +441,43 @@ class InventorySyncManager implements InventorySyncManagementInterface
     /**
      * {@inheritdoc}
      */
-    public function process($numToProcess = 100)
+    public function process()
     {
         try {
             $this->logger->info('Starting inventory sync processing');
 
-            while ($numToProcess != 0) {
-                $ts = microtime(true);
-                $inventorySyncs = $this->getNextInventorySyncBatchToBeProcessed($numToProcess);
-                $this->logger->info('Time to load inventory syncs batch: ' . (microtime(true) - $ts));
+            $ts = microtime(true);
+            $inventorySyncs = $this->getNextInventorySyncBatchToBeProcessed(100);
+            $this->logger->info('Time to load inventory syncs batch: ' . (microtime(true) - $ts));
 
-                if ((int) $inventorySyncs->getTotalCount() === 0) {
-                    $this->logger->info('No records to process.');
-                    break;
+            if ((int) $inventorySyncs->getTotalCount() === 0) {
+                $this->logger->info('No records to process.');
+                return;
+            }
+
+            $this->inventorySyncsToUpdate = [];
+
+            foreach ($inventorySyncs->getItems() as $inventorySync) {
+                $product = $inventorySync->getProduct();
+                if (!$this->configuration->isFlowEnabled($inventorySync->getStoreId())) {
+                    $this->markInventorySyncAsError($inventorySync, 'Flow module is disabled.');
+                    continue;
                 }
-
-                $this->inventorySyncsToUpdate = [];
-
-                foreach ($inventorySyncs->getItems() as $inventorySync) {
-                    $product = $inventorySync->getProduct();
-                    if (!$this->configuration->isFlowEnabled($inventorySync->getStoreId())) {
-                        $this->markInventorySyncAsError($inventorySync, 'Flow module is disabled.');
-                        continue;
-                    }
-                    if ($product) {
-                        $this->markInventorySyncAsProcessing($inventorySync);
-                        array_push($this->inventorySyncsToUpdate, $inventorySync);
-                    }
-                    $numToProcess--;
-                }
-
-                if (count($this->inventorySyncsToUpdate)) {
-                    $ts = microtime(true);
-                    $this->itemUpdateApiClient->execute(
-                        $this->inventorySyncsToUpdate,
-                        [$this, 'successfulInventoryUpdateCallback'],
-                        [$this, 'failureInventoryUpdateCallback']
-                    );
-                    $this->logger->info('Time to asynchronously update inventory on flow.io: '
-                        . (microtime(true) - $ts));
+                if ($product) {
+                    $this->markInventorySyncAsProcessing($inventorySync);
+                    array_push($this->inventorySyncsToUpdate, $inventorySync);
                 }
             }
 
-            if ($numToProcess == 0) {
-                // We've hit the processing limit, break out of loop.
-                break;
+            if (count($this->inventorySyncsToUpdate)) {
+                $ts = microtime(true);
+                $this->itemUpdateApiClient->execute(
+                    $this->inventorySyncsToUpdate,
+                    [$this, 'successfulInventoryUpdateCallback'],
+                    [$this, 'failureInventoryUpdateCallback']
+                );
+                $this->logger->info('Time to asynchronously update inventory on flow.io: '
+                    . (microtime(true) - $ts));
             }
 
             $this->logger->info('Done processing inventory sync queue.');

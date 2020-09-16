@@ -43,7 +43,7 @@ interface InventorySyncManagementInterface
      * @param int $numToProcess
      * @return InventorySync
      */
-    public function process($numToProcess = 100);
+    public function process();
 
     /**
      * Marks Inventory Sync entry as done

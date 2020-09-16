@@ -97,7 +97,7 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
         $this->createProductsFixture->execute();
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
         
         $fraudStatusChangedEvents = $this->createWebhookEventsFixture->createFraudStatusChangeWebhooks();
 
@@ -110,7 +110,7 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
         );
 
         //Processing fraud status change event
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         foreach ($fraudStatusChangedEvents as $fraudStatusChangedEvent) {
             $payload = $fraudStatusChangedEvent->getPayloadData();

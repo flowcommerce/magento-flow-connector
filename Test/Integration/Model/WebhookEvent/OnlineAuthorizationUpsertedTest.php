@@ -99,7 +99,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal.json']);
@@ -113,7 +113,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing card authorization upserted event
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         foreach ($onlineAuthorizationUpsertedEvents as $onlineAuthorizationUpsertedEvent) {
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
@@ -175,7 +175,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal_declined.json']);
@@ -189,7 +189,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing card authorization upserted event
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         foreach ($onlineAuthorizationUpsertedEvents as $onlineAuthorizationUpsertedEvent) {
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
@@ -250,7 +250,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal_expired.json']);
@@ -264,7 +264,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing card authorization upserted event
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         foreach ($onlineAuthorizationUpsertedEvents as $onlineAuthorizationUpsertedEvent) {
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
@@ -326,7 +326,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
         
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal_pending.json']);
@@ -340,7 +340,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing card authorization upserted event
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         foreach ($onlineAuthorizationUpsertedEvents as $onlineAuthorizationUpsertedEvent) {
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
@@ -401,7 +401,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal_reversed.json']);
@@ -415,7 +415,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing card authorization upserted event
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         foreach ($onlineAuthorizationUpsertedEvents as $onlineAuthorizationUpsertedEvent) {
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();
@@ -477,7 +477,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal_review.json']);
@@ -491,7 +491,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing card authorization upserted event
-        $this->webhookEventManager->process(100, 1);
+        $this->webhookEventManager->process();
 
         foreach ($onlineAuthorizationUpsertedEvents as $onlineAuthorizationUpsertedEvent) {
             $payload = $onlineAuthorizationUpsertedEvent->getPayloadData();

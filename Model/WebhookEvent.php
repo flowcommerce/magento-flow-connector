@@ -1677,7 +1677,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @throws WebhookException
      * @throws NoSuchEntityException
      */
-    private function doOrderUpserted(array $data)
+    public function doOrderUpserted(array $data)
     {
         // Check if order is present in payload
         if (!array_key_exists('order', $data)) {
@@ -2355,7 +2355,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         $this->logger->info('Processing order_upserted_v2 data');
         $data = $this->getPayloadData();
+        $this->processOrderPlacedPayloadData($data);
+    }
 
+    public function processOrderPlacedPayloadData($data = null, $usesWebhookEvent = true)
+    {
         try {
             $order = $this->doOrderUpserted($data);
             $this->doAllocationUpsertedV2($order, $data);
@@ -2367,13 +2371,19 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $order->save();
 
             if ($orderIncrementId = $order->getIncrementId()) {
-                $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId);
+                if ($usesWebhookEvent) {
+                    $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId);
+                }
                 $this->syncManager->putSyncStreamRecord($this->getStoreId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
             } else {
-                $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+                if ($usesWebhookEvent) {
+                    $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+                }
             }
         } catch (LocalizedException $e) {
-            $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+            if ($usesWebhookEvent) {
+                $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+            }
         }
     }
 

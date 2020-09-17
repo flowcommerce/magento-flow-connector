@@ -30,6 +30,11 @@
             <schedule>*/5 * * * *</schedule>
         </job>
     </group>
+    <group id="flowcommerce_flowconnector_order_sync_poll">
+        <job name="flowcommerce_flowconnector_order_sync_poll_task" instance="FlowCommerce\FlowConnector\Cron\OrderSyncPollTask" method="execute">
+            <schedule>*/28 * * * *</schedule>
+        </job>
+    </group>
     <group id="flowcommerce_flowconnector_cron_cleanup">
         <job name="flowcommerce_flowconnector_cron_cleanup_task" instance="FlowCommerce\FlowConnector\Cron\CronCleanupTask" method="execute">
             <schedule>*/5 * * * *</schedule>

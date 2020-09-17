@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.5.1
+- Cron task optimizations
+
 ## 2.5.0
 - Add Sync Stream registration to intialization command
 - Add Sync Stream Record registration for order import events

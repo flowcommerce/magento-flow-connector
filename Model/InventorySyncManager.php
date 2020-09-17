@@ -457,9 +457,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
         try {
             $this->logger->info('Starting inventory sync processing');
 
-            $ts = microtime(true);
             $inventorySyncs = $this->getNextInventorySyncBatchToBeProcessed(1000);
-            $this->logger->info('Time to load inventory syncs batch: ' . (microtime(true) - $ts));
 
             if ((int) $inventorySyncs->getTotalCount() === 0) {
                 $this->logger->info('No records to process.');
@@ -481,14 +479,11 @@ class InventorySyncManager implements InventorySyncManagementInterface
             }
 
             if (count($this->inventorySyncsToUpdate)) {
-                $ts = microtime(true);
                 $this->itemUpdateApiClient->execute(
                     $this->inventorySyncsToUpdate,
                     [$this, 'successfulInventoryUpdateCallback'],
                     [$this, 'failureInventoryUpdateCallback']
                 );
-                $this->logger->info('Time to asynchronously update inventory on flow.io: '
-                    . (microtime(true) - $ts));
             }
 
             $this->logger->info('Done processing inventory sync queue.');

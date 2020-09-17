@@ -162,9 +162,7 @@ class CatalogSync
         try {
             $this->logger->info('Starting sync sku processing');
 
-            $ts = microtime(true);
             $syncSkus = $this->syncSkuManager->getNextSyncSkuBatchToBeProcessed(1000);
-            $this->logger->info('Time to load products to sync: ' . (microtime(true) - $ts));
 
             if ((int)$syncSkus->getTotalCount() === 0) {
                 $this->logger->info('No records to process.');
@@ -195,25 +193,19 @@ class CatalogSync
             }
 
             if (count($this->syncSkusToUpdate)) {
-                $ts = microtime(true);
                 $this->flowSaveItemApi->execute(
                     $this->syncSkusToUpdate,
                     [$this, 'successfulProductSave'],
                     [$this, 'failureProductSave']
                 );
-                $this->logger->info('Time to asynchronously save products on flow.io: '
-                    . (microtime(true) - $ts));
             }
 
             if (count($this->syncSkusToDelete)) {
-                $ts = microtime(true);
                 $this->flowDeleteItemApi->execute(
                     $this->syncSkusToDelete,
                     [$this, 'successfulProductDelete'],
                     [$this, 'failureProductDelete']
                 );
-                $this->logger->info('Time to asynchronously delete products on flow.io: '
-                    . (microtime(true) - $ts));
             }
 
             $this->logger->info('Done processing sync skus.');

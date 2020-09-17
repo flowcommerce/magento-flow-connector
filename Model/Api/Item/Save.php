@@ -119,9 +119,7 @@ class Save
             foreach ($syncSkus as $syncSku) {
                 try {
                     $product = $syncSku->getProduct();
-                    $ts = microtime(true);
                     $data = $this->productDataMapper->map($syncSku, $product);
-                    $this->logger->info('Time to convert product to flow data: ' . (microtime(true) - $ts));
                     $urls = [];
                     foreach ($data as $item) {
                         $url = $this->urlBuilder->getFlowApiEndpoint(

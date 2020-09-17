@@ -40,12 +40,7 @@ class InventorySyncProcessCommand extends BaseCommand
     public function configure()
     {
         $this->setName('flow:connector:inventory-sync')
-            ->setDescription('Sync inventory queue to Flow.')
-            ->addArgument(
-                'num-to-process',
-                InputArgument::OPTIONAL,
-                'Number of records to process. Defaults to processing all records.'
-            );
+            ->setDescription('Sync inventory queue to Flow.');
     }
 
     /**
@@ -56,12 +51,7 @@ class InventorySyncProcessCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $numToProcess = $input->getArgument('num-to-process');
-        if (!isset($numToProcess)) {
-            $numToProcess = -1;
-        }
-
         $this->initCLI();
-        $this->inventoryManager->process($numToProcess, 1);
+        $this->inventoryManager->processAll();
     }
 }

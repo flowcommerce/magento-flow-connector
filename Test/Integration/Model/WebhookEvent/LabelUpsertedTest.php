@@ -105,7 +105,7 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
         $this->createProductsFixture->execute();
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process();
 
         $labelUpsertedEvents = $this->createWebhookEventsFixture->createLabelUpsertedWebhooks();
 
@@ -118,7 +118,7 @@ class LabelUpsertedTest extends \PHPUnit\Framework\TestCase
         );
 
         //Processing fraud status change event
-        $this->webhookEventManager->process(1000, 1);
+        $this->webhookEventManager->process();
 
         foreach ($labelUpsertedEvents as $labelUpsertedEvent) {
             $payload = $labelUpsertedEvent->getPayloadData();

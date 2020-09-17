@@ -161,7 +161,7 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->subject->enqueueAllStockItems();
 
-        $this->subject->process(100, 10);
+        $this->subject->process();
 
         $searchCriteria = $this->searchCriteriaBuilder
             ->create();

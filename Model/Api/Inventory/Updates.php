@@ -146,9 +146,7 @@ class Updates
                     continue;
                 }
                 try {
-                    $ts = microtime(true);
                     $inventoryApiRequest = $this->inventoryDataMapper->map($inventorySync);
-                    $this->logger->info('Time to convert stock item to flow data: ' . (microtime(true) - $ts));
                     $serializedInventoryApiRequest = $this->jsonSerializer->serialize($inventoryApiRequest);
                     $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX, $storeId);
                     yield function () use ($client, $url, $storeId, $serializedInventoryApiRequest) {

@@ -144,94 +144,68 @@ class CatalogSync
     }
 
     /**
-     * Returns the next SyncSku batch to be processed
-     * @param $batchSize
-     * @return SearchResultInterface
+     * {@inheritdoc}
      */
-    private function getNextUnprocessedEvents($batchSize)
+    public function processAll()
     {
-        return $this->syncSkuManager->getNextSyncSkuBatchToBeProcessed($batchSize);
+        $stillProcessing = true; 
+        do {
+            $stillProcessing = $this->process();
+        } while ($stillProcessing);
     }
 
     /**
-     * Processes the SyncSku queue.
-     * @param int $numToProcess Number of records to process. Pass in -1 to process all records.
-     * @param int $keepAlive Number of seconds to keep alive after/between processing.
-     * @return void
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * {@inheritdoc}
      */
-    public function process($numToProcess = 1000, $keepAlive = 60)
+    public function process()
     {
         try {
             $this->logger->info('Starting sync sku processing');
 
-            while ($keepAlive > 0) {
-                while ($numToProcess != 0) {
-                    $ts = microtime(true);
-                    $syncSkus = $this->getNextUnprocessedEvents(100);
-                    $this->logger->info('Time to load products to sync: ' . (microtime(true) - $ts));
+            $syncSkus = $this->syncSkuManager->getNextSyncSkuBatchToBeProcessed(1000);
 
-                    if ((int)$syncSkus->getTotalCount() === 0) {
-                        $this->logger->info('No records to process.');
-                        break;
-                    }
-                    $this->syncSkusToUpdate = [];
-                    $this->syncSkusToDelete = [];
+            if ((int)$syncSkus->getTotalCount() === 0) {
+                $this->logger->info('No records to process.');
+                return false;
+            }
+            $this->syncSkusToUpdate = [];
+            $this->syncSkusToDelete = [];
 
-                    foreach ($syncSkus->getItems() as $syncSku) {
-                        $product = $syncSku->getProduct();
-                        if (!$this->configuration->isFlowEnabled($syncSku->getStoreId())) {
-                            $this->syncSkuManager->markSyncSkuAsError($syncSku, 'Flow module is disabled.');
-                            continue;
-                        }
-                        if ($product) {
-                            // Product exists in enabled state and was updated - propagate update to Flow.
-                            $this->syncSkuManager->markSyncSkuAsProcessing($syncSku);
-                            array_push($this->syncSkusToUpdate, $syncSku);
-                        } elseif ($syncSku->getState() === SyncSkuInterface::STATE_DONE) {
-                            // Product was either deleted or disabled in Magento and we have record of it being
-                            // previously synced to Flow - delete from Flow as well, then delete SKU from our table.
-                            array_push($this->syncSkusToDelete, $syncSku);
-                        } else {
-                            // Product was either deleted or disabled in Magento and there is no record of it ever
-                            // being synced to Flow - Delete SKU from our table.
-                            $this->syncSkuManager->deleteSyncSku($syncSku);
-                        }
-
-                        $numToProcess--;
-                    }
-
-                    if (count($this->syncSkusToUpdate)) {
-                        $ts = microtime(true);
-                        $this->flowSaveItemApi->execute(
-                            $this->syncSkusToUpdate,
-                            [$this, 'successfulProductSave'],
-                            [$this, 'failureProductSave']
-                        );
-                        $this->logger->info('Time to asynchronously save products on flow.io: '
-                            . (microtime(true) - $ts));
-                    }
-
-                    if (count($this->syncSkusToDelete)) {
-                        $ts = microtime(true);
-                        $this->flowDeleteItemApi->execute(
-                            $this->syncSkusToDelete,
-                            [$this, 'successfulProductDelete'],
-                            [$this, 'failureProductDelete']
-                        );
-                        $this->logger->info('Time to asynchronously delete products on flow.io: '
-                            . (microtime(true) - $ts));
-                    }
+            foreach ($syncSkus->getItems() as $syncSku) {
+                $product = $syncSku->getProduct();
+                if (!$this->configuration->isFlowEnabled($syncSku->getStoreId())) {
+                    $this->syncSkuManager->markSyncSkuAsError($syncSku, 'Flow module is disabled.');
+                    continue;
                 }
-
-                if ($numToProcess == 0) {
-                    // We've hit the processing limit, break out of loop.
-                    break;
+                if ($product) {
+                    // Product exists in enabled state and was updated - propagate update to Flow.
+                    $this->syncSkuManager->markSyncSkuAsProcessing($syncSku);
+                    array_push($this->syncSkusToUpdate, $syncSku);
+                } elseif ($syncSku->getState() === SyncSkuInterface::STATE_DONE) {
+                    // Product was either deleted or disabled in Magento and we have record of it being
+                    // previously synced to Flow - delete from Flow as well, then delete SKU from our table.
+                    array_push($this->syncSkusToDelete, $syncSku);
+                } else {
+                    // Product was either deleted or disabled in Magento and there is no record of it ever
+                    // being synced to Flow - Delete SKU from our table.
+                    $this->syncSkuManager->deleteSyncSku($syncSku);
                 }
+            }
 
-                // Num to process not exhausted, keep alive to wait for more.
-                $keepAlive--;
-                sleep(1);
+            if (count($this->syncSkusToUpdate)) {
+                $this->flowSaveItemApi->execute(
+                    $this->syncSkusToUpdate,
+                    [$this, 'successfulProductSave'],
+                    [$this, 'failureProductSave']
+                );
+            }
+
+            if (count($this->syncSkusToDelete)) {
+                $this->flowDeleteItemApi->execute(
+                    $this->syncSkusToDelete,
+                    [$this, 'successfulProductDelete'],
+                    [$this, 'failureProductDelete']
+                );
             }
 
             $this->logger->info('Done processing sync skus.');
@@ -240,6 +214,7 @@ class CatalogSync
             $this->logger->warning('Error syncing products: '
                 . $e->getMessage() . '\n' . $e->getTraceAsString());
         }
+        return true;
     }
 
     /**

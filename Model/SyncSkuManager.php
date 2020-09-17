@@ -179,9 +179,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
      */
     public function deleteSyncSku(SyncSku $syncSku)
     {
-        $ts = microtime(true);
         $syncSku->delete();
-        $this->logger->info('Time to delete sync sku: ' . (microtime(true) - $ts));
     }
 
     /**
@@ -417,9 +415,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
         $syncSku->setRequestBody($requestBody);
         $syncSku->setResponseHeaders($responseHeaders);
         $syncSku->setResponseBody($responseBody);
-        $ts = microtime(true);
         $this->updateSyncSkuStatus($syncSku);
-        $this->logger->info('Time to update sync sku as done: ' . (microtime(true) - $ts));
     }
 
     /**
@@ -433,7 +429,6 @@ class SyncSkuManager implements SyncSkuManagementInterface
         $responseHeaders = null,
         $responseBody = null
     ) {
-        $ts = microtime(true);
         $syncSku->setStatus(SyncSku::STATUS_ERROR);
         if ($errorMessage !== null) {
             $syncSku->setMessage((string)$errorMessage);
@@ -443,7 +438,6 @@ class SyncSkuManager implements SyncSkuManagementInterface
         $syncSku->setResponseHeaders($responseHeaders);
         $syncSku->setResponseBody($responseBody);
         $this->updateSyncSkuStatus($syncSku);
-        $this->logger->info('Time to update sync sku as error: ' . (microtime(true) - $ts));
     }
 
     /**
@@ -452,9 +446,7 @@ class SyncSkuManager implements SyncSkuManagementInterface
     public function markSyncSkuAsProcessing(SyncSku $syncSku)
     {
         $syncSku->setStatus(SyncSku::STATUS_PROCESSING);
-        $ts = microtime(true);
         $this->updateSyncSkuStatus($syncSku);
-        $this->logger->info('Time to update sync sku for processing: ' . (microtime(true) - $ts));
     }
 
     /**

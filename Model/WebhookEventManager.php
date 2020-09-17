@@ -117,58 +117,53 @@ class WebhookEventManager implements WebhookEventManagementInterface
     }
 
     /**
-     * Process the webhook event queue.
-     * @param $numToProcess - Number of records to process.
-     * @param $keepAlive - Number of seconds to keep alive after/between processing.
-     * @throws LocalizedException
+     * {@inheritdoc}
      */
-    public function process($numToProcess = 1000, $keepAlive = 60)
+    public function processAll()
+    {
+        $stillProcessing = true; 
+        do {
+            $stillProcessing = $this->process();
+        } while ($stillProcessing);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process()
     {
         $this->logger->info('Starting webhook event processing');
 
         $this->deleteOldProcessedEvents();
         $this->resetOldErrorEvents();
 
-        while ($keepAlive > 0) {
-            while ($numToProcess > 0) {
-                $webhookEvent = $this->getNextUnprocessedEvent();
-                if ($webhookEvent == null) {
-                    break;
-                }
-
-                $this->logger->info('Processing webhook event: ' . $webhookEvent->getType());
-                $webhookEvent->process();
-
-                $numToProcess--;
-            }
-
-            // $this->logger->info('Webhook keep alive remaining: ' . $keepAlive);
-            $keepAlive--;
-            sleep(1);
+        $webhookEvents = $this->getNextUnprocessedEvents();
+        if ((int) count($webhookEvents) === 0) {
+            $this->logger->info('No webhook events to process.');
+            return false;
         }
 
+        foreach ($webhookEvents as $webhookEvent) {
+            $this->logger->info('Processing webhook event: ' . $webhookEvent->getType());
+            $webhookEvent->process();
+        }
         $this->logger->info('Done processing webhook events');
+        return true;
     }
 
     /**
      * Returns the next unprocessed event.
-     * @return WebhookEvent|null
+     * @return WebhookEvent[]
      */
-    private function getNextUnprocessedEvent()
+    private function getNextUnprocessedEvents()
     {
         $collection = $this->webhookEventCollectionFactory->create();
         $collection->addFieldToFilter('status', WebhookEvent::STATUS_NEW);
         $collection->addFieldToFilter('triggered_at', ['lteq' => (new \DateTime())->format('Y-m-d H:i:s')]);
         $collection->setOrder('updated_at', 'ASC');
         $collection->setOrder('id', 'ASC');
-        $collection->setPageSize(1);
-        if ($collection->getSize() == 0) {
-            $return =  null;
-        } else {
-            /** @var WebhookEvent $return */
-            $return = $collection->getFirstItem();
-        }
-        return $return;
+        $collection->setPageSize(100);
+        return $collection;
     }
 
     /**

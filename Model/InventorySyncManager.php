@@ -441,57 +441,49 @@ class InventorySyncManager implements InventorySyncManagementInterface
     /**
      * {@inheritdoc}
      */
-    public function process($numToProcess = 1000, $keepAlive = 60)
+    public function processAll()
+    {
+        $stillProcessing = true; 
+        do {
+            $stillProcessing = $this->process();
+        } while ($stillProcessing);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function process()
     {
         try {
             $this->logger->info('Starting inventory sync processing');
 
-            while ($keepAlive > 0) {
-                while ($numToProcess != 0) {
-                    $ts = microtime(true);
-                    $inventorySyncs = $this->getNextInventorySyncBatchToBeProcessed($numToProcess);
-                    $this->logger->info('Time to load inventory syncs batch: ' . (microtime(true) - $ts));
+            $inventorySyncs = $this->getNextInventorySyncBatchToBeProcessed(1000);
 
-                    if ((int) $inventorySyncs->getTotalCount() === 0) {
-                        $this->logger->info('No records to process.');
-                        break;
-                    }
+            if ((int) $inventorySyncs->getTotalCount() === 0) {
+                $this->logger->info('No records to process.');
+                return false;
+            }
 
-                    $this->inventorySyncsToUpdate = [];
+            $this->inventorySyncsToUpdate = [];
 
-                    foreach ($inventorySyncs->getItems() as $inventorySync) {
-                        $product = $inventorySync->getProduct();
-                        if (!$this->configuration->isFlowEnabled($inventorySync->getStoreId())) {
-                            $this->markInventorySyncAsError($inventorySync, 'Flow module is disabled.');
-                            continue;
-                        }
-                        if ($product) {
-                            $this->markInventorySyncAsProcessing($inventorySync);
-                            array_push($this->inventorySyncsToUpdate, $inventorySync);
-                        }
-                        $numToProcess--;
-                    }
-
-                    if (count($this->inventorySyncsToUpdate)) {
-                        $ts = microtime(true);
-                        $this->itemUpdateApiClient->execute(
-                            $this->inventorySyncsToUpdate,
-                            [$this, 'successfulInventoryUpdateCallback'],
-                            [$this, 'failureInventoryUpdateCallback']
-                        );
-                        $this->logger->info('Time to asynchronously update inventory on flow.io: '
-                            . (microtime(true) - $ts));
-                    }
+            foreach ($inventorySyncs->getItems() as $inventorySync) {
+                $product = $inventorySync->getProduct();
+                if (!$this->configuration->isFlowEnabled($inventorySync->getStoreId())) {
+                    $this->markInventorySyncAsError($inventorySync, 'Flow module is disabled.');
+                    continue;
                 }
-
-                if ($numToProcess == 0) {
-                    // We've hit the processing limit, break out of loop.
-                    break;
+                if ($product) {
+                    $this->markInventorySyncAsProcessing($inventorySync);
+                    array_push($this->inventorySyncsToUpdate, $inventorySync);
                 }
+            }
 
-                // Num to process not exhausted, keep alive to wait for more.
-                $keepAlive--;
-                sleep(1);
+            if (count($this->inventorySyncsToUpdate)) {
+                $this->itemUpdateApiClient->execute(
+                    $this->inventorySyncsToUpdate,
+                    [$this, 'successfulInventoryUpdateCallback'],
+                    [$this, 'failureInventoryUpdateCallback']
+                );
             }
 
             $this->logger->info('Done processing inventory sync queue.');
@@ -499,6 +491,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
             $this->logger->warning('Error syncing inventory: '
                 . $e->getMessage() . '\n' . $e->getTraceAsString());
         }
+        return true;
     }
 
     /**

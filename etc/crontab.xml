@@ -7,12 +7,12 @@
     </group>
     <group id="flowcommerce_flowconnector_catalog_process">
         <job name="flowcommerce_flowconnector_catalog_sync_process_task" instance="FlowCommerce\FlowConnector\Cron\CatalogSyncProcessTask" method="execute">
-            <schedule>* * * * *</schedule>
+            <schedule>*/5 * * * *</schedule>
         </job>
     </group>
     <group id="flowcommerce_flowconnector_webhook">
         <job name="flowcommerce_flowconnector_webhook_event_process_task" instance="FlowCommerce\FlowConnector\Cron\WebhookEventProcessTask" method="execute">
-            <schedule>* * * * *</schedule>
+            <schedule>*/5 * * * *</schedule>
         </job>
     </group>
     <group id="flowcommerce_flowconnector_centers_update">
@@ -27,7 +27,7 @@
     </group>
     <group id="flowcommerce_flowconnector_inventory_process">
         <job name="flowcommerce_flowconnector_inventory_sync_process_task" instance="FlowCommerce\FlowConnector\Cron\InventorySyncProcessTask" method="execute">
-            <schedule>* * * * *</schedule>
+            <schedule>*/5 * * * *</schedule>
         </job>
     </group>
     <group id="flowcommerce_flowconnector_cron_cleanup">

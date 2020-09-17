@@ -150,7 +150,7 @@ class CatalogSync
     {
         $stillProcessing = true; 
         do {
-            $stillProcesing = $this->process();
+            $stillProcessing = $this->process();
         } while ($stillProcessing);
     }
 

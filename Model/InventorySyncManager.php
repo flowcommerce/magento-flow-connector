@@ -445,7 +445,7 @@ class InventorySyncManager implements InventorySyncManagementInterface
     {
         $stillProcessing = true; 
         do {
-            $stillProcesing = $this->process();
+            $stillProcessing = $this->process();
         } while ($stillProcessing);
     }
 

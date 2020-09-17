@@ -123,7 +123,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
     {
         $stillProcessing = true; 
         do {
-            $stillProcesing = $this->process();
+            $stillProcessing = $this->process();
         } while ($stillProcessing);
     }
 

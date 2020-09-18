@@ -69,12 +69,12 @@ class GetByKey
      * Gets sync stream pending records by key
      * @param int $storeId
      * @param string $key
-     * @return bool
+     * @return []
      * @throws NoSuchEntityException
      */
     public function execute($storeId, $key)
     {
-        $return = false;
+        $return = [];
 
         /** @var HttpClient $client */
         $client = $this->httpClientFactory->create();
@@ -88,8 +88,10 @@ class GetByKey
             $response = $client->get($url . '?stream_key=' . $key, $payload);
             $statusCode = (int) $response->getStatusCode();
             if ($statusCode === 200) {
-                $this->logger->info('Sync Stream got pending records by key: ' . $response->getBody());
-                $return = true;
+                $result = (string) $response->getBody();
+                if ($result) {
+                    $return = $this->jsonSerializer->unserialize($result);
+                }
             } else {
                 $this->logger->info('Sync Stream get pending records by key failed: ' . $response->getBody());
             }

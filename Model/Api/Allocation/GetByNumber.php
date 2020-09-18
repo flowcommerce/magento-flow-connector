@@ -1,6 +1,6 @@
 <?php
 
-namespace FlowCommerce\FlowConnector\Model\Api\Order;
+namespace FlowCommerce\FlowConnector\Model\Api\Allocation;
 
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Api\UrlBuilder;

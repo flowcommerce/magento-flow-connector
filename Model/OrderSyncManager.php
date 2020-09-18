@@ -7,6 +7,7 @@ use FlowCommerce\FlowConnector\Model\Order as FlowOrder;
 use FlowCommerce\FlowConnector\Model\Allocation as FlowAllocation;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
@@ -103,7 +104,7 @@ class OrderSyncManager
             }
 
             foreach ($pendingOrderRecords as $pendingOrderRecord) {
-                $this->logger->info('Processing pending Flow order number: ' . $pendingOrderRecord['value']));
+                $this->logger->info('Processing pending Flow order number: ' . $pendingOrderRecord['value']);
                 $order = $this->flowOrder->getByNumber($store->getId(), $pendingOrderRecord['value']);
                 $allocation = $this->flowAllocation->getByNumber($store->getId(), $pendingOrderRecord['value']);
                 $this->webhookEvent->processOrderPlacedPayloadData([

@@ -2,15 +2,13 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use Magento\Framework\Model\AbstractModel;
-use Magento\Framework\DataObject\IdentityInterface;
 use FlowCommerce\FlowConnector\Model\Api\Allocation\GetByNumber;
 use Psr\Log\LoggerInterface as Logger;
 
 /**
  * Model class for storing Flow order data.
  */
-class Allocation extends AbstractModel implements IdentityInterface
+class Allocation 
 {
     /**
      * @var Logger

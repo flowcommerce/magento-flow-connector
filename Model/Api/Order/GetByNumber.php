@@ -12,7 +12,7 @@ use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Store\Model\StoreManager;
 use Psr\Log\LoggerInterface as Logger;
 
-class Get
+class GetByNumber
 {
     /**
      * Url Stub Prefix of this API endpoint

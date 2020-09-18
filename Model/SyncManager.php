@@ -65,12 +65,14 @@ class SyncManager implements SyncManagementInterface
     public function __construct(
         StreamPutApiClient $streamPutApiClient,
         StreamRecordPutApiClient $streamRecordPutApiClient,
+        StreamPendingRecordGetByKeyApiClient $streamPendingRecordGetByKeyApiClient,
         Logger $logger,
         StoreManager $storeManager,
         Configuration $configuration
     ) {
         $this->streamPutApiClient = $streamPutApiClient;
         $this->streamRecordPutApiClient = $streamRecordPutApiClient;
+        $this->streamPendingRecordGetByKeyApiClient = $streamPendingRecordGetByKeyApiClient;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->configuration = $configuration;

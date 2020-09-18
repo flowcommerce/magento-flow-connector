@@ -5,6 +5,7 @@ namespace FlowCommerce\FlowConnector\Model;
 use FlowCommerce\FlowConnector\Model\SyncManager;
 use FlowCommerce\FlowConnector\Model\Order as FlowOrder;
 use FlowCommerce\FlowConnector\Model\Allocation as FlowAllocation;
+use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
@@ -52,6 +53,11 @@ class OrderSyncManager
     private $flowAllocation;
 
     /**
+     * @var WebhookEvent
+     */
+    private $webhookEvent;
+
+    /**
      * @param SyncManager $syncManager
      * @param Notification $notification
      * @param JsonSerializer $jsonSerializer
@@ -59,6 +65,7 @@ class OrderSyncManager
      * @param StoreManager $storeManager
      * @param FlowOrder $flowOrder
      * @param FlowAllocation $flowAllocation
+     * @param WebhookEvent $webhookEvent
      */
     public function __construct(
         SyncManager $syncManager,
@@ -67,6 +74,7 @@ class OrderSyncManager
         Logger $logger,
         FlowOrder $flowOrder,
         FlowAllocation $flowAllocation,
+        WebhookEvent $webhookEvent,
         StoreManager $storeManager
     ) {
         $this->syncManager = $syncManager;
@@ -74,6 +82,7 @@ class OrderSyncManager
         $this->jsonSerializer = $jsonSerializer;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
+        $this->webhookEvent = $webhookEvent;
         $this->flowOrder = $flowOrder;
         $this->flowAllocation = $flowAllocation;
     }

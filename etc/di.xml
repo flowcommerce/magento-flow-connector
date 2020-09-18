@@ -100,7 +100,6 @@
                 <item name="flowcommerce_flowconnector_webhook_register_webhooks" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand</item>
                 <item name="flowcommerce_flowconnector_cron_cleanup" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CronCleanupCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_update_settings" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand</item>
-                // TODO create command trigger
                 <item name="flowcommerce_flowconnector_order_sync_poll" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\OrderSyncPollCommand</item>
             </argument>
         </arguments>

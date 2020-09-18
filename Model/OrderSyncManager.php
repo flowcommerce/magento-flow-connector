@@ -2,7 +2,9 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use FlowCommerce\FlowConnector\Model\OrderSync;
+use FlowCommerce\FlowConnector\Model\SyncManager;
+use FlowCommerce\FlowConnector\Model\Order as FlowOrder;
+use FlowCommerce\FlowConnector\Model\Allocation as FlowAllocation;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use Psr\Log\LoggerInterface as Logger;
@@ -14,9 +16,9 @@ use Psr\Log\LoggerInterface as Logger;
 class OrderSyncManager
 {
     /*
-     * @var OrderSync
+     * @var SyncManager
      */
-    private $orderSync;
+    private $syncManager;
 
     /**
      * @var JsonSerializer
@@ -39,24 +41,40 @@ class OrderSyncManager
     private $storeManager;
 
     /**
-     * @param OrderSync $orderSync
+     * @var FlowOrder
+     */
+    private $flowOrder;
+
+    /**
+     * @var FlowAllocation
+     */
+    private $flowAllocation;
+
+    /**
+     * @param SyncManager $syncManager
      * @param Notification $notification
      * @param JsonSerializer $jsonSerializer
      * @param Logger $logger
      * @param StoreManager $storeManager
+     * @param FlowOrder $flowOrder
+     * @param FlowAllocation $flowAllocation
      */
     public function __construct(
-        OrderSync $orderSync,
+        SyncManager $syncManager,
         Notification $notification,
         JsonSerializer $jsonSerializer,
         Logger $logger,
+        FlowOrder $flowOrder,
+        FlowAllocation $flowAllocation,
         StoreManager $storeManager
     ) {
-        $this->orderSync = $orderSync;
+        $this->syncManager = $syncManager;
         $this->notification = $notification;
         $this->jsonSerializer = $jsonSerializer;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
+        $this->flowOrder = $flowOrder;
+        $this->flowAllocation = $flowAllocation;
     }
 
     /**
@@ -86,13 +104,11 @@ class OrderSyncManager
 
             foreach ($pendingOrderRecords as $pendingOrderRecord) {
                 $this->logger->info('Processing pending Flow order number: ' . $pendingOrderRecord['value']));
-                // TODO create order get by number
-                $pendingOrderData = $this->orderGetByNumber->execute($pendingOrderRecord['value']);
-                // TODO create allocation get by number
-                $pendingOrderAllocationData = $this->allocationGetByNumber->execute($pendingOrderRecord['value']);
+                $order = $this->flowOrder->getByNumber($store->getId(), $pendingOrderRecord['value']);
+                $allocation = $this->flowAllocation->getByNumber($store->getId(), $pendingOrderRecord['value']);
                 $this->webhookEvent->processOrderPlacedPayloadData([
-                    'allocation' => $pendingOrderAllocationData,
-                    'order' => $pendingOrderData
+                    'allocation' => $allocation,
+                    'order' => $order
                 ], false);
             }
         }

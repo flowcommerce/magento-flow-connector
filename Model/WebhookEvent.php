@@ -2163,10 +2163,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function processOrderPlacedPayloadData($data = null, $usesWebhookEvent = true)
     {
         try {
-            if (isset($receivedOrder['attributes'][self::DATA_KEY_STORE_ID])) {
-                $storeId = (int) $receivedOrder['attributes'][self::DATA_KEY_STORE_ID];
+            $storeId = null;
+            if (isset($data['order']['attributes'][self::DATA_KEY_STORE_ID])) {
+                $storeId = (int) $data['order']['attributes'][self::DATA_KEY_STORE_ID];
             }
-            $store = $this->storeManager->getStore($storeId > 0 ? $storeId : null);
+            $store = $this->storeManager->getStore($storeId);
             $order = $this->doOrderUpserted($data, $store);
             $this->doAllocationUpsertedV2($order, $data);
 

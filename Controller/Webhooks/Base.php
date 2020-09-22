@@ -122,7 +122,7 @@ abstract class Base extends \Magento\Framework\App\Action\Action implements Csrf
         $this->eventManager->dispatch($eventName, [
             'type' => $this->getEventType(),
             'payload' => $payload,
-            'store_if' => $storeId,
+            'storeId' => $storeId,
             'logger' => $this->logger
         ]);
 

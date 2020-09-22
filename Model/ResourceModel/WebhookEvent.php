@@ -96,7 +96,6 @@ class WebhookEvent extends AbstractDb
             message,
             type,
             payload,
-            store_id,
             triggered_at
         ) values (
             ?,
@@ -111,7 +110,6 @@ class WebhookEvent extends AbstractDb
             message = ?,
             type = ?,
             payload = ?,
-            store_id = ?,
             triggered_at = ?
         ';
         $this->getConnection()->query(
@@ -122,13 +120,11 @@ class WebhookEvent extends AbstractDb
                 $webhookEvent->getMessage(),
                 $webhookEvent->getType(),
                 $webhookEvent->getPayload(),
-                $webhookEvent->getStoreId(),
                 $webhookEvent->getTriggeredAt(),
                 $webhookEvent->getStatus(),
                 $webhookEvent->getMessage(),
                 $webhookEvent->getType(),
                 $webhookEvent->getPayload(),
-                $webhookEvent->getStoreId(),
                 $webhookEvent->getTriggeredAt()
             ]
         );

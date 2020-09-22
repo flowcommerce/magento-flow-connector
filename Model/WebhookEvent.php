@@ -2146,7 +2146,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         try {
             if (isset($receivedOrder['attributes'][self::DATA_KEY_STORE_ID])) {
-                $storeId = $receivedOrder['attributes'][self:DATA_KEY_STORE_ID];
+                $storeId = $receivedOrder['attributes'][self::DATA_KEY_STORE_ID];
                 $store = $this->storeManager->getStore($storeId);
             } else {
                 $store = $this->storeManager->getStore();

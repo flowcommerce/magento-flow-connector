@@ -313,6 +313,7 @@ class SessionManager implements SessionManagementInterface
     public function createFlowOrderForm($country = null) {
         $quote = $this->checkoutSession->getQuote();
         $items = $quote->getAllVisibleItems();
+        $store = $this->storeManager->getStore();
         if (!$items) {
             return null;
         }
@@ -321,7 +322,8 @@ class SessionManager implements SessionManagementInterface
             'attributes' => [
                 WebhookEvent::QUOTE_ID => $quote->getId(),
                 WebhookEvent::CHECKOUT_SESSION_ID => $this->checkoutSession->getSessionId(),
-                WebhookEvent::CUSTOMER_SESSION_ID => $this->customerSession->getSessionId()
+                WebhookEvent::CUSTOMER_SESSION_ID => $this->customerSession->getSessionId(),
+                WebhookEvent::DATA_KEY_STORE_ID => $store->getId()  
             ]
         ];
 

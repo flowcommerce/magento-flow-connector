@@ -109,7 +109,6 @@ class WebhookEventManager implements WebhookEventManagementInterface
         $webhookEvent = $this->webhookEventFactory->create();
         $webhookEvent->setType($type);
         $webhookEvent->setPayload($payload);
-        $webhookEvent->setStoreId($storeId);
         $webhookEvent->setStatus(WebhookEvent::STATUS_NEW);
         $webhookEvent->setTriggeredAt($timestamp);
         $this->saveWebhookEvent($webhookEvent);

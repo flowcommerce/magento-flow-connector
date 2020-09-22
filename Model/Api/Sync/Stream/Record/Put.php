@@ -16,7 +16,7 @@ class Put
     /**
      * Url Stub of the records streams
      */
-    const RECORDS_STREAMS_URL_STUB = 'sync/records/streams';
+    const RECORDS_STREAMS_URL_STUB = '/sync/records/streams';
 
     /**
      * Url Stub of the systems

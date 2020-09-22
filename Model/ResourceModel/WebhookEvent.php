@@ -103,7 +103,6 @@ class WebhookEvent extends AbstractDb
             ?,
             ?,
             ?,
-            ?,
             ?
         ) on duplicate key update
             status = ?,

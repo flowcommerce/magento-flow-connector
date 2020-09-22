@@ -114,6 +114,11 @@ class OrderSyncManager
 
             foreach ($pendingOrderRecords as $pendingOrderRecord) {
                 $this->logger->info('Processing pending Flow order number: ' . $pendingOrderRecord['value']);
+                if($this->webhookEvent->getOrderByFlowOrderNumber($pendingOrderRecord['value'])) {
+                    $this->logger->info('Flow order number: ' . $pendingOrderRecord['value'] . ' already imported.');
+                    $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
+                    continue;
+                }
                 $order = $this->flowOrder->getByNumber($store->getId(), $pendingOrderRecord['value']);
                 $allocation = $this->flowAllocation->getByNumber($store->getId(), $pendingOrderRecord['value']);
                 $this->webhookEvent->processOrderPlacedPayloadData([

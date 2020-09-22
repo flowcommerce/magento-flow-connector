@@ -96,9 +96,10 @@ class WebhookEventManager implements WebhookEventManagementInterface
      * @param string $type
      * @param string[] $payload
      * @return WebhookEvent
+     * @param int $storeId
      * @throws \Exception
      */
-    public function queue($type, $payload)
+    public function queue($type, $payload, $storeId)
     {
         $this->logger->info('Queue webhook event type: ' . $type);
 
@@ -108,6 +109,7 @@ class WebhookEventManager implements WebhookEventManagementInterface
         $webhookEvent = $this->webhookEventFactory->create();
         $webhookEvent->setType($type);
         $webhookEvent->setPayload($payload);
+        $webhookEvent->setStoreId($storeId);
         $webhookEvent->setStatus(WebhookEvent::STATUS_NEW);
         $webhookEvent->setTriggeredAt($timestamp);
         $this->saveWebhookEvent($webhookEvent);

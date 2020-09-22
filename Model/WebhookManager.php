@@ -194,7 +194,7 @@ class WebhookManager implements WebhookManagementInterface
     public function registerWebhook($storeId, $endpointStub, $events, $existingWebhooks = null)
     {
         $baseUrl = $this->storeManager->getStore($storeId)->getBaseUrl(UrlInterface::URL_TYPE_WEB, true);
-        $url = $baseUrl . 'flowconnector/webhooks/' . $endpointStub;
+        $url = $baseUrl . 'flowconnector/webhooks/' . $endpointStub . '?storeId=' . $storeId;
         if (count($existingWebhooks) > 0) {
             foreach ($existingWebhooks as $webhook) {
                 if ($webhook['url'] == $url) {

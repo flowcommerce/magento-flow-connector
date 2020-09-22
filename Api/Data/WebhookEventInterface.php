@@ -87,6 +87,12 @@ interface WebhookEventInterface
     public function getId();
 
     /**
+     * Getter - Store Id
+     * @return int|null
+     */
+    public function getStoreId();
+
+    /**
      * Getter - Type
      * @return string|null
      */
@@ -141,6 +147,13 @@ interface WebhookEventInterface
      */
     public function setId($value);
 
+    /**
+     * Setter - Store Id
+     * @param int|null $value
+     * @return $this
+     */
+    public function setStoreId($value);
+    
     /**
      * Setter - Type
      * @param string|null $value

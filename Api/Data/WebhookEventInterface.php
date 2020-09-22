@@ -153,7 +153,7 @@ interface WebhookEventInterface
      * @return $this
      */
     public function setStoreId($value);
-    
+
     /**
      * Setter - Type
      * @param string|null $value

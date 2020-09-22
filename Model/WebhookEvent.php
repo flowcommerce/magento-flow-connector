@@ -471,6 +471,23 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getStoreId()
+    {
+        return (int)$this->getData(self::DATA_KEY_STORE_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStoreId($value)
+    {
+        $this->setData(self::DATA_KEY_STORE_ID, (int)$value);
+        return $this;
+    }
+
+    /**
      * Process webhook event data.
      */
     public function process()
@@ -516,6 +533,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->eventManager->dispatch($eventName, [
                 'type' => $this->getType(),
                 'payload' => $this->getPayload(),
+                'storeId' => $this->getStoreId(),
                 'logger' => $this->logger,
             ]);
 

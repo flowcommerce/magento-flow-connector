@@ -61,7 +61,6 @@ use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
 use FlowCommerce\FlowConnector\Model\SyncManager;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use \Magento\Sales\Model\Order\Shipment\Track;
-use GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -264,11 +263,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     protected $webhookEventManager;
 
     /**
-     * @var GuzzleClient
-     */
-    protected $guzzleClient;
-
-    /**
      * @var OrderPaymentRepositoryInterface
      */
     private $orderPaymentRepository;
@@ -347,7 +341,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param WebhookEventManager $webhookEventManager
      * @param FlowShippingMethod $flowShippingMethod
      * @param OrderSender $orderSender
-     * @param GuzzleClient $guzzleClient
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
      * @param FilterBuilder $filterBuilder
      * @param InvoiceService $invoiceService
@@ -393,7 +386,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         WebhookEventManager $webhookEventManager,
         FlowShippingMethod $flowShippingMethod,
         OrderSender $orderSender,
-        GuzzleClient $guzzleClient,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
         FilterBuilder $filterBuilder,
         InvoiceService $invoiceService,
@@ -443,7 +435,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->flowShippingMethod = $flowShippingMethod;
         $this->orderSender = $orderSender;
         $this->webhookEventManager = $webhookEventManager;
-        $this->guzzleClient = $guzzleClient;
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->filterBuilder = $filterBuilder;
         $this->invoiceService = $invoiceService;

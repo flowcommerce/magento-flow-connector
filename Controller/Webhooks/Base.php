@@ -113,8 +113,7 @@ abstract class Base extends \Magento\Framework\App\Action\Action implements Csrf
             }
         }
 
-        $storeId = $this->getRequest()->getParam('storeId');
-        $this->webhookEventManager->queue($this->getEventType(), $payload, $storeId);
+        $this->webhookEventManager->queue($this->getEventType(), $payload);
 
         // Fire an event for client extension code to process
         $eventName = WebhookEvent::EVENT_FLOW_PREFIX . $this->getEventType();
@@ -122,7 +121,6 @@ abstract class Base extends \Magento\Framework\App\Action\Action implements Csrf
         $this->eventManager->dispatch($eventName, [
             'type' => $this->getEventType(),
             'payload' => $payload,
-            'storeId' => $storeId,
             'logger' => $this->logger
         ]);
 

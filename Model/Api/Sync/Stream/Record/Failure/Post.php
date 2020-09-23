@@ -93,7 +93,7 @@ class Post
         ];
         $payload = [
             'auth' => $this->auth->getAuthHeader($storeId),
-            'body' => $body
+            'body' => $this->jsonSerializer->serialize($body)
         ];
 
         try {

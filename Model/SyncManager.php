@@ -6,6 +6,7 @@ use FlowCommerce\FlowConnector\Api\SyncManagementInterface;
 use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Put as StreamPutApiClient;
 use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Record\Put as StreamRecordPutApiClient;
 use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Pending\Record\GetByKey as StreamPendingRecordGetByKeyApiClient;
+use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Record\Failure\Post as StreamRecordFailurePostApiClient;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
@@ -43,6 +44,11 @@ class SyncManager implements SyncManagementInterface
     private $streamPendingRecordGetByKeyApiClient;
 
     /**
+     * @var StreamRecordFailurePostApiClient
+     */
+    private $streamRecordFailurePostApiClient;
+
+    /**
      * @var Logger
      */
     private $logger;
@@ -66,6 +72,7 @@ class SyncManager implements SyncManagementInterface
         StreamPutApiClient $streamPutApiClient,
         StreamRecordPutApiClient $streamRecordPutApiClient,
         StreamPendingRecordGetByKeyApiClient $streamPendingRecordGetByKeyApiClient,
+        StreamRecordFailurePostApiClient $streamRecordFailurePostApiClient,
         Logger $logger,
         StoreManager $storeManager,
         Configuration $configuration
@@ -73,6 +80,7 @@ class SyncManager implements SyncManagementInterface
         $this->streamPutApiClient = $streamPutApiClient;
         $this->streamRecordPutApiClient = $streamRecordPutApiClient;
         $this->streamPendingRecordGetByKeyApiClient = $streamPendingRecordGetByKeyApiClient;
+        $this->streamRecordFailurePostApiClient = $streamRecordFailurePostApiClient;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->configuration = $configuration;
@@ -144,6 +152,16 @@ class SyncManager implements SyncManagementInterface
     {
         $this->logger->info('Getting Sync Stream Pending Records by key: ' . $key);
         return $this->streamPendingRecordGetByKeyApiClient->execute($storeId, $key);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @throws NoSuchEntityException
+     */
+    public function postSyncStreamRecordFailure($storeId, $key, $value, $reason, $messages)
+    {
+        $this->logger->info('Posting Sync Record Failure for stream: ' . $key . ' with value: ' . $value);
+        return $this->streamRecordFailurePostApiClient->execute($storeId, $key, $value, $reason, $messages);
     }
 }
 

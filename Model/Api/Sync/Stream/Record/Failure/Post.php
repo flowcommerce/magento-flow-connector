@@ -97,7 +97,7 @@ class Post
         ];
 
         try {
-            $response = $client->put($url, $payload);
+            $response = $client->post($url, $payload);
             $statusCode = (int) $response->getStatusCode();
             if ($statusCode === 201) {
                 $this->logger->info('Sync Stream Record Failure registered: ' . $response->getBody());

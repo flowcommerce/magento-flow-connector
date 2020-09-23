@@ -2187,11 +2187,13 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 if ($usesWebhookEvent) {
                     $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
                 }
+                $this->syncManager->postSyncStreamRecordFailure($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number'], 'other', [$e->getMessage()]);
             }
         } catch (LocalizedException $e) {
             if ($usesWebhookEvent) {
                 $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
             }
+            $this->syncManager->postSyncStreamRecordFailure($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number'], 'other', [$e->getMessage()]);
         }
     }
 

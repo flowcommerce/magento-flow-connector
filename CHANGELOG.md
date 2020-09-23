@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.5.2
+- Add cron for order sync polling, every half hour
+- Add console command for order sync polling, flow:connector:order-sync
+- Remove deprecated webhook authorization_deleted_v2
+- Remove deprecated webhook processing methods
+
 ## 2.5.1
 - Cron task optimizations
 

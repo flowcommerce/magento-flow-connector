@@ -5,6 +5,7 @@ namespace FlowCommerce\FlowConnector\Model;
 use FlowCommerce\FlowConnector\Api\SyncManagementInterface;
 use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Put as StreamPutApiClient;
 use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Record\Put as StreamRecordPutApiClient;
+use FlowCommerce\FlowConnector\Model\Api\Sync\Stream\Pending\Record\GetByKey as StreamPendingRecordGetByKeyApiClient;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
@@ -37,6 +38,11 @@ class SyncManager implements SyncManagementInterface
     private $streamRecordPutApiClient;
 
     /**
+     * @var StreamPendingRecordGetByKeyApiClient
+     */
+    private $streamPendingRecordGetByKeyApiClient;
+
+    /**
      * @var Logger
      */
     private $logger;
@@ -59,12 +65,14 @@ class SyncManager implements SyncManagementInterface
     public function __construct(
         StreamPutApiClient $streamPutApiClient,
         StreamRecordPutApiClient $streamRecordPutApiClient,
+        StreamPendingRecordGetByKeyApiClient $streamPendingRecordGetByKeyApiClient,
         Logger $logger,
         StoreManager $storeManager,
         Configuration $configuration
     ) {
         $this->streamPutApiClient = $streamPutApiClient;
         $this->streamRecordPutApiClient = $streamRecordPutApiClient;
+        $this->streamPendingRecordGetByKeyApiClient = $streamPendingRecordGetByKeyApiClient;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->configuration = $configuration;
@@ -126,6 +134,16 @@ class SyncManager implements SyncManagementInterface
     {
         $this->logger->info('Recording value: ' . $value . ' Sync Stream key : ' . $type);
         return $this->streamRecordPutApiClient->execute($storeId, $type, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @throws NoSuchEntityException
+     */
+    public function getSyncStreamPendingRecordByKey($storeId, $key)
+    {
+        $this->logger->info('Getting Sync Stream Pending Records by key: ' . $key);
+        return $this->streamPendingRecordGetByKeyApiClient->execute($storeId, $key);
     }
 }
 

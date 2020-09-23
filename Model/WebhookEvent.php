@@ -61,7 +61,6 @@ use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
 use FlowCommerce\FlowConnector\Model\SyncManager;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
 use \Magento\Sales\Model\Order\Shipment\Track;
-use GuzzleHttp\Client as GuzzleClient;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -264,11 +263,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     protected $webhookEventManager;
 
     /**
-     * @var GuzzleClient
-     */
-    protected $guzzleClient;
-
-    /**
      * @var OrderPaymentRepositoryInterface
      */
     private $orderPaymentRepository;
@@ -347,7 +341,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param WebhookEventManager $webhookEventManager
      * @param FlowShippingMethod $flowShippingMethod
      * @param OrderSender $orderSender
-     * @param GuzzleClient $guzzleClient
      * @param OrderPaymentRepositoryInterface $orderPaymentRepository
      * @param FilterBuilder $filterBuilder
      * @param InvoiceService $invoiceService
@@ -393,7 +386,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         WebhookEventManager $webhookEventManager,
         FlowShippingMethod $flowShippingMethod,
         OrderSender $orderSender,
-        GuzzleClient $guzzleClient,
         OrderPaymentRepositoryInterface $orderPaymentRepository,
         FilterBuilder $filterBuilder,
         InvoiceService $invoiceService,
@@ -443,7 +435,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->flowShippingMethod = $flowShippingMethod;
         $this->orderSender = $orderSender;
         $this->webhookEventManager = $webhookEventManager;
-        $this->guzzleClient = $guzzleClient;
         $this->orderPaymentRepository = $orderPaymentRepository;
         $this->filterBuilder = $filterBuilder;
         $this->invoiceService = $invoiceService;
@@ -480,6 +471,23 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getStoreId()
+    {
+        return (int)$this->getData(self::DATA_KEY_STORE_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStoreId($value)
+    {
+        $this->setData(self::DATA_KEY_STORE_ID, (int)$value);
+        return $this;
+    }
+
+    /**
      * Process webhook event data.
      */
     public function process()
@@ -488,9 +496,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->webhookEventManager->markWebhookEventAsProcessing($this);
 
             switch ($this->getType()) {
-                case 'authorization_deleted_v2':
-                    $this->processAuthorizationDeletedV2();
-                    break;
                 case 'capture_upserted_v2':
                     $this->processCaptureUpsertedV2();
                     break;
@@ -539,152 +544,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             } catch (\Exception $e) {
                 $this->logger->warn('Error saving webhook error: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
             }
-        }
-    }
-
-    /**
-     * Process allocation_upserted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/allocation-upserted-v-2
-     */
-    private function processAllocationUpsertedV2()
-    {
-        $this->logger->info('Processing allocation_upserted_v2 data');
-        $data = $this->getPayloadData();
-
-        $receivedOrder = $data['allocation']['order'];
-
-        // Do not process allocations until their order has submitted_at date
-        if (!array_key_exists('submitted_at', $receivedOrder)) {
-            $this->webhookEventManager->markWebhookEventAsError($this, 'Order data incomplete, skipping');
-            return;
-        }
-
-        if ($order = $this->getOrderByFlowOrderNumber($data['allocation']['order']['number'])) {
-            if ($order->getFlowConnectorOrderReady()) {
-                $this->logger->info('Order ready, duplicate submission ignored');
-                return;
-            }
-
-            foreach ($data['allocation']['details'] as $detail) {
-
-                // allocation_detail is a union model. If there is a "number",
-                // then the detail refers to a line item, otherwise the detail
-                // is for the order.
-                $item = null;
-                if (array_key_exists('number', $detail)) {
-                    $item = $this->getOrderItem($order, $detail['number']);
-                }
-
-                switch ($detail['key']) {
-                    case 'adjustment':
-                        if ($item) {
-                            // noop, adjustment only applies to order
-                        }
-                        break;
-
-                    case 'subtotal':
-                        if ($item) {
-                            $subtotalAmounts = $this->initializeSubtotalAmounts();
-                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['included']);
-                            $subtotalAmounts = $this->allocateSubtotalAmounts($subtotalAmounts, $detail['not_included']);
-                            $item = $this->applySubtotalAmountsToItem($item, $subtotalAmounts, $detail['quantity']);
-                        }
-                        break;
-
-                    case 'vat':
-                        if ($item) {
-                            // noop, this is included in the subtotal for line items
-                        }
-                        break;
-
-                    case 'duty':
-                        if ($item) {
-                            // noop, duty only applies to order
-                        }
-                        break;
-
-                    case 'shipping':
-                        if ($item) {
-                            // noop, shipping only applies to order
-                        }
-                        break;
-
-                    case 'insurance':
-                        // noop, this is a placeholder and not implemented by Flow.
-                        break;
-
-                    case 'discount':
-                        if ($item) {
-                            // noop, this is included in the subtotal for line items
-                        }
-                        break;
-
-                    default:
-                        throw new WebhookException('Unrecognized allocation detail key: ' . $detail['key']);
-                }
-            }
-
-            $order->setFlowConnectorOrderReady(1);
-
-            $this->orderSender->send($order);
-
-            // Save order after sending order confirmation email
-            $order->save();
-        } else {
-            $this->requeue('Unable to find order right now, reprocess.');
-        }
-    }
-
-    /**
-     * Process authorization_deleted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/authorization-deleted-v-2
-     */
-    private function processAuthorizationDeletedV2()
-    {
-        $this->logger->info('Processing authorization_deleted_v2 data');
-        $data = $this->getPayloadData();
-
-        $urlStub = '/authorizations?id=' . $data['id'];
-        $client = $this->guzzleClient->getFlowClient($urlStub, $this->getStoreId());
-        $response = $client->send();
-
-        if ($response->isSuccess()) {
-            $authorization = $this->jsonSerializer->unserialize($response->getBody());
-            if (array_key_exists('order', $authorization)) {
-                $orderPayment = null;
-
-                if ($order = $this->getOrderByFlowOrderNumber($authorization['order']['number'])) {
-                    foreach ($order->getPaymentsCollection() as $payment) {
-                        $this->logger->info('Payment: ' . $payment->getId());
-
-                        $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
-                        if ($flowPaymentRef == $data['authorization']['id']) {
-                            $orderPayment = $payment;
-                            break;
-                        }
-                    }
-                } else {
-                    $this->requeue('Unable to find order right now, reprocess.');
-                }
-
-                if ($orderPayment) {
-                    $orderPayment->cancel();
-                    $orderPayment->save();
-
-                    $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
-                } else {
-                    throw new WebhookException('Unable to find corresponding payment.');
-                }
-
-            } else {
-                throw new WebhookException('Order for authorization deleted not found.');
-            }
-
-        } else {
-            throw new WebhookException('Failed to retrieve Flow authorization: ' . $data['id']);
         }
     }
 
@@ -914,41 +773,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         } else {
             throw new WebhookException('Unable to find corresponding payment.');
         }
-    }
-
-    /**
-     * Process order_upserted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/order-upserted-v-2
-     */
-    private function processOrderUpsertedV2()
-    {
-        $this->logger->info('Processing order_upserted_v2 data');
-        $data = $this->getPayloadData();
-
-        // Check if order is present in payload
-        if (!array_key_exists('order', $data)) {
-            $this->setMessage('Order data not present in payload, skipping.');
-            $this->setStatus(self::STATUS_DONE);
-            $this->save();
-            return;
-        }
-
-        $receivedOrder = $data['order'];
-
-        // Do not process orders until they have a submitted_at date
-        if (!array_key_exists('submitted_at', $receivedOrder)) {
-            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order data incomplete, skipping');
-            return;
-        }
-
-        // Check if this order has already been processed
-        if ($this->getOrderByFlowOrderNumber($receivedOrder['number'])) {
-            $this->webhookEventManager->markWebhookEventAsDone($this, 'Order previously processed, skipping');
-            return;
-        }
-
-        $this->webhookEventManager->markWebhookEventAsDone($this);
     }
 
     /**
@@ -1301,7 +1125,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      *
      * @return OrderModel
      */
-    private function getOrderByFlowOrderNumber($number)
+    public function getOrderByFlowOrderNumber($number)
     {
         $order = $this->orderFactory->create()->loadByAttribute('ext_order_id', $this->getTrimExtOrderId($number));
         return ($order->getExtOrderId()) ? $order : null;
@@ -1399,14 +1223,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     /**
      * {@inheritdoc}
      */
-    public function getStoreId()
-    {
-        return (int)$this->getData(self::DATA_KEY_STORE_ID);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return (string)$this->getData(self::DATA_KEY_TYPE);
@@ -1466,15 +1282,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function getDeletedAt()
     {
         return $this->getData(self::DATA_KEY_DELETED_AT);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setStoreId($value)
-    {
-        $this->setData(self::DATA_KEY_STORE_ID, (int)$value);
-        return $this;
     }
 
     /**
@@ -1672,12 +1479,13 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * https://docs.flow.io/type/order
      *
      * @param array $data
+     * @param $store
      * @return Order
      * @throws LocalizedException
      * @throws WebhookException
      * @throws NoSuchEntityException
      */
-    private function doOrderUpserted(array $data)
+    public function doOrderUpserted(array $data, $store)
     {
         // Check if order is present in payload
         if (!array_key_exists('order', $data)) {
@@ -1689,12 +1497,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         // Check if this order has already been processed
         if ($this->getOrderByFlowOrderNumber($receivedOrder['number'])) {
             throw new LocalizedException(__('Order previously processed, skipping.'));
-        }
-
-        if ($storeId = $this->getStoreId()) {
-            $store = $this->storeManager->getStore($storeId);
-        } else {
-            $store = $this->storeManager->getStore();
         }
         $this->logger->info('Store: ' . $store->getId());
 
@@ -2023,7 +1825,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
          * method from cart repository used by \Magento\Quote\Model\QuoteRepository::get()
          * clobbers store ID from quote with current store ID:
          */
-        $quote->setStoreId($this->getStoreId());
+        $quote->setStoreId($store->getId());
 
         /**
          * Allow creating orders with malformed addresses
@@ -2355,9 +2157,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         $this->logger->info('Processing order_upserted_v2 data');
         $data = $this->getPayloadData();
+        $this->processOrderPlacedPayloadData($data);
+    }
 
+    public function processOrderPlacedPayloadData($data = null, $usesWebhookEvent = true)
+    {
         try {
-            $order = $this->doOrderUpserted($data);
+            $storeId = null;
+            if (isset($data['order']['attributes'][self::DATA_KEY_STORE_ID])) {
+                $storeId = (int) $data['order']['attributes'][self::DATA_KEY_STORE_ID];
+            }
+            $store = $this->storeManager->getStore($storeId);
+            $order = $this->doOrderUpserted($data, $store);
             $this->doAllocationUpsertedV2($order, $data);
 
             $order->setFlowConnectorOrderReady(1);
@@ -2367,13 +2178,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $order->save();
 
             if ($orderIncrementId = $order->getIncrementId()) {
-                $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId);
-                $this->syncManager->putSyncStreamRecord($this->getStoreId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
+                if ($usesWebhookEvent) {
+                    $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId);
+                }
+
+                $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
             } else {
-                $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+                if ($usesWebhookEvent) {
+                    $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+                }
             }
         } catch (LocalizedException $e) {
-            $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+            if ($usesWebhookEvent) {
+                $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
+            }
         }
     }
 

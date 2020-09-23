@@ -79,6 +79,11 @@
             <argument name="webhookManager" xsi:type="object">FlowCommerce\FlowConnector\Model\WebhookManager\Proxy</argument>
         </arguments>
     </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\OrderSyncPollCommand">
+        <arguments>
+            <argument name="orderSyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\OrderSyncManager\Proxy</argument>
+        </arguments>
+    </type>
 
     <!-- CLI Commands -->
     <type name="Magento\Framework\Console\CommandList">
@@ -95,6 +100,7 @@
                 <item name="flowcommerce_flowconnector_webhook_register_webhooks" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand</item>
                 <item name="flowcommerce_flowconnector_cron_cleanup" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CronCleanupCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_update_settings" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand</item>
+                <item name="flowcommerce_flowconnector_order_sync_poll" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\OrderSyncPollCommand</item>
             </argument>
         </arguments>
     </type>

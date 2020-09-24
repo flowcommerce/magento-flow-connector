@@ -2163,6 +2163,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function processOrderPlacedPayloadData($data = null, $usesWebhookEvent = true)
     {
         $errorMessages = [];
+        $orderIncrementId = null;
         try {
             $storeId = null;
             if (isset($data['order']['attributes'][self::DATA_KEY_STORE_ID])) {
@@ -2177,15 +2178,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             // Save order after sending order confirmation email
             $order->save();
+            $orderIncrementId = $order->getIncrementId();
         } catch (LocalizedException $e) {
             array_push($errorMessages, $e->getMessage());
         }
 
-        if ($orderIncrementId = $order->getIncrementId()) {
-            $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId);
+        if ($orderIncrementId) {
+            $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId) : null;
             $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
         } else {
-            $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $errorMessages));
+            $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $errorMessages)) : null;
             $this->syncManager->postSyncStreamRecordFailure($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number'], 'other', $errorMessages);
         }
     }

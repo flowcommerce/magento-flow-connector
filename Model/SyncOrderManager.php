@@ -105,11 +105,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
     }
 
     /**
-     * Sync order by Flow Order Number
-     * @param string $orderNumber
-     * @param int $storeId
-     * @return void
-     * @throws
+     * {@inheritdoc}
      */
     public function syncByValue($orderNumber, $storeId)
     {

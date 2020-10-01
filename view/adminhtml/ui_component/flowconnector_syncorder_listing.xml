@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">flowconnector_syncorder_listing.flowconnector_syncorder_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>flowconnector_syncorder_columns</spinner>
+        <deps>
+            <dep>flowconnector_syncorder_listing.flowconnector_syncorder_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="flowconnector_syncorder_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Magento_Backend::system</aclResource>
+        <dataProvider class="FlowCommerce\FlowConnector\Ui\Component\DataProvider" name="flowconnector_syncorder_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filterSearch name="fulltext"/>
+        <filters name="listing_filters">
+            <settings>
+                <templates>
+                    <filters>
+                        <select>
+                            <param name="template" xsi:type="string">ui/grid/filters/elements/ui-select</param>
+                            <param name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</param>
+                        </select>
+                    </filters>
+                </templates>
+            </settings>
+            <filterSelect name="store_id" provider="${ $.parentName }">
+                <settings>
+                    <captionValue>0</captionValue>
+                    <options class="Magento\Store\Ui\Component\Listing\Column\Store\Options"/>
+                    <label translate="true">Store View</label>
+                    <dataScope>store_id</dataScope>
+                    <imports>
+                        <link name="visible">componentType = column, index = ${ $.index }:visible</link>
+                    </imports>
+                </settings>
+            </filterSelect>
+        </filters>
+        <massaction name="listing_massaction">
+            <action name="retry">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to retry selected items?</message>
+                        <title translate="true">Retry items</title>
+                    </confirm>
+                    <url path="flowconnector/syncorder/massRetry"/>
+                    <type>retry</type>
+                    <label translate="true">Retry</label>
+                </settings>
+            </action>
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="flowconnector_syncorder_columns">
+        <settings>
+            <childDefaults>
+                <param name="fieldAction" xsi:type="array">
+                    <item name="provider" xsi:type="string">flowconnector_syncorder_listing.flowconnector_syncorder_listing.flowconnector_syncorder_columns.actions</item>
+                    <item name="target" xsi:type="string">applyAction</item>
+                    <item name="params" xsi:type="array">
+                        <item name="0" xsi:type="string">view</item>
+                        <item name="1" xsi:type="string">${ $.$data.rowIndex }</item>
+                    </item>
+                </param>
+            </childDefaults>
+        </settings>
+        <selectionsColumn name="values">
+            <settings>
+                <indexField>value</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Created At</label>
+                <sorting>desc</sorting>
+            </settings>
+        </column>
+        <column name="value">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Number</label>
+            </settings>
+        </column>
+        <column name="increment_id">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Increment Id</label>
+            </settings>
+        </column>
+        <column name="store_id" class="Magento\Store\Ui\Component\Listing\Column\Store">
+            <settings>
+                <label translate="true">Store View</label>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+        <column name="messages">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Messages</label>
+                <visible>true</visible>
+            </settings>
+        </column>
+        <column name="updated_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Updated At</label>
+            </settings>
+        </column>
+        <column name="deleted_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Deleted At</label>
+                <visible>false</visible>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="FlowCommerce\FlowConnector\Ui\Component\Listing\Columns\SyncOrderFailureActions" sortOrder="200">
+            <settings>
+                <indexField>value</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

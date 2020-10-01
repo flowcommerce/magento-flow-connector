@@ -67,7 +67,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
         WebhookEvent $webhookEvent,
         SyncManager $syncManager,
         FlowOrder $flowOrder,
-        FlowAllocation $flowAllocation,
+        FlowAllocation $flowAllocation
     ) {
         $this->logger = $logger;
         $this->storeManager = $storeManager;

@@ -310,6 +310,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private $syncManager;
 
     /**
+     * @var SyncOrderFactory
+     */
+    private $syncOrderFactory;
+
+    /**
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
@@ -353,6 +358,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param SyncManager $syncManager
      * @param AbstractResource|null $resource
      * @param ResourceCollection|null $resourceCollection
+     * @param SyncOrderFactory $syncOrderFactory
      * @param array $data
      */
     public function __construct(
@@ -398,6 +404,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         SyncManager $syncManager,
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
+        SyncOrderFactory $syncOrderFactory,
         array $data = []
     ) {
         parent::__construct(
@@ -445,6 +452,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->trackFactory = $trackFactory;
         $this->configuration = $configuration;
         $this->syncManager = $syncManager;
+        $this->syncOrderFactory = $syncOrderFactory;
     }
 
     protected function _construct()
@@ -2188,7 +2196,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
         } else {
             $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $errorMessages)) : null;
-            $this->syncManager->postSyncStreamRecordFailure($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number'], 'other', $errorMessages);
+            $syncOrder = $this->syncOrderFactory->create();
+            $syncOrder->setValue($data['order']['number']);
+            $syncOrder->setStoreId($store->getId());
+            $syncOrder->setMessages(implode(',', $errorMessages));
+            $syncOrder->save();
         }
     }
 

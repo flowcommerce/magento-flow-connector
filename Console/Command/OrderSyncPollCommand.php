@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 use Magento\Framework\App\State as AppState;
 use Magento\Framework\Registry;
-use FlowCommerce\FlowConnector\Model\OrderSyncManager;
+use FlowCommerce\FlowConnector\Model\SyncOrderManager;
 
 /**
  * Command to process the Order Sync Poll
@@ -15,23 +15,23 @@ use FlowCommerce\FlowConnector\Model\OrderSyncManager;
 class OrderSyncPollCommand extends BaseCommand
 {
     /**
-     * @var OrderSyncManager
+     * @var SyncOrderManager
      */
-    private $orderSyncManager;
+    private $syncOrderManager;
 
     /**
      * OrderSyncPollCommand constructor.
      * @param AppState $appState
      * @param Registry $registry
-     * @param OrderSyncManager $orderSyncManager
+     * @param SyncOrderManager $syncOrderManager
      */
     public function __construct(
         AppState $appState,
         Registry $registry,
-        OrderSyncManager $orderSyncManager
+        SyncOrderManager $syncOrderManager
     ) {
         parent::__construct($appState, $registry);
-        $this->orderSyncManager = $orderSyncManager;
+        $this->syncOrderManager = $syncOrderManager;
     }
 
     public function configure()
@@ -50,7 +50,7 @@ class OrderSyncPollCommand extends BaseCommand
     {
         $logger = new FlowConsoleLogger($output);
         $this->initCLI();
-        $this->orderSyncManager->setLogger($logger);
-        $this->orderSyncManager->process();
+        $this->syncOrderManager->setLogger($logger);
+        $this->syncOrderManager->process();
     }
 }

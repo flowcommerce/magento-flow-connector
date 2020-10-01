@@ -5,7 +5,7 @@ namespace FlowCommerce\FlowConnector\Cron;
 use FlowCommerce\FlowConnector\Model\LockManager\CantAcquireLockException;
 use \Psr\Log\LoggerInterface as Logger;
 use \FlowCommerce\FlowConnector\Api\LockManagerInterface as LockManager;
-use \FlowCommerce\FlowConnector\Model\OrderSyncManager;
+use \FlowCommerce\FlowConnector\Model\SyncOrderManager;
 
 /**
  * Cron Task wrapper class to run order sync poll processing
@@ -29,24 +29,24 @@ class OrderSyncPollTask
     private $logger;
 
     /**
-     * @var OrderSyncManager
+     * @var SyncOrderManager
      */
-    private $orderSyncManager;
+    private $syncOrderManager;
 
     /**
      * OrderSyncPollTask constructor.
      * @param LockManager $lockManager
      * @param Logger $logger
-     * @param OrderSyncManager $orderSyncManager
+     * @param SyncOrderManager $syncOrderManager
      */
     public function __construct(
         LockManager $lockManager,
         Logger $logger,
-        orderSyncManager $orderSyncManager
+        syncOrderManager $syncOrderManager
     ) {
         $this->lockManager = $lockManager;
         $this->logger = $logger;
-        $this->orderSyncManager = $orderSyncManager;
+        $this->syncOrderManager = $syncOrderManager;
     }
 
     /**
@@ -68,7 +68,7 @@ class OrderSyncPollTask
         try {
             $this->acquireLock();
             $this->logger->info('Running OrderSyncPollTask execute');
-            $this->orderSyncManager->process();
+            $this->syncOrderManager->process();
             $this->releaseLock();
         } catch (CantAcquireLockException $e) {
             $this->logger->info($e->getMessage());

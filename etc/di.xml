@@ -81,7 +81,7 @@
     </type>
     <type name="FlowCommerce\FlowConnector\Console\Command\OrderSyncPollCommand">
         <arguments>
-            <argument name="orderSyncManager" xsi:type="object">FlowCommerce\FlowConnector\Model\OrderSyncManager\Proxy</argument>
+            <argument name="syncOrderManager" xsi:type="object">FlowCommerce\FlowConnector\Model\SyncOrderManager\Proxy</argument>
         </arguments>
     </type>
 

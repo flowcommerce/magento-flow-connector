@@ -107,7 +107,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
     /**
      * {@inheritdoc}
      */
-    public function syncByValue($orderNumber, $storeId)
+    public function syncByValue(string $orderNumber, int $storeId)
     {
         $order = $this->flowOrder->getByNumber($storeId, $orderNumber);
         $allocation = $this->flowAllocation->getByNumber($storeId, $orderNumber);

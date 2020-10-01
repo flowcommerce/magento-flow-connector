@@ -11,7 +11,7 @@ class Collection extends AbstractCollection
 
     protected $_idFieldName = 'id';
     protected $_eventPrefix = 'flow_connector_sync_skus';
-    protected $_eventObject = 'sync_sku';   protected $_idFieldName = 'value';
+    protected $_eventObject = 'sync_sku';
 
     protected function _construct()
     {

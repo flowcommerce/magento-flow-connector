@@ -62,7 +62,7 @@ class Retry extends Action
             $syncOrder->load($value);
             if ($syncOrder->getValue()) {
                 try {
-                    $this->syncOrderManager->syncByValue($syncOrder->getValue());
+                    $this->syncOrderManager->syncByValue($syncOrder->getValue(), $syncOrder->getStoreId());
                     $this->messageManager->addSuccessMessage('The order has been retried');
                 } catch (Exception $e) {
                     $this->messageManager->addExceptionMessage($e);

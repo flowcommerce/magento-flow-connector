@@ -91,7 +91,13 @@ class SyncOrderManager implements SyncOrderManagementInterface
             }
 
             foreach ($pendingOrderRecords as $pendingOrderRecord) {
-                $this->syncByValue($pendingOrderRecord['value']);
+                $this->logger->info('Processing pending Flow order number: ' . $orderNumber);
+                if ($this->webhookEvent->getOrderByFlowOrderNumber($orderNumber)) {
+                    $this->logger->info('Flow order number: ' . $orderNumber . ' already imported.');
+                    $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $orderNumber);
+                    continue;
+                }
+                $this->syncByValue($pendingOrderRecord['value'], $store->getId());
             }
         }
         $this->logger->info('Done processing order sync poll');
@@ -100,20 +106,15 @@ class SyncOrderManager implements SyncOrderManagementInterface
 
     /**
      * Sync order by Flow Order Number
-     * @param string $value
+     * @param string $orderNumber
+     * @param int $storeId
      * @return void
      * @throws
      */
-    public function syncByValue($value)
+    public function syncByValue($orderNumber, $storeId)
     {
-        $this->logger->info('Processing pending Flow order number: ' . $orderNumber);
-        if ($this->webhookEvent->getOrderByFlowOrderNumber($orderNumber)) {
-            $this->logger->info('Flow order number: ' . $orderNumber . ' already imported.');
-            $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $orderNumber);
-            continue;
-        }
-        $order = $this->flowOrder->getByNumber($store->getId(), $orderNumber);
-        $allocation = $this->flowAllocation->getByNumber($store->getId(), $orderNumber);
+        $order = $this->flowOrder->getByNumber($storeId, $orderNumber);
+        $allocation = $this->flowAllocation->getByNumber($storeId, $orderNumber);
         $this->webhookEvent->processOrderPlacedPayloadData([
             'allocation' => $allocation,
             'order' => $order

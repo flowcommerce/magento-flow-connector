@@ -70,7 +70,7 @@ class MassRetry extends Action
 
         /** @var SyncOrder $syncOrder */
         foreach ($collection as $syncOrder) {
-            $this->syncOrderManager->syncByValue($syncOrder->getValue());
+            $this->syncOrderManager->syncByValue($syncOrder->getValue(), $syncOrder->getStoreId());
         }
 
         $this->messageManager->addSuccess(__('A total of %1 order(s) have been retried.', $collectionSize));

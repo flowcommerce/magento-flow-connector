@@ -32,10 +32,6 @@ $syncOrder = $block->getSyncOrder();
                 <th><?= $block->escapeHtml(__('Updated At:')) ?></th>
                 <td><?= $block->escapeHtml($syncOrder->getUpdatedAt()) ?></td>
             </tr>
-            <tr>
-                <th><?= $block->escapeHtml(__('Deleted At:')) ?></th>
-                <td><?= $block->escapeHtml($syncOrder->getDeletedAt()) ?></td>
-            </tr>
         </tbody>
     </table>
 </div>

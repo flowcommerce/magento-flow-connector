@@ -77,12 +77,6 @@ interface SyncOrderInterface
     public function getUpdatedAt();
 
     /**
-     * Getter - Deleted At
-     * @return string|null
-     */
-    public function getDeletedAt();
-
-    /**
      * Setter - Value
      * @param int $value
      * @return SyncOrderInterface

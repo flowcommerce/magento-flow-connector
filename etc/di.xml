@@ -184,7 +184,7 @@
             <argument name="collections" xsi:type="array">
                 <item name="flowconnector_webhookevent_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\Grid\Collection</item>
                 <item name="flowconnector_syncsku_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Grid\Collection</item>
-                <item name="flowconnector_syncorderfailure_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncOrderRetry\Grid\Collection</item>
+                <item name="flowconnector_syncorder_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncOrder\Grid\Collection</item>
                 <item name="sales_order_webhookevent_grid_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\Order\WebhookEvent\Grid\Collection</item>
             </argument>
         </arguments>

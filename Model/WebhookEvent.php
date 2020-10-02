@@ -1136,7 +1136,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function getOrderByFlowOrderNumber($number)
     {
         $order = $this->orderFactory->create()->loadByAttribute('ext_order_id', $this->getTrimExtOrderId($number));
-        return ($order->getExtOrderId()) ? $order : null;
+        return ($order->getExtOrderId()) ? $order : false;
     }
 
     /**
@@ -2196,6 +2196,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
         } else {
             $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $errorMessages)) : null;
+            /** @var SyncOrder $syncOrder */
             $syncOrder = $this->syncOrderFactory->create();
             $syncOrder->setValue($data['order']['number']);
             $syncOrder->setStoreId($store->getId());

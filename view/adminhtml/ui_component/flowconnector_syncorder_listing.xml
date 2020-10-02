@@ -135,7 +135,7 @@
                 <visible>false</visible>
             </settings>
         </column>
-        <actionsColumn name="actions" class="FlowCommerce\FlowConnector\Ui\Component\Listing\Columns\SyncOrderFailureActions" sortOrder="200">
+        <actionsColumn name="actions" class="FlowCommerce\FlowConnector\Ui\Component\Listing\Columns\SyncOrderActions" sortOrder="200">
             <settings>
                 <indexField>value</indexField>
             </settings>

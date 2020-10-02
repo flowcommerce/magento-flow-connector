@@ -60,7 +60,7 @@ class SyncOrder extends AbstractModel implements SyncOrderInterface, IdentityInt
      */
     public function getIdentities()
     {
-        return [self::CACHE_TAG . '_' . $this->getValue()];
+        return [self::CACHE_TAG . '_' . $this->getId()];
     }
 
     /**

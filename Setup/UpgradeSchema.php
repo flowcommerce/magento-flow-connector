@@ -813,7 +813,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         $table = $connection
             ->newTable($tableName)
-            ->addColumn('value', Table::TYPE_TEXT, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true], 'Primary key, Flow Order Number')
+            ->addColumn('id', Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true], 'Primary key')
+            ->addColumn('value', Table::TYPE_TEXT, 255, ['nullable' => true], 'Flow Order Number')
             ->addColumn('increment_id', Table::TYPE_TEXT, 255, ['nullable' => true], 'Increment Id')
             ->addColumn('store_id', Table::TYPE_TEXT, 255, ['nullable' => false], 'Store Id')
             ->addColumn('messages', Table::TYPE_TEXT, 255, ['nullable' => true], 'Error messages')

@@ -11,6 +11,11 @@ use \FlowCommerce\FlowConnector\Model\ResourceModel\SyncOrder as SyncOrderResour
 interface SyncOrderInterface
 {
     /**
+     * Data Key - ID
+     */
+    const DATA_KEY_ID = 'id';
+
+    /**
      * Data Key - Store ID
      */
     const DATA_KEY_STORE_ID = 'store_id';
@@ -39,6 +44,12 @@ interface SyncOrderInterface
      * Data Key - Updated At
      */
     const DATA_KEY_UPDATED_AT = 'updated_at';
+
+    /**
+     * Getter - ID
+     * @return int|null
+     */
+    public function getId();
 
     /**
      * Getter - Value
@@ -75,6 +86,13 @@ interface SyncOrderInterface
      * @return string|null
      */
     public function getUpdatedAt();
+
+    /**
+     * Setter - ID
+     * @param int $value
+     * @return SyncSkuInterface
+     */
+    public function setId($value);
 
     /**
      * Setter - Value

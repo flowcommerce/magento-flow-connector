@@ -74,6 +74,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
         $this->webhookEvent = $webhookEvent;
         $this->syncManager = $syncManager;
         $this->flowOrder = $flowOrder;
+        $this->flowAllocation = $flowAllocation;
     }
 
     /**

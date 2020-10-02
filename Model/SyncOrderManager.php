@@ -91,10 +91,10 @@ class SyncOrderManager implements SyncOrderManagementInterface
             }
 
             foreach ($pendingOrderRecords as $pendingOrderRecord) {
-                $this->logger->info('Processing pending Flow order number: ' . $orderNumber);
-                if ($this->webhookEvent->getOrderByFlowOrderNumber($orderNumber)) {
-                    $this->logger->info('Flow order number: ' . $orderNumber . ' already imported.');
-                    $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $orderNumber);
+                $this->logger->info('Processing pending Flow order number: ' . $pendingOrderRecord['value']);
+                if ($this->webhookEvent->getOrderByFlowOrderNumber($pendingOrderRecord['value'])) {
+                    $this->logger->info('Flow order number: ' . $pendingOrderRecord['value'] . ' already imported.');
+                    $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $pendingOrderRecord['value']);
                     continue;
                 }
                 $this->syncByValue($pendingOrderRecord['value'], $store->getId());

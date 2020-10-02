@@ -1136,7 +1136,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     public function getOrderByFlowOrderNumber($number)
     {
         $order = $this->orderFactory->create()->loadByAttribute('ext_order_id', $this->getTrimExtOrderId($number));
-        return ($order->getExtOrderId()) ? $order : false;
+        return ($order->getExtOrderId()) ? $order : null;
     }
 
     /**

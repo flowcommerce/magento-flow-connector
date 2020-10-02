@@ -20,7 +20,7 @@ class SyncOrder extends AbstractModel implements SyncOrderInterface, IdentityInt
     /**
      * Sync sku cache tag
      */
-    const CACHE_TAG = 'flow_connector_sync_skus';
+    const CACHE_TAG = 'flow_connector_sync_orders';
 
     /**
      * Cache tag

@@ -3,7 +3,7 @@
 ## 2.5.2
 - Add cron for order sync polling, every half hour
 - Add console command for order sync polling, flow:connector:order-sync
-- Send exception messages to sync service for failed order syncing
+- Add Order Sync dashboard view to retry or fail order imports with errors
 - Remove deprecated webhook authorization_deleted_v2
 - Remove deprecated webhook processing methods
 

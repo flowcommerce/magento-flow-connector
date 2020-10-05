@@ -1582,7 +1582,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         foreach ($receivedOrder['lines'] as $line) {
             $this->logger->info('Looking up product: ' . $line['item_number']);
             if (!$product = $this->productRepository->get($line['item_number'])) {
-                array_push($this->errorMessages, 'Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $line['item_number']);
+                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $line['item_number']);
                 continue;
             }
             $product->setPrice($line['price']['amount']);
@@ -1590,7 +1590,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
 
             if (is_null($this->addProductWithOptions($quote, $product, $line, $receivedOrder['number'], $store->getId()))) {
-                array_push($this->errorMessages, 'Error processing Flow order: ' . $receivedOrder['number'] . ' item_number could not be added: ' . $line['item_number']);
+                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number could not be added: ' . $line['item_number']);
+                continue;
             }
         }
 
@@ -2200,6 +2201,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $orderIncrementId = $order->getIncrementId();
         } catch (WebhookException $e) {
             array_push($this->errorMessages, $e->getMessage());
+            $this->addSyncOrderError($orderNumber, $storeId);
         }
 
         if ($orderIncrementId) {

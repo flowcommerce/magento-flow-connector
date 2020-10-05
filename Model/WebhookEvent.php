@@ -2205,7 +2205,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         /** @var SyncOrder $syncOrder */
         $syncOrder = $this->syncOrderFactory->create();
         $syncOrder->setValue($orderNumber);
-        $syncOrder->setStoreId($store->getId());
+        $syncOrder->setStoreId($storeId);
         $syncOrder->setMessages(implode(',', $this->errorMessages));
         $syncOrder->save();
     }

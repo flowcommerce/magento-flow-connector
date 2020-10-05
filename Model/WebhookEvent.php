@@ -2207,19 +2207,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
     public function addProductWithOptions ($quote, $product, $line) {
         $item = null;
+        $qty = intval($line['quantity']);
         if (isset($line['attributes']['options'])) {
             $formOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
             foreach ($formOptions as $option) {
                 if ($option['code'] === 'info_buyRequest') {
                     if ($buyRequest = $this->jsonSerializer->unserialize($option['value'])) {
                         $buyRequest = new \Magento\Framework\DataObject($buyRequest);
-                        $buyRequest->setOriginalQty($buyRequest->getQty())->setQty($line['quantity'] * 1);
+                        $buyRequest = $buyRequest->setOriginalQty($qty)->setQty($qty);
                         $item = $quote->addProduct($product, $buyRequest);
                     }
                 }
             }
         } else {
-            $item = $quote->addProduct($product, $line['quantity'] * 1);
+            $item = $quote->addProduct($product, $qty);
         }
         $quote->save();
         return $item;

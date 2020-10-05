@@ -312,7 +312,6 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $orderItemSku = $item->getSku();
                 $quantity = intval($allocationItems[$item->getSku()]['quantity']);
                 $quantityOrdered = intval($item->getQtyOrdered());
-                var_dump(['quantity', $quantity, $quantityOrdered]);
                 $subtotalAmounts = $this->subject->initializeSubtotalAmounts();
                 $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['included'], $quantity);
                 $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['not_included'], $quantity);

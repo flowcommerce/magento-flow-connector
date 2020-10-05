@@ -1592,7 +1592,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $product->setBasePrice($line['price']['base']['amount']);
             $this->logger->info('Adding product to quote: ' . $line['item_number']);
 
-            if (is_null($this->addProductWithOptions($quote, $product, $line))) {
+            if (is_null($this->addProductWithOptions($quote, $product, $line, $receivedOrder['number'], $store->getId()))) {
                 throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number could not be added: ' . $line['item_number']);
                 continue;
             }
@@ -2196,33 +2196,41 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
         } else {
             $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $errorMessages)) : null;
-            /** @var SyncOrder $syncOrder */
-            $syncOrder = $this->syncOrderFactory->create();
-            $syncOrder->setValue($data['order']['number']);
-            $syncOrder->setStoreId($store->getId());
-            $syncOrder->setMessages(implode(',', $errorMessages));
-            $syncOrder->save();
+            $this->addSyncOrderError($data['order']['number'], $errorMessages, $store->getId());
         }
     }
 
-    public function addProductWithOptions ($quote, $product, $line) {
+    public function addSyncOrderError ($orderNumber, $errorMessages, $storeId) {
+        /** @var SyncOrder $syncOrder */
+        $syncOrder = $this->syncOrderFactory->create();
+        $syncOrder->setValue($data['order']['number']);
+        $syncOrder->setStoreId($store->getId());
+        $syncOrder->setMessages(implode(',', $errorMessages));
+        $syncOrder->save();
+    }
+
+    public function addProductWithOptions ($quote, $product, $line, $orderNumber, $storeId) {
         $item = null;
-        $qty = intval($line['quantity']);
-        if (isset($line['attributes']['options'])) {
-            $formOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
-            foreach ($formOptions as $option) {
-                if ($option['code'] === 'info_buyRequest') {
-                    if ($buyRequest = $this->jsonSerializer->unserialize($option['value'])) {
-                        $buyRequest = new \Magento\Framework\DataObject($buyRequest);
-                        $buyRequest = $buyRequest->setOriginalQty($qty)->setQty($qty);
-                        $item = $quote->addProduct($product, $buyRequest);
+        try {
+            $qty = intval($line['quantity']);
+            if (isset($line['attributes']['options'])) {
+                $formOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
+                foreach ($formOptions as $option) {
+                    if ($option['code'] === 'info_buyRequest') {
+                        if ($buyRequest = $this->jsonSerializer->unserialize($option['value'])) {
+                            $buyRequest = new \Magento\Framework\DataObject($buyRequest);
+                            $buyRequest = $buyRequest->setOriginalQty($qty)->setQty($qty);
+                            $item = $quote->addProduct($product, $buyRequest);
+                        }
                     }
                 }
+            } else {
+                $item = $quote->addProduct($product, $qty);
             }
-        } else {
-            $item = $quote->addProduct($product, $qty);
+            $quote->save();
+        } catch (LocalizedException $e) {
+            $this->addSyncOrderError($orderNumber, [$e->getMessage()], $storeId);
         }
-        $quote->save();
         return $item;
     }
 

@@ -405,6 +405,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
         SyncOrderFactory $syncOrderFactory,
+        array $errorMessages = [],
         array $data = []
     ) {
         parent::__construct(
@@ -453,6 +454,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->configuration = $configuration;
         $this->syncManager = $syncManager;
         $this->syncOrderFactory = $syncOrderFactory;
+        $this->errorMessages = [];
     }
 
     protected function _construct()
@@ -2170,7 +2172,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
     public function processOrderPlacedPayloadData($data = null, $usesWebhookEvent = true)
     {
-        $errorMessages = [];
         $orderIncrementId = null;
         try {
             $storeId = null;
@@ -2188,24 +2189,24 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $order->save();
             $orderIncrementId = $order->getIncrementId();
         } catch (LocalizedException $e) {
-            array_push($errorMessages, $e->getMessage());
+            array_push($this->errorMessages, $e->getMessage());
         }
 
         if ($orderIncrementId) {
             $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $data['order']['number'] . ' imported as Magento order increment id: ' . $orderIncrementId) : null;
             $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $data['order']['number']);
         } else {
-            $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $errorMessages)) : null;
-            $this->addSyncOrderError($data['order']['number'], $errorMessages, $store->getId());
+            $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $this->errorMessages)) : null;
+            $this->addSyncOrderError($data['order']['number'], $store->getId());
         }
     }
 
-    public function addSyncOrderError ($orderNumber, $errorMessages, $storeId) {
+    public function addSyncOrderError ($orderNumber, $storeId) {
         /** @var SyncOrder $syncOrder */
         $syncOrder = $this->syncOrderFactory->create();
-        $syncOrder->setValue($data['order']['number']);
+        $syncOrder->setValue($orderNumber);
         $syncOrder->setStoreId($store->getId());
-        $syncOrder->setMessages(implode(',', $errorMessages));
+        $syncOrder->setMessages(implode(',', $this->errorMessages));
         $syncOrder->save();
     }
 
@@ -2229,7 +2230,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
             $quote->save();
         } catch (LocalizedException $e) {
-            $this->addSyncOrderError($orderNumber, [$e->getMessage()], $storeId);
+            array_push($this->errorMessages, $e->getMessage());
+            $this->addSyncOrderError($orderNumber, $storeId);
         }
         return $item;
     }

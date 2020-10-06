@@ -14,10 +14,10 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Ui\Component\MassAction\Filter;
 
 /**
- * Class MassRetry
+ * Class MassFail
  * @package FlowCommerce\FlowConnector\Controller\Adminhtml\SyncOrder
  */
-class MassRetry extends Action
+class MassFail extends Action
 {
     /**
      * Authorization level of a basic admin session
@@ -59,7 +59,7 @@ class MassRetry extends Action
     }
 
     /**
-     * Mass Retry action
+     * Mass Fail action
      * @return Redirect
      * @throws LocalizedException|Exception
      */
@@ -73,7 +73,7 @@ class MassRetry extends Action
             $this->syncOrderManager->failByValue($syncOrder->getValue(), 'other', ['Manually marked as failed in Magento back office'], $syncOrder->getStoreId());
         }
 
-        $this->messageManager->addSuccess(__('A total of %1 order(s) have been retried.', $collectionSize));
+        $this->messageManager->addSuccess(__('A total of %1 order(s) have been marked failed.', $collectionSize));
 
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);

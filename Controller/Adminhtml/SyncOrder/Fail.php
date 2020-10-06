@@ -63,7 +63,7 @@ class Fail extends Action
             if ($syncOrder->getValue()) {
                 try {
                     $this->syncOrderManager->failByValue($syncOrder->getValue(), 'other', ['Manually marked as failed in Magento back office'], $syncOrder->getStoreId());
-                    $this->messageManager->addSuccessMessage('The order has failed');
+                    $this->messageManager->addSuccessMessage('The order has been marked failed');
                 } catch (Exception $e) {
                     $this->messageManager->addExceptionMessage($e);
                 }

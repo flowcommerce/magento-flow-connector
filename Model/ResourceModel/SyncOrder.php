@@ -10,6 +10,8 @@ use \Magento\Framework\Model\ResourceModel\Db\AbstractDb;
  */
 class SyncOrder extends AbstractDb
 {
+    protected $_isPkAutoIncrement = false;
+
     /**
      * Initializes resource model
      */

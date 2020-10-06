@@ -44,6 +44,7 @@ class SyncOrder extends AbstractModel implements SyncOrderInterface, IdentityInt
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        var_dump('CONSTRUCT SYNCORDER');
     }
 
     /**
@@ -116,6 +117,7 @@ class SyncOrder extends AbstractModel implements SyncOrderInterface, IdentityInt
      */
     public function setStoreId($value)
     {
+        var_dump('SET SYNCORDER STOREID:' . $value);
         $this->setData(self::DATA_KEY_STORE_ID, $value);
         return $this;
     }
@@ -125,6 +127,7 @@ class SyncOrder extends AbstractModel implements SyncOrderInterface, IdentityInt
      */
     public function setValue($value)
     {
+        var_dump('SET SYNCORDER VALUE:' . $value);
         $this->setData(self::DATA_KEY_VALUE, $value);
         return $this;
     }
@@ -143,6 +146,7 @@ class SyncOrder extends AbstractModel implements SyncOrderInterface, IdentityInt
      */
     public function setMessages($value)
     {
+        var_dump('SET SYNCORDER MESSAGES:' . $value);
         $this->setData(self::DATA_KEY_MESSAGES, $value);
         return $this;
     }

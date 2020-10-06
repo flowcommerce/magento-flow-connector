@@ -53,6 +53,14 @@ class SyncOrderActions extends Column
                     'label' => __('View'),
                     'hidden' => false,
                 ];
+                $item[$this->getData('name')]['fail'] = [
+                    'href' => $this->urlBuilder->getUrl(
+                        'flowconnector/syncorder/fail',
+                        ['value' => $item['value']]
+                    ),
+                    'label' => __('Fail'),
+                    'hidden' => false,
+                ];
                 $item[$this->getData('name')]['retry'] = [
                     'href' => $this->urlBuilder->getUrl(
                         'flowconnector/syncorder/retry',

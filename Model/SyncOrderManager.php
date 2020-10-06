@@ -108,6 +108,14 @@ class SyncOrderManager implements SyncOrderManagementInterface
     /**
      * {@inheritdoc}
      */
+    public function failByValue(string $orderNumber, string $reason, string[] $messages, int $storeId)
+    {
+        $this->syncManager->postSyncStreamRecordFailure($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $orderNumber, $reason, $messages);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function syncByValue(string $orderNumber, int $storeId)
     {
         $order = $this->flowOrder->getByNumber($storeId, $orderNumber);

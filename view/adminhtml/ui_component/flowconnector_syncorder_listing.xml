@@ -65,6 +65,17 @@
                     <label translate="true">Retry</label>
                 </settings>
             </action>
+            <action name="fail">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to fail selected items?</message>
+                        <title translate="true">Fail items</title>
+                    </confirm>
+                    <url path="flowconnector/syncorder/massFail"/>
+                    <type>fail</type>
+                    <label translate="true">Fail</label>
+                </settings>
+            </action>
         </massaction>
         <paging name="listing_paging"/>
     </listingToolbar>

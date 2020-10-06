@@ -49,6 +49,7 @@ use Magento\Sales\Api\Data\OrderPaymentSearchResultInterface;
 use Magento\Sales\Model\Order\Payment;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\DB\TransactionFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Convert\Order as ConvertOrder;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Shipment;
@@ -1488,6 +1489,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param $store
      * @return Order
      * @throws WebhookException
+     * @throws LocalizedException
      * @throws NoSuchEntityException
      */
     public function doOrderUpserted(array $data, $store)
@@ -2199,7 +2201,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // Save order after sending order confirmation email
             $order->save();
             $orderIncrementId = $order->getIncrementId();
-        } catch (WebhookException $e) {
+        } catch (LocalizedException $e) {
             array_push($this->errorMessages, $e->getMessage());
             $this->addSyncOrderError($orderNumber, $storeId);
         }
@@ -2214,12 +2216,17 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     public function addSyncOrderError ($orderNumber, $storeId) {
-        /** @var SyncOrder $syncOrder */
-        $syncOrder = $this->syncOrderFactory->create();
-        $syncOrder->setValue($orderNumber);
-        $syncOrder->setStoreId($storeId);
-        $syncOrder->setMessages(implode(', ', $this->errorMessages));
-        $syncOrder->save();
+        try {
+            var_dump('RAN SYNC ORDER ERROR');
+            /** @var SyncOrder $syncOrder */
+            $syncOrder = $this->syncOrderFactory->create();
+            $syncOrder->setValue($orderNumber);
+            $syncOrder->setStoreId($storeId);
+            $syncOrder->setMessages(implode(', ', $this->errorMessages));
+            $syncOrder->save();
+        } catch (LocalizedException $e) {
+            $this->logger->error($e->getMessage());
+        }
     }
 
     public function addProductWithOptions ($quote, $product, $line, $orderNumber, $storeId) {

@@ -75,11 +75,11 @@ class View extends Action
      */
     public function execute()
     {
-        $id = $this->getRequest()->getParam('id');
+        $value = $this->getRequest()->getParam('value');
         $syncOrder = $this->syncOrderFactory->create();
 
-        if ($id) {
-            $syncOrder->load($id);
+        if ($value) {
+            $syncOrder->load($value);
             if (!$syncOrder->getId()) {
                 $this->messageManager->addError(__('This Order Sync no longer exists.'));
                 /** @var Redirect $resultRedirect */

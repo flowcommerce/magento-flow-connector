@@ -2209,6 +2209,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         if ($orderIncrementId) {
             $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsDone($this, 'Flow order number: ' . $orderNumber . ' imported as Magento order increment id: ' . $orderIncrementId) : null;
             $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $orderNumber);
+            $this->addSyncOrderSuccess($orderNumber, $orderIncrementId);
         } else {
             $usesWebhookEvent ? $this->webhookEventManager->markWebhookEventAsError($this, implode(',', $this->errorMessages)) : null;
             $this->addSyncOrderError($orderNumber, $store->getId());
@@ -2219,10 +2220,27 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         try {
             /** @var SyncOrder $syncOrder */
             $syncOrder = $this->syncOrderFactory->create();
+            $syncOrder->load($orderNumber);
             $syncOrder->setValue($orderNumber);
             $syncOrder->setStoreId($storeId);
             $syncOrder->setMessages(implode(', ', $this->errorMessages));
             $syncOrder->save();
+        } catch (LocalizedException $e) {
+            $this->logger->error($e->getMessage());
+        } finally {
+            return $syncOrder || null;
+        }
+    }
+
+    public function addSyncOrderSuccess ($orderNumber, $incrementId) {
+        try {
+            /** @var SyncOrder $syncOrder */
+            $syncOrder = $this->syncOrderFactory->create();
+            $syncOrder->load($orderNumber);
+            if ($syncOrder->getId()) {
+                $syncOrder->setIncrementId($incrementId);
+                $syncOrder->save();
+            }
         } catch (LocalizedException $e) {
             $this->logger->error($e->getMessage());
         } finally {

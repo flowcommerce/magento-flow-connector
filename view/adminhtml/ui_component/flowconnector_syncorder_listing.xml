@@ -21,8 +21,8 @@
         <aclResource>Magento_Backend::system</aclResource>
         <dataProvider class="FlowCommerce\FlowConnector\Ui\Component\DataProvider" name="flowconnector_syncorder_listing_data_source">
             <settings>
-                <requestFieldName>id</requestFieldName>
-                <primaryFieldName>id</primaryFieldName>
+                <requestFieldName>value</requestFieldName>
+                <primaryFieldName>value</primaryFieldName>
             </settings>
         </dataProvider>
     </dataSource>

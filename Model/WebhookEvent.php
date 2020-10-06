@@ -2217,13 +2217,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
     public function addSyncOrderError ($orderNumber, $storeId) {
         try {
-            var_dump('RAN SYNC ORDER ERROR');
             /** @var SyncOrder $syncOrder */
             $syncOrder = $this->syncOrderFactory->create();
             $syncOrder->setValue($orderNumber);
             $syncOrder->setStoreId($storeId);
             $syncOrder->setMessages(implode(', ', $this->errorMessages));
-            $syncOrder->save();
         } catch (LocalizedException $e) {
             $this->logger->error($e->getMessage());
         }

@@ -29,6 +29,12 @@ class SyncOrder extends AbstractModel implements SyncOrderInterface, IdentityInt
     protected $_cacheTag = self::CACHE_TAG;
 
     /**
+     * Event Prefix
+     * @var string
+     */
+    protected $_eventPrefix = 'flow_connector_sync_orders';
+
+    /**
      * SyncOrder constructor.
      * @param Context $context
      * @param Registry $registry

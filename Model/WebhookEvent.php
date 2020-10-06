@@ -2222,6 +2222,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $syncOrder->setValue($orderNumber);
             $syncOrder->setStoreId($storeId);
             $syncOrder->setMessages(implode(', ', $this->errorMessages));
+            $syncOrder->save();
         } catch (LocalizedException $e) {
             $this->logger->error($e->getMessage());
         } finally {

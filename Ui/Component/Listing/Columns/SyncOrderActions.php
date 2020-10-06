@@ -48,7 +48,7 @@ class SyncOrderActions extends Column
                 $item[$this->getData('name')]['view'] = [
                     'href' => $this->urlBuilder->getUrl(
                         'flowconnector/syncorder/view',
-                        ['id' => $item['id']]
+                        ['value' => $item['value']]
                     ),
                     'label' => __('View'),
                     'hidden' => false,
@@ -56,7 +56,7 @@ class SyncOrderActions extends Column
                 $item[$this->getData('name')]['retry'] = [
                     'href' => $this->urlBuilder->getUrl(
                         'flowconnector/syncorder/retry',
-                        ['id' => $item['id']]
+                        ['value' => $item['value']]
                     ),
                     'label' => __('Retry'),
                     'hidden' => false,

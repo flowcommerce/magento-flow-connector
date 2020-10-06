@@ -2216,6 +2216,22 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
     }
 
+    public function addSyncOrderFailure ($orderNumber, $storeId) {
+        try {
+            /** @var SyncOrder $syncOrder */
+            $syncOrder = $this->syncOrderFactory->create();
+            $syncOrder->load($orderNumber);
+            if ($syncOrder->getId()) {
+                $syncOrder->setMessages('Manually marked failed.');
+                $syncOrder->save();
+            }
+        } catch (LocalizedException $e) {
+            $this->logger->error($e->getMessage());
+        } finally {
+            return $syncOrder || null;
+        }
+    }
+
     public function addSyncOrderError ($orderNumber, $storeId) {
         try {
             /** @var SyncOrder $syncOrder */

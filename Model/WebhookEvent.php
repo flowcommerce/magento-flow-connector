@@ -2201,7 +2201,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             // Save order after sending order confirmation email
             $order->save();
             $orderIncrementId = $order->getIncrementId();
-        } catch (Exception $e) {
+        } catch (LocalizedException $e) {
             array_push($this->errorMessages, $e->getMessage());
             $this->addSyncOrderError($orderNumber, $storeId);
         }

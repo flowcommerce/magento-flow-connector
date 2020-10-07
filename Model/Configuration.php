@@ -80,6 +80,9 @@ class Configuration
     // Default checkout base url for Flow checkout
     const FLOW_DEFAULT_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
 
+    // Flow console base url
+    const FLOW_CONSOLE_BASE_URL = 'https://console.flow.io/';
+
     // Name of Flow session cookie
     const FLOW_SESSION_COOKIE = '_f60_session';
 
@@ -227,6 +230,21 @@ class Configuration
 
         return $this->getFlowCheckoutBaseUrl($storeId) .
             $this->auth->getFlowOrganizationId($storeId) . '/order/';
+    }
+
+    /**
+     * Returns the Flow Console Base Url with the current Org
+     * @param int|null $storeId
+     * @throws NoSuchEntityException
+     * @return string
+     */
+    public function getFlowConsoleBaseUrlWithOrg($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return self::FLOW_CONSOLE_BASE_URL . $this->auth->getFlowOrganizationId($storeId);
     }
 
     /**

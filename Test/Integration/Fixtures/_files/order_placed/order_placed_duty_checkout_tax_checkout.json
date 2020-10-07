@@ -224,8 +224,8 @@
         }
       },
       {
-        "number": "simple_1",
-        "name": "Simple Product 1",
+        "number": "simple_4",
+        "name": "Simple Product 4",
         "quantity": 1,
         "local": {
           "experience": {
@@ -253,8 +253,8 @@
             "weight_type": "No",
             "sku_type": "No",
             "weight": "18.0000",
-            "name": "Simple Product 1",
-            "sku": "simple_1",
+            "name": "Simple Product 4",
+            "sku": "simple_4",
             "quantity_and_stock_status": "In Stock",
             "magento_version": "2.2.5",
             "country_of_manufacture": " ",
@@ -877,7 +877,7 @@
         }
       },
       {
-        "item_number": "simple_1",
+        "item_number": "simple_4",
         "quantity": 1,
         "price": {
           "currency": "CAD",
@@ -1229,7 +1229,7 @@
         "discriminator": "allocation_line_detail"
       },
       {
-        "number": "simple_1",
+        "number": "simple_4",
         "quantity": 1,
         "key": "subtotal",
         "price": {

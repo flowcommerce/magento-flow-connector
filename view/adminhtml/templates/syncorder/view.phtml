@@ -1,0 +1,43 @@
+<?php
+/** @var \FlowCommerce\FlowConnector\Block\Adminhtml\SyncOrder\View $block */
+$syncOrder = $block->getSyncOrder();
+$orderConsoleUrl = $block->getFlowConsoleOrderUrl($syncOrder->getValue(), $syncOrder->getStoreId());
+?>
+<div class="fieldset-wrapper syncorder-information">
+    <div class="fieldset-wrapper-title">
+        <span class="title"><?= $block->escapeHtml(__('Order Sync Data')) ?></span>
+    </div>
+    <table class="admin__table-secondary">
+        <tbody>
+            <tr>
+                <th><?= $block->escapeHtml(__('Number:')) ?></th>
+                <td>
+                    <?= $block->escapeHtml($syncOrder->getValue()) ?> 
+                    <a href="<?php echo $orderConsoleUrl; ?>" target="_blank">
+                        View order in Flow Console
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Increment Id:')) ?></th>
+                <td><?= $block->escapeHtml($syncOrder->getIncrementId()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Store ID:')) ?></th>
+                <td><?= $block->escapeHtml($syncOrder->getStoreId()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Messages:')) ?></th>
+                <td><?= $block->escapeHtml($syncOrder->getMessages()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Created At:')) ?></th>
+                <td><?= $block->escapeHtml($syncOrder->getCreatedAt()) ?></td>
+            </tr>
+            <tr>
+                <th><?= $block->escapeHtml(__('Updated At:')) ?></th>
+                <td><?= $block->escapeHtml($syncOrder->getUpdatedAt()) ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -106,6 +106,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->addOrderLatestTrackingData($setup);
         }
 
+        if (version_compare($context->getVersion(), '2.5.2', '<=')) {
+            $this->installSyncOrdersTable($installer);
+        }
+
         $installer->endSetup();
     }
 
@@ -791,5 +795,42 @@ class UpgradeSchema implements UpgradeSchemaInterface
         foreach ($attributes as $attributeCode => $attributeParams) {
             $salesSetup->addAttribute('order', $attributeCode, $attributeParams);
         }
+    }
+
+    /**
+     * Creates a table to hold Flow orders to sync to Magento.
+     * @param SchemaSetupInterface $installer
+     * @throws \Zend_Db_Exception
+     */
+    private function installSyncOrdersTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_sync_orders');
+        $connection = $installer->getConnection();
+
+        if ($connection->isTableExists($tableName)) {
+            return;
+        } // table already exists, no need to install now
+
+        $table = $connection
+            ->newTable($tableName)
+            ->addColumn('id', Table::TYPE_INTEGER, null, ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true], 'Primary key')
+            ->addColumn('value', Table::TYPE_TEXT, 255, ['nullable' => true], 'Flow Order Number')
+            ->addColumn('increment_id', Table::TYPE_TEXT, 255, ['nullable' => true], 'Increment Id')
+            ->addColumn('store_id', Table::TYPE_TEXT, 255, ['nullable' => false], 'Store Id')
+            ->addColumn('messages', Table::TYPE_TEXT, 255, ['nullable' => true], 'Error messages')
+            ->addColumn('created_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT], 'Created At')
+            ->addColumn('updated_at', Table::TYPE_TIMESTAMP, null, ['nullable' => false, 'default' => Table::TIMESTAMP_INIT_UPDATE], 'Updated At')
+            ->setComment('Flow Orders to Sync')
+            ->setOption('type', 'InnoDB')
+            ->setOption('charset', 'utf8');
+
+        $connection->createTable($table);
+
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, ['increment_id'], AdapterInterface::INDEX_TYPE_INDEX),
+            ['increment_id'],
+            AdapterInterface::INDEX_TYPE_INDEX
+        );
     }
 }

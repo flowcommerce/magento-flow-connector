@@ -110,7 +110,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
      */
     public function failByValue(string $orderNumber, string $reason, array $messages, int $storeId)
     {
-        $this->syncManager->postSyncStreamRecordFailure($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $orderNumber, $reason, $messages);
+        $this->syncManager->postSyncStreamRecordFailure($storeId, $this->syncManager::PLACED_ORDER_TYPE, $orderNumber, $reason, $messages);
         $this->webhookEvent->addSyncOrderFailure($orderNumber, $storeId);
     }
 

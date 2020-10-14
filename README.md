@@ -184,6 +184,11 @@ Sync queued items to Flow catalog:
 $ php bin/magento flow:connector:catalog-sync
 ```
 
+Sync missing orders from Flow to Magento:
+```plaintext
+$ php bin/magento flow:connector:order-sync
+```
+
 Enqueue all products for sync to Flow catalog:
 ```plaintext
 $ php bin/magento flow:connector:catalog-enqueue

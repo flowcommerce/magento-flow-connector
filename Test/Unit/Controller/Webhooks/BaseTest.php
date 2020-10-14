@@ -18,12 +18,6 @@ use Psr\Log\LoggerInterface;
  */
 class BaseTest extends \PHPUnit\Framework\TestCase
 { 
-    public function testAuthorizationDeletedV2()
-    {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2');
-        $controller->execute();
-    }
-
     public function testCaptureUpsertedV2()
     {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\CaptureUpsertedV2');

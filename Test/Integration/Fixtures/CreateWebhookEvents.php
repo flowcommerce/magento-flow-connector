@@ -2,7 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Test\Integration\Fixtures;
 
-use FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\CaptureUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\CardAuthorizationUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged;
@@ -84,16 +83,6 @@ class CreateWebhookEvents
         $this->readFactory = $this->objectManager->create(ReadFactory::class);
         $this->webhookEventManager = $this->objectManager->create(WebhookEventManager::class);
         $this->searchCriteriaBuilder = $this->objectManager->create(SearchCriteriaBuilder::class);
-    }
-    
-    /**
-     * Create and process webhook event
-     * @param string[] $filenames
-     * @return WebhookEvent[]
-     */
-    public function createAuthorizationDeletedWebhooks($filenames = null)
-    {
-        return $this->createWebhooks(AuthorizationDeletedV2::EVENT_TYPE, $filenames);
     }
 
     /**

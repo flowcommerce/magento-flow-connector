@@ -2,7 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Model\WebhookManager;
 
-use FlowCommerce\FlowConnector\Controller\Webhooks\AuthorizationDeletedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\CaptureUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\CardAuthorizationUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged;
@@ -28,7 +27,6 @@ class EndpointsConfiguration
     public function getEndpointsConfiguration()
     {
         return [
-            $this->getRouteStub(AuthorizationDeletedV2::class) => [AuthorizationDeletedV2::EVENT_TYPE],
             $this->getRouteStub(CaptureUpsertedV2::class) => [CaptureUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(CardAuthorizationUpsertedV2::class) => [CardAuthorizationUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(FraudStatusChanged::class) => [FraudStatusChanged::EVENT_TYPE],

@@ -4,6 +4,7 @@ namespace FlowCommerce\FlowConnector\Model;
 
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\DataObject\IdentityInterface;
+use FlowCommerce\FlowConnector\Model\Api\Order\GetByNumber;
 
 /**
  * Model class for storing Flow order data.
@@ -25,17 +26,24 @@ class Order extends AbstractModel implements IdentityInterface
     protected $logger;
     protected $jsonHelper;
 
+    /**
+     * @var GetByNumber
+     */
+    private $getByNumber;
+
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
+        GetByNumber $getByNumber,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->logger = $logger;
         $this->jsonHelper = $jsonHelper;
+        $this->getByNumber = $getByNumber;
 
         parent::__construct(
             $context,
@@ -83,5 +91,15 @@ class Order extends AbstractModel implements IdentityInterface
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @throws NoSuchEntityException
+     */
+    public function getByNumber($storeId, $number)
+    {
+        $this->logger->info('Getting order by number: ' . $number);
+        return $this->getByNumber->execute($storeId, $number);
     }
 }

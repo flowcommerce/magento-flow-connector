@@ -95,8 +95,8 @@ class WebhookEventManager implements WebhookEventManagementInterface
      * Queue webhook event for processing.
      * @param string $type
      * @param string[] $payload
-     * @param int $storeId
      * @return WebhookEvent
+     * @param int $storeId
      * @throws \Exception
      */
     public function queue($type, $payload, $storeId)

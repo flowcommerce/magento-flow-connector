@@ -10,5 +10,6 @@
         <add id="FlowCommerce_FlowConnector::flowconnector_elements" title="Flow Connector" module="FlowCommerce_FlowConnector" sortOrder="100" parent="Magento_Backend::system" resource="Magento_Backend::system" />
         <add id="FlowConnector::webhook_events" title="Webhook Events" translate="title" module="FlowCommerce_FlowConnector" sortOrder="10" parent="FlowCommerce_FlowConnector::flowconnector_elements" action="flowconnector/webhookevent" resource="Magento_Backend::system"/>
         <add id="FlowConnector::sync_sku" title="Catalog Sync" translate="title" module="FlowCommerce_FlowConnector" sortOrder="20" parent="FlowCommerce_FlowConnector::flowconnector_elements" action="flowconnector/syncsku" resource="Magento_Backend::system"/>
+        <add id="FlowConnector::sync_order" title="Order Sync" translate="title" module="FlowCommerce_FlowConnector" sortOrder="30" parent="FlowCommerce_FlowConnector::flowconnector_elements" action="flowconnector/syncorder" resource="Magento_Backend::system"/>
     </menu>
 </config>

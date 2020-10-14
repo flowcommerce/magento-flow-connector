@@ -79,6 +79,11 @@
             <argument name="webhookManager" xsi:type="object">FlowCommerce\FlowConnector\Model\WebhookManager\Proxy</argument>
         </arguments>
     </type>
+    <type name="FlowCommerce\FlowConnector\Console\Command\OrderSyncPollCommand">
+        <arguments>
+            <argument name="syncOrderManager" xsi:type="object">FlowCommerce\FlowConnector\Model\SyncOrderManager\Proxy</argument>
+        </arguments>
+    </type>
 
     <!-- CLI Commands -->
     <type name="Magento\Framework\Console\CommandList">
@@ -95,6 +100,7 @@
                 <item name="flowcommerce_flowconnector_webhook_register_webhooks" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookRegisterWebhooksCommand</item>
                 <item name="flowcommerce_flowconnector_cron_cleanup" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CronCleanupCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_update_settings" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand</item>
+                <item name="flowcommerce_flowconnector_order_sync_poll" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\OrderSyncPollCommand</item>
             </argument>
         </arguments>
     </type>
@@ -178,6 +184,7 @@
             <argument name="collections" xsi:type="array">
                 <item name="flowconnector_webhookevent_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\WebhookEvent\Grid\Collection</item>
                 <item name="flowconnector_syncsku_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku\Grid\Collection</item>
+                <item name="flowconnector_syncorder_listing_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncOrder\Grid\Collection</item>
                 <item name="sales_order_webhookevent_grid_data_source" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\Order\WebhookEvent\Grid\Collection</item>
             </argument>
         </arguments>
@@ -200,6 +207,16 @@
             <argument name="eventPrefix" xsi:type="string">flowconnector_syncskus_collection</argument>
             <argument name="eventObject" xsi:type="string">syncskus_grid_collection</argument>
             <argument name="resourceModel" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncSku</argument>
+        </arguments>
+    </type>
+
+    <!-- Sync Order Grid Collection -->
+    <type name="FlowCommerce\FlowConnector\Model\ResourceModel\SyncOrder\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">flow_connector_sync_orders</argument>
+            <argument name="eventPrefix" xsi:type="string">flowconnector_syncorders_collection</argument>
+            <argument name="eventObject" xsi:type="string">syncorders_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncOrder</argument>
         </arguments>
     </type>
 </config>

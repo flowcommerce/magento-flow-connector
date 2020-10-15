@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.5.3
+- Address price localization configuration bug
+
 ## 2.5.2
 - Add cron for order sync polling, every half hour
 - Add console command for order sync polling, flow:connector:order-sync

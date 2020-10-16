@@ -1,0 +1,42 @@
+<?php
+/**
+ * FlowCommerce
+ *
+ * FlowCommerce_FlowConnector
+ * @category    FlowCommerce
+ * @package     FlowCommerce_FlowConnector
+ * @author      FlowCommerce
+ * @copyright   Copyright (c) 2020 FlowCommerce
+ */
+
+/** @var $block \FlowCommerce\FlowConnector\Block\FlowProductInfo */
+/** @var $view \Magento\Catalog\Block\Product\View */
+?>
+
+
+<?php if (count($block->getFlowProductSkus()) > 1):
+  $skus = $block->getFlowProductSkus();
+?>
+  <script type="text/javascript">
+    {
+     "@context": "http://schema.org/",
+     "@type": "Product",
+     "@id": "<?php $skus[0] ?>",
+     "name": "<?php $skus[0]['name'] ?>",
+     "url": "<?php $skus[0]['url']?>",
+     "offers": [
+     // product_id_sku_map
+     <?php foreach ($skus as $sku) ?>
+      {
+        "@type" : "Offer",
+        "@id": "<?php $sku['id'] ?>",
+        "sku": "<?php $sku['sku'] ?>",
+        "availability" : "http://schema.org/<?php if ($sku['available']) { ?> 'InStock' <?php} else: {?>'OutofStock' ?> endif; ?>",
+        "price" : "<?php $sku['price'] ?>",
+        "priceCurrency" : "<?php $sku['currency'] ?>",
+        "url" : "<?php $sku['url'] ?>"
+      }
+    ]
+    }
+  </script>
+<?php endif; ?>

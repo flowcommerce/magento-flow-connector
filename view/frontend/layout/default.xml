@@ -25,6 +25,8 @@
         </referenceContainer>
         <!-- Adding container for opt-in -->
         <referenceContainer name="head.additional">
+         <block class="FlowCommerce\FlowConnector\Block\FlowJS" name="flowcommerce.flowconnector.flowjs"
+                   template="FlowCommerce_FlowConnector::flow-schema.phtml" before="-"/>
             <block class="FlowCommerce\FlowConnector\Block\FlowJS" name="flowcommerce.flowconnector.flowjs"
                    template="FlowCommerce_FlowConnector::flowjs.phtml" before="-"/>
             <block class="FlowCommerce\FlowConnector\Block\FlowCountryPicker" name="flowcommerce.flowconnector.country.picker"

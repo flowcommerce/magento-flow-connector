@@ -12,13 +12,18 @@ namespace FlowCommerce\FlowConnector\Block;
 
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Configuration;
+use FlowCommerce\FlowConnector\Plugin\Magento\Catalog\Block\Product\View;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+
 
 class FlowJS extends Template
 {
     /** @var Configuration */
     private $configuration;
+
+    /** @var View */
+    private $view;
 
     /** @var Auth */
     private $auth;
@@ -27,9 +32,11 @@ class FlowJS extends Template
         Context $context,
         Auth $auth,
         Configuration $configuration,
+        View $view,
         array $data = []
     ) {
         $this->auth = $auth;
+        $this->view = $view;
         $this->configuration = $configuration;
         parent::__construct($context, $data);
     }
@@ -47,6 +54,11 @@ class FlowJS extends Template
     public function isFlowEnabled()
     {
         return $this->configuration->isFlowEnabled();
+    }
+
+    public function getFlowProductSkus()
+    {
+        return $this->view->afterGetJsonConfig(\Magento\Catalog\Block\Product\View);
     }
 
     public function isFlowProduction()

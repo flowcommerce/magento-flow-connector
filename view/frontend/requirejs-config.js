@@ -13,7 +13,8 @@ var config = {
         'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
         'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min',
-        'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion'
+        'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion',
+        'flowSchema': 'FlowCommerce_FlowConnector/js/flow-schema'
     },
     deps: [
         'flowInit',

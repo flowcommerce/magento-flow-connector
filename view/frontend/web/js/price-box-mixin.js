@@ -83,13 +83,11 @@ define([
                             template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
                         } 
 
-                        if (template.data.flowPriceCode) {
-                            priceTemplate = mageTemplate(this.options.flowPriceTemplateByPriceCode);
-                        }
-
-                        if (!template.data.flowLocalized) {
-                            if (template.data.productSku && template.data.flowPriceCode) {
+                        if (!template.data.flowLocalized && template.data.flowPriceCode) {
+                            if (template.data.productSku) {
                                 priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                            } else {
+                                priceTemplate = mageTemplate(this.options.flowPriceTemplateByPriceCode);
                             }
                         }
 
@@ -120,21 +118,19 @@ define([
             },
 
             getFlowPriceCode: function (priceCode) {
-                var flowPriceCode = false;
-                if (typeof(priceCode) == "string") {
-                    switch (priceCode) {
-                        case MAGENTOMINPRICEKEY:
-                            flowPriceCode = FLOWMINPRICEKEY;
-                            break;
+                switch (priceCode.toString()) {
+                    case MAGENTOMINPRICEKEY:
+                        return FLOWMINPRICEKEY;
+                        break;
 
-                        case MAGENTOBASEPRICEKEY:
-                        case MAGENTOOLDPRICEKEY:
-                        case MAGENTOREGULARPRICEKEY:
-                            flowPriceCode = FLOWREGULARPRICEKEY;
-                            break;
-                    }
+                    case MAGENTOBASEPRICEKEY:
+                    case MAGENTOOLDPRICEKEY:
+                    case MAGENTOREGULARPRICEKEY:
+                        return FLOWREGULARPRICEKEY;
+                        break;
+                    default:
+                        return false;
                 }
-                return flowPriceCode;
             },
 
             getCurrentProductId: function (productId) {

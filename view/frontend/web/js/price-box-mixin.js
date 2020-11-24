@@ -21,7 +21,6 @@ define([
             MAGENTOFINALPRICEKEY = 'finalPrice', 
             FLOWMINPRICEKEY = 'minimal_price',
             FLOWREGULARPRICEKEY = 'regular_price',
-            FLOWBASEPRICEKEY = 'base_price',
             FLOWFINALPRICEKEY = 'final_price',
             FLOWACTUALPRICEKEY = 'localized_item_price';
 
@@ -128,13 +127,11 @@ define([
                             flowPriceCode = FLOWMINPRICEKEY;
                             break;
 
+                        case MAGENTOBASEPRICEKEY:
+                        case MAGENTOBASEPRICEKEY:
                         case MAGENTOOLDPRICEKEY:
                         case MAGENTOREGULARPRICEKEY:
                             flowPriceCode = FLOWREGULARPRICEKEY;
-                            break;
-
-                        case MAGENTOBASEPRICEKEY:
-                            flowPriceCode = FLOWBASEPRICEKEY; 
                             break;
 
                         case MAGENTOFINALPRICEKEY:

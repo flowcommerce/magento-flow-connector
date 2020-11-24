@@ -79,14 +79,14 @@ define([
                         template.data.flowPriceCode = this.getFlowPriceCode(priceCode);
                         template.data.productId = this.getCurrentProductId(this.options.productId); 
 
-                        if (template.data.flowPriceCode) {
-                            priceTemplate = mageTemplate(this.options.flowPriceTemplateByPriceCode);
-                        }
-
                         if (flowLocalizedPrices) {
                             template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
                             template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
                         } 
+
+                        if (template.data.flowPriceCode) {
+                            priceTemplate = mageTemplate(this.options.flowPriceTemplateByPriceCode);
+                        }
 
                         if (!template.data.flowLocalized) {
                             if (template.data.productSku) {
@@ -133,7 +133,6 @@ define([
                             break;
 
                         case MAGENTOBASEPRICEKEY:
-                        case MAGENTOBASEPRICEKEY:
                         case MAGENTOOLDPRICEKEY:
                         case MAGENTOREGULARPRICEKEY:
                             flowPriceCode = FLOWREGULARPRICEKEY;
@@ -142,7 +141,6 @@ define([
                         default:
                             // Use localized_item_price instead of final_price from Flow, localized_item_price is always what the final price in checkout will be
                             flowPriceCode = FLOWACTUALPRICEKEY;
-                            break;
                     }
                 }
                 return flowPriceCode;

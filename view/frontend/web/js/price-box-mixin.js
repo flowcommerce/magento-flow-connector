@@ -15,6 +15,7 @@ define([
                 flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
             },
             MAGENTOMINPRICEKEY = 'minPrice',
+            MAGENTOOLDPRICEKEY = 'oldPrice',
             MAGENTOREGULARPRICEKEY = 'regularPrice',
             MAGENTOBASEPRICEKEY = 'basePrice',
             MAGENTOFINALPRICEKEY = 'finalPrice', 
@@ -127,6 +128,7 @@ define([
                             flowPriceCode = FLOWMINPRICEKEY;
                             break;
 
+                        case MAGENTOOLDPRICEKEY:
                         case MAGENTOREGULARPRICEKEY:
                             flowPriceCode = FLOWREGULARPRICEKEY;
                             break;

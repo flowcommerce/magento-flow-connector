@@ -39,6 +39,7 @@ class PriceBox
         $flowPriceCode = 'final_price';
         if (isset($arguments['price_type'])) {
             switch ($arguments['price_type']) {
+                case 'oldPrice':
                 case 'regularPrice':
                     $flowPriceCode = 'regular_price';
                     break;

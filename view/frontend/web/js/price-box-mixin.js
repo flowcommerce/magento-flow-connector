@@ -11,6 +11,7 @@ define([
     return function (widget) {
         var globalOptions = {
                 priceTemplate: '<span data-flow-localize="item-price" class="price"><%- data.formatted %></span>',
+                flowPriceTemplateByPriceCode: '<span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span>',
                 flowPriceTemplateBySku: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
                 flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
             },
@@ -78,6 +79,10 @@ define([
                         template.data.flowPriceCode = this.getFlowPriceCode(priceCode);
                         template.data.productId = this.getCurrentProductId(this.options.productId); 
 
+                        if (template.data.flowPriceCode) {
+                            priceTemplate = mageTemplate(this.options.flowPriceTemplateByPriceCode);
+                        }
+
                         if (flowLocalizedPrices) {
                             template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
                             template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
@@ -134,7 +139,7 @@ define([
                             flowPriceCode = FLOWREGULARPRICEKEY;
                             break;
 
-                        case MAGENTOFINALPRICEKEY:
+                        default:
                             // Use localized_item_price instead of final_price from Flow, localized_item_price is always what the final price in checkout will be
                             flowPriceCode = FLOWACTUALPRICEKEY;
                             break;

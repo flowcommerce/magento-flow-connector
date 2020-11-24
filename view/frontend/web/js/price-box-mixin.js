@@ -52,7 +52,6 @@ define([
                 }
 
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
-                    priceTemplate = mageTemplate(this.options.priceTemplate),
                     flowLocalizedPrices = false; 
                 this.flowFormattedPrice = false; 
 
@@ -82,6 +81,8 @@ define([
                             template.data.productSku = this.getCurrentProductSku(template.data.productId, flowLocalizedPrices, flowLocalizationKey);
                             template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
                         } 
+
+                        var priceTemplate = mageTemplate(this.options.priceTemplate),
 
                         if (!template.data.flowLocalized && template.data.flowPriceCode) {
                             if (template.data.productSku) {

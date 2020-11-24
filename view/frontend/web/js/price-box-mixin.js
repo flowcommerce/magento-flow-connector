@@ -82,7 +82,7 @@ define([
                             template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
                         } 
 
-                        var priceTemplate = mageTemplate(this.options.priceTemplate),
+                        var priceTemplate = mageTemplate(this.options.priceTemplate);
 
                         if (!template.data.flowLocalized && template.data.flowPriceCode) {
                             if (template.data.productSku) {

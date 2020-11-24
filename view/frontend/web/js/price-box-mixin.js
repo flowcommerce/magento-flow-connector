@@ -22,7 +22,6 @@ define([
             MAGENTOFINALPRICEKEY = 'finalPrice', 
             FLOWMINPRICEKEY = 'minimal_price',
             FLOWREGULARPRICEKEY = 'regular_price',
-            FLOWFINALPRICEKEY = 'final_price',
             FLOWACTUALPRICEKEY = 'localized_item_price';
 
         $.widget('mage.priceBox', widget, {
@@ -89,12 +88,8 @@ define([
                         }
 
                         if (!template.data.flowLocalized) {
-                            if (template.data.productSku) {
-                                if (template.data.flowPriceCode == FLOWACTUALPRICEKEY) {
-                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySku);
-                                } else {
-                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
-                                }
+                            if (template.data.productSku && template.data.flowPriceCode) {
+                                priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
                             }
                         }
 
@@ -137,10 +132,6 @@ define([
                         case MAGENTOREGULARPRICEKEY:
                             flowPriceCode = FLOWREGULARPRICEKEY;
                             break;
-
-                        default:
-                            // Use localized_item_price instead of final_price from Flow, localized_item_price is always what the final price in checkout will be
-                            flowPriceCode = FLOWACTUALPRICEKEY;
                     }
                 }
                 return flowPriceCode;

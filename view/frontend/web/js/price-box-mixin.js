@@ -11,17 +11,17 @@ define([
     return function (widget) {
         var globalOptions = {
                 priceTemplate: '<span data-flow-localize="item-price" class="price"><%- data.formatted %></span>',
+                flowPriceTemplateByPriceCode: '<span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span>',
                 flowPriceTemplateBySku: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>',
                 flowPriceTemplateBySkuPriceCode: '<span data-flow-item-number="<%- data.productSku %>"><span data-flow-localize="item-price-attribute" data-flow-item-price-attribute="<%- data.flowPriceCode %>" class="price"><span style="width:3em; height:0.5em; display:inline-block;"></span></span></span>'
             },
             MAGENTOMINPRICEKEY = 'minPrice',
+            MAGENTOOLDPRICEKEY = 'oldPrice',
             MAGENTOREGULARPRICEKEY = 'regularPrice',
             MAGENTOBASEPRICEKEY = 'basePrice',
             MAGENTOFINALPRICEKEY = 'finalPrice', 
             FLOWMINPRICEKEY = 'minimal_price',
             FLOWREGULARPRICEKEY = 'regular_price',
-            FLOWBASEPRICEKEY = 'base_price',
-            FLOWFINALPRICEKEY = 'final_price',
             FLOWACTUALPRICEKEY = 'localized_item_price';
 
         $.widget('mage.priceBox', widget, {
@@ -52,7 +52,6 @@ define([
                 }
 
                 var priceFormat = (this.options.priceConfig && this.options.priceConfig.priceFormat) || {},
-                    priceTemplate = mageTemplate(this.options.priceTemplate),
                     flowLocalizedPrices = false; 
                 this.flowFormattedPrice = false; 
 
@@ -83,13 +82,13 @@ define([
                             template = this.localizeTemplate(template, flowLocalizedPrices, flowLocalizationKey);
                         } 
 
-                        if (!template.data.flowLocalized) {
+                        var priceTemplate = mageTemplate(this.options.priceTemplate);
+
+                        if (!template.data.flowLocalized && template.data.flowPriceCode) {
                             if (template.data.productSku) {
-                                if (template.data.flowPriceCode == FLOWACTUALPRICEKEY) {
-                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySku);
-                                } else {
-                                    priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
-                                }
+                                priceTemplate = mageTemplate(this.options.flowPriceTemplateBySkuPriceCode);
+                            } else {
+                                priceTemplate = mageTemplate(this.options.flowPriceTemplateByPriceCode);
                             }
                         }
 
@@ -120,28 +119,19 @@ define([
             },
 
             getFlowPriceCode: function (priceCode) {
-                var flowPriceCode = false;
-                if (typeof(priceCode) == "string") {
-                    switch (priceCode) {
-                        case MAGENTOMINPRICEKEY:
-                            flowPriceCode = FLOWMINPRICEKEY;
-                            break;
+                switch (priceCode.toString()) {
+                    case MAGENTOMINPRICEKEY:
+                        return FLOWMINPRICEKEY;
+                        break;
 
-                        case MAGENTOREGULARPRICEKEY:
-                            flowPriceCode = FLOWREGULARPRICEKEY;
-                            break;
-
-                        case MAGENTOBASEPRICEKEY:
-                            flowPriceCode = FLOWBASEPRICEKEY; 
-                            break;
-
-                        case MAGENTOFINALPRICEKEY:
-                            // Use localized_item_price instead of final_price from Flow, localized_item_price is always what the final price in checkout will be
-                            flowPriceCode = FLOWACTUALPRICEKEY;
-                            break;
-                    }
+                    case MAGENTOBASEPRICEKEY:
+                    case MAGENTOOLDPRICEKEY:
+                    case MAGENTOREGULARPRICEKEY:
+                        return FLOWREGULARPRICEKEY;
+                        break;
+                    default:
+                        return false;
                 }
-                return flowPriceCode;
             },
 
             getCurrentProductId: function (productId) {

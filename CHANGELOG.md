@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.5.4
+- Address strikethrough display errors
+
 ## 2.5.3
 - Address price localization configuration bug
 

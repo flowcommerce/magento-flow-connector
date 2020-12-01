@@ -23,6 +23,11 @@ use Psr\Log\LoggerInterface as Logger;
 class SyncOrderManager implements SyncOrderManagementInterface
 {
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * @var Logger
      */
     private $logger;
@@ -54,6 +59,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
 
     /**
      * SyncOrderManagement constructor.
+     * @param \FlowCommerce\FlowConnector\Model\Configuration $configuration
      * @param Logger $logger
      * @param StoreManager $storeManager
      * @param WebhookEvent $webhookEvent
@@ -62,6 +68,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
      * @param FlowAllocation $flowAllocation
      */
     public function __construct(
+        Configuration $configuration,
         Logger $logger,
         StoreManager $storeManager,
         WebhookEvent $webhookEvent,
@@ -69,6 +76,7 @@ class SyncOrderManager implements SyncOrderManagementInterface
         FlowOrder $flowOrder,
         FlowAllocation $flowAllocation
     ) {
+        $this->configuration = $configuration;
         $this->logger = $logger;
         $this->storeManager = $storeManager;
         $this->webhookEvent = $webhookEvent;
@@ -85,20 +93,22 @@ class SyncOrderManager implements SyncOrderManagementInterface
         $this->logger->info('Starting processing order sync poll');
 
         foreach ($this->storeManager->getStores() as $store) {
-            $pendingOrderRecords = $this->syncManager->getSyncStreamPendingRecordByKey($store->getId(), $this->syncManager::PLACED_ORDER_TYPE);
-            if ((int) count($pendingOrderRecords) === 0) {
-                $this->logger->info('No orders found to process.');
-                return false;
-            }
-
-            foreach ($pendingOrderRecords as $pendingOrderRecord) {
-                $this->logger->info('Processing pending Flow order number: ' . $pendingOrderRecord['value']);
-                if ($this->webhookEvent->getOrderByFlowOrderNumber($pendingOrderRecord['value'])) {
-                    $this->logger->info('Flow order number: ' . $pendingOrderRecord['value'] . ' already imported.');
-                    $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $pendingOrderRecord['value']);
-                    continue;
+            if ($this->configuration->isFlowEnabled($store->getId())) {
+                $pendingOrderRecords = $this->syncManager->getSyncStreamPendingRecordByKey($store->getId(), $this->syncManager::PLACED_ORDER_TYPE);
+                if ((int) count($pendingOrderRecords) === 0) {
+                    $this->logger->info('No orders found to process.');
+                    return false;
                 }
-                $this->syncByValue($pendingOrderRecord['value'], $store->getId());
+
+                foreach ($pendingOrderRecords as $pendingOrderRecord) {
+                    $this->logger->info('Processing pending Flow order number: ' . $pendingOrderRecord['value']);
+                    if ($this->webhookEvent->getOrderByFlowOrderNumber($pendingOrderRecord['value'])) {
+                        $this->logger->info('Flow order number: ' . $pendingOrderRecord['value'] . ' already imported.');
+                        $this->syncManager->putSyncStreamRecord($store->getId(), $this->syncManager::PLACED_ORDER_TYPE, $pendingOrderRecord['value']);
+                        continue;
+                    }
+                    $this->syncByValue($pendingOrderRecord['value'], $store->getId());
+                }
             }
         }
         $this->logger->info('Done processing order sync poll');

@@ -80,12 +80,13 @@ class GetByKey
         $client = $this->httpClientFactory->create();
         $url = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB, $storeId);
 
-        $payload = [ 'auth' => $this->auth->getAuthHeader($storeId) ];
+        $payload = [
+            'auth' => $this->auth->getAuthHeader($storeId),
+        ];
 
         try {
             $response = $client->get($url . '?stream_key=' . $key, $payload);
             $statusCode = (int) $response->getStatusCode();
-            $this->logger->info('Sync Stream get pending records by key response code: ' . $statusCode);
             if ($statusCode === 200) {
                 $result = (string) $response->getBody();
                 if ($result) {

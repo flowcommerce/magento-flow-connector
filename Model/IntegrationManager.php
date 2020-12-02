@@ -15,6 +15,11 @@ use FlowCommerce\FlowConnector\Api\SyncManagementInterface as SyncManager;
 class IntegrationManager implements IntegrationManagementInterface
 {
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * @var InventoryCenterManager
      */
     private $inventoryCenterManager;
@@ -36,17 +41,20 @@ class IntegrationManager implements IntegrationManagementInterface
 
     /**
      * IntegrationManager constructor.
+     * @param \FlowCommerce\FlowConnector\Model\Configuration $configuration
      * @param InventoryCenterManager $inventoryCenterManager
      * @param SyncSkuPriceAttributesManager $syncSkuPriceAttributesManager
      * @param WebhookManager $webhookManager
      * @param SyncManager $syncManager
      */
     public function __construct(
+        Configuration $configuration,
         InventoryCenterManager $inventoryCenterManager,
         SyncSkuPriceAttributesManager $syncSkuPriceAttributesManager,
         WebhookManager $webhookManager,
         SyncManager $syncManager
     ) {
+        $this->configuration = $configuration;
         $this->inventoryCenterManager = $inventoryCenterManager;
         $this->syncSkuPriceAttributesManager = $syncSkuPriceAttributesManager;
         $this->webhookManager = $webhookManager;
@@ -58,12 +66,16 @@ class IntegrationManager implements IntegrationManagementInterface
      */
     public function initializeIntegrationForStoreView($storeId)
     {
-        $resultInventoryCenterFetchKeys = $this->inventoryCenterManager->fetchInventoryCenterKeys([$storeId]);
-        $resultSyncSkuPriceAttributes = $this->syncSkuPriceAttributesManager->createPriceAttributesInFlow($storeId);
-        $resultWebhookRegistration = $this->webhookManager->registerAllWebhooks($storeId);
-        $resultWebhookSettings = $this->webhookManager->updateWebhookSettings($storeId);
-        $resultSyncStreamRegistration = $this->syncManager->registerAllSyncStreams($storeId);
-        return $resultInventoryCenterFetchKeys && $resultSyncSkuPriceAttributes
-            && $resultWebhookRegistration && $resultWebhookSettings;
+        if ($this->configuration->isFlowEnabled($storeId)) {
+            $resultInventoryCenterFetchKeys = $this->inventoryCenterManager->fetchInventoryCenterKeys([$storeId]);
+            $resultSyncSkuPriceAttributes = $this->syncSkuPriceAttributesManager->createPriceAttributesInFlow($storeId);
+            $resultWebhookRegistration = $this->webhookManager->registerAllWebhooks($storeId);
+            $resultWebhookSettings = $this->webhookManager->updateWebhookSettings($storeId);
+            $resultSyncStreamRegistration = $this->syncManager->registerAllSyncStreams($storeId);
+            return $resultInventoryCenterFetchKeys && $resultSyncSkuPriceAttributes
+                && $resultWebhookRegistration && $resultWebhookSettings;
+        }
+
+        return true;
     }
 }

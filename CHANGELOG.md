@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.5.5
+- Store view configuration errors addressed
+- Accept order imports with line items priced at 0
+
 ## 2.5.4
 - Address strikethrough display errors
 

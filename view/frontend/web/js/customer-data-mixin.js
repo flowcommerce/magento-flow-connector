@@ -86,6 +86,9 @@ define([
 
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
+            var sections = ['cart'];
+            customerData.invalidate(sections);
+            customerData.reload(sections, true);
             flow.cmd('on', 'ready', function () {
                 bindTotalsObserver();
                 flow.cmd('on', 'cartError', function () {

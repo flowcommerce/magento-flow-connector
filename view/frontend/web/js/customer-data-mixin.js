@@ -15,6 +15,9 @@ define([
             var config = {childList: true, subtree: true, characterData: true };
 
             var callback = function(mutationsList, observer) {
+                var sections = ['cart'];
+                customerData.invalidate(sections);
+                customerData.reload(sections, true);
                 reloadFlowCart(observer);
             };
 
@@ -86,9 +89,6 @@ define([
 
         customerData.init = wrapper.wrap(customerData.init, function (_super) {
             var result = _super();
-            var sections = ['cart'];
-            customerData.invalidate(sections);
-            customerData.reload(sections, true);
             flow.cmd('on', 'ready', function () {
                 bindTotalsObserver();
                 flow.cmd('on', 'cartError', function () {

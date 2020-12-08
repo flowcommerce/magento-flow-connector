@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.5.6
+- Speed up webhook processing to every 2 minutes
+- Address deprecated quote clear method
+
 ## 2.5.5
 - Store view configuration errors addressed
 - Accept order imports with line items priced at 0

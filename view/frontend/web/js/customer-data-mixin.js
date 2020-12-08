@@ -15,7 +15,7 @@ define([
             var config = {childList: true, subtree: true, characterData: true };
 
             var callback = function(mutationsList, observer) {
-                reloadFlowCart(observer);
+                reloadFlowCart(observer, customerData);
             };
 
             var observer = new MutationObserver(callback);
@@ -23,13 +23,17 @@ define([
             observer.observe(targetTotals, config);
         }
 
-        function reloadFlowCart(observer = null) {
+        function reloadFlowCart(observer = null, customerData) {
             if (observer) observer.disconnect();
             if (!flow.magento2.shouldLocalizeCart()) {
                 flow.magento2.showCart();
                 flow.magento2.showCartTotals();
                 return false;
             }
+
+            var sections = ['cart'];
+            customerData.invalidate(sections);
+            customerData.reload(sections, true);
 
             flow.magento2.hideCart();
             flow.magento2.hideCartTotals();

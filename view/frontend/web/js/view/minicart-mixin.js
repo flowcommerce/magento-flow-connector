@@ -1,7 +1,8 @@
 define([
     'jquery',
+    'Magento_Customer/js/customer-data',
     'flowCompanion'
-], function ($) {
+], function ($, customerData) {
     'use strict';
 
     return function (Component) {
@@ -16,6 +17,10 @@ define([
                     if (!window.flow.magento2.shouldLocalizeCart()) {
                         return;
                     }
+
+                    var sections = ['cart'];
+                    customerData.invalidate(sections);
+                    customerData.reload(sections, true);
 
                     miniCart = $('[data-block=\'minicart\']');
                     body = $('[data-container=\'body\']');

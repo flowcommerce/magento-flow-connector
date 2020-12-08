@@ -15,9 +15,6 @@ define([
             var config = {childList: true, subtree: true, characterData: true };
 
             var callback = function(mutationsList, observer) {
-                var sections = ['cart'];
-                customerData.invalidate(sections);
-                customerData.reload(sections, true);
                 reloadFlowCart(observer);
             };
 

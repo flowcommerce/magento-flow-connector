@@ -2066,8 +2066,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         if (array_key_exists('attributes', $receivedOrder)) {
             if (array_key_exists(self::QUOTE_ID, $receivedOrder['attributes'])) {
                 $quoteId = $receivedOrder['attributes'][self::QUOTE_ID];
-                if ($userQuote = $this->quoteFactory->create()->load($quoteId)) {
+                if ($userQuote = $this->quoteFactory->create()->loadByIdWithoutStore($quoteId)) {
                     $userQuote->removeAllItems();
+                    $userQuote->collectTotals();
+                    $userQuote->save();
                 }
             }
         }

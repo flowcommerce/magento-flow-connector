@@ -2068,6 +2068,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $quoteId = $receivedOrder['attributes'][self::QUOTE_ID];
                 if ($userQuote = $this->quoteFactory->create()->loadByIdWithoutStore($quoteId)) {
                     $userQuote->removeAllItems();
+                    $userQuote->collectTotals();
                     $userQuote->save();
                 }
             }

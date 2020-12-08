@@ -12,7 +12,7 @@
     </group>
     <group id="flowcommerce_flowconnector_webhook">
         <job name="flowcommerce_flowconnector_webhook_event_process_task" instance="FlowCommerce\FlowConnector\Cron\WebhookEventProcessTask" method="execute">
-            <schedule>*/5 * * * *</schedule>
+            <schedule>*/2 * * * *</schedule>
         </job>
     </group>
     <group id="flowcommerce_flowconnector_centers_update">

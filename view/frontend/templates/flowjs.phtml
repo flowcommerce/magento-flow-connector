@@ -13,6 +13,9 @@
 ?>
 <?php if ($block->isFlowEnabled()) : ?>
     <script type="text/javascript">
+    define('flow_organization_id', [], () => {
+        return "<?= $block->getFlowOrganizationId(); ?>" || false;
+    });
     window.flow_enabled = true;
     window.flow_organization_id = "<?= $block->getFlowOrganizationId(); ?>" || false;
     window.flow_production = "<?= (int)$block->isFlowProduction(); ?>" || false;
@@ -26,7 +29,7 @@
         document.head.append(`
             body [data-role="priceBox"] span.price {
                 opacity: 1;
-            } 
+            }
         `);
     }, window.flow_pricing_timeout);
 
@@ -44,7 +47,7 @@
         <style>
         [data-role="priceBox"] span.price {
             opacity: 0;
-        } 
+        }
         body.flow-catalog-localized [data-role="priceBox"] span.price {
             opacity: 1;
         }
@@ -56,7 +59,7 @@
         .checkout-cart-index .cart-summary span.price,
         #minicart-content-wrapper span.price {
             opacity: 0;
-        } 
+        }
         .flow-cart-localized.checkout-cart-index .form-cart span.price,
         .flow-cart-totals-localized.checkout-cart-index .cart-summary span.price,
         .flow-cart-localized #minicart-content-wrapper span.price {

@@ -1,5 +1,4 @@
 define([
-    'flowJs',
     'jquery',
     'underscore',
     'mage/template',
@@ -8,8 +7,9 @@ define([
     'priceUtils',
     'jquery/ui',
     'jquery/jquery.parsequery',
-    'mage/validation/validation'
-], function (flow, $, _, mageTemplate, keyboardHandler, $t, priceUtils) {
+    'mage/validation/validation',
+    'flow-init'
+], function ($, _, mageTemplate, keyboardHandler, $t, priceUtils) {
     'use strict';
 
     return function (widget) {

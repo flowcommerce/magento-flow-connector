@@ -1,4 +1,4 @@
-define(['ko','flowJs'], function (ko, flow) {
+define(['ko'], function (ko) {
     flow = flow || {};
     flow.cmd = flow.cmd || function () {
         (flow.q = flow.q || []).push(arguments);

@@ -1,7 +1,7 @@
 define([
-    'flowJs',
-    'jquery'
-], function (flow, $) {
+    'jquery',
+    'flow-init'
+], function ($) {
     'use strict';
 
     return function (Component) {

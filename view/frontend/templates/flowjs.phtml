@@ -40,7 +40,7 @@
                 opacity: 1;
             } 
         `);
-    }, <?= $maxCatalogHideMs; ?>);
+    }, <?= $maxCatalogHideMs ?>);
 
     setTimeout(function(){
         document.head.append(`
@@ -50,7 +50,7 @@
                 opacity: 1;
             }
         `);
-    }, <?= $maxCartHideMs; ?>);
+    }, <?= $maxCartHideMs ?>);
     </script>
     <?php if ($maxCatalogHideMs > 0) : ?>
         <style>

@@ -20,14 +20,14 @@
     {
         "*": {
             "FlowCommerce_FlowConnector/js/view/flow-init": {
-                "organization_id": <?= /* @escapeNotVerified */ (int)$block->getFlowOrganizationId(); ?>,
+                "organization_id": <?= /* @escapeNotVerified */ (int)$block->getFlowOrganizationId() ?>,
                 "enabled": true,
-                "production": <?= /* @escapeNotVerified */ (int)$block->isFlowProduction(); ?>,
-                "support_discounts": <?= /* @escapeNotVerified */ (int)$block->isFlowSupportMagentoDiscounts(); ?>,
-                "cart_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCartLocalize(); ?>,
-                "catalog_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCatalogLocalize(); ?>,
-                "pricing_timeout": <?= /* @escapeNotVerified */ $maxCatalogHideMs; ?>,
-                "cart_timeout": <?= /* @escapeNotVerified */ $maxCartHideMs; ?>,
+                "production": <?= /* @escapeNotVerified */ (int)$block->isFlowProduction() ?>,
+                "support_discounts": <?= /* @escapeNotVerified */ (int)$block->isFlowSupportMagentoDiscounts() ?>,
+                "cart_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCartLocalize() ?>,
+                "catalog_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCatalogLocalize() ?>,
+                "pricing_timeout": <?= /* @escapeNotVerified */ $maxCatalogHideMs ?>,
+                "cart_timeout": <?= /* @escapeNotVerified */ $maxCartHideMs ?>
             }
         }
     }

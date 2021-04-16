@@ -23,9 +23,9 @@
 {
     "*": {
         "FlowCommerce_FlowConnector/js/view/flow-init": {
-            "payment_methods_enabled": <?= /* @escapeNotVerified */ (int)$block->isPaymentMethodsPDPEnabled(); ?>,
-            "shipping_window_enabled": <?= /* @escapeNotVerified */ (int)$block->isShippingWindowPDPEnabled(); ?>,
-            "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled(); ?>,
+            "payment_methods_enabled": <?= /* @escapeNotVerified */ (int)$block->isPaymentMethodsPDPEnabled() ?>,
+            "shipping_window_enabled": <?= /* @escapeNotVerified */ (int)$block->isShippingWindowPDPEnabled() ?>,
+            "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled() ?>
         }
     }
 }

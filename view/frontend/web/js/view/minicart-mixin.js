@@ -1,5 +1,6 @@
 define([
-    'jquery'
+    'jquery',
+    'flowInit'
 ], function ($) {
     'use strict';
 
@@ -12,18 +13,18 @@ define([
                     result = this._super();
 
                 flow.cmd('on', 'ready', function() {
-                    if (!window.flow.magento2.shouldLocalizeCart()) {
+                    if (!flow.magento2.shouldLocalizeCart()) {
                         return;
                     }
 
                     miniCart = $('[data-block=\'minicart\']');
                     body = $('[data-container=\'body\']');
-                    window.flow.magento2.miniCartAvailable = false;
+                    flow.magento2.miniCartAvailable = false;
                     flowMiniCartLocalize = function (source, waitTimeMs) {
-                        window.flow.magento2.hideCart();
-                        window.flow.magento2.hideCartTotals();
+                        flow.magento2.hideCart();
+                        flow.magento2.hideCartTotals();
                         setTimeout(function(){
-                            window.flow.cart.localize()
+                            flow.cart.localize()
                         }, waitTimeMs);
                     };
 
@@ -33,7 +34,7 @@ define([
                         miniCart.remove();
                     } else {
                         // Is not Cart page
-                        window.flow.magento2.miniCartAvailable = true;
+                        flow.magento2.miniCartAvailable = true;
                         miniCart.attr('data-flow-cart-container', '');
                         miniCart.on('dropdowndialogopen', function(){flowMiniCartLocalize('open', 0)});
                         miniCart.on('contentUpdated', function(){flowMiniCartLocalize('minicart.contentUpdated', 500)});

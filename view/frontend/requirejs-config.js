@@ -22,9 +22,6 @@ var config = {
         'flowJs': {
             exports: 'flow'
         },
-        'flowInit': {
-            deps: ['flowJs']
-        },
     },
     config: {
         mixins: {

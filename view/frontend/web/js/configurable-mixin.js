@@ -6,7 +6,8 @@ define([
     'priceUtils',
     'priceBox',
     'jquery/ui',
-    'jquery/jquery.parsequery'
+    'jquery/jquery.parsequery',
+    'flowInit'
 ], function ($, _, mageTemplate, $t, priceUtils) {
     'use strict';
 

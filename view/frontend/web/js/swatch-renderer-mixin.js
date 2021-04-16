@@ -7,8 +7,7 @@ define([
     'priceUtils',
     'jquery/ui',
     'jquery/jquery.parsequery',
-    'mage/validation/validation',
-    'flow-init'
+    'mage/validation/validation'
 ], function ($, _, mageTemplate, keyboardHandler, $t, priceUtils) {
     'use strict';
 

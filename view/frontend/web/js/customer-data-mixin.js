@@ -1,7 +1,6 @@
 define([
     'jquery',
-    'mage/utils/wrapper',
-    'flow-init'
+    'mage/utils/wrapper'
 ], function ($, wrapper) {
     'use strict';
 

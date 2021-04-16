@@ -1,6 +1,5 @@
 define([
-    'jquery',
-    'flow-init'
+    'jquery'
 ], function ($) {
     'use strict';
 

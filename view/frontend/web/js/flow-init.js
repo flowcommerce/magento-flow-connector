@@ -1,5 +1,5 @@
 define(['ko'], function (ko) {
-    const flow = flow || {};
+    const flow = window.flow || {};
     flow.cmd = flow.cmd || function () {
         (flow.q = flow.q || []).push(arguments);
     };

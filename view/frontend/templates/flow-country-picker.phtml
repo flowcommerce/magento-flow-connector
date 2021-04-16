@@ -11,6 +11,12 @@
 
 /** @var $block \FlowCommerce\FlowConnector\Block\FlowCountryPicker */
 ?>
-<script type="text/javascript">
-window.flow_country_picker_enabled = <?= (int)$block->isCountryPickerEnabled(); ?>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "FlowCommerce_FlowConnector/js/view/flow-init": {
+            "country_picker_enabled": <?= /* @escapeNotVerified */ (int)$block->isCountryPickerEnabled(); ?>,
+        }
+    }
+}
 </script>

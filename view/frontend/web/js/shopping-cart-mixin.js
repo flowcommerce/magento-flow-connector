@@ -1,7 +1,7 @@
 define([
-    'jquery',
-    'flowCompanion'
-], function ($) {
+    'flowJs',
+    'jquery'
+], function (flow, $) {
     'use strict';
 
     return function (widget) {

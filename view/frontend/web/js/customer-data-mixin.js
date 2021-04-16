@@ -1,8 +1,8 @@
 define([
+    'flowJs',
     'jquery',
     'mage/utils/wrapper',
-    'flowCompanion'
-], function ($, wrapper) {
+], function (flow, $, wrapper) {
     'use strict';
 
     return function (customerData) {

@@ -11,22 +11,20 @@ var config = {
     paths: {
         'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
         'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
-        'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min',
-        'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion'
     },
     deps: [
         'flowInit',
         'flowJs',
-        'flowCountryPicker',
         'day',
-        'flowCompanion'
     ],
     shim: {
         'flowJs': {
-            deps: ['flowInit'],
             exports: 'flow'
-        }
+        },
+        'flowInit': {
+            deps: ['flowJs']
+        },
     },
     config: {
         mixins: {

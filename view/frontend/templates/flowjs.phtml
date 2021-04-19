@@ -30,7 +30,7 @@
                 "cart_timeout": <?= /* @escapeNotVerified */ $maxCartHideMs ?>,
                 "payment_methods_enabled": <?= /* @escapeNotVerified */ (int)$block->isPaymentMethodsPDPEnabled() ?>,
                 "shipping_window_enabled": <?= /* @escapeNotVerified */ (int)$block->isShippingWindowPDPEnabled() ?>,
-                "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled() ?>
+                "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled() ?>,
                 "country_picker_enabled": <?= /* @escapeNotVerified */ (int)$block->isCountryPickerEnabled() ?>
             }
         }

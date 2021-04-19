@@ -17,13 +17,27 @@ var config = {
         'day',
     ],
     shim: {
-        'FlowCommerce_FlowConnector/js/flow-init': { deps: ['flowJs'] },
-        'FlowCommerce_FlowConnector/js/configurable-mixin': { deps: ['flowInit'] },
-        'FlowCommerce_FlowConnector/js/customer-data-mixin': { deps: ['flowInit'] },
-        'FlowCommerce_FlowConnector/js/price-box-mixin': { deps: ['flowInit'] },
-        'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': { deps: ['flowInit'] },
-        'FlowCommerce_FlowConnector/js/shopping-cart-mixin': { deps: ['flowInit'] },
-        'FlowCommerce_FlowConnector/js/view/minicart-mixin': { deps: ['flowInit'] },
+        'FlowCommerce_FlowConnector/js/flow-init': {
+            deps: ['flowJs']
+        },
+        'FlowCommerce_FlowConnector/js/configurable-mixin': {
+            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        },
+        'FlowCommerce_FlowConnector/js/customer-data-mixin': {
+            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        },
+        'FlowCommerce_FlowConnector/js/price-box-mixin': {
+            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        },
+        'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': {
+            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        },
+        'FlowCommerce_FlowConnector/js/shopping-cart-mixin': {
+            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        },
+        'FlowCommerce_FlowConnector/js/view/minicart-mixin': {
+            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        },
     },
     config: {
         mixins: {

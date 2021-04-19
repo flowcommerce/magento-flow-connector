@@ -1,10 +1,9 @@
-define([], function () {
+define(['flowJs'], function (flow) {
     return function (config) {
-        const flow = window.flow || {};
+        flow = flow || {};
         flow.cmd = flow.cmd || function () {
             (flow.q = flow.q || []).push(arguments);
         };
-
         flow.magento2 = flow.magento || {};
         flow.magento2.enabled = config.enabled;
         flow.magento2.production = config.production;
@@ -164,6 +163,5 @@ define([], function () {
         flow.cmd('set', 'organization', config.organization_id);
         flow.cmd('set', 'optinContainerSelector', '#flow-optin');
         flow.cmd('init');
-        window.flow = flow;
     }
 });

@@ -1,4 +1,5 @@
 define([
+    'flowJs',
     'jquery',
     'underscore',
     'mage/template',
@@ -8,7 +9,7 @@ define([
     'jquery/ui',
     'jquery/jquery.parsequery',
     'flowInit'
-], function ($, _, mageTemplate, $t, priceUtils) {
+], function (flow, $, _, mageTemplate, $t, priceUtils) {
     'use strict';
 
     return function (widget) {

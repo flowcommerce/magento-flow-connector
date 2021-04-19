@@ -1,6 +1,6 @@
 define([], function () {
     return function (config) {
-        window.flow = window.flow || {};
+        const flow = window.flow || {};
         flow.cmd = flow.cmd || function () {
             (flow.q = flow.q || []).push(arguments);
         };
@@ -164,5 +164,6 @@ define([], function () {
         flow.cmd('set', 'organization', config.organization_id);
         flow.cmd('set', 'optinContainerSelector', '#flow-optin');
         flow.cmd('init');
+        window.flow = flow;
     }
 });

@@ -1,4 +1,4 @@
-define([], function () {
+define(['flowJs'], function () {
     return function (config) {
         window.flow = window.flow || {};
         flow.cmd = flow.cmd || function () {

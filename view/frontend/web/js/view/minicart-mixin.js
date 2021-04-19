@@ -3,7 +3,7 @@ define([
     'flowInit'
 ], function ($) {
     'use strict';
-    wflow, indow.flow = window.flow || {};
+    window.flow = window.flow || {};
 
     return function (Component) {
         return Component.extend({

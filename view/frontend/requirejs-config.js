@@ -9,19 +9,21 @@
  */
 var config = {
     paths: {
-        'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
         'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min',
     },
     deps: [
-        'flowInit',
         'flowJs',
         'day',
     ],
     shim: {
-        'flowJs': {
-            exports: 'flow'
-        },
+        'FlowCommerce_FlowConnector/js/flow-init': { deps: ['flowJs'] },
+        'FlowCommerce_FlowConnector/js/configurable-mixin': { deps: ['flowInit'] },
+        'FlowCommerce_FlowConnector/js/customer-data-mixin': { deps: ['flowInit'] },
+        'FlowCommerce_FlowConnector/js/price-box-mixin': { deps: ['flowInit'] },
+        'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': { deps: ['flowInit'] },
+        'FlowCommerce_FlowConnector/js/shopping-cart-mixin': { deps: ['flowInit'] },
+        'FlowCommerce_FlowConnector/js/view/minicart-mixin': { deps: ['flowInit'] },
     },
     config: {
         mixins: {

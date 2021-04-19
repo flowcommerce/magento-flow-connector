@@ -1,6 +1,6 @@
-define(['flowJs'], function (flow) {
+define([], function () {
     return function (config) {
-        flow = flow || {};
+        window.flow = window.flow || {};
         flow.cmd = flow.cmd || function () {
             (flow.q = flow.q || []).push(arguments);
         };
@@ -163,5 +163,5 @@ define(['flowJs'], function (flow) {
         flow.cmd('set', 'organization', config.organization_id);
         flow.cmd('set', 'optinContainerSelector', '#flow-optin');
         flow.cmd('init');
-    }
+    };
 });

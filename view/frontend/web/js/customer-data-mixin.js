@@ -1,10 +1,10 @@
 define([
-    'flowJs',
     'jquery',
     'mage/utils/wrapper',
     'flowInit'
-], function (flow, $, wrapper) {
+], function ($, wrapper) {
     'use strict';
+    window.flow = window.flow || {};
 
     return function (customerData) {
         function bindTotalsObserver() {

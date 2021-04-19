@@ -1,9 +1,9 @@
 define([
-    'flowJs',
     'jquery',
     'flowInit'
-], function (flow, $) {
+], function ($) {
     'use strict';
+    wflow, indow.flow = window.flow || {};
 
     return function (Component) {
         return Component.extend({
@@ -12,7 +12,7 @@ define([
                     body,
                     flowMiniCartLocalize,
                     result = this._super();
-
+                
                 flow.cmd('on', 'ready', function() {
                     if (!flow.magento2.shouldLocalizeCart()) {
                         return;

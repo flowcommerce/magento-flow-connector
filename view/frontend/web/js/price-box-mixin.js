@@ -1,13 +1,13 @@
 define([
-    'flowJs',
     'jquery',
     'Magento_Catalog/js/price-utils',
     'underscore',
     'mage/template',
     'jquery/ui',
     'flowInit'
-], function (flow, $, utils, _, mageTemplate) {
+], function ($, utils, _, mageTemplate) {
     'use strict';
+    window.flow = window.flow || {};
 
     return function (widget) {
         var globalOptions = {

@@ -1,9 +1,9 @@
 define([
-    'flowJs',
     'jquery',
     'flowInit'
-], function (flow, $) {
+], function ($) {
     'use strict';
+    window.flow = window.flow || {};
 
     return function (widget) {
         var body;

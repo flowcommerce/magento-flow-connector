@@ -11,53 +11,60 @@ var config = {
     paths: {
         'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min',
+        'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
+        'configMixin': 'FlowCommerce_FlowConnector/js/configurable-mixin',
+        'customerMixin': 'FlowCommerce_FlowConnector/js/customer-data-mixin',
+        'priceMixin': 'FlowCommerce_FlowConnector/js/price-box-mixin',
+        'swatchMixin': 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin',
+        'cartMixin': 'FlowCommerce_FlowConnector/js/shopping-cart-mixin',
+        'minicartMixin': 'FlowCommerce_FlowConnector/js/view/minicart-mixin',
     },
     deps: [
         'flowJs',
         'day',
     ],
     shim: {
-        'FlowCommerce_FlowConnector/js/flow-init': {
+        'flowInit': {
             deps: ['flowJs']
         },
-        'FlowCommerce_FlowConnector/js/configurable-mixin': {
-            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        'configMixin': {
+            deps: ['flowInit']
         },
-        'FlowCommerce_FlowConnector/js/customer-data-mixin': {
-            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        'customerMixin': {
+            deps: ['flowInit']
         },
-        'FlowCommerce_FlowConnector/js/price-box-mixin': {
-            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        'priceMixin': {
+            deps: ['flowInit']
         },
-        'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': {
-            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        'swatchMixin': {
+            deps: ['flowInit']
         },
-        'FlowCommerce_FlowConnector/js/shopping-cart-mixin': {
-            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        'cartMixin': {
+            deps: ['flowInit']
         },
-        'FlowCommerce_FlowConnector/js/view/minicart-mixin': {
-            deps: ['FlowCommerce_FlowConnector/js/flow-init']
+        'minicartMixin': {
+            deps: ['flowInit']
         },
     },
     config: {
         mixins: {
             'Magento_ConfigurableProduct/js/configurable': {
-                'FlowCommerce_FlowConnector/js/configurable-mixin': true
+                'configMixin': true
             },
             'Magento_Customer/js/customer-data': {
-                'FlowCommerce_FlowConnector/js/customer-data-mixin': true
+                'customerMixin': true
             },
             'Magento_Catalog/js/price-box': {
-                'FlowCommerce_FlowConnector/js/price-box-mixin': true
+                'priceMixin': true
             },
             'Magento_Swatches/js/swatch-renderer': {
-                'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
+                'swatchMixin': true
             },
             'Magento_Checkout/js/shopping-cart': {
-                'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
+                'cartMixin': true
             },
             'Magento_Checkout/js/view/minicart': {
-                'FlowCommerce_FlowConnector/js/view/minicart-mixin': true
+                'minicartMixin': true
             },
         }
     }

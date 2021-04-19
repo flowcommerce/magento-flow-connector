@@ -18,15 +18,3 @@
 <?php if ($block->isShippingWindowPDPEnabled()): ?>
     <span class="flow-shipping-window" id="flow-shipping-window" flow-shipping-window></span>
 <?php endif; ?>
-
-<script type="text/x-magento-init">
-{
-    "*": {
-        "FlowCommerce_FlowConnector/js/flow-init": {
-            "payment_methods_enabled": <?= /* @escapeNotVerified */ (int)$block->isPaymentMethodsPDPEnabled() ?>,
-            "shipping_window_enabled": <?= /* @escapeNotVerified */ (int)$block->isShippingWindowPDPEnabled() ?>,
-            "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled() ?>
-        }
-    }
-}
-</script>

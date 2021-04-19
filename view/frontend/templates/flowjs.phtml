@@ -27,7 +27,11 @@
                 "cart_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCartLocalize() ?>,
                 "catalog_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCatalogLocalize() ?>,
                 "pricing_timeout": <?= /* @escapeNotVerified */ $maxCatalogHideMs ?>,
-                "cart_timeout": <?= /* @escapeNotVerified */ $maxCartHideMs ?>
+                "cart_timeout": <?= /* @escapeNotVerified */ $maxCartHideMs ?>,
+                "payment_methods_enabled": <?= /* @escapeNotVerified */ (int)$block->isPaymentMethodsPDPEnabled() ?>,
+                "shipping_window_enabled": <?= /* @escapeNotVerified */ (int)$block->isShippingWindowPDPEnabled() ?>,
+                "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled() ?>
+                "country_picker_enabled": <?= /* @escapeNotVerified */ (int)$block->isCountryPickerEnabled() ?>
             }
         }
     }

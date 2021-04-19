@@ -103,4 +103,44 @@ class FlowJS extends Template
     {
         return $this->configuration->isSupportMagentoDiscounts();
     }
+
+    /**
+     * Check if country picker is enabled
+     * @return boolean
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isCountryPickerEnabled()
+    {
+        return $this->configuration->isCountryPickerEnabled();
+    }
+
+    /**
+     * Check if payment methods are enabled on pdp
+     * @return boolean
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isPaymentMethodsPDPEnabled()
+    {
+        return $this->configuration->isPaymentMethodsPDPEnabled();
+    }
+
+    /**
+     * Check if shipping window is enabled on pdp
+     * @return boolean
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isShippingWindowPDPEnabled()
+    {
+        return $this->configuration->isShippingWindowPDPEnabled();
+    }
+
+    /**
+     * Check if tax and duty messaging is enabled
+     * @return boolean
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isTaxDutyMessagingEnabled()
+    {
+        return $this->configuration->isTaxDutyMessagingEnabled();
+    }
 }

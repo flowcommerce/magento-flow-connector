@@ -4,7 +4,7 @@ set -e
 trap '>&2 echo Error: Command \`$BASH_COMMAND\` on line $LINENO failed with exit code $?' ERR
 
 echo "==> Installing Magento 2 CE (Version $MAGENTO_VERSION) over composer create-project ..."
-composer self-update --1
+composer self-update
 cd $HOME
 composer create-project "magento/community-edition:$MAGENTO_VERSION" magento
 cd $HOME/magento

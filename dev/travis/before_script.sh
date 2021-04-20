@@ -106,3 +106,4 @@ mysql -uroot -e '
     SET @@global.sql_mode = NO_ENGINE_SUBSTITUTION;
     CREATE DATABASE magento_integration_tests;
 '
+mv dev/tests/integration/etc/install-config-mysql.php.dist dev/tests/integration/etc/install-config-mysql.php

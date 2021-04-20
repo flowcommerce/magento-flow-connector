@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+127.0.0.1
 set -e
 trap '>&2 echo Error: Command \`$BASH_COMMAND\` on line $LINENO failed with exit code $?' ERR
 
@@ -29,8 +29,7 @@ composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
 
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"
-    cp dev/tests/integration/etc/install-config-mysql.php.dist dev/tests/integration/etc/install-config-mysql.php
-    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" -vvv --db-host='localhost' --db-user='root' --db-password='123123q' --db-name='magento_integration_tests' --db-prefix='' --backend-frontname='backend' --search-engine='elasticsearch7' --elasticsearch-host='localhost' --elasticsearch-port='9200' --admin-user='user' --admin-password='password1' --admin-email='admin@example.com' --admin-firstname='firstname' --admin-lastname='lastname' --amqp-host='localhost' --amqp-port='5672' --amqp-user='guest' --amqp-password='guest' 
+    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" -vvv --db-host='127.0.0.1' --db-user='travis' --db-password='' --db-name='magento_integration_tests' --db-prefix='travis_' --backend-frontname='backend' --admin-user='user' --admin-password='password1' --admin-email='admin@example.com' --admin-firstname='firstname' --admin-lastname='lastname'
 
     echo "==> Enable extension and compile magento..."
     php bin/magento module:enable FlowCommerce_FlowConnector

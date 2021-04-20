@@ -1,14 +1,12 @@
 define([
+    'flowInit',
     'jquery',
     'Magento_Catalog/js/price-utils',
     'underscore',
     'mage/template',
-    'jquery/ui',
-    'flowInit'
-], function ($, utils, _, mageTemplate) {
+    'jquery/ui'
+], function (flow, $, utils, _, mageTemplate) {
     'use strict';
-    window.flow = window.flow || {};
-
     return function (widget) {
         var globalOptions = {
                 priceTemplate: '<span data-flow-localize="item-price" class="price"><%- data.formatted %></span>',

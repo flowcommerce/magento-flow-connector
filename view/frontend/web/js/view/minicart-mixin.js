@@ -1,10 +1,8 @@
 define([
-    'jquery',
-    'flowInit'
-], function ($) {
+    'flowInit',
+    'jquery'
+], function (flow, $) {
     'use strict';
-    window.flow = window.flow || {};
-
     return function (Component) {
         return Component.extend({
             initialize: function () {

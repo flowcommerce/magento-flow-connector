@@ -1,4 +1,5 @@
 define([
+    'flowInit',
     'jquery',
     'underscore',
     'mage/template',
@@ -7,12 +8,9 @@ define([
     'priceUtils',
     'jquery/ui',
     'jquery/jquery.parsequery',
-    'mage/validation/validation',
-    'flowInit'
-], function ($, _, mageTemplate, keyboardHandler, $t, priceUtils) {
+    'mage/validation/validation'
+], function (flow, $, _, mageTemplate, keyboardHandler, $t, priceUtils) {
     'use strict';
-    window.flow = window.flow || {};
-
     return function (widget) {
         $.widget('mage.SwatchRenderer', widget, {
             _RenderControls: function () {

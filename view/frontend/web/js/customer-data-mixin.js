@@ -1,11 +1,9 @@
 define([
+    'flowInit',
     'jquery',
-    'mage/utils/wrapper',
-    'flowInit'
-], function ($, wrapper) {
+    'mage/utils/wrapper'
+], function (flow, $, wrapper) {
     'use strict';
-    window.flow = window.flow || {};
-
     return function (customerData) {
         function bindTotalsObserver() {
             var targetTotals = document.getElementById('cart-totals');

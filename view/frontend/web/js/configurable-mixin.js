@@ -1,4 +1,5 @@
 define([
+    'flowInit',
     'jquery',
     'underscore',
     'mage/template',
@@ -6,12 +7,9 @@ define([
     'priceUtils',
     'priceBox',
     'jquery/ui',
-    'jquery/jquery.parsequery',
-    'flowInit'
-], function ($, _, mageTemplate, $t, priceUtils) {
+    'jquery/jquery.parsequery'
+], function (flow, $, _, mageTemplate, $t, priceUtils) {
     'use strict';
-    window.flow = window.flow || {};
-
     return function (widget) {
         $.widget('mage.configurable', widget, {
             _configureElement: function (element) {

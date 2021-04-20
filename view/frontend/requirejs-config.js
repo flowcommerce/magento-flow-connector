@@ -27,7 +27,8 @@ var config = {
     ],
     shim: {
         'flowInit': {
-            deps: ['flowJs', 'flowCountryPicker']
+            deps: ['flowJs', 'flowCountryPicker'],
+            exports: 'flow'
         },
         'configMixin': {
             deps: ['flowInit']

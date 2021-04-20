@@ -42,6 +42,7 @@ cache:
   directories:
   - $HOME/.composer/cache
 before_install:
+- composer self-update --1
 - composer config -g http-basic.repo.magento.com $MAGENTO_PUBLICKEY $MAGENTO_PRIVATEKEY
 - composer config -g github-oauth.github.com $GITHUB_OAUTH_TOKEN
 - chmod +x ./dev/travis/*

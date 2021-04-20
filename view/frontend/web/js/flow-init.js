@@ -4,6 +4,9 @@ define(['flowJs', 'flowCountryPicker'], function () {
         flow.cmd = flow.cmd || function () {
             (flow.q = flow.q || []).push(arguments);
         };
+        flow.cmd('set', 'organization', config.organization_id);
+        flow.cmd('set', 'optinContainerSelector', '#flow-optin');
+        flow.cmd('init');
         flow.magento2 = flow.magento || {};
         flow.magento2.enabled = config.enabled;
         flow.magento2.production = config.production;
@@ -159,10 +162,6 @@ define(['flowJs', 'flowCountryPicker'], function () {
                 }
             });
         });
-
-        flow.cmd('set', 'organization', config.organization_id);
-        flow.cmd('set', 'optinContainerSelector', '#flow-optin');
-        flow.cmd('init');
         return flow;
     };
 });

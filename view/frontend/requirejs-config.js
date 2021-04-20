@@ -13,12 +13,6 @@ var config = {
         'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min',
         'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
-        'configMixin': 'FlowCommerce_FlowConnector/js/configurable-mixin',
-        'customerMixin': 'FlowCommerce_FlowConnector/js/customer-data-mixin',
-        'priceMixin': 'FlowCommerce_FlowConnector/js/price-box-mixin',
-        'swatchMixin': 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin',
-        'cartMixin': 'FlowCommerce_FlowConnector/js/shopping-cart-mixin',
-        'minicartMixin': 'FlowCommerce_FlowConnector/js/view/minicart-mixin',
     },
     deps: [
         'flowJs',
@@ -30,44 +24,26 @@ var config = {
             deps: ['flowJs', 'flowCountryPicker'],
             exports: 'flow'
         },
-        'configMixin': {
-            deps: ['flowInit']
-        },
-        'customerMixin': {
-            deps: ['flowInit']
-        },
-        'priceMixin': {
-            deps: ['flowInit']
-        },
-        'swatchMixin': {
-            deps: ['flowInit']
-        },
-        'cartMixin': {
-            deps: ['flowInit']
-        },
-        'minicartMixin': {
-            deps: ['flowInit']
-        },
     },
     config: {
         mixins: {
             'Magento_ConfigurableProduct/js/configurable': {
-                'configMixin': true
+                'FlowCommerce_FlowConnector/js/configurable-mixin': true
             },
             'Magento_Customer/js/customer-data': {
-                'customerMixin': true
+                'FlowCommerce_FlowConnector/js/customer-data-mixin': true
             },
             'Magento_Catalog/js/price-box': {
-                'priceMixin': true
+                'FlowCommerce_FlowConnector/js/price-box-mixin': true
             },
             'Magento_Swatches/js/swatch-renderer': {
-                'swatchMixin': true
+                'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
             },
             'Magento_Checkout/js/shopping-cart': {
-                'cartMixin': true
+                'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
             },
             'Magento_Checkout/js/view/minicart': {
-                'minicartMixin': true
+                'FlowCommerce_FlowConnector/js/view/minicart-mixin': true
             },
         }
     }

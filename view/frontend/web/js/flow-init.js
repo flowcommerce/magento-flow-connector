@@ -1,4 +1,8 @@
-define(['flowJs', 'flowCountryPicker'], function () {
+define([
+    'jquery',
+    'flowJs',
+    'flowCountryPicker'
+], function ($) {
     return function (config) {
         const flow = window.flow || {};
         flow.cmd = flow.cmd || function () {

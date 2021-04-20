@@ -18,6 +18,7 @@
             <values>
                 <value id="riskified-img" type="host">http://img.riskified.com/</value>
                 <value id="flow-beacon" type="host">https://beacon.flow.io/</value>
+                <value id="flow-cdn-secure-img" type="host">https://cdn.flow.io/</value>
             </values>
         </policy>
     </policies>

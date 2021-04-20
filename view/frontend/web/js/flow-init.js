@@ -23,7 +23,8 @@ define(['flowJs', 'flowCountryPicker'], function () {
         flow.magento2.hasLocalizedCartTotals = false;
         flow.magento2.installedFlowTotalsFields = false;
         flow.magento2.hasExperience = function () {
-             return typeof(flow.session.getExperience()) == "string";
+            flow.session = window.flow.session || {}; 
+            return typeof(flow.session.getExperience()) == "string";
         }
 
         flow.magento2.shouldLocalizeCatalog = function () {

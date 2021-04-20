@@ -3,9 +3,9 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="flow-cdn" type="host">https://cdn.flow.io/</value>
+                <value id="flow-cdn" type="host">http://cdn.flow.io/</value>
+                <value id="flow-cdn-secure" type="host">https://cdn.flow.io/</value>
                 <value id="beacon-riskified" type="host">http://beacon.riskified.com/</value>
-                
             </values>
         </policy>
         <policy id="connect-src">

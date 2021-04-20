@@ -30,7 +30,7 @@ composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"
     mysql -uroot -e 'CREATE DATABASE magento;'
-    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" --backend-frontname=admin --db-host=localhost --db-name=magento_integration_tests --db-user=root --db-password=123123q --admin-firstname=Magento --admin-lastname=User --admin-email=hi@flow.io --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/New_York --use-rewrites=1
+    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" --backend-frontname=admin --db-host=localhost --db-name=magento --db-user=root --admin-firstname=Magento --admin-lastname=User --admin-email=hi@flow.io --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/New_York --use-rewrites=1
 
     echo "==> Enable extension and compile magento..."
     php bin/magento module:enable FlowCommerce_FlowConnector
@@ -100,5 +100,3 @@ if [ "$TEST_SUITE" = "integration_core" ]; then
 
     cd ../../..
 fi
-
-mv dev/tests/integration/etc/install-config-mysql.php.dist dev/tests/integration/etc/install-config-mysql.php

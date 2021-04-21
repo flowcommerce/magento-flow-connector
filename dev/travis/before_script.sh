@@ -3,7 +3,6 @@ set -e
 trap '>&2 echo Error: Command \`$BASH_COMMAND\` on line $LINENO failed with exit code $?' ERR
 
 echo "==> Installing Magento 2 CE (Version $MAGENTO_VERSION) over composer create-project ..."
-cp ./install-config-mysql.travis.php.dist $HOME/magento/dev/tests/integration/etc/install-config-mysql.php
 cd $HOME
 composer create-project "magento/community-edition:$MAGENTO_VERSION" magento
 cd $HOME/magento
@@ -105,3 +104,4 @@ mysql -uroot -e '
     SET @@global.sql_mode = NO_ENGINE_SUBSTITUTION;
     CREATE DATABASE magento_integration_tests;
 '
+cp ./app/code/FlowCommerce/FlowConnector/install-config-mysql.travis.php.dist dev/tests/integration/etc/install-config-mysql.php

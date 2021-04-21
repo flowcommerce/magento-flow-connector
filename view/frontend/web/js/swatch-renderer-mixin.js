@@ -2,14 +2,7 @@ define([
     'flowInit',
     'jquery',
     'underscore',
-    'mage/template',
-    'mage/smart-keyboard-handler',
-    'mage/translate',
-    'priceUtils',
-    'jquery/ui',
-    'jquery/jquery.parsequery',
-    'mage/validation/validation'
-], function (flow, $, _, mageTemplate, keyboardHandler, $t, priceUtils) {
+], function (flow, $, _) {
     'use strict';
     return function (widget) {
         $.widget('mage.SwatchRenderer', widget, {

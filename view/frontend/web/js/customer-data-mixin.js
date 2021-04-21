@@ -83,8 +83,7 @@ define([
             return true;
         }
 
-        customerData.init = wrapper.wrap(customerData.init, function (_super) {
-            var result = _super();
+        customerData.init = wrapper.wrapSuper(customerData.init, function (init) {
             flow.cmd('on', 'ready', function () {
                 bindTotalsObserver();
                 flow.cmd('on', 'cartError', function () {
@@ -106,7 +105,6 @@ define([
                     if (localTax) localTax.show();
                 }); 
             });
-            return result;
         });
 
         return customerData;

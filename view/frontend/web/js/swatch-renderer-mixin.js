@@ -4,8 +4,8 @@ define([
     'underscore',
 ], function (flow, $, _) {
     'use strict';
-    return function (widget) {
-        $.widget('mage.SwatchRenderer', widget, {
+    return function (SwatchRenderer) {
+        $.widget('mage.SwatchRenderer', $.mage.SwatchRenderer, {
             _RenderControls: function () {
                 flow.magento2.optionsIndex = flow.magento2.optionsIndex || {};
                 var productId = this.options.jsonConfig.productId;
@@ -24,7 +24,7 @@ define([
                 return this._super();
             },
 
-            _OnClick: function ($this, $widget, eventName) {
+            _OnClick: function ($this, $widget) {
                 var productId = $widget.options.jsonConfig.productId,
                     selectedOptionId = $this["context"].attributes["option-id"].value,
                     optionsMap = _.toArray($widget.optionsMap);
@@ -44,7 +44,7 @@ define([
                         }
                     }
                 });
-                return this._super($this, $widget, eventName);
+                return this._super($this, $widget);
             },
 
             _OnChange: function ($this, $widget) {
@@ -70,22 +70,22 @@ define([
                 return this._super($this, $widget);
             },
 
-            _Rebuild: function ($this, $widget) {
+            _Rebuild: function () {
                 flow.cmd('on', 'ready', function() {
                     if (flow.magento2.shouldLocalizeCatalog()) {
                         flow.magento2.hidePrices();
                     }
                 });
-                return this._super($this, $widget);
+                return this._super();
             },
 
-            _UpdatePrice: function ($this, $widget) {
+            _UpdatePrice: function () {
                 flow.cmd('on', 'ready', function() {
                     if (flow.magento2.shouldLocalizeCatalog()) {
                         flow.magento2.hidePrices();
                     }
                 });
-                return this._super($this, $widget);
+                return this._super();
             },
 
         });

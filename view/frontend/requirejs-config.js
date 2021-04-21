@@ -39,9 +39,6 @@ var config = {
             'Magento_Checkout/js/shopping-cart': {
                 'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
             },
-            'Magento_Checkout/js/view/minicart': {
-                'FlowCommerce_FlowConnector/js/view/minicart-mixin': true
-            },
         }
     }
 };

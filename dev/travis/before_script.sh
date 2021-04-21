@@ -3,6 +3,7 @@ set -e
 trap '>&2 echo Error: Command \`$BASH_COMMAND\` on line $LINENO failed with exit code $?' ERR
 
 echo "==> Installing Magento 2 CE (Version $MAGENTO_VERSION) over composer create-project ..."
+cp ./install-config-mysql.travis.php.dist $HOME/magento/dev/tests/integration/etc/install-config-mysql.php
 cd $HOME
 composer create-project "magento/community-edition:$MAGENTO_VERSION" magento
 cd $HOME/magento
@@ -28,10 +29,8 @@ composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
 
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"
-    cp dev/tests/integration/etc/install-config-mysql.php.dist dev/tests/integration/etc/install-config-mysql.php
-    mysql -uroot -e 'CREATE DATABASE magento_integration_tests;'
-    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" -vvv --db-host='127.0.0.1' --db-user='root' --db-password='' --db-name='magento_integration_tests' --db-prefix='' --backend-frontname='backend' --search-engine='elasticsearch7' --elasticsearch-host='localhost' --elasticsearch-port=9200 --amqp-host='localhost' --amqp-port='5672' --amqp-user='guest' --amqp-password='guest' --admin-user='user' --admin-password='password1' --admin-email='admin@example.com' --admin-firstname='firstname' --admin-lastname='lastname'
-
+    mysql -uroot -e 'CREATE DATABASE magento;'
+    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" --backend-frontname=admin --db-host=localhost --db-name=magento --db-user=root --admin-firstname=Magento --admin-lastname=User --admin-email=hi@flow.io --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/New_York --use-rewrites=1
     echo "==> Enable extension and compile magento..."
     php bin/magento module:enable FlowCommerce_FlowConnector
     php bin/magento setup:di:compile
@@ -100,3 +99,9 @@ if [ "$TEST_SUITE" = "integration_core" ]; then
 
     cd ../../..
 fi
+
+# create integration database and move integration db configuration file into place
+mysql -uroot -e '
+    SET @@global.sql_mode = NO_ENGINE_SUBSTITUTION;
+    CREATE DATABASE magento_integration_tests;
+'

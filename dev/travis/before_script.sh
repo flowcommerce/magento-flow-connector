@@ -104,4 +104,4 @@ mysql -uroot -e '
     SET @@global.sql_mode = NO_ENGINE_SUBSTITUTION;
     CREATE DATABASE magento_integration_tests;
 '
-cp ./app/code/FlowCommerce/FlowConnector/install-config-mysql.travis.php.dist dev/tests/integration/etc/install-config-mysql.php
+cp ./vendor/flowcommerce/flowconnector/install-config-mysql.travis.php.dist dev/tests/integration/etc/install-config-mysql.php

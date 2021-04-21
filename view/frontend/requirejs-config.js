@@ -30,9 +30,6 @@ var config = {
             'Magento_ConfigurableProduct/js/configurable': {
                 'FlowCommerce_FlowConnector/js/configurable-mixin': true
             },
-            'Magento_Customer/js/customer-data': {
-                'FlowCommerce_FlowConnector/js/customer-data-mixin': true
-            },
             'Magento_Catalog/js/price-box': {
                 'FlowCommerce_FlowConnector/js/price-box-mixin': true
             },

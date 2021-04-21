@@ -155,7 +155,10 @@ define([
             }
 
             flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
-            flow.cart.localize();
+
+            flow.cmd('on', 'ready', function() {
+                flow.cart.localize();
+            });
             return true;
         }
 

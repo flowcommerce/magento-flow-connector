@@ -3,7 +3,7 @@ define([
     'jquery'
 ], function (flow, $) {
     'use strict';
-    return function (Component) {
+    return function (Component, flow) {
         return Component.extend({
             initialize: function () {
                 var miniCart,

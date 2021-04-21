@@ -4,6 +4,12 @@ define([
     'underscore',
 ], function (flow, $, _) {
     'use strict';
+    window.flow = window.flow || {};
+    window.flow.cmd = window.flow.cmd || function () {
+        (window.flow.q = window.flow.q || []).push(arguments);
+    };
+    window.flow.magento2 = window.flow.magento2 || {};
+
     return function (SwatchRenderer) {
         $.widget('mage.SwatchRenderer', $.mage.SwatchRenderer, {
             _RenderControls: function () {

@@ -103,7 +103,7 @@ class InventorySyncManagerTest extends \PHPUnit\Framework\TestCase
      * Sets up for tests
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->httpResponse = $this->createPartialMock(HttpResponse::class, ['isSuccess']);

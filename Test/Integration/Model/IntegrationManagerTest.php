@@ -56,7 +56,7 @@ class IntegrationManagerTest extends TestCase
      * Sets up for tests
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->storeManager = $this->objectManager->create(StoreManager::class);

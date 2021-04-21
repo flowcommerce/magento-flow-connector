@@ -441,7 +441,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         $return = true;
         try {
             $endpoint = $this->urlBuilder->getFlowApiEndpoint(self::URL_STUB_PREFIX);
-            $this->assertContains($endpoint, $url);
+            $this->assertStringContainsString($endpoint, $url);
             $sku = substr($url, strrpos($url, '/') + 1);//get last string
             $this->assertTrue($this->isValidSku($sku));
         } catch (Exception $e) {

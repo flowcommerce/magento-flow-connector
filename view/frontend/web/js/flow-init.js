@@ -239,7 +239,10 @@ define([
                         quantity: qty
                     };
 
-                    flow.beacon.processEvent('cart_add', cartAddEvent);
+                    flow.cmd('on', 'ready', function() {
+                        flow.beacon = flow.beacon || {};
+                        flow.beacon.processEvent('cart_add', cartAddEvent);
+                    });
                 }
             });
 

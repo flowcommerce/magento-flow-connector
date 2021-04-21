@@ -29,7 +29,7 @@ composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
 
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"
-    cp dev/tests/integration/etc/install-config-mysql.travis.php.dist dev/tests/integration/etc/install-config-mysql.travis.php
+    cp dev/tests/integration/etc/install-config-mysql.php.dist dev/tests/integration/etc/install-config-mysql.php
     mysql -uroot -e 'CREATE DATABASE magento;'
     php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" -vvv --db-host='127.0.0.1' --db-user='root' --db-password='123123q' --db-name='magento' --db-prefix='' --backend-frontname='backend' --admin-user='user' --admin-password='password1' --admin-email='admin@example.com' --admin-firstname='firstname' --admin-lastname='lastname'
 

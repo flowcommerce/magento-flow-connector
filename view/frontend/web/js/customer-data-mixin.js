@@ -1,8 +1,7 @@
 define([
     'flowInit',
     'jquery',
-    'mage/utils/wrapper'
-], function (flow, $, wrapper) {
+], function (flow, $) {
     'use strict';
     return function (customerData) {
         function bindTotalsObserver() {

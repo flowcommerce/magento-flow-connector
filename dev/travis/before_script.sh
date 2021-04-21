@@ -29,8 +29,8 @@ composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"
     cp dev/tests/integration/etc/install-config-mysql.php.dist dev/tests/integration/etc/install-config-mysql.php
-    mysql -uroot -p123123q -e 'CREATE DATABASE magento_integration_tests;'
-    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" -vvv --db-host='127.0.0.1' --db-user='root' --db-password='123123q' --db-name='magento_integration_tests' --db-prefix='' --backend-frontname='backend' --search-engine='elasticsearch7' --elasticsearch-host='localhost' --elasticsearch-port=9200 --amqp-host='localhost' --amqp-port='5672' --amqp-user='guest' --amqp-password='guest' --admin-user='user' --admin-password='password1' --admin-email='admin@example.com' --admin-firstname='firstname' --admin-lastname='lastname'
+    mysql -uroot -e 'CREATE DATABASE magento_integration_tests;'
+    php bin/magento setup:install --base-url="http://$MAGENTO_HOST_NAME/" -vvv --db-host='127.0.0.1' --db-user='root' --db-password='' --db-name='magento_integration_tests' --db-prefix='' --backend-frontname='backend' --search-engine='elasticsearch7' --elasticsearch-host='localhost' --elasticsearch-port=9200 --amqp-host='localhost' --amqp-port='5672' --amqp-user='guest' --amqp-password='guest' --admin-user='user' --admin-password='password1' --admin-email='admin@example.com' --admin-firstname='firstname' --admin-lastname='lastname'
 
     echo "==> Enable extension and compile magento..."
     php bin/magento module:enable FlowCommerce_FlowConnector

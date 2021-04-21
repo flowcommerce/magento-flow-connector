@@ -12,8 +12,8 @@ define([
                     items, i, cartContainer, baseCurrency,
                     lineItemDiscount = {};
 
-                flow.cmd('on', 'ready', function () {
-                    if (!flow.magento2.shouldLocalizeCart()) {
+                window.flow.cmd('on', 'ready', function () {
+                    if (!window.flow.magento2.shouldLocalizeCart()) {
                         return;
                     }
 
@@ -40,7 +40,7 @@ define([
                         itemContainer.find('.price .cart-price > span.price').attr('data-flow-localize','cart-item-price');
                         itemContainer.find('.subtotal .cart-price > span.price').attr('data-flow-localize','cart-item-line-total');
                         try {
-                            if (lineItemDiscount[number].percent > 0 && flow.magento2.support_discounts) {
+                            if (lineItemDiscount[number].percent > 0 && window.flow.magento2.support_discounts) {
                                 itemContainer.attr('data-flow-cart-item-discount-percent', lineItemDiscount[number].percent);
                             }
                         } catch (e) {
@@ -48,7 +48,7 @@ define([
                         }
                     }
 
-                    flow.cart.localize();
+                    window.flow.cart.localize();
                 });
 
                 return result;

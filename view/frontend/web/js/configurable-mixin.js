@@ -7,9 +7,9 @@ define([
         $.widget('mage.configurable', widget, {
             _configureElement: function (element) {
                 var self = this;
-                flow.cmd('on', 'ready', function () {
-                    if (flow.magento2.shouldLocalizeCatalog()) {
-                        flow.magento2.simpleProduct = self._getSimpleProductId(element);
+                window.flow.cmd('on', 'ready', function () {
+                    if (window.flow.magento2.shouldLocalizeCatalog()) {
+                        window.flow.magento2.simpleProduct = self._getSimpleProductId(element);
                     }
                 });
                 return this._super(element);

@@ -83,30 +83,26 @@ define([
             return true;
         }
 
-        customerData.init = wrapper.wrapSuper(customerData.init, function (init) {
-            flow.cmd('on', 'ready', function () {
-                bindTotalsObserver();
-                flow.cmd('on', 'cartError', function () {
-                    flow.magento2.showCart();
-                    flow.magento2.showCartTotals();
+        flow.cmd('on', 'ready', function () {
+            bindTotalsObserver();
+            flow.cmd('on', 'cartError', function () {
+                flow.magento2.showCart();
+                flow.magento2.showCartTotals();
 
-                    var totals, subtotal, grandTotal, discount, flowFields, shippingEstimator, giftCard, localTax;
-                    totals = $('#cart-totals');
-                    shippingEstimator = $('#block-shipping');
-                    giftCard = $('#block-giftcard');
-                    localTax = totals.find('.totals-tax');
-                    subtotal = totals.find('.totals.sub');
-                    grandTotal = totals.find('.totals.grand');
-                    discount = totals.find('[data-th=\'Discount\']');
+                var totals, subtotal, grandTotal, discount, flowFields, shippingEstimator, giftCard, localTax;
+                totals = $('#cart-totals');
+                shippingEstimator = $('#block-shipping');
+                giftCard = $('#block-giftcard');
+                localTax = totals.find('.totals-tax');
+                subtotal = totals.find('.totals.sub');
+                grandTotal = totals.find('.totals.grand');
+                discount = totals.find('[data-th=\'Discount\']');
 
-                    if (discount) discount.show();
-                    if (shippingEstimator) shippingEstimator.show();
-                    if (giftCard) giftCard.show();
-                    if (localTax) localTax.show();
-                }); 
-            });
+                if (discount) discount.show();
+                if (shippingEstimator) shippingEstimator.show();
+                if (giftCard) giftCard.show();
+                if (localTax) localTax.show();
+            }); 
         });
-
-        return customerData;
     };
 });

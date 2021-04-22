@@ -31,7 +31,7 @@ define([
 
             _OnClick: function ($this, $widget) {
                 var productId = $widget.options.jsonConfig.productId,
-                    selectedOptionId = $this["context"].attributes["option-id"].value,
+                    selectedOptionId = $this.context.attributes["data-option-id"].value,
                     optionsMap = _.toArray($widget.optionsMap);
                 window.flow.magento2.optionsSelected = window.flow.magento2.optionsSelected || [];
                 if (window.flow.magento2.optionsSelected[productId] == undefined) {
@@ -54,7 +54,7 @@ define([
 
             _OnChange: function ($this, $widget) {
                 var productId = $widget.options.jsonConfig.productId,
-                    selectedOptionId = $this["context"].value,
+                    selectedOptionId = $this.context.attributes["data-option-id"].value,
                     optionsMap = _.toArray($widget.optionsMap);
                 window.flow.magento2.optionsSelected = window.flow.magento2.optionsSelected || [];
                 if (window.flow.magento2.optionsSelected[productId] == undefined) {

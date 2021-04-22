@@ -1,4 +1,4 @@
-define([
+require([
     'flowInit',
     'jquery',
     'Magento_Catalog/js/price-utils',

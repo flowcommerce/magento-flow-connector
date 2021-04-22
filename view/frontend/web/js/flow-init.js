@@ -1,4 +1,4 @@
-define([
+require([
     'jquery',
     'flowJs',
     'flowCountryPicker'

@@ -1,4 +1,4 @@
-define([
+require([
     'flowInit',
     'jquery'
 ], function (flow, $) {

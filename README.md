@@ -22,7 +22,7 @@ In order to successfully connect your Magento console to Flow, you'll need the f
     - A Flow API key for use in the Magento Back Office setup
     - your Flow Organization ID, which can be found in your Flow Console URL. For example, https://console.flow.io/{ORGANIZATION_ID}/experiences
 - A Magento installation with:
-    - Version 2.3.2 or greater
+    - Version 2.4.2 or greater
     - Magento Open Source (CE), Magento Commerce using on-prem (EE), or Magento Commerce on Cloud (ECE)
     - Shell access and permission to run command line tools
     - Crons enabled

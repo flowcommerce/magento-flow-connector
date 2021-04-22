@@ -24,7 +24,7 @@ var config = {
         'day',
     ],
     shim: {
-        'flowInit': ['flowJs', 'flowCountryPicker'],
+        'flowInit': ['flowJs', 'flowCountryPicker', 'day'],
         'configMixin': ['flowJs', 'flowInit'],
         'priceBoxMixin': ['flowJs', 'flowInit'],
         'swatchRendererMixin': ['flowJs', 'flowInit'],
@@ -33,16 +33,16 @@ var config = {
     config: {
         mixins: {
             'Magento_ConfigurableProduct/js/configurable': {
-                'configMixin': true
+                'FlowCommerce_FlowConnector/js/configurable-mixin': true
             },
             'Magento_Catalog/js/price-box': {
-                'priceBoxMixin': true
+                'FlowCommerce_FlowConnector/js/price-box-mixin': true
             },
             'Magento_Swatches/js/swatch-renderer': {
-                'swatchRendererMixin': true
+                'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
             },
             'Magento_Checkout/js/shopping-cart': {
-                'shoppingCartMixin': true
+                'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
             },
         }
     }

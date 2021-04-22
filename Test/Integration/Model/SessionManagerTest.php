@@ -42,7 +42,7 @@ class SessionManagerTest extends \PHPUnit\Framework\TestCase
      * Sets up for tests
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->subject = $this->objectManager->create(Subject::class);

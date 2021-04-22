@@ -15,7 +15,7 @@
         <directory suffix="Test.php">../../../vendor/flowcommerce/flowconnector/Test/Integration</directory>
     </testsuite>
     <filter>
-        <whitelist addUncoveredFilesFromWhiteList="true">
+        <whitelist>
             <directory suffix=".php">../../../app/code/Magento</directory>
             <directory suffix=".php">../../../lib/internal/Magento</directory>
             <exclude>

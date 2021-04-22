@@ -12,23 +12,39 @@
 /** @var $block \FlowCommerce\FlowConnector\Block\FlowJS */
 ?>
 <?php if ($block->isFlowEnabled()) : ?>
-    <script type="text/javascript">
-    window.flow_enabled = true;
-    window.flow_organization_id = "<?= $block->getFlowOrganizationId(); ?>" || false;
-    window.flow_production = "<?= (int)$block->isFlowProduction(); ?>" || false;
-    window.flow_support_magento_discounts = "<?= (int)$block->isFlowSupportMagentoDiscounts(); ?>" || false;
-    window.flow_cart_localize = <?= (int)$block->isFlowCartLocalize(); ?> || false;
-    window.flow_catalog_localize = <?= (int)$block->isFlowCatalogLocalize(); ?> || false;
-    window.flow_pricing_timeout = "<?= (int)$block->getFlowMaxCatalogHideMs(); ?>" || 0;
-    window.flow_cart_timeout = "<?= (int)$block->getFlowMaxCartHideMs(); ?>" || 0;
+    <?php
+    $maxCatalogHideMs = (int)$block->getFlowMaxCatalogHideMs();
+    $maxCartHideMs = (int)$block->getFlowMaxCartHideMs();
+    ?>
+    <script type="text/x-magento-init">
+    {
+        "*": {
+            "FlowCommerce_FlowConnector/js/flow-init": {
+                "organization_id": "<?= /* @escapeNotVerified */ (string)$block->getFlowOrganizationId() ?>",
+                "enabled": true,
+                "production": <?= /* @escapeNotVerified */ (int)$block->isFlowProduction() ?>,
+                "support_discounts": <?= /* @escapeNotVerified */ (int)$block->isFlowSupportMagentoDiscounts() ?>,
+                "cart_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCartLocalize() ?>,
+                "catalog_localize": <?= /* @escapeNotVerified */ (int)$block->isFlowCatalogLocalize() ?>,
+                "pricing_timeout": <?= /* @escapeNotVerified */ $maxCatalogHideMs ?>,
+                "cart_timeout": <?= /* @escapeNotVerified */ $maxCartHideMs ?>,
+                "payment_methods_enabled": <?= /* @escapeNotVerified */ (int)$block->isPaymentMethodsPDPEnabled() ?>,
+                "shipping_window_enabled": <?= /* @escapeNotVerified */ (int)$block->isShippingWindowPDPEnabled() ?>,
+                "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled() ?>,
+                "country_picker_enabled": <?= /* @escapeNotVerified */ (int)$block->isCountryPickerEnabled() ?>
+            }
+        }
+    }
+    </script>
 
+    <script type="text/javascript">
     setTimeout(function(){
         document.head.append(`
             body [data-role="priceBox"] span.price {
                 opacity: 1;
             } 
         `);
-    }, window.flow_pricing_timeout);
+    }, <?= $maxCatalogHideMs ?>);
 
     setTimeout(function(){
         document.head.append(`
@@ -38,9 +54,9 @@
                 opacity: 1;
             }
         `);
-    }, window.flow_cart_timeout);
+    }, <?= $maxCartHideMs ?>);
     </script>
-    <?php if ($block->getFlowMaxCatalogHideMs() > 0) : ?>
+    <?php if ($maxCatalogHideMs > 0) : ?>
         <style>
         [data-role="priceBox"] span.price {
             opacity: 0;
@@ -50,7 +66,7 @@
         }
         </style>
     <?php endif; ?>
-    <?php if ((int)$block->getFlowMaxCartHideMs() > 0) : ?>
+    <?php if ($maxCartHideMs > 0) : ?>
         <style>
         .checkout-cart-index .form-cart span.price,
         .checkout-cart-index .cart-summary span.price,

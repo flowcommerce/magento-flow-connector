@@ -30,7 +30,7 @@ class WebhookEventTest extends \PHPUnit\Framework\TestCase
     protected $quotePaymentFactory;
     protected $eventManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createMock(\Magento\Framework\Model\Context::class);
         $this->registry = $this->createMock(\Magento\Framework\Registry::class);

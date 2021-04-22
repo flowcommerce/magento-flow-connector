@@ -9,32 +9,31 @@
  */
 var config = {
     paths: {
-        'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
         'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
         'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min',
-        'flowCompanion': 'FlowCommerce_FlowConnector/js/flow-companion'
+        'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
+        'configMixin': 'FlowCommerce_FlowConnector/js/configurable-mixin',
+        'priceBoxMixin': 'FlowCommerce_FlowConnector/js/price-box-mixin',
+        'swatchRendererMixin': 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin',
+        'shoppingCartMixin': 'FlowCommerce_FlowConnector/js/shopping-cart-mixin',
     },
     deps: [
-        'flowInit',
         'flowJs',
         'flowCountryPicker',
         'day',
-        'flowCompanion'
     ],
     shim: {
-        'flowJs': {
-            deps: ['flowInit'],
-            exports: 'flow'
-        }
+        'flowInit': ['flowJs', 'flowCountryPicker', 'day'],
+        'configMixin': ['flowJs', 'flowInit'],
+        'priceBoxMixin': ['flowJs', 'flowInit'],
+        'swatchRendererMixin': ['flowJs', 'flowInit'],
+        'shoppingCartMixin': ['flowJs', 'flowInit'],
     },
     config: {
         mixins: {
             'Magento_ConfigurableProduct/js/configurable': {
                 'FlowCommerce_FlowConnector/js/configurable-mixin': true
-            },
-            'Magento_Customer/js/customer-data': {
-                'FlowCommerce_FlowConnector/js/customer-data-mixin': true
             },
             'Magento_Catalog/js/price-box': {
                 'FlowCommerce_FlowConnector/js/price-box-mixin': true
@@ -44,9 +43,6 @@ var config = {
             },
             'Magento_Checkout/js/shopping-cart': {
                 'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
-            },
-            'Magento_Checkout/js/view/minicart': {
-                'FlowCommerce_FlowConnector/js/view/minicart-mixin': true
             },
         }
     }

@@ -134,7 +134,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
     /**
      * Sets up for tests
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->createWebhookEventsFixture = $this->objectManager->create(CreateWebhookEvents::class);

@@ -45,7 +45,7 @@ class CatalogSyncProcessTaskTest extends \PHPUnit\Framework\TestCase
      * Sets up for tests
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->catalogSync = $this->createPartialMock(CatalogSync::class, ['process']);

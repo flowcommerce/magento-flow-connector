@@ -59,7 +59,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     /**
      * Setup
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = new ObjectManager($this);
 

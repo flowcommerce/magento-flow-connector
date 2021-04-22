@@ -40,7 +40,7 @@ class SyncSkuManagerTest extends \PHPUnit\Framework\TestCase
      * Sets up for tests
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
         $this->createProductsFixture = $this->objectManager->create(CreateProductsWithCategories::class);

@@ -1,5 +1,11 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.0
+- Refactor FlowJS implementation, optimized to remove possible race conditions
+- Upgrade test suite to comply with Magento 2.4.X
+- Update Travis CI configuration to comply with Magento 2.4.X
+- Add CSP allowlists for required domains
+
 ## 2.5.6
 - Speed up webhook processing to every 2 minutes
 - Address deprecated quote clear method

@@ -1,7 +1,5 @@
-require([
+define([
     'jquery',
-    'flowJs',
-    'flowCountryPicker'
 ], function ($) {
     return function (config) {
         window.flow = window.flow || {};

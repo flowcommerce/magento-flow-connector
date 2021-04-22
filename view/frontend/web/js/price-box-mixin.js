@@ -1,10 +1,9 @@
-require([
-    'flowInit',
+define([
     'jquery',
     'Magento_Catalog/js/price-utils',
     'underscore',
     'mage/template'
-], function (flow, $, utils, _, mageTemplate) {
+], function ($, utils, _, mageTemplate) {
     'use strict';
     window.flow = window.flow || {};
     window.flow.cmd = window.flow.cmd || function () {

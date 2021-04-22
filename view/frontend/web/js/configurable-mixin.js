@@ -1,7 +1,6 @@
-require([
-    'flowInit',
+define([
     'jquery'
-], function (flow, $) {
+], function ($) {
     'use strict';
     window.flow = window.flow || {};
     window.flow.cmd = window.flow.cmd || function () {

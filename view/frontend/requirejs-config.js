@@ -13,6 +13,10 @@ var config = {
         'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min',
         'day': 'FlowCommerce_FlowConnector/js/day.min',
         'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
+        'configMixin': 'FlowCommerce_FlowConnector/js/configurable-mixin',
+        'priceBoxMixin': 'FlowCommerce_FlowConnector/js/price-box-mixin',
+        'swatchRendererMixin': 'FlowCommerce_FlowConnector/js/swatch-renderer-mixin',
+        'shoppingCartMixin': 'FlowCommerce_FlowConnector/js/shopping-cart-mixin',
     },
     deps: [
         'flowJs',
@@ -20,24 +24,25 @@ var config = {
         'day',
     ],
     shim: {
-        'flowInit': {
-            deps: ['flowJs', 'flowCountryPicker'],
-            exports: 'flow'
-        },
+        'flowInit': ['flowJs', 'flowCountryPicker'],
+        'configMixin': ['flowJs', 'flowInit'],
+        'priceBoxMixin': ['flowJs', 'flowInit'],
+        'swatchRendererMixin': ['flowJs', 'flowInit'],
+        'shoppingCartMixin': ['flowJs', 'flowInit'],
     },
     config: {
         mixins: {
             'Magento_ConfigurableProduct/js/configurable': {
-                'FlowCommerce_FlowConnector/js/configurable-mixin': true
+                'configMixin': true
             },
             'Magento_Catalog/js/price-box': {
-                'FlowCommerce_FlowConnector/js/price-box-mixin': true
+                'priceBoxMixin': true
             },
             'Magento_Swatches/js/swatch-renderer': {
-                'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': true
+                'swatchRendererMixin': true
             },
             'Magento_Checkout/js/shopping-cart': {
-                'FlowCommerce_FlowConnector/js/shopping-cart-mixin': true
+                'shoppingCartMixin': true
             },
         }
     }

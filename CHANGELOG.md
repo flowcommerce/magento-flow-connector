@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.4
+- Magento Marketplace specific changes
+
 ## 2.6.0
 - Refactor FlowJS implementation, optimized to remove possible race conditions
 - Upgrade test suite to comply with Magento 2.4.X

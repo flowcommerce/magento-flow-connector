@@ -46,13 +46,13 @@ class Configuration
 
     // Store configuration key for catalog price localization
     const FLOW_CATALOG_PRICE_LOCALIZATION = 'flowcommerce/flowconnector/catalog_price_localization';
-    
+
     // Store configuration key for max catalog price hide ms
     const FLOW_MAX_CATALOG_HIDE_MS = 'flowcommerce/flowconnector/max_catalog_hide_ms';
-    
+
     // Store configuration key for catalog price localization
     const FLOW_CART_LOCALIZATION = 'flowcommerce/flowconnector/cart_localization';
-    
+
     // Store configuration key for max cart hide ms
     const FLOW_MAX_CART_HIDE_MS = 'flowcommerce/flowconnector/max_cart_hide_ms';
 
@@ -76,7 +76,9 @@ class Configuration
 
     // Store configuration key for checkout base url
     const FLOW_CHECKOUT_BASE_URL = 'flowcommerce/flowconnector/checkout_base_url';
-    
+
+    const FLOW_ORDER_IDENTIFIERS_SYNC_ENABLED = 'flowcommerce/flowconnector/order_identifiers_sync_enabled';
+
     // Default checkout base url for Flow checkout
     const FLOW_DEFAULT_CHECKOUT_BASE_URL = 'https://checkout.flow.io/';
 
@@ -574,6 +576,25 @@ class Configuration
 
         return (bool) $this->scopeConfig->getValue(
             self::FLOW_REGULAR_PRICING_OVERRIDE,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Returns true if order identifiers sync is enabled in the Admin Store Configuration.
+     * @param int|null $storeId
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    public function isOrderIdentifiersSyncEnabled($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        return (bool) $this->scopeConfig->getValue(
+            self::FLOW_ORDER_IDENTIFIERS_SYNC_ENABLED,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );

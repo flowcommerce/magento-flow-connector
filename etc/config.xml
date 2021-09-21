@@ -40,6 +40,7 @@
                 <tax_duty_messaging>1</tax_duty_messaging>
                 <daily_catalog_sync>0</daily_catalog_sync>
                 <regular_pricing_override>0</regular_pricing_override>
+                <order_identifiers_sync_enabled>0</order_identifiers_sync_enabled>
             </flowconnector>
         </flowcommerce>
     </default>

@@ -172,6 +172,13 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="order_identifiers_sync_enabled" translate="label" type="select" sortOrder="23" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Associate Magento with Flow Order Identifiers</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
         <section id="payment">

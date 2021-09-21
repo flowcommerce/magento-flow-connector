@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.5
+- Add feature to associate Magento and Flow order IDs using API request
+- Add feature to include the selected shipping service into additional order data
+
 ## 2.6.4
 - Magento Marketplace specific changes
 

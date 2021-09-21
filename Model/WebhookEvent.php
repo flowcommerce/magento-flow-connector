@@ -60,7 +60,9 @@ use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
 use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
 use FlowCommerce\FlowConnector\Model\SyncManager;
 use Magento\Sales\Model\Order\Shipment\TrackFactory;
-use \Magento\Sales\Model\Order\Shipment\Track;
+use Magento\Sales\Model\Order\Shipment\Track;
+use FlowCommerce\FlowConnector\Model\OrderIdentifiersSyncManager;
+use Exception;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -75,6 +77,8 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const FLOW_PAYMENT_DESCRIPTION = 'flow_payment_description';
     const FLOW_PAYMENT_ORDER_NUMBER = 'flow_payment_order_number';
     const FLOW_SHIPPING_ESTIMATE = 'flow_shipping_estimate';
+    const FLOW_SHIPPING_CARRIER = 'flow_shipping_carrier';
+    const FLOW_SHIPPING_METHOD = 'flow_shipping_method';
 
     /**
      * Flow shipment track title
@@ -315,6 +319,11 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private $syncOrderFactory;
 
     /**
+     * @var OrderIdentifiersSyncManager
+     */
+    private $orderIdentifiersSyncManager;
+
+    /**
      * WebhookEvent constructor.
      * @param Context $context
      * @param Registry $registry
@@ -402,9 +411,10 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         TrackFactory $trackFactory,
         Configuration $configuration,
         SyncManager $syncManager,
+        SyncOrderFactory $syncOrderFactory,
+        OrderIdentifiersSyncManager $orderIdentifiersSyncManager,
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
-        SyncOrderFactory $syncOrderFactory,
         array $errorMessages = [],
         array $data = []
     ) {
@@ -454,6 +464,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->configuration = $configuration;
         $this->syncManager = $syncManager;
         $this->syncOrderFactory = $syncOrderFactory;
+        $this->orderIdentifiersSyncManager = $orderIdentifiersSyncManager;
         $this->errorMessages = [];
     }
 
@@ -547,12 +558,14 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 'logger' => $this->logger,
             ]);
 
-        } catch (\Exception $e) {
-            $this->logger->warn('Error processing webhook: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+        } catch (Exception $e) {
+            $this->logger->critical($e);
+            $this->logger->error('Error processing webhook: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
             try {
                 $this->webhookEventManager->markWebhookEventAsError($this, $e->getMessage());
-            } catch (\Exception $e) {
-                $this->logger->warn('Error saving webhook error: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+            } catch (Exception $e) {
+                $this->logger->critical($e);
+                $this->logger->error('Error saving webhook error: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
             }
         }
     }
@@ -1692,6 +1705,27 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             }
         }
 
+        $shippingServices = [];
+        $flowShippingCarrier = null;
+        $flowShippingMethod = Null;
+        $deliveries = $receivedOrder['deliveries'];
+        foreach ($deliveries as $delivery) {
+            if (array_key_exists('options', $delivery)) {
+                foreach ($delivery['options'] as $option) {
+                    $shippingServices[$option['id']] = [
+                        'carrier' => $option['service']['carrier']['id'],
+                        'method' => $option['service']['name']
+                    ];
+                }
+            }
+        }
+        foreach ($receivedOrder['selections'] as $selectionId) {
+            if (array_key_exists($selectionId, $shippingServices)) {
+                $flowShippingCarrier = $shippingServices[$selectionId]['carrier'];
+                $flowShippingMethod = $shippingServices[$selectionId]['method'];
+            }
+        }
+
         if (array_key_exists('payments', $receivedOrder)) {
             $this->logger->info('Adding payment data');
             foreach ($receivedOrder['payments'] as $flowPayment) {
@@ -1718,6 +1752,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     self::FLOW_SHIPPING_ESTIMATE,
                     $flowShippingEstimate
                 );
+
+                if($flowShippingCarrier) {
+                    $payment->setAdditionalInformation(
+                        self::FLOW_SHIPPING_CARRIER,
+                        $flowShippingCarrier
+                    );
+                }
+
+                if($flowShippingMethod) {
+                    $payment->setAdditionalInformation(
+                        self::FLOW_SHIPPING_METHOD,
+                        $flowShippingMethod
+                    );
+                }
 
                 // NOTE: only supporting 1 payment for now
                 break;
@@ -2059,6 +2107,20 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $flowOrder->setFlowOrderId($receivedOrder['number']);
         $flowOrder->setData($this->getPayload());
         $flowOrder->save();
+
+        ////////////////////////////////////////////////////////////
+        // Queue order identifiers for sync
+        ////////////////////////////////////////////////////////////
+        try {
+            $this->orderIdentifiersSyncManager->queueOrderIdentifiersforSync(
+                (int) $store->getId(),
+                [
+                    $order->getIncrementId() => $receivedOrder['number']
+                ]
+            );
+        } catch (Exception $e) {
+            $this->logger->info($e->getMessage());
+        }
 
         ////////////////////////////////////////////////////////////
         // Clear user's cart

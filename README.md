@@ -1,4 +1,4 @@
-# Integrating Magento 2 with Flow
+# Flow Connector for Magento 2
 
 ## Introduction
 Magento 2 is a popular e-commerce platform that helps businesses build and manage their online storefront. The Flow Connector extension for Magento 2 lets you seamlessly manage all of your global sales challenges.
@@ -173,6 +173,9 @@ This toggle controls the automatic enqueue of all skus daily at 1:15AM (timezone
 ### Enable Regular Pricing Override
 This toggle controls whether to use final_price or regular_price when syncing item prices with Flow and for Flow Checkout UI. The connector will always sync all available Magento item prices as additional attributes. This toggle defaults to "No".
 
+### Associate Magento with Flow Order Identifiers
+This toggle controls whether Magento increment ID will be associated with Flow Order ID after Magento order was created in Magento system. This works asynchronously using the [Message Queues](https://devdocs.magento.com/guides/v2.4/extension-dev-guide/message-queues/message-queues.html) Magento feature, for which at least MySQL based message queues configuration is required. MySQL based message queues are enabled by default in Magento Open Source using Magento built-in cron job, and no additional configuration is required. In Magento Commerce more powerful AMQP setup can be introduced after slight adjustments to the extension files as per [Change message queue from MySQL to AMQP](https://devdocs.magento.com/guides/v2.4/extension-dev-guide/message-queues/message-queues.html#change-message-queue-from-mysql-to-amqp). This is usually necessary only for stores receiving a significantly large number of orders in a very short period of time. This toggle defaults to "No".
+
 ### Shell Commands Available
 Save product attributes needed for catalog integration to Flow:
 ```plaintext
@@ -232,6 +235,11 @@ $ php bin/magento flow:connector:webhook-register
 Create secret for webhook payload verification:
 ```plaintext
 $ php bin/magento flow:connector:webhook-update
+```
+
+Queues Magento order increment ID M123456, and Flow order ID F123456 from store ID 1 for association using Flow API:
+```plaintext
+$ php bin/magento flow:connector:order-identifiers-queue --store_id 1 --magento_order_id M123456 --flow_order_id F123456
 ```
 
 ### Extending Functionality

@@ -101,6 +101,7 @@
                 <item name="flowcommerce_flowconnector_cron_cleanup" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\CronCleanupCommand</item>
                 <item name="flowcommerce_flowconnector_webhook_update_settings" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\WebhookUpdateSettingsCommand</item>
                 <item name="flowcommerce_flowconnector_order_sync_poll" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\OrderSyncPollCommand</item>
+                <item name="flowcommerce_flowconnector_order_identifiers_queue" xsi:type="object">FlowCommerce\FlowConnector\Console\Command\OrderIdentifiersSyncQueueCommand</item>
             </argument>
         </arguments>
     </type>

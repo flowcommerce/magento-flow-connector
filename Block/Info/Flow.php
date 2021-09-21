@@ -61,6 +61,20 @@ class Flow extends \Magento\Payment\Block\Info
             $transportData[(string)__('Flow Shipping Estimate')] = $flowShippingEstimate;
         }
 
+        $flowShippingCarrier = $info->getAdditionalInformation(
+            WebhookEvent::FLOW_SHIPPING_CARRIER
+        );
+        if ($flowShippingCarrier) {
+            $transportData[(string)__('Flow Shipping Carrier')] = $flowShippingCarrier;
+        }
+
+        $flowShippingMethod = $info->getAdditionalInformation(
+            WebhookEvent::FLOW_SHIPPING_METHOD
+        );
+        if ($flowShippingMethod) {
+            $transportData[(string)__('Flow Shipping Method')] = $flowShippingMethod;
+        }
+
         $transport = new \Magento\Framework\DataObject($transportData);
         $transport = parent::_prepareSpecificInformation($transport);
 

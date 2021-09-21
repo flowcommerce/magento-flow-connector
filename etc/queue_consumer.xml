@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
+    <consumer
+        name="flowcommerce_flowconnector.sync_order_identifiers"
+        queue="flowcommerce_flowconnector.sync_order_identifiers"
+        connection="db"
+        maxMessages="100"
+        consumerInstance="Magento\Framework\MessageQueue\Consumer"
+        handler="FlowCommerce\FlowConnector\Model\OrderIdentifiersSyncConsumer::process" />
+</config>

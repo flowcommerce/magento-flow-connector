@@ -2387,7 +2387,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             switch ($source['key']) {
             case 'item_price':
                 $subtotalAmounts['rawItemPrice'] += $sourceAmount;
+                $this->logger->info(sprintf('rawItemPrice: %s', $subtotalAmounts['rawItemPrice']));
                 $subtotalAmounts['baseRawItemPrice'] += $sourceBaseAmount;
+                $this->logger->info(sprintf('baseRawItemPrice: %s', $subtotalAmounts['baseRawItemPrice']));
                 $subtotalAmounts['itemPrice'] += $sourceAmount;
                 $subtotalAmounts['baseItemPrice'] += $sourceBaseAmount;
                 $subtotalAmounts['itemPriceInclTax'] += $sourceAmount;
@@ -2430,7 +2432,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
     public function applySubtotalAmountsToItem($item, $subtotalAmounts, $quantity) {
         $item->setOriginalPrice($subtotalAmounts['rawItemPrice']);
+        $this->logger->info(sprintf('setOriginalPrice: %s', $subtotalAmounts['rawItemPrice']));
         $item->setBaseOriginalPrice($subtotalAmounts['baseRawItemPrice']);
+        $this->logger->info(sprintf('setBaseOriginalPrice: %s', $subtotalAmounts['baseRawItemPrice']));
         $item->setPrice($subtotalAmounts['itemPrice']);
         $item->setBasePrice($subtotalAmounts['baseItemPrice']);
         $item->setRowTotal($subtotalAmounts['itemPrice'] * $quantity);

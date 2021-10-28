@@ -1,6 +1,9 @@
 define([
     'jquery',
-], function ($) {
+    'day',
+    'flowJs',
+    'flowCountryPicker'
+], function ($, day) {
     return function (config) {
         window.flow = window.flow || {};
         window.flow.cmd = window.flow.cmd || function () {

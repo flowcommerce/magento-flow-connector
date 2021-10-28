@@ -19,7 +19,7 @@
     <script type="text/x-magento-init">
     {
         "*": {
-            "FlowCommerce_FlowConnector/js/flow-init": {
+            "flowInit": {
                 "organization_id": "<?= /* @escapeNotVerified */ (string)$block->getFlowOrganizationId() ?>",
                 "enabled": true,
                 "production": <?= /* @escapeNotVerified */ (int)$block->isFlowProduction() ?>,
@@ -80,4 +80,27 @@
         }
         </style>
     <?php endif; ?>
+<?php else: ?>
+    <script type="text/javascript">
+        if('require' in window) {
+            require.config({
+                config: {
+                    mixins: {
+                        'Magento_ConfigurableProduct/js/configurable': {
+                            'FlowCommerce_FlowConnector/js/configurable-mixin': false
+                        },
+                        'Magento_Catalog/js/price-box': {
+                            'FlowCommerce_FlowConnector/js/price-box-mixin': false
+                        },
+                        'Magento_Swatches/js/swatch-renderer': {
+                            'FlowCommerce_FlowConnector/js/swatch-renderer-mixin': false
+                        },
+                        'Magento_Checkout/js/shopping-cart': {
+                            'FlowCommerce_FlowConnector/js/shopping-cart-mixin': false
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 <?php endif; ?>

@@ -1,6 +1,7 @@
 define([
     'jquery',
     'underscore',
+    'flowInit'
 ], function ($, _) {
     'use strict';
     window.flow = window.flow || {};

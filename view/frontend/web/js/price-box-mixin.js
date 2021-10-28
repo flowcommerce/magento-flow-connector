@@ -2,7 +2,8 @@ define([
     'jquery',
     'Magento_Catalog/js/price-utils',
     'underscore',
-    'mage/template'
+    'mage/template',
+    'flowInit'
 ], function ($, utils, _, mageTemplate) {
     'use strict';
     window.flow = window.flow || {};

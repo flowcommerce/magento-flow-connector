@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.7
+- Fix for swatch localization price issue
+- Fix issue with swatch mixin and handling dropdown attributes
+- Fix for duplicate orders issue
+
 ## 2.6.6
 - Avoid adding Javascript to store frontend if Flow Connector is disabled in Magento admin
 

@@ -10,9 +10,12 @@
             <schedule>*/5 * * * *</schedule>
         </job>
     </group>
-    <group id="flowcommerce_flowconnector_webhook">
+    <group id="flowcommerce_flowconnector_webhook_order_sync_poll">
         <job name="flowcommerce_flowconnector_webhook_event_process_task" instance="FlowCommerce\FlowConnector\Cron\WebhookEventProcessTask" method="execute">
             <schedule>*/2 * * * *</schedule>
+        </job>
+        <job name="flowcommerce_flowconnector_order_sync_poll_task" instance="FlowCommerce\FlowConnector\Cron\OrderSyncPollTask" method="execute">
+            <schedule>*/28 * * * *</schedule>
         </job>
     </group>
     <group id="flowcommerce_flowconnector_centers_update">
@@ -28,11 +31,6 @@
     <group id="flowcommerce_flowconnector_inventory_process">
         <job name="flowcommerce_flowconnector_inventory_sync_process_task" instance="FlowCommerce\FlowConnector\Cron\InventorySyncProcessTask" method="execute">
             <schedule>*/5 * * * *</schedule>
-        </job>
-    </group>
-    <group id="flowcommerce_flowconnector_order_sync_poll">
-        <job name="flowcommerce_flowconnector_order_sync_poll_task" instance="FlowCommerce\FlowConnector\Cron\OrderSyncPollTask" method="execute">
-            <schedule>*/28 * * * *</schedule>
         </job>
     </group>
     <group id="flowcommerce_flowconnector_cron_cleanup">

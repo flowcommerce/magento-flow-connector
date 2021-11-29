@@ -100,6 +100,17 @@ define([
                     }
                 }, this);
                 if (!this.flowFormattedPrice) {
+                    var currentProductId = this.getCurrentProductId(this.options.productId);
+                    if(currentProductId) {
+                        if('product_id_sku_map' in window.flow.magento2
+                            && $.inArray(currentProductId, window.flow.magento2.product_id_sku_map)) {
+                            var selectedSku = window.flow.magento2.product_id_sku_map[currentProductId];
+                            $("div.product-info-main span [data-flow-item-number]").each(function(index) {
+                                $(this).data('flow-item-number', selectedSku);
+                                $(this).attr('data-flow-item-number', selectedSku);
+                            });
+                        }
+                    }
                     window.flow.cmd('localize');
                 } else {
                     window.flow.magento2.showPrices();

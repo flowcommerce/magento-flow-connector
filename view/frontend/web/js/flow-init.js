@@ -1,9 +1,11 @@
 define([
     'jquery',
     'day',
+    'Magento_Customer/js/customer-data',
     'flowJs',
-    'flowCountryPicker'
-], function ($, day) {
+    'flowCountryPicker',
+    'domReady!'
+], function ($, day, customerData) {
     return function (config) {
         window.flow = window.flow || {};
         window.flow.cmd = window.flow.cmd || function () {
@@ -87,16 +89,36 @@ define([
                 return false;
             }
 
-            var config = {childList: true, subtree: true, characterData: true };
+            var config = {childList: true, subtree: true, characterData: false };
 
             var callback = function(mutationsList, observer) {
                 reloadFlowCart(observer);
             };
 
-            var observer = new MutationObserver(callback);
+            var observer = new MutationObserver(debounce(callback, 1000));
 
             observer.observe(targetTotals, config);
         }
+
+        function debounce(func, wait, immediate) {
+            var timeout;
+
+            return function() {
+                var context = this,
+                args = arguments;
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+
+                timeout = setTimeout(function() {
+                    timeout = null;
+                    if (!immediate) {
+                        func.apply(context, args);
+                    }
+                }, wait);
+
+                if (callNow) func.apply(context, args);
+            }
+          }
 
         function reloadFlowCart(observer = null) {
             if (observer) observer.disconnect();
@@ -116,6 +138,7 @@ define([
             localTax = totals.find('.totals-tax');
             subtotal = totals.find('.totals.sub');
             grandTotal = totals.find('.totals.grand');
+            shipping = totals.find('.totals.shipping');
             discount = totals.find('[data-th=\'Discount\']');
 
             subtotal.find('span.price').attr('data-flow-localize','cart-subtotal'); 
@@ -151,6 +174,7 @@ define([
                 if (shippingEstimator) shippingEstimator.hide();
                 if (giftCard) giftCard.hide();
                 if (localTax) localTax.hide();
+                if (shipping) shipping.hide();
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
@@ -249,6 +273,9 @@ define([
             });
 
             bindTotalsObserver();
+            customerData.reload(['cart'], false);
+
+
             window.flow.cmd('on', 'cartError', function () {
                 window.flow.magento2.showCart();
                 window.flow.magento2.showCartTotals();

@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.8
+- Frontend cart localization improvements
+
 ## 2.6.7
 - Fix for swatch localization price issue
 - Fix issue with swatch mixin and handling dropdown attributes

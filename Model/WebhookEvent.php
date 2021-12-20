@@ -535,9 +535,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 case 'fraud_status_changed':
                     $this->processFraudStatusChanged();
                     break;
-                case 'tracking_label_event_upserted':
-                    $this->processTrackingLabelEventUpserted();
-                    break;
                 case 'label_upserted':
                     $this->processLabelUpserted();
                     break;
@@ -973,79 +970,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             $this->requeue('Unable to find order right now, reprocess.');
             return;
         }
-    }
-
-    /**
-     * Process tracking_label_event_upserted webhook event data.
-     *
-     * https://docs.flow.io/type/tracking-label-event-upserted
-     */
-    private function processTrackingLabelEventUpserted()
-    {
-        $this->logger->info('Processing tracking_label_event_upserted data');
-        $data = $this->getPayloadData();
-
-        /** @var OrderModel $order */
-        if ($order = $this->getOrderByFlowOrderNumber($data['order_number'])) {
-
-            // Add any new tracks to shipment
-            /** @var Shipment $shipment */
-            $shipment = $this->getFirstShipmentForOrder($order);
-            if ($shipment && $shipment->getId()) {
-                $existingTracksCollection = $shipment->getAllTracks();
-
-                $newTracks = [];
-                $existingTrackNumbers = [];
-
-                /** @var Track $existingTrack */
-                foreach ($existingTracksCollection as $existingTrack) {
-                    $existingTrackNumbers[] = $existingTrack->getNumber();
-                }
-
-                if (isset($data['carrier']) && isset($data['carrier_tracking_number']) &&
-                    !in_array($data['carrier_tracking_number'], $existingTrackNumbers)) {
-                    $carrierTrack = [
-                        'carrier_code' => 'custom',
-                        'title' => $data['carrier'],
-                        'number' => $data['carrier_tracking_number']
-                    ];
-                    $tracks[] = $carrierTrack;
-                }
-                if (isset($data['flow_tracking_number']) &&
-                    !in_array($data['flow_tracking_number'], $existingTrackNumbers)) {
-                    $flowTrack = [
-                        'carrier_code' => 'custom',
-                        'title' => self::FLOW_TRACK_TITLE,
-                        'number' => $data['flow_tracking_number']
-                    ];
-                    $tracks[] = $flowTrack;
-                }
-
-                $this->addTracksToShipment($shipment, $newTracks);
-            } else {
-                $this->requeue('Unable to find shipment right now, reprocess.');
-            }
-
-            $this->webhookEventManager->markWebhookEventAsDone($this, '');
-
-        } else {
-            $this->requeue('Unable to find order right now, reprocess.');
-            return;
-        }
-    }
-
-    /**
-     * @param OrderModel $order
-     * @return \Magento\Framework\DataObject
-     */
-    private function getFirstShipmentForOrder(OrderModel $order)
-    {
-        $shipments = $order->getShipmentsCollection();
-        if ($shipments) {
-            return $shipments->getFirstItem();
-        }
-
-        return null;
     }
 
     /**

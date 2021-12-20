@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
  * Test class for webhook controllers.
  */
 class BaseTest extends \PHPUnit\Framework\TestCase
-{ 
+{
     public function testCaptureUpsertedV2()
     {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\CaptureUpsertedV2');
@@ -57,12 +57,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     public function testRefundUpsertedV2()
     {
         $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2');
-        $controller->execute();
-    }
-
-    public function testTrackingLabelEventUpserted()
-    {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\TrackingLabelEventUpserted');
         $controller->execute();
     }
 

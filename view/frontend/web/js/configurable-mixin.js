@@ -21,5 +21,7 @@ define([
                 return this._super(element);
             }
         });
+
+        return $.mage.configurable;
     }
 });

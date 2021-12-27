@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.10
+- Add the missing return statement to configurable mixin
+
 ## 2.6.9
 - Remove tracking_label_event_upserted webhook event
 

@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.11
+- Add indexes to webhook events database table for performance reasons
+
 ## 2.6.10
 - Add the missing return statement to configurable mixin
 

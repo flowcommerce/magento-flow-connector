@@ -110,6 +110,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->installSyncOrdersTable($installer);
         }
 
+        if (version_compare($context->getVersion(), '2.6.11', '<=')) {
+            $this->addStoreIdTypeIndexToWebhookEventsTable($installer);
+            $this->addStatusTriggeredAtIndexToWebhookEventsTable($installer);
+        }
+
         $installer->endSetup();
     }
 
@@ -830,6 +835,48 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $tableName,
             $installer->getIdxName($tableName, ['increment_id'], AdapterInterface::INDEX_TYPE_INDEX),
             ['increment_id'],
+            AdapterInterface::INDEX_TYPE_INDEX
+        );
+    }
+
+    /**
+     * Add index for WHERE store_id LIKE ? AND type LIKE ?.
+     * @param SchemaSetupInterface $installer
+     * @return void
+     */
+    private function addStoreIdTypeIndexToWebhookEventsTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_webhook_events');
+        $connection = $installer->getConnection();
+        $columnOneName = 'store_id';
+        $columnTwoName = 'type';
+
+        // Add index for WHERE store_id LIKE ? AND type LIKE ?.
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, [$columnOneName, $columnTwoName], AdapterInterface::INDEX_TYPE_INDEX),
+            [$columnOneName, $columnTwoName],
+            AdapterInterface::INDEX_TYPE_INDEX
+        );
+    }
+
+    /**
+     * Add index for WHERE (`status` = ?) AND (`triggered_at` <= ?).
+     * @param SchemaSetupInterface $installer
+     * @return void
+     */
+    private function addStatusTriggeredAtIndexToWebhookEventsTable(SchemaSetupInterface $installer)
+    {
+        $tableName = $installer->getTable('flow_connector_webhook_events');
+        $connection = $installer->getConnection();
+        $columnOneName = 'status';
+        $columnTwoName = 'triggered_at';
+
+        // Add index for WHERE (`status` = ?) AND (`triggered_at` <= ?).
+        $connection->addIndex(
+            $tableName,
+            $installer->getIdxName($tableName, [$columnOneName, $columnTwoName], AdapterInterface::INDEX_TYPE_INDEX),
+            [$columnOneName, $columnTwoName],
             AdapterInterface::INDEX_TYPE_INDEX
         );
     }

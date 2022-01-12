@@ -2,13 +2,12 @@
 
 namespace FlowCommerce\FlowConnector\Observer;
 
-use FlowCommerce\FlowConnector\Model\InventorySyncManager;
 use FlowCommerce\FlowConnector\Model\SyncSkuManager;
 use Magento\CatalogImportExport\Model\Import\Product as ProductImport;
-use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Psr\Log\LoggerInterface as Logger;
+use FlowCommerce\FlowConnector\Model\Configuration;
 
 /**
  * Class SyncProductsAfterImportDelete
@@ -17,19 +16,9 @@ use Psr\Log\LoggerInterface as Logger;
 class SyncProductsAfterImportDelete implements ObserverInterface
 {
     /**
-     * @var InventorySyncManager
-     */
-    private $inventorySyncManager;
-
-    /**
      * @var Logger
      */
     private $logger;
-
-    /**
-     * @var ProductRepository
-     */
-    private $productRepository;
 
     /**
      * @var SyncSkuManager
@@ -37,22 +26,25 @@ class SyncProductsAfterImportDelete implements ObserverInterface
     private $syncSkuManager;
 
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * Action constructor.
-     * @param InventorySyncManager $inventorySyncManager
      * @param Logger $logger
-     * @param ProductRepository $productRepository
      * @param SyncSkuManager $syncSkuManager
+     * @param Configuration $configuration
+     * @return void
      */
     public function __construct(
-        InventorySyncManager $inventorySyncManager,
         Logger $logger,
-        ProductRepository $productRepository,
-        SyncSkuManager $syncSkuManager
+        SyncSkuManager $syncSkuManager,
+        Configuration $configuration
     ) {
-        $this->inventorySyncManager = $inventorySyncManager;
         $this->logger = $logger;
-        $this->productRepository = $productRepository;
         $this->syncSkuManager = $syncSkuManager;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -62,6 +54,7 @@ class SyncProductsAfterImportDelete implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+
         $productSkus = [];
         $deletedProductsData = (array)$observer->getData('bunch');
         foreach ($deletedProductsData as $deletedProductData) {
@@ -74,7 +67,9 @@ class SyncProductsAfterImportDelete implements ObserverInterface
                 'Flow Catalog Sync - After product import (delete), deferring to product sync manager',
                 ['product_skus' => $productSkus]
             );
-            $this->syncSkuManager->enqueueMultipleProductsByProductSku($productSkus);
+            foreach ($this->configuration->getEnabledStores() as $store) {
+                $this->syncSkuManager->enqueueMultipleProductsByProductSku($productSkus, $store->getId());
+            }
         }
     }
 }

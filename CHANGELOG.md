@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.12
+- Avoid executing observers if Flow Connector is disabled in Magento admin
+- Remove deprecated preload localized catalog cache feature
+- Remove Webhook Events tab from order view screen in Magento admin for performance reasons
+
 ## 2.6.11
 - Add indexes to webhook events database table for performance reasons
 

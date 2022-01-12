@@ -105,14 +105,6 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="preload_localized_catalog_cache" translate="label" type="select" sortOrder="14" showInDefault="0" showInWebsite="0" showInStore="1">
-                    <label>Enable Preload Localized Catalog Cache</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <depends>
-                        <field id="enabled">1</field>
-                        <field id="catalog_price_localization">1</field>
-                    </depends>
-                </field>
                 <field id="max_catalog_hide_ms" translate="label" type="text" sortOrder="15" showInDefault="0" showInWebsite="0" showInStore="1">
                     <label>Maximum Time to Hide Catalog Prices</label>
                     <comment>After this amount of milliseconds, catalog prices will display regardless of Flow's localization results</comment>

@@ -2,7 +2,6 @@
 
 namespace FlowCommerce\FlowConnector\Observer;
 
-use FlowCommerce\FlowConnector\Model\InventorySyncManager;
 use FlowCommerce\FlowConnector\Model\SyncSkuManager;
 use Magento\CatalogImportExport\Model\Import\Product as ProductImport;
 use Magento\Framework\Event\Observer;
@@ -16,11 +15,6 @@ use Psr\Log\LoggerInterface as Logger;
 class SyncProductsAfterImportSave implements ObserverInterface
 {
     /**
-     * @var InventorySyncManager
-     */
-    private $inventorySyncManager;
-
-    /**
      * @var Logger
      */
     private $logger;
@@ -32,16 +26,13 @@ class SyncProductsAfterImportSave implements ObserverInterface
 
     /**
      * Action constructor.
-     * @param InventorySyncManager $inventorySyncManager
      * @param Logger $logger
      * @param SyncSkuManager $syncSkuManager
      */
     public function __construct(
-        InventorySyncManager $inventorySyncManager,
         Logger $logger,
         SyncSkuManager $syncSkuManager
     ) {
-        $this->inventorySyncManager = $inventorySyncManager;
         $this->logger = $logger;
         $this->syncSkuManager = $syncSkuManager;
     }
@@ -82,10 +73,6 @@ class SyncProductsAfterImportSave implements ObserverInterface
                 ['product_ids' => $productIds]
             );
             $this->syncSkuManager->enqueueMultipleProductsByProductIds($productIds);
-            /**
-             * At this moment there is still no stock item available for imported products, skipping inventory sync
-             */
-            //$this->inventorySyncManager->enqueueMultipleStockItemByProductIds($productIds);
         }
     }
 }

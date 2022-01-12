@@ -54,9 +54,6 @@ class View
                 $config['flow_product_id_sku_map'][$simple->getId()] = $simple->getSku();
             }
         }
-        if ($this->configuration->isCatalogPriceLocalizationEnabled() && $this->configuration->isPreloadLocalizedCatalogCacheEnabled()) {
-            $config['flow_localized_prices'] = $this->flowPrices->localizePrices($skus);
-        }
         return $this->jsonSerializer->serialize($config);
     }
 }

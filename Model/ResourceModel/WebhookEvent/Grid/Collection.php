@@ -95,24 +95,6 @@ class Collection extends WebhookEventCollection implements SearchResultInterface
     }
 
     /**
-     * @param array|string $field
-     * @param null $condition
-     * @return WebhookEventCollection
-     */
-    public function addFieldToFilter($field, $condition = null)
-    {
-        if ($field === 'order_id') {
-            $requestedOrderId = $condition;
-            $order = $this->orderFactory->create();
-            $this->orderResourceModel->load($order, $requestedOrderId);
-            $extOrderId = $order->getExtOrderId();
-            $field = WebhookEvent::DATA_KEY_PAYLOAD;
-            $condition = ['like' => '%' . $extOrderId . '%'];
-        }
-        return parent::addFieldToFilter($field, $condition);
-    }
-
-    /**
      * @param AggregationInterface $aggregations
      * @return $this
      */

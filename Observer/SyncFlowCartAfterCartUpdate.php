@@ -2,12 +2,11 @@
 
 namespace FlowCommerce\FlowConnector\Observer;
 
-use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Magento\Quote\Model\Quote;
 use Psr\Log\LoggerInterface as Logger;
 use FlowCommerce\FlowConnector\Model\FlowCartManager;
+use FlowCommerce\FlowConnector\Model\Configuration;
 
 /**
  * Class SyncFlowCartAfterCartUpdate
@@ -19,26 +18,29 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
     /** @var FlowCartManager */
     private $flowCartManager;
 
-    /** @var CheckoutSession */
-    private $checkoutSession;
-
     /** @var Logger */
     private $logger;
 
     /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
      * SyncFlowCartAfterCartUpdate constructor.
      * @param FlowCartManager $flowCartManager
-     * @param CheckoutSession $checkoutSession
      * @param Logger $logger
+     * @param Configuration $configuration
+     * @return void
      */
     public function __construct(
         FlowCartManager $flowCartManager,
-        CheckoutSession $checkoutSession,
-        Logger $logger
+        Logger $logger,
+        Configuration $configuration
     ) {
         $this->flowCartManager = $flowCartManager;
-        $this->checkoutSession = $checkoutSession;
         $this->logger = $logger;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -48,6 +50,10 @@ class SyncFlowCartAfterCartUpdate implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        if (!$this->configuration->isFlowEnabled()) {
+            return;
+        }
+
         try {
             $this->flowCartManager->syncCartData();
         } catch (\Exception $e) {

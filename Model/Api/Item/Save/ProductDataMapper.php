@@ -28,6 +28,7 @@ use \Magento\Store\Model\ScopeInterface as StoreScope;
 use \Psr\Log\LoggerInterface as Logger;
 use GuzzleHttp\Client as GuzzleClient;
 use FlowCommerce\FlowConnector\Model\Configuration;
+use FlowCommerce\FlowConnector\Model\ResourceModel\Directory\Country\Collection as CountryCollection;
 
 /**
  * Class ProductDataMapper
@@ -139,25 +140,37 @@ class ProductDataMapper
     private $syncSkuManager;
 
     /**
-     * ProductDataMapper constructor.
-     * @param Logger $logger
-     * @param JsonSerializer $jsonSerializer
-     * @param GuzzleClient $guzzleClient
-     * @param StoreManager $storeManager
-     * @param LinkManagement $linkManagement
-     * @param CategoryCollectionFactory $categoryCollectionFactory
-     * @param BlockFactory $blockFactory
-     * @param AppEmulation $appEmulation
-     * @param LocaleResolver $localeResolver
-     * @param ScopeConfig $scopeConfig
-     * @param ConfigurableTypeResourceModel $configurable
-     * @param ProductFactory $productFactory
-     * @param ProductRepository $productRepository
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param ProductMetaData $productMetadata
-     * @param Configuration $configuration
-     * @param SyncSkuManager $syncSkuManager
+     * @var CountryCollection
      */
+    private $countryCollection;
+
+    /**
+     * @var null|array
+     */
+    private $iso3CodeToNameMapping = null;
+
+   /**
+    * ProductDataMapper constructor.
+    * @param Logger $logger
+    * @param JsonSerializer $jsonSerializer
+    * @param GuzzleClient $guzzleClient
+    * @param StoreManager $storeManager
+    * @param LinkManagement $linkManagement
+    * @param CategoryCollectionFactory $categoryCollectionFactory
+    * @param BlockFactory $blockFactory
+    * @param AppEmulation $appEmulation
+    * @param LocaleResolver $localeResolver
+    * @param ScopeConfig $scopeConfig
+    * @param ConfigurableTypeResourceModel $configurable
+    * @param ProductFactory $productFactory
+    * @param ProductRepository $productRepository
+    * @param SearchCriteriaBuilder $searchCriteriaBuilder
+    * @param ProductMetaData $productMetadata
+    * @param Configuration $configuration
+    * @param SyncSkuManager $syncSkuManager
+    * @param CountryCollection $countryCollection
+    * @return void
+    */
     public function __construct(
         Logger $logger,
         JsonSerializer $jsonSerializer,
@@ -175,7 +188,8 @@ class ProductDataMapper
         SearchCriteriaBuilder $searchCriteriaBuilder,
         ProductMetaData $productMetadata,
         Configuration $configuration,
-        SyncSkuManager $syncSkuManager
+        SyncSkuManager $syncSkuManager,
+        CountryCollection $countryCollection
     ) {
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
@@ -194,6 +208,7 @@ class ProductDataMapper
         $this->productMetaData = $productMetadata;
         $this->configuration = $configuration;
         $this->syncSkuManager = $syncSkuManager;
+        $this->countryCollection = $countryCollection;
     }
 
     /**
@@ -491,7 +506,7 @@ class ProductDataMapper
         $data['magento_version'] = $this->getMagentoVersion();
 
         $hostname = getHostName();
-        
+
         // Add host name
         $data['host_name'] = $hostname;
 
@@ -499,7 +514,7 @@ class ProductDataMapper
         $data['host_ip'] = getHostByName($hostname);
 
         $storeId = $product->getStoreId();
-        
+
         // Add store id
         $data['store_id'] = $storeId;
 
@@ -517,10 +532,31 @@ class ProductDataMapper
         }
 
         // Add country of origin
-        if ($product->getCountryOfManufacture()) {
-            $data['country_of_origin'] = $product->getCountryOfManufacture();
+        if (($countryOfManufactureName = $product->getCountryOfManufacture())) {
+            $countryOfManufactureCode = $this->getCountryOfManufactureCodeByName($countryOfManufactureName);
+            if($countryOfManufactureCode) {
+                $data['country_of_origin'] = $countryOfManufactureCode;
+            }
         }
 
         return $data;
+    }
+
+    /**
+     * @param string $countryOfManufactureName
+     * @return null|string
+     * @throws Exception
+     */
+    private function getCountryOfManufactureCodeByName(string $countryOfManufactureName): ?string
+    {
+        if(is_null($this->iso3CodeToNameMapping)) {
+            $this->iso3CodeToNameMapping = $this->countryCollection->loadData()->getIso3CodeToNameMapping();
+        }
+
+        if(!($countryOfManufactureCode = array_search($countryOfManufactureName, $this->iso3CodeToNameMapping))) {
+            return null;
+        }
+
+        return $countryOfManufactureCode;
     }
 }

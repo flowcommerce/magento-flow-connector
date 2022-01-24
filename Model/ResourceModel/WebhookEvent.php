@@ -2,11 +2,12 @@
 
 namespace FlowCommerce\FlowConnector\Model\ResourceModel;
 
-use FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface;
 use Magento\Framework\DataObjectFactory;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\Model\ResourceModel\Db\Context;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface;
 
 /**
  * Class WebhookEvent
@@ -142,12 +143,13 @@ class WebhookEvent extends AbstractDb
     public function deleteOldProcessedEvents()
     {
         $tableName = $this->getMainTable();
-        $sql = '
-        delete from ' . $tableName . '
+        $sqlOne = 'SET @interval_timestamp = DATE_SUB(NOW(), INTERVAL 96 HOUR)';
+        $this->getConnection()->query($sqlOne);
+
+        $sqlTwo = 'delete from ' . $tableName . '
          where status=\'' . self::STATUS_DONE . '\'
-           and updated_at < date_sub(now(), interval 96 hour)
-        ';
-        $this->getConnection()->query($sql);
+           and updated_at < @interval_timestamp';
+        $this->getConnection()->query($sqlTwo);
     }
 
     /**
@@ -158,13 +160,15 @@ class WebhookEvent extends AbstractDb
     public function resetOldErrorEvents()
     {
         $tableName = $this->getMainTable();
-        $sql = '
-        update ' . $tableName . '
+
+        $sqlOne = 'SET @interval_timestamp = DATE_SUB(NOW(), INTERVAL 4 HOUR)';
+        $this->getConnection()->query($sqlOne);
+
+        $sqlTwo = 'update ' . $tableName . '
            set status=\'' . self::STATUS_NEW . '\'
          where status=\'' . self::STATUS_PROCESSING . '\'
-           and updated_at < date_sub(now(), interval 4 hour)
-        ';
-        $this->getConnection()->query($sql);
+           and updated_at < @interval_timestamp';
+        $this->getConnection()->query($sqlTwo);
     }
 
     /**

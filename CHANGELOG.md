@@ -1,5 +1,9 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.13
+- Optimize webhook events processing SQL queries for better performance
+- Send country_of_origin as ISO Alpha-3 country code instead of country name when syncing SKUs
+
 ## 2.6.12
 - Avoid executing observers if Flow Connector is disabled in Magento admin
 - Remove deprecated preload localized catalog cache feature

@@ -10,6 +10,9 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use Magento\Framework\Module\ModuleListInterface as ModuleList;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
+use Magento\Framework\App\Config\Storage\WriterInterface as ConfigWriter;
+use Magento\Framework\App\Cache\TypeListInterface as CacheTypeListInterface;
+
 
 /**
  * Class Configuration
@@ -117,6 +120,16 @@ class Configuration
     private $urlBuilder;
 
     /**
+     * @var ConfigWriter
+     */
+    private $configWriter;
+
+    /**
+     * @var CacheTypeListInterface
+     */
+    private $cacheTypeList;
+
+    /**
      * Util constructor.
      * @param Auth $auth
      * @param ModuleList $moduleList
@@ -129,13 +142,17 @@ class Configuration
         ModuleList $moduleList,
         ScopeConfig $scopeConfig,
         StoreManager $storeManager,
-        UrlBuilder $urlBuilder
+        UrlBuilder $urlBuilder,
+        ConfigWriter $configWriter,
+        CacheTypeListInterface $cacheTypeList
     ) {
         $this->auth = $auth;
         $this->moduleList = $moduleList;
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
         $this->urlBuilder = $urlBuilder;
+        $this->configWriter = $configWriter;
+        $this->cacheTypeList = $cacheTypeList;
     }
 
     /**
@@ -150,6 +167,24 @@ class Configuration
             $storeId = $this->getCurrentStoreId();
         }
         return (bool) $this->scopeConfig->getValue(self::FLOW_ENABLED, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    /**
+     * Disable Flow Connector in Admin Store Configuration.
+     *
+     * @param int|null $storeId
+     * @return void
+     * @throws NoSuchEntityException
+     */
+    public function disableFlow($storeId = null)
+    {
+        if ($storeId === null) {
+            $storeId = $this->getCurrentStoreId();
+        }
+
+        $this->configWriter->save(self::FLOW_ENABLED, 0, $scope = ScopeInterface::SCOPE_STORES, $storeId);
+        $this->cacheTypeList->cleanType(\Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER);
+        $this->cacheTypeList->cleanType(\Magento\PageCache\Model\Cache\Type::TYPE_IDENTIFIER);
     }
 
     /**

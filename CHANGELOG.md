@@ -1,5 +1,10 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.15
+- Upgrade Travis environment to Magento 2.4.2
+- Add underscore as dependency for flow-init.js
+- Bundle FlowJS instead of loading the latest version from CDN
+
 ## 2.6.14
 - Do not allow enabling Flow Connector if Organization ID or API Token are not valid
 

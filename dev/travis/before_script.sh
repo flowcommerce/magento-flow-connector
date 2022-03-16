@@ -105,3 +105,4 @@ mysql -uroot -e '
     CREATE DATABASE magento_integration_tests;
 '
 cp ./vendor/flowcommerce/flowconnector/install-config-mysql.travis.php.dist dev/tests/integration/etc/install-config-mysql.php
+#cp dev/tests/integration/etc/post-install-setup-command-config.php.dist dev/tests/integration/etc/post-install-setup-command-config.php

@@ -1,18 +1,10 @@
-sudo: required
-dist: trusty
-group: edge
+dist: focal
 addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
-    - postfix
   hosts:
   - travis.flow.io
 services:
-  - rabbitmq
   - elasticsearch
+  - mysql
 language: php
 git:
   depth: 5
@@ -22,19 +14,19 @@ env:
   - MAGENTO_HOST_NAME="travis.flow.io"
 matrix:
   include:
-  - php: 7.3
+  - php: 7.4
     env: MAGENTO_VERSION=2.4.2 TEST_SUITE=static_flow
     if: branch=main
-  - php: 7.3
+  - php: 7.4
     env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_flow
     if: branch=main
-  # - php: 7.3
+  # - php: 7.4
   #   env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_core INTEGRATION_INDEX=1
   #   if: branch=main
-  # - php: 7.3
+  # - php: 7.4
   #   env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_core INTEGRATION_INDEX=2
   #   if: branch=main
-  # - php: 7.3
+  # - php: 7.4
   #   env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_core INTEGRATION_INDEX=3
   #   if: branch=main
 cache:
@@ -42,7 +34,7 @@ cache:
   directories:
   - $HOME/.composer/cache
 before_install:
-- composer self-update --1
+- composer self-update --2
 - composer config -g http-basic.repo.magento.com $MAGENTO_PUBLICKEY $MAGENTO_PRIVATEKEY
 - composer config -g github-oauth.github.com $GITHUB_OAUTH_TOKEN
 - chmod +x ./dev/travis/*

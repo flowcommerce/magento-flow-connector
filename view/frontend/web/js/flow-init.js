@@ -2,10 +2,11 @@ define([
     'jquery',
     'day',
     'Magento_Customer/js/customer-data',
-    'flowJs',
-    'flowCountryPicker',
+    'underscore',
+    'flowJsBundle',
+    'flowCountryPickerBundle',
     'domReady!'
-], function ($, day, customerData) {
+], function ($, day, customerData, _) {
     return function (config) {
         window.flow = window.flow || {};
         window.flow.cmd = window.flow.cmd || function () {
@@ -14,7 +15,7 @@ define([
         window.flow.cmd('set', 'organization', config.organization_id);
         window.flow.cmd('set', 'optinContainerSelector', '#flow-optin');
         window.flow.cmd('init');
-        window.flow.magento2 = window.flow.magento || {};
+        window.flow.magento2 = window.flow.magento2 || {};
         window.flow.magento2.enabled = config.enabled;
         window.flow.magento2.production = config.production;
         window.flow.magento2.support_discounts = config.support_discounts;

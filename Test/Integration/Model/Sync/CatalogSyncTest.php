@@ -36,7 +36,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
      * Url Stub Prefix of this API endpoint
      */
     const URL_STUB_PREFIX = '/catalog/items/';
-    
+
     /**
      * @var CreateProductsWithCategories
      */
@@ -129,7 +129,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
     public function setUp(): void
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $this->httpResponse = $this->createPartialMock(HttpResponse::class, ['isSuccess']);
+        $this->httpResponse = $this->createPartialMock(HttpResponse::class, ['getStatusCode']);
         $httpPromise = $this->objectManager->create(HttpPromise::class, [
             'waitFn' => function () use (&$httpPromise) {
                 $httpPromise->resolve($this->httpResponse);
@@ -419,7 +419,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
 
             $this->assertCount(2, $jsonRequest->images);
             foreach ($jsonRequest->images as $image) {
-                $this->assertRegExp('/^http.*\.jpg/', $image->url);
+                $this->assertMatchesRegularExpression('/^http.*\.jpg/', $image->url);
                 $this->assertContains($image->tags[0], ['thumbnail', 'checkout']);
             }
 
@@ -430,7 +430,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         }
         return $return;
     }
-    
+
     /**
      * Validates given url
      * @param $url
@@ -449,7 +449,7 @@ class CatalogSyncTest extends \PHPUnit\Framework\TestCase
         }
         return $return;
     }
-    
+
     /**
      * Check if sku is valid
      * @param $sku

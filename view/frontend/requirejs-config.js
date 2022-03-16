@@ -10,22 +10,21 @@
 var config = {
     map: {
         '*': {
-            'day': 'FlowCommerce_FlowConnector/js/day.min',
-            'flowInit': 'FlowCommerce_FlowConnector/js/flow-init'
+            'flowInit': 'FlowCommerce_FlowConnector/js/flow-init',
+            'day': 'FlowCommerce_FlowConnector/js/day.min'
         }
     },
     paths: {
-        'flowJs': '//cdn.flow.io/flowjs/latest/flow.min',
-        'flowCountryPicker': '//cdn.flow.io/country-picker/js/v0/country-picker.min'
-
+        'flowJsBundle': 'FlowCommerce_FlowConnector/js/flow.min',
+        'flowCountryPickerBundle': 'FlowCommerce_FlowConnector/js/country-picker.min'
     },
     shim: {
-        'flowJs': {
+        'flowJsBundle': {
             'exports': 'flow'
         },
-        'flowCountryPicker': {
+        'flowCountryPickerBundle': {
             'deps': [
-                'flowJs'
+                'flowJsBundle'
             ]
         }
     },

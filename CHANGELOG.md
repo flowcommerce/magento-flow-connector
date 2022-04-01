@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.16
+- Add support for configurable products when creating Magento order
+
 ## 2.6.15
 - Upgrade Travis environment to Magento 2.4.2
 - Add underscore as dependency for flow-init.js

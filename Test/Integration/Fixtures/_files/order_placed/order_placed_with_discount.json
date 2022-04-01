@@ -96,7 +96,6 @@
                         "price": "24.0000",
                         "options_container": "Block after Info Column",
                         "regular_price": "34.2",
-                        "parent_entity_id": "1593",
                         "color": "Yellow",
                         "user_agent": "Flow-M2-2.0.0",
                         "minimal_price": "24.0000",
@@ -121,8 +120,7 @@
                         "msrp_display_actual_price_type": "Use config",
                         "updated_at": "2018-10-15 19:03:06",
                         "visibility": "Not Visible Individually",
-                        "price_view": "Price Range",
-                        "parent_sku": "WS05"
+                        "price_view": "Price Range"
                     },
                     "price_attributes": {
                         "regular_price": {

@@ -86,7 +86,6 @@
             "options_container": "Block after Info Column",
             "regular_price": "13.95",
             "price_type": "No",
-            "parent_entity_id": "22",
             "color": "No",
             "user_agent": "Flow-M2-1.1.1",
             "minimal_price": "10.0000",
@@ -108,8 +107,7 @@
             "updated_at": "2018-11-12 19:01:31",
             "visibility": "Catalog, Search",
             "test_configurable": "Option 1",
-            "price_view": "Price Range",
-            "parent_sku": "configurable"
+            "price_view": "Price Range"
           },
           "price_attributes": {
             "regular_price": {
@@ -174,7 +172,6 @@
             "options_container": "Block after Info Column",
             "regular_price": "13.95",
             "price_type": "No",
-            "parent_entity_id": "22",
             "color": "No",
             "user_agent": "Flow-M2-1.1.1",
             "minimal_price": "10.0000",
@@ -196,8 +193,7 @@
             "updated_at": "2018-11-12 19:01:32",
             "visibility": "Catalog, Search",
             "test_configurable": "Option 2",
-            "price_view": "Price Range",
-            "parent_sku": "configurable"
+            "price_view": "Price Range"
           },
           "price_attributes": {
             "regular_price": {
@@ -262,7 +258,6 @@
             "options_container": "Block after Info Column",
             "regular_price": "13.95",
             "price_type": "No",
-            "parent_entity_id": "22",
             "color": "No",
             "user_agent": "Flow-M2-1.1.1",
             "minimal_price": "10.0000",
@@ -284,8 +279,7 @@
             "updated_at": "2018-11-12 19:01:31",
             "visibility": "Catalog, Search",
             "test_configurable": "Option 1",
-            "price_view": "Price Range",
-            "parent_sku": "configurable"
+            "price_view": "Price Range"
           },
           "price_attributes": {
             "regular_price": {
@@ -350,7 +344,6 @@
             "options_container": "Block after Info Column",
             "regular_price": "13.95",
             "price_type": "No",
-            "parent_entity_id": "22",
             "color": "No",
             "user_agent": "Flow-M2-1.1.1",
             "minimal_price": "10.0000",
@@ -372,8 +365,7 @@
             "updated_at": "2018-11-12 19:01:32",
             "visibility": "Catalog, Search",
             "test_configurable": "Option 3",
-            "price_view": "Price Range",
-            "parent_sku": "configurable"
+            "price_view": "Price Range"
           },
           "price_attributes": {
             "regular_price": {

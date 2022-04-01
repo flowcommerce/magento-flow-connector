@@ -108,7 +108,6 @@
                         "price": "42.0000",
                         "options_container": "Block after Info Column",
                         "regular_price": "1499.0",
-                        "parent_entity_id": "277",
                         "color": "Yellow",
                         "minimal_price": "42.0000",
                         "thumbnail": "/m/j/mj01-yellow_main_1.jpg",
@@ -129,8 +128,7 @@
                         "erin_recommends": "No",
                         "msrp_display_actual_price_type": "Use config",
                         "updated_at": "2019-07-15 17:28:16",
-                        "price_view": "Price Range",
-                        "parent_sku": "configurable"
+                        "price_view": "Price Range"
                     },
                     "price_attributes": {
                         "regular_price": {
@@ -1087,4 +1085,4 @@
         }
     },
     "discriminator": "order_placed"
-} 
+}

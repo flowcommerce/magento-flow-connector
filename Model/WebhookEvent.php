@@ -1133,7 +1133,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private function getOrderItem($order, $sku)
     {
         $item = null;
-        foreach ($order->getAllItems() as $orderItem) {
+        foreach ($order->getAllVisibleItems() as $orderItem) {
             if ($orderItem->getProduct()->getSku() == $sku) {
                 $item = $orderItem;
                 break;
@@ -1519,17 +1519,29 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ////////////////////////////////////////////////////////////
 
         foreach ($receivedOrder['lines'] as $line) {
-            $this->logger->info('Looking up product: ' . $line['item_number']);
-            if (!$product = $this->productRepository->get($line['item_number'])) {
-                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $line['item_number']);
+            $itemNumber = $line['item_number'];
+            if(!empty($receivedOrder['items'])) {
+                foreach ($receivedOrder['items'] as $receivedOrderItem) {
+                    if($receivedOrderItem['number'] === $itemNumber && !empty($receivedOrderItem['local']['attributes']['parent_sku'])) {
+                        // Note: We assume that if item has parent_sku specified, it was added to cart through configurable product,
+                        // and not by adding simple product to cart directly.
+                        $itemNumber = $receivedOrderItem['local']['attributes']['parent_sku'];
+                        $this->logger->info('Configurable product recognized: ' . $itemNumber);
+                        break;
+                    }
+                }
+            }
+            $this->logger->info('Looking up product: ' . $itemNumber);
+            if (!$product = $this->productRepository->get($itemNumber)) {
+                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $itemNumber);
                 continue;
             }
             $product->setPrice($line['price']['amount']);
             $product->setBasePrice($line['price']['base']['amount']);
-            $this->logger->info('Adding product to quote: ' . $line['item_number']);
+            $this->logger->info('Adding product to quote: ' . $itemNumber);
 
             if (is_null($this->addProductWithOptions($quote, $product, $line, $receivedOrder['number'], $store->getId()))) {
-                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number could not be added: ' . $line['item_number']);
+                throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number could not be added: ' . $itemNumber);
                 continue;
             }
         }

@@ -2,67 +2,70 @@
 
 namespace FlowCommerce\FlowConnector\Model;
 
-use FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface;
-use FlowCommerce\FlowConnector\Exception\WebhookException;
-use FlowCommerce\FlowConnector\Model\OrderFactory as FlowOrderFactory;
-use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEventManager;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Model\AbstractModel;
-use Magento\Framework\DataObject\IdentityInterface;
-use Magento\Framework\DataObject\Factory;
-use Magento\Quote\Model\Quote;
-use Magento\Sales\Api\Data\OrderInterface as Order;
-use Magento\Sales\Api\Data\OrderItemInterface as OrderItem;
-use Magento\Framework\Model\Context;
-use Magento\Framework\Registry;
-use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
-use Magento\Store\Model\StoreManagerInterface as StoreManager;
-use Magento\Catalog\Model\ProductFactory;
-use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
-use Magento\Catalog\Model\Product\OptionFactory;
-use Magento\Quote\Model\QuoteFactory;
-use Magento\Quote\Model\QuoteManagement;
-use Magento\Customer\Model\CustomerFactory;
-use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
-use Magento\Sales\Model\Service\OrderService;
-use Magento\Quote\Api\CartRepositoryInterface as CartRepository;
-use Magento\Quote\Api\CartManagementInterface as CartManager;
-use Magento\Quote\Model\Quote\Address\Rate as ShippingRate;
-use Magento\Quote\Api\Data\CurrencyInterface as Currency;
-use Magento\Directory\Model\CountryFactory;
-use Magento\Directory\Model\RegionFactory;
-use Magento\Sales\Model\OrderFactory as MagentoOrderFactory;
-use Magento\Payment\Model\MethodList as PaymentMethodList;
-use Magento\Sales\Api\OrderRepositoryInterface as OrderRepository;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Quote\Model\Quote\PaymentFactory;
-use Magento\Framework\Event\ManagerInterface as EventManager;
-use Magento\Framework\Model\ResourceModel\AbstractResource;
-use Magento\Framework\Data\Collection\AbstractDb as ResourceCollection;
-use Psr\Log\LoggerInterface as Logger;
-use FlowCommerce\FlowConnector\Model\Carrier\FlowShippingMethod;
-use Magento\Sales\Model\Order\Email\Sender\OrderSender;
-use Magento\Sales\Model\Order as OrderModel;
-use Magento\Sales\Api\OrderPaymentRepositoryInterface;
-use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Magento\Sales\Api\Data\OrderPaymentSearchResultInterface;
-use Magento\Sales\Model\Order\Payment;
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\DB\TransactionFactory;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Sales\Model\Convert\Order as ConvertOrder;
-use Magento\Sales\Model\Order\Invoice;
-use Magento\Sales\Model\Order\Shipment;
-use Magento\Sales\Model\Service\InvoiceService;
-use Magento\Shipping\Model\ShipmentNotifier;
-use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
-use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
-use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
-use FlowCommerce\FlowConnector\Model\SyncManager;
-use Magento\Sales\Model\Order\Shipment\TrackFactory;
-use Magento\Sales\Model\Order\Shipment\Track;
-use FlowCommerce\FlowConnector\Model\OrderIdentifiersSyncManager;
 use Exception;
+use DomainException;
+use InvalidArgumentException;
+use Magento\Quote\Model\Quote;
+use Magento\Framework\Registry;
+use Magento\Catalog\Model\Product;
+use Magento\Framework\Model\Context;
+use Magento\Quote\Model\QuoteFactory;
+use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Payment;
+use Psr\Log\LoggerInterface as Logger;
+use Magento\Sales\Model\Order\Shipment;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Quote\Model\QuoteManagement;
+use Magento\Catalog\Model\ProductFactory;
+use Magento\Framework\DataObject\Factory;
+use Magento\Directory\Model\RegionFactory;
+use Magento\Framework\Model\AbstractModel;
+use Magento\Customer\Model\CustomerFactory;
+use Magento\Directory\Model\CountryFactory;
+use Magento\Framework\DB\TransactionFactory;
+use Magento\Sales\Model\Order as OrderModel;
+use Magento\Shipping\Model\ShipmentNotifier;
+use Magento\Quote\Model\Quote\PaymentFactory;
+use Magento\Sales\Model\Service\OrderService;
+use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use FlowCommerce\FlowConnector\Model\SyncManager;
+use Magento\Sales\Api\Data\OrderPaymentInterface;
+use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Api\Data\OrderInterface as Order;
+use Magento\Sales\Model\Order\Shipment\TrackFactory;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Api\OrderPaymentRepositoryInterface;
+use Magento\Sales\Model\Convert\Order as ConvertOrder;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Magento\Quote\Api\Data\CurrencyInterface as Currency;
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use FlowCommerce\FlowConnector\Exception\WebhookException;
+use Magento\Payment\Model\MethodList as PaymentMethodList;
+use Magento\Framework\Model\ResourceModel\AbstractResource;
+use Magento\Quote\Model\Quote\Address\Rate as ShippingRate;
+use Magento\Sales\Api\Data\OrderItemInterface as OrderItem;
+use Magento\Sales\Model\OrderFactory as MagentoOrderFactory;
+use Magento\Framework\Event\ManagerInterface as EventManager;
+use Magento\Quote\Api\CartManagementInterface as CartManager;
+use Magento\Sales\Api\Data\OrderPaymentSearchResultInterface;
+use FlowCommerce\FlowConnector\Api\Data\WebhookEventInterface;
+use Magento\Store\Model\StoreManagerInterface as StoreManager;
+use FlowCommerce\FlowConnector\Model\Carrier\FlowShippingMethod;
+use FlowCommerce\FlowConnector\Model\Config\Source\InvoiceEvent;
+use Magento\Quote\Api\CartRepositoryInterface as CartRepository;
+use FlowCommerce\FlowConnector\Model\Config\Source\ShipmentEvent;
+use FlowCommerce\FlowConnector\Model\OrderIdentifiersSyncManager;
+use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
+use Magento\Sales\Api\OrderRepositoryInterface as OrderRepository;
+use FlowCommerce\FlowConnector\Model\OrderFactory as FlowOrderFactory;
+use Magento\Framework\Data\Collection\AbstractDb as ResourceCollection;
+use Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
+use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEventManager;
+use Magento\Framework\DataObjectFactory;
+use Magento\Quote\Model\Quote\Item;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -160,11 +163,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @var QuoteFactory
      */
     protected $quoteFactory;
-
-    /**
-     * @var OptionFactory
-     */
-    private $optionFactory;
 
     /**
      * @var QuoteManagement
@@ -324,7 +322,12 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     private $orderIdentifiersSyncManager;
 
     /**
-     * WebhookEvent constructor.
+     * @var DataObjectFactory
+     */
+    private $dataObjectFactory;
+
+    /**
+     * WebhookEvent constructor
      * @param Context $context
      * @param Registry $registry
      * @param Factory $objectFactory
@@ -334,7 +337,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param ProductFactory $productFactory
      * @param ProductRepository $productRepository
      * @param QuoteFactory $quoteFactory
-     * @param OptionFactory $optionFactory
      * @param QuoteManagement $quoteManagement
      * @param CustomerFactory $customerFactory
      * @param CustomerRepository $customerRepository
@@ -351,7 +353,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param PaymentFactory $quotePaymentFactory
      * @param EventManager $eventManager
-     * @param \FlowCommerce\FlowConnector\Model\OrderFactory $flowOrderFactory
+     * @param OrderFactory $flowOrderFactory
      * @param WebhookEventManager $webhookEventManager
      * @param FlowShippingMethod $flowShippingMethod
      * @param OrderSender $orderSender
@@ -365,10 +367,16 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      * @param TrackFactory $trackFactory
      * @param Configuration $configuration
      * @param SyncManager $syncManager
+     * @param SyncOrderFactory $syncOrderFactory
+     * @param OrderIdentifiersSyncManager $orderIdentifiersSyncManager
+     * @param DataObjectFactory $dataObjectFactory
      * @param AbstractResource|null $resource
      * @param ResourceCollection|null $resourceCollection
-     * @param SyncOrderFactory $syncOrderFactory
+     * @param array $errorMessages
      * @param array $data
+     * @return void
+     * @throws LocalizedException
+     * @throws LocalizedException
      */
     public function __construct(
         Context $context,
@@ -380,7 +388,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         ProductFactory $productFactory,
         ProductRepository $productRepository,
         QuoteFactory $quoteFactory,
-        OptionFactory $optionFactory,
         QuoteManagement $quoteManagement,
         CustomerFactory $customerFactory,
         CustomerRepository $customerRepository,
@@ -413,6 +420,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         SyncManager $syncManager,
         SyncOrderFactory $syncOrderFactory,
         OrderIdentifiersSyncManager $orderIdentifiersSyncManager,
+        DataObjectFactory $dataObjectFactory,
         AbstractResource $resource = null,
         ResourceCollection $resourceCollection = null,
         array $errorMessages = [],
@@ -432,7 +440,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->productFactory = $productFactory;
         $this->productRepository = $productRepository;
         $this->quoteFactory = $quoteFactory;
-        $this->optionFactory = $optionFactory;
         $this->quoteManagement = $quoteManagement;
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
@@ -465,6 +472,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $this->syncManager = $syncManager;
         $this->syncOrderFactory = $syncOrderFactory;
         $this->orderIdentifiersSyncManager = $orderIdentifiersSyncManager;
+        $this->dataObjectFactory = $dataObjectFactory;
         $this->errorMessages = [];
     }
 
@@ -2264,23 +2272,50 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
     }
 
+    /**
+     * @param mixed $quote
+     * @param Product $product
+     * @param mixed $line
+     * @param mixed $orderNumber
+     * @param mixed $storeId
+     * @return mixed
+     * @throws DomainException
+     * @throws Exception
+     * @throws InvalidArgumentException
+     */
     public function addProductWithOptions ($quote, $product, $line, $orderNumber, $storeId) {
         $item = null;
+        $qty = (int)$line['quantity'];
         try {
-            $qty = intval($line['quantity']);
-            if (isset($line['attributes']['options'])) {
-                $formOptions = $this->jsonSerializer->unserialize($line['attributes']['options']);
-                foreach ($formOptions as $option) {
-                    if ($option['code'] === 'info_buyRequest') {
-                        if ($buyRequest = $this->jsonSerializer->unserialize($option['value'])) {
-                            $buyRequest = new \Magento\Framework\DataObject($buyRequest);
-                            $buyRequest = $buyRequest->setOriginalQty($qty)->setQty($qty);
-                            $item = $quote->addProduct($product, $buyRequest);
-                        }
-                    }
-                }
+            if(!empty($line['attributes']['options'])) {
+                $options = $this->jsonSerializer->unserialize($line['attributes']['options']);
+            } else {
+                $options = [];
+            }
+        } catch (InvalidArgumentException $e) {
+            $options = [];
+        }
+
+        try {
+            list ($additionalOptions, $buyRequestArray) = $this->getRequiredOptions($options);
+            if (!empty($buyRequestArray)) {
+                $buyRequest = $this->dataObjectFactory->create();
+                $buyRequest->addData($buyRequestArray);
+                $buyRequest = $buyRequest->setOriginalQty($qty)->setQty($qty);
+                $item = $quote->addProduct($product, $buyRequest);
             } else {
                 $item = $quote->addProduct($product, $qty);
+            }
+
+            if ($item && !empty($additionalOptions)) {
+                $itemAdditionalOptions = $this->getAdditionalOptionsByItem($item);
+                $additionalOptions = array_merge($itemAdditionalOptions, $additionalOptions);
+                $item->addOption(
+                    [
+                        'code' => 'additional_options',
+                        'value' => $this->jsonSerializer->serialize($additionalOptions),
+                    ]
+                );
             }
             $quote->save();
         } catch (WebhookException $e) {
@@ -2396,5 +2431,49 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $item->setBaseDiscountAmount($subtotalAmounts['itemBaseDiscountAmount'] * $quantity);
         $item->save();
         return $item;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    private function getRequiredOptions(array $options): array
+    {
+        $additionalOptions = [];
+        $buyRequest = [];
+        foreach ($options as $key => $option) {
+            if ($option['code'] === 'additional_options') {
+                $additionalOptions = $this->jsonSerializer->unserialize($option['value']);
+            }
+
+            if ($option['code'] === 'info_buyRequest') {
+                $buyRequest = $this->jsonSerializer->unserialize($option['value']);
+            }
+        }
+
+        return [$additionalOptions, $buyRequest];
+    }
+
+    /**
+     * @param Item $item
+     *
+     * @return array
+     */
+    private function getAdditionalOptionsByItem(Item $item): array
+    {
+        if ($item->getOptionByCode('additional_options')) {
+            try {
+                $itemAdditionalOptions = $this->jsonSerializer->unserialize(
+                    $item->getOptionByCode('additional_options')->getValue()
+                );
+            } catch (InvalidArgumentException $e) {
+                $itemAdditionalOptions = [];
+            }
+        } else {
+            $itemAdditionalOptions = [];
+        }
+
+        return $itemAdditionalOptions;
     }
 }

@@ -531,11 +531,17 @@ class ProductDataMapper
             }
         }
 
-        // Add country of origin
+        // Handle special cases and exceptions
         if (($countryOfManufactureName = $product->getCountryOfManufacture())) {
             $countryOfManufactureCode = $this->getCountryOfManufactureCodeByName($countryOfManufactureName);
             if($countryOfManufactureCode) {
+                // Add country of origin as ISO Alpha-3 code
                 $data['country_of_origin'] = $countryOfManufactureCode;
+
+                // Override country of manufacture name with ISO Alpha-3 code
+                if(isset($data['country_of_manufacture'])) {
+                    $data['country_of_manufacture'] = $countryOfManufactureCode;
+                }
             }
         }
 

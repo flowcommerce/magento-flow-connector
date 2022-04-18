@@ -2,33 +2,34 @@
 
 namespace FlowCommerce\FlowConnector\Model\Api\Item\Save;
 
-use \FlowCommerce\FlowConnector\Model\SyncSku;
-use \FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface as SyncSkuManager;
-use \Magento\Catalog\Api\Data\ProductInterface;
-use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
-use \Magento\Catalog\Block\Product\ListProduct as ListProductBlock;
+use Exception;
+use \Magento\Framework\UrlInterface;
+use GuzzleHttp\Client as GuzzleClient;
+use \Psr\Log\LoggerInterface as Logger;
 use \Magento\Catalog\Model\ProductFactory;
-use \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
-use \Magento\ConfigurableProduct\Api\LinkManagementInterface as LinkManagement;
-use \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable as ConfigurableTypeResourceModel;
-use \Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
-use \Magento\Framework\Api\SearchCriteriaBuilder;
 use \Magento\Framework\App\Area as AppArea;
+use \FlowCommerce\FlowConnector\Model\SyncSku;
+use \Magento\Catalog\Api\Data\ProductInterface;
+use \Magento\Framework\Api\SearchCriteriaBuilder;
+use \Magento\Framework\View\Element\BlockFactory;
+use FlowCommerce\FlowConnector\Model\Configuration;
+use \Magento\Framework\Exception\LocalizedException;
+use \Magento\Store\Model\ScopeInterface as StoreScope;
+use \Magento\Framework\Exception\NoSuchEntityException;
+use \Magento\Store\Model\App\Emulation as AppEmulation;
+use \Magento\Framework\Locale\Resolver as LocaleResolver;
+use \Magento\Store\Model\StoreManagerInterface as StoreManager;
+use \Magento\Catalog\Block\Product\ListProduct as ListProductBlock;
+use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 use \Magento\Framework\App\Config\ScopeConfigInterface as ScopeConfig;
 use \Magento\Framework\App\ProductMetadataInterface as ProductMetaData;
-use \Magento\Framework\Exception\LocalizedException;
-use \Magento\Framework\Exception\NoSuchEntityException;
-use \Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
-use \Magento\Framework\Locale\Resolver as LocaleResolver;
-use \Magento\Framework\UrlInterface;
-use \Magento\Framework\View\Element\BlockFactory;
-use \Magento\Store\Model\App\Emulation as AppEmulation;
-use \Magento\Store\Model\StoreManagerInterface as StoreManager;
-use \Magento\Store\Model\ScopeInterface as StoreScope;
-use \Psr\Log\LoggerInterface as Logger;
-use GuzzleHttp\Client as GuzzleClient;
-use FlowCommerce\FlowConnector\Model\Configuration;
-use FlowCommerce\FlowConnector\Model\ResourceModel\Directory\Country\Collection as CountryCollection;
+use \Magento\Catalog\Api\ProductRepositoryInterface as ProductRepository;
+use \Magento\ConfigurableProduct\Api\LinkManagementInterface as LinkManagement;
+use \FlowCommerce\FlowConnector\Api\SyncSkuManagementInterface as SyncSkuManager;
+use \Magento\ConfigurableProduct\Model\Product\Type\Configurable as ConfigurableType;
+use \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
+use \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable as ConfigurableTypeResourceModel;
+use Magento\Directory\Model\CountryFactory;
 
 /**
  * Class ProductDataMapper
@@ -140,14 +141,9 @@ class ProductDataMapper
     private $syncSkuManager;
 
     /**
-     * @var CountryCollection
+     * @var CountryFactory
      */
-    private $countryCollection;
-
-    /**
-     * @var null|array
-     */
-    private $iso3CodeToNameMapping = null;
+    private $countryFactory;
 
    /**
     * ProductDataMapper constructor.
@@ -168,7 +164,7 @@ class ProductDataMapper
     * @param ProductMetaData $productMetadata
     * @param Configuration $configuration
     * @param SyncSkuManager $syncSkuManager
-    * @param CountryCollection $countryCollection
+    * @param CountryFactory $countryFactory
     * @return void
     */
     public function __construct(
@@ -189,7 +185,7 @@ class ProductDataMapper
         ProductMetaData $productMetadata,
         Configuration $configuration,
         SyncSkuManager $syncSkuManager,
-        CountryCollection $countryCollection
+        CountryFactory $countryFactory
     ) {
         $this->logger = $logger;
         $this->jsonSerializer = $jsonSerializer;
@@ -208,7 +204,7 @@ class ProductDataMapper
         $this->productMetaData = $productMetadata;
         $this->configuration = $configuration;
         $this->syncSkuManager = $syncSkuManager;
-        $this->countryCollection = $countryCollection;
+        $this->countryFactory = $countryFactory;
     }
 
     /**
@@ -531,16 +527,25 @@ class ProductDataMapper
             }
         }
 
-        // Handle special cases and exceptions
-        if (($countryOfManufactureName = $product->getCountryOfManufacture())) {
-            $countryOfManufactureCode = $this->getCountryOfManufactureCodeByName($countryOfManufactureName);
-            if($countryOfManufactureCode) {
-                // Add country of origin as ISO Alpha-3 code
-                $data['country_of_origin'] = $countryOfManufactureCode;
+        // Add country of origin
+        if (($countryOfManufactureISO2 = $product->getCountryOfManufacture())) {
+            try {
+                $countryOfManufactureISO3 = $this->getCountryOfManufactureISO3ByISO2($countryOfManufactureISO2);
 
-                // Override country of manufacture name with ISO Alpha-3 code
+                $data['country_of_origin'] = $countryOfManufactureISO3;
+                $data['country_of_manufacture'] = $countryOfManufactureISO3;
+            } catch(Exception $e) {
+                $this->logger->info(__('Unable to map country of origin due to exception %1', $e->getMessage()));
+                $this->logger->critical($e);
+
+                if(isset($data['country_of_origin'])) {
+                    // Unset to avoid error message due to country_of_origin not being ISO3, if such attribute exists.
+                    unset($data['country_of_origin']);
+                }
+
                 if(isset($data['country_of_manufacture'])) {
-                    $data['country_of_manufacture'] = $countryOfManufactureCode;
+                    // Unset to avoid error message due to country_of_manufacture not being ISO3, if such attribute exists.
+                    unset($data['country_of_manufacture']);
                 }
             }
         }
@@ -549,20 +554,20 @@ class ProductDataMapper
     }
 
     /**
-     * @param string $countryOfManufactureName
-     * @return null|string
-     * @throws Exception
+     * @param string $countryOfManufactureISO2
+     * @return string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
-    private function getCountryOfManufactureCodeByName(string $countryOfManufactureName): ?string
+    private function getCountryOfManufactureISO3ByISO2(string $countryOfManufactureISO2): string
     {
-        if(is_null($this->iso3CodeToNameMapping)) {
-            $this->iso3CodeToNameMapping = $this->countryCollection->loadData()->getIso3CodeToNameMapping();
+        $country = $this->countryFactory->create();
+        $country->loadByCode($countryOfManufactureISO2);
+
+        if(!$country || !$country->getId() || !($countryOfManufactureISO3 = $country->getData('iso3_code'))) {
+            throw new NoSuchEntityException(__('The country %1 that was requested doesn\'t exist.', $countryOfManufactureISO2));
         }
 
-        if(!($countryOfManufactureCode = array_search($countryOfManufactureName, $this->iso3CodeToNameMapping))) {
-            return null;
-        }
-
-        return $countryOfManufactureCode;
+        return $countryOfManufactureISO3;
     }
 }

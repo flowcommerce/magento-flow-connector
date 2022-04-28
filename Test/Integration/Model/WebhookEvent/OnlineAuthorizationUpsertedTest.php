@@ -327,7 +327,7 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
         $orderPlacedEvents = $this->createWebhookEventsFixture
             ->createOrderPlacedWebhooks(['order_placed_paypal.json']);
         $this->webhookEventManager->process();
-        
+
         $onlineAuthorizationUpsertedEvents = $this->createWebhookEventsFixture
             ->createOnlineAuthorizationUpsertedWebhooks(['online_authorization_upserted_v2_paypal_pending.json']);
 
@@ -526,8 +526,8 @@ class OnlineAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
                 $paymentDescription = 'Payment with ' . $methodInformation['name'];
                 $this->assertEquals($paymentDescription, $flowPaymentDescription);
 
-                $this->assertEquals(Order::STATE_PAYMENT_REVIEW, $order->getState());
-                $this->assertEquals(Order::STATE_PAYMENT_REVIEW, $order->getStatus());
+                $this->assertEquals(Order::STATE_PENDING_PAYMENT, $order->getState());
+                $this->assertEquals(Order::STATE_PENDING_PAYMENT, $order->getStatus());
                 $this->assertEquals(null, $payment->getAmountAuthorized());
             }
         }

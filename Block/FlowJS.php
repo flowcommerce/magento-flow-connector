@@ -12,6 +12,7 @@ namespace FlowCommerce\FlowConnector\Block;
 
 use FlowCommerce\FlowConnector\Model\Api\Auth;
 use FlowCommerce\FlowConnector\Model\Configuration;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
@@ -23,6 +24,13 @@ class FlowJS extends Template
     /** @var Auth */
     private $auth;
 
+    /**
+     * @param Context $context
+     * @param Auth $auth
+     * @param Configuration $configuration
+     * @param array $data
+     * @return void
+     */
     public function __construct(
         Context $context,
         Auth $auth,
@@ -142,5 +150,19 @@ class FlowJS extends Template
     public function isTaxDutyMessagingEnabled()
     {
         return $this->configuration->isTaxDutyMessagingEnabled();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBaseCurrencyCode(): ?string
+    {
+        try {
+             /** @var \Magento\Store\Model\Store $currentStore */
+            $currentStore = $this->_storeManager->getStore();
+            return $currentStore->getBaseCurrency()->getCode();
+        } catch(NoSuchEntityException $e) {
+            return null;
+        }
     }
 }

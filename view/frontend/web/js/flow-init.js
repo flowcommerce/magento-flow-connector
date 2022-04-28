@@ -84,6 +84,32 @@ define([
             }
         }
 
+        if(config.base_currency_code) {
+            var customOptionPriceNoticeElements = $('.catalog-product-view span.price-notice');
+            $(customOptionPriceNoticeElements).each(function() {
+                var priceWrapper = $(this).find('.price-wrapper');
+                var priceAmount = $(priceWrapper).data('price-amount');
+                if(priceAmount) {
+                    $(priceWrapper).attr('data-flow-price-conversion-amount', priceAmount);
+                    $(priceWrapper).attr('data-flow-price-conversion-base-currency', config.base_currency_code);
+                }
+            });
+
+            var customOptionSelectPriceElements = $('.catalog-product-view .product-custom-option [price]');
+            $(customOptionSelectPriceElements).each(function() {
+                var priceLabel = $(this).text();
+                var priceLabelArray = priceLabel.split('+');
+                if(priceLabelArray.length == 2) {
+                    var priceAmount = $(this).val();
+                    if(priceAmount) {
+                        $(this).attr('data-flow-price-conversion-amount', priceAmount);
+                        $(this).attr('data-flow-price-conversion-base-currency', config.base_currency_code);
+                        $(this).attr('data-flow-item-prefix', priceLabelArray[0] + '+');
+                    }
+                }
+            });
+        }
+
         function bindTotalsObserver() {
             var targetTotals = document.getElementById('cart-totals');
             if (targetTotals == null) {
@@ -142,11 +168,11 @@ define([
             shipping = totals.find('.totals.shipping');
             discount = totals.find('[data-th=\'Discount\']');
 
-            subtotal.find('span.price').attr('data-flow-localize','cart-subtotal'); 
-            grandTotal.find('span.price').attr('data-flow-localize','cart-total'); 
+            subtotal.find('span.price').attr('data-flow-localize','cart-subtotal');
+            grandTotal.find('span.price').attr('data-flow-localize','cart-total');
             if (discount) {
                 if (window.flow.magento2.support_discounts) {
-                    discount.find('span.price').attr('data-flow-localize','cart-discount'); 
+                    discount.find('span.price').attr('data-flow-localize','cart-discount');
                 } else {
                     discount.hide();
                 }
@@ -179,7 +205,7 @@ define([
                 window.flow.magento2.installedFlowTotalsFields = true;
             }
 
-            window.flow.cmd('on', 'cartLocalized', bindTotalsObserver); 
+            window.flow.cmd('on', 'cartLocalized', bindTotalsObserver);
 
             window.flow.cmd('on', 'ready', function() {
                 window.flow.cart.localize();
@@ -252,8 +278,8 @@ define([
                                 productId = optionData.productId;
                             }
                         });
-                    } 
-                } 
+                    }
+                }
 
                 if (window.flow.magento2.product_id_sku_map != undefined && productId) {
                     if (window.flow.magento2.product_id_sku_map[productId]) {
@@ -294,7 +320,7 @@ define([
                 if (shippingEstimator) shippingEstimator.show();
                 if (giftCard) giftCard.show();
                 if (localTax) localTax.show();
-            }); 
+            });
 
             var miniCart,
                 body,

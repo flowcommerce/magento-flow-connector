@@ -21,6 +21,9 @@
     <!-- Overriding Order Totals Block for magento admin -->
     <preference for="Magento\Sales\Block\Adminhtml\Order\Totals" type="FlowCommerce\FlowConnector\Block\Adminhtml\Order\Totals" />
 
+    <!-- Overriding Order Totals Block for emails and frontend -->
+    <preference for="Magento\Sales\Block\Order\Totals" type="FlowCommerce\FlowConnector\Block\Order\Totals" />
+
     <!-- API Extension for discount handling -->
     <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountRepositoryInterface" type="FlowCommerce\FlowConnector\Model\ResourceModel\DiscountRepository" />
     <preference for="FlowCommerce\FlowConnector\Api\Data\DiscountInterface" type="FlowCommerce\FlowConnector\Model\Discount" />

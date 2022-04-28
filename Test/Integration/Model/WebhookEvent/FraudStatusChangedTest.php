@@ -98,7 +98,7 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process();
-        
+
         $fraudStatusChangedEvents = $this->createWebhookEventsFixture->createFraudStatusChangeWebhooks();
 
         $webhookCollection = $this->webhookEventCollectionFactory->create();
@@ -130,7 +130,7 @@ class FraudStatusChanged extends \PHPUnit\Framework\TestCase
 
             switch ($status) {
                 case 'pending':
-                    $this->assertEquals(Order::STATE_PAYMENT_REVIEW, $order->getState());
+                    $this->assertEquals(Order::STATE_PENDING_PAYMENT, $order->getState());
                     break;
                 case 'approved':
                     $this->assertEquals(Order::STATE_PROCESSING, $order->getState());

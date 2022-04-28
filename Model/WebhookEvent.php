@@ -734,6 +734,19 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         }
 
         if ($orderPayment) {
+            // Check whether order was already canceled by fraud_status_changed
+            $flowOrderNumber = $payment->getAdditionalInformation(self::FLOW_PAYMENT_ORDER_NUMBER);
+            if($order->getState() == OrderModel::STATE_CANCELED) {
+                $this->logger->info(
+                    __(
+                        'Is canceled, aborting authorization for order id: %1 [# %2], Flow order number: %3',
+                        $order->getEntityId(),
+                        $order->getIncrementId(),
+                        $flowOrderNumber
+                    )
+                );
+                return;
+            }
 
             $orderPayment->setTransactionId($authorization['id']);
             $orderPayment->save();
@@ -746,12 +759,36 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     // For example, online payment methods like AliPay or PayPal will have a
                     // status of 'pending' until the user completes the payment.
                     // Pending authorizations expire if the user does not complete the payment in a timely fashion.
+
+                    $this->logger->info(
+                        __(
+                            'Flow authorization status %1 detected. Moving to state: %2 for order id: %3 [# %4], Flow order number: %5',
+                            $status,
+                            OrderModel::STATE_PENDING_PAYMENT,
+                            $order->getEntityId(),
+                            $order->getIncrementId(),
+                            $flowOrderNumber
+                        )
+                    );
+
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
                     $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
                     $order->save();
                     break;
                 case 'expired':
                     // Authorization has expired.
+
+                    $this->logger->info(
+                        __(
+                            'Flow authorization status %1 detected. Moving to state: %2 for order id: %3 [# %4], Flow order number: %5',
+                            $status,
+                            OrderModel::STATE_PENDING_PAYMENT,
+                            $order->getEntityId(),
+                            $order->getIncrementId(),
+                            $flowOrderNumber
+                        )
+                    );
+
                     $orderPayment->setAmountAuthorized(0.0);
                     $orderPayment->save();
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
@@ -760,6 +797,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     break;
                 case 'authorized':
                     // Authorization was successful
+
+                    $this->logger->info(
+                        __(
+                            'Flow authorization status %1 detected. Moving to state: %2 for order id: %3 [# %4], Flow order number: %5',
+                            $status,
+                            OrderModel::STATE_PROCESSING,
+                            $order->getEntityId(),
+                            $order->getIncrementId(),
+                            $flowOrderNumber
+                        )
+                    );
+
                     $orderPayment->setAmountAuthorized($authorization['amount']);
                     $orderPayment->save();
                     $order->setState(OrderModel::STATE_PROCESSING);
@@ -770,13 +819,36 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     // If an immediate response is not available, the state will be 'review' -
                     // this usually indicates fraud review requires additional time / verification
                     // (or a potential network issue with the issuing bank)
-                    $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
-                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PAYMENT_REVIEW));
+
+                    $this->logger->info(
+                        __(
+                            'Flow authorization status %1 detected. Moving to state: %2 for order id: %3 [# %4], Flow order number: %5',
+                            $status,
+                            OrderModel::STATE_PENDING_PAYMENT,
+                            $order->getEntityId(),
+                            $order->getIncrementId(),
+                            $flowOrderNumber
+                        )
+                    );
+
+                    $order->setState(OrderModel::STATE_PENDING_PAYMENT);
+                    $order->setStatus($order->getConfig()->getStateDefaultStatus(OrderModel::STATE_PENDING_PAYMENT));
                     $order->save();
                     break;
                 case 'declined':
                     // Indicates the authorization has been declined by the issuing bank.
                     // See the authorization decline code for more details as to the reason for decline.
+
+                    $this->logger->info(
+                        __(
+                            'Flow authorization status %1 detected. Moving to state: %1 for order id: %2, Flow order number: %3 [# %4]',
+                            OrderModel::STATE_PENDING_PAYMENT,
+                            $order->getEntityId(),
+                            $order->getIncrementId(),
+                            $flowOrderNumber
+                        )
+                    );
+
                     $orderPayment->setIsFraudDetected(true);
                     $orderPayment->save();
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
@@ -788,6 +860,18 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                     // Indicates the authorization has been fully reversed.
                     // You can fully reverse an authorization up until the moment you capture funds;
                     // once you have captured funds you must create refunds.
+
+                    $this->logger->info(
+                        __(
+                            'Flow authorization status %1 detected. Moving to state: %2 for order id: %3 [# %4], Flow order number: %5',
+                            $status,
+                            OrderModel::STATE_PENDING_PAYMENT,
+                            $order->getEntityId(),
+                            $order->getIncrementId(),
+                            $flowOrderNumber
+                        )
+                    );
+
                     $orderPayment->setAmountAuthorized(0.0);
                     $orderPayment->save();
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
@@ -963,7 +1047,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 $order->getState() != OrderModel::STATE_CLOSED &&
                 $order->getState() != OrderModel::STATE_CANCELED) {
                 if ($data['status'] == 'pending') {
-                    $order->setState(OrderModel::STATE_PAYMENT_REVIEW);
+                    $order->setState(OrderModel::STATE_PENDING_PAYMENT);
                 } elseif ($data['status'] == 'approved') {
                     $order->setState(OrderModel::STATE_PROCESSING);
                 } elseif ($data['status'] == 'declined') {
@@ -2325,9 +2409,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         return $item;
     }
 
-    // Remove initial 'ord-' from Flow order numbers and ensure the length matches expected 32 char in ext_order_id field
+    // Hash Flow order numbers with MD5 to ensure the length matches expected 32 char in ext_order_id field
     public function getTrimExtOrderId ($orderNumber) {
-        return substr($orderNumber, 4, 32);
+        return md5($orderNumber);
     }
 
     public function initializeSubtotalAmounts() {

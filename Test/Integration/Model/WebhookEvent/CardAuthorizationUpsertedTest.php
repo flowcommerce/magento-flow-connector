@@ -99,7 +99,7 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process();
-        
+
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
 
         $webhookCollection = $this->webhookEventCollectionFactory->create();
@@ -166,8 +166,8 @@ class CardAuthorizationUpsertedTest extends \PHPUnit\Framework\TestCase
                         $this->assertEquals(Order::STATE_PROCESSING, $order->getStatus());
                         break;
                     case 'review':
-                        $this->assertEquals(Order::STATE_PAYMENT_REVIEW, $order->getState());
-                        $this->assertEquals(Order::STATE_PAYMENT_REVIEW, $order->getStatus());
+                        $this->assertEquals(Order::STATE_PENDING_PAYMENT, $order->getState());
+                        $this->assertEquals(Order::STATE_PENDING_PAYMENT, $order->getStatus());
                         $this->assertEquals(null, $payment->getAmountAuthorized());
                         break;
                     case 'declined':

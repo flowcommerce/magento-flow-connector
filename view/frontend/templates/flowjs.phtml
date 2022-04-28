@@ -31,7 +31,8 @@
                 "payment_methods_enabled": <?= /* @escapeNotVerified */ (int)$block->isPaymentMethodsPDPEnabled() ?>,
                 "shipping_window_enabled": <?= /* @escapeNotVerified */ (int)$block->isShippingWindowPDPEnabled() ?>,
                 "tax_duty_enabled": <?= /* @escapeNotVerified */ (int)$block->isTaxDutyMessagingEnabled() ?>,
-                "country_picker_enabled": <?= /* @escapeNotVerified */ (int)$block->isCountryPickerEnabled() ?>
+                "country_picker_enabled": <?= /* @escapeNotVerified */ (int)$block->isCountryPickerEnabled() ?>,
+                "base_currency_code": "<?= /* @escapeNotVerified */ (string)$block->getBaseCurrencyCode() ?>"
             }
         }
     }
@@ -42,7 +43,7 @@
         document.head.append(`
             body [data-role="priceBox"] span.price {
                 opacity: 1;
-            } 
+            }
         `);
     }, <?= $maxCatalogHideMs ?>);
 
@@ -60,7 +61,7 @@
         <style>
         [data-role="priceBox"] span.price {
             opacity: 0;
-        } 
+        }
         body.flow-catalog-localized [data-role="priceBox"] span.price {
             opacity: 1;
         }
@@ -72,7 +73,7 @@
         .checkout-cart-index .cart-summary span.price,
         #minicart-content-wrapper span.price {
             opacity: 0;
-        } 
+        }
         .flow-cart-localized.checkout-cart-index .form-cart span.price,
         .flow-cart-totals-localized.checkout-cart-index .cart-summary span.price,
         .flow-cart-localized #minicart-content-wrapper span.price {

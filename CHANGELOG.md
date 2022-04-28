@@ -1,7 +1,14 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.18
+- Send country_of_manufacture as ISO Alpha-3 code when syncing SKUs
+- Remove "Grand Total to be Charged" from emails and frontend
+- Support localizing custom options amounts on product page
+- Hash ext_order_id instead of trimming
+- Payment authorization processing improvements
+
 ## 2.6.17
-- Add support for additional_options when adding products to quote.
+- Add support for additional_options when adding products to quote
 
 ## 2.6.16
 - Add support for configurable products when creating Magento order

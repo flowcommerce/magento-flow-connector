@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.6.19
+- Fix QTY and correct line item allocation with multiple products with same parent SKU in cart
+
 ## 2.6.18
 - Send country_of_manufacture as ISO Alpha-3 code when syncing SKUs
 - Remove "Grand Total to be Charged" from emails and frontend

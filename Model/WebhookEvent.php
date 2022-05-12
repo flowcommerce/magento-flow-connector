@@ -1226,7 +1226,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     {
         $item = null;
         foreach ($order->getAllVisibleItems() as $orderItem) {
-            if ($orderItem->getProduct()->getSku() == $sku) {
+            if ($orderItem->getSku() == $sku) {
                 $item = $orderItem;
                 break;
             }
@@ -1624,7 +1624,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 }
             }
             $this->logger->info('Looking up product: ' . $itemNumber);
-            if (!$product = $this->productRepository->get($itemNumber)) {
+            if (!$product = $this->productRepository->get($itemNumber, false, null, true)) {
                 throw new WebhookException('Error processing Flow order: ' . $receivedOrder['number'] . ' item_number not found: ' . $itemNumber);
                 continue;
             }
@@ -2357,7 +2357,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     }
 
     /**
-     * @param mixed $quote
+     * @param Quote $quote
      * @param Product $product
      * @param mixed $line
      * @param mixed $orderNumber

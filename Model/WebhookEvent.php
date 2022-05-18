@@ -66,6 +66,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface as CustomerRepository;
 use FlowCommerce\FlowConnector\Api\WebhookEventManagementInterface as WebhookEventManager;
 use Magento\Framework\DataObjectFactory;
 use Magento\Quote\Model\Quote\Item;
+use Magento\Sales\Model\Order\Payment\Transaction;
 
 /**
  * Model class for storing a Flow webhook event.
@@ -95,6 +96,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
     const ORDER_PAYMENT_REFERENCE = 'reference';
     const ORDER_PAYMENT_TYPE = 'type';
     const ORDER_PAYMENT_DESCRIPTION = 'description';
+    const ORDER_PAYMENT_TOTAL = 'total';
 
     /**
      * Key for additional attributes sent to hosted checkout
@@ -537,9 +539,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 case 'refund_capture_upserted_v2':
                     $this->processRefundCaptureUpsertedV2();
                     break;
-                case 'refund_upserted_v2':
-                    $this->processRefundUpsertedV2();
-                    break;
                 case 'fraud_status_changed':
                     $this->processFraudStatusChanged();
                     break;
@@ -600,15 +599,9 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
                 if (($orderPayment = $order->getPayment())) {
                     if ($order->getFlowConnectorOrderReady()) {
                         if ($order->canInvoice()) {
-                            // Close transaction
-                            /** @var Payment|null $orderPayment */
-                            if ($orderPayment->canCapture()) {
-                                // Mark payment as closed.
-                                $orderPayment->setIsTransactionClosed(true);
-                            }
-
                             // Create invoice
                             if ($this->configuration->getFlowInvoiceEvent($order->getStoreId()) == InvoiceEvent::VALUE_WHEN_CAPTURED) {
+                                $orderPayment->setIsTransactionClosed(1);
                                 $this->invoiceOrder($order);
                                 $this->webhookEventManager->markWebhookEventAsDone($this, 'Invoice created');
                             } else {
@@ -900,80 +893,6 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         $refund = $data['refund_capture']['refund'];
 
         if (!empty($data['authorization']['order']['number']) || !empty($data['authorization']['key'])) {
-            $flowOrderNumber = $refund['authorization']['order']['number'];
-            $orderPayment = null;
-
-            if ((!empty($data['authorization']['order']['number'])
-                    && ($order = $this->getOrderByFlowOrderNumber($data['authorization']['order']['number']))
-                ) ||
-                (!empty($data['authorization']['key'])
-                    && ($order = $this->getOrderByFlowAuthorizationId($data['authorization']['key']))
-                )
-            ) {
-                foreach ($order->getPaymentsCollection() as $payment) {
-                    $this->logger->info('Payment: ' . $payment->getId());
-
-                    $flowPaymentRef = $payment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
-                    if ($flowPaymentRef == $refund['authorization']['id']) {
-                        $orderPayment = $payment;
-                        break;
-                    }
-                }
-
-            } else {
-                throw new WebhookException('Unable to find order by Flow order number.');
-            }
-
-            /** @var Payment|null $orderPayment */
-            if ($orderPayment) {
-                if ($orderPayment->canRefund()) {
-                    $orderPayment->registerRefundNotification($refund['amount']);
-                } else {
-                    // Ignore, refund was initiated by Magento.
-                }
-
-                $this->webhookEventManager->markWebhookEventAsDone($this);
-
-            } else {
-                throw new WebhookException('Unable to find payment by Flow order number.');
-            }
-
-        } elseif (array_key_exists('key', $refund['authorization'])) {
-            $authorizationId = $refund['authorization']['key'];
-
-            /** @var Payment|null $orderPayment */
-            $orderPayment = $this->getOrderPaymentByFlowAuthorizationId($authorizationId);
-            if ($orderPayment) {
-                if ($orderPayment->canRefund()) {
-                    $orderPayment->registerRefundNotification($refund['amount']);
-                } else {
-                    // Ignore, refund was initiated by Magento.
-                }
-
-                $this->webhookEventManager->markWebhookEventAsDone($this);
-            } else {
-                throw new WebhookException(__(sprintf('Unable to find payment by Flow authorization ID #%s', $authorizationId)));
-            }
-        } else {
-            throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
-        }
-    }
-
-    /**
-     * Process refund_upserted_v2 webhook event data.
-     *
-     * https://docs.flow.io/type/refund-upserted-v-2
-     * @throws WebhookException
-     */
-    private function processRefundUpsertedV2()
-    {
-        $this->logger->info('Processing refund_upserted_v2 data');
-        $data = $this->getPayloadData();
-
-        $refund = $data['refund'];
-
-        if (!empty($data['authorization']['order']['number']) || !empty($data['authorization']['key'])) {
-            $flowOrderNumber = $refund['authorization']['order']['number'];
             $orderPayment = null;
 
             if ((!empty($data['authorization']['order']['number'])
@@ -999,8 +918,38 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
 
             /** @var Payment $orderPayment */
             if ($orderPayment) {
-                if ($orderPayment->canRefund()) {
-                    $orderPayment->registerRefundNotification($refund['amount']);
+                if ($orderPayment->canRefund()
+                        && $this->canRefundOrder($order)
+                        && $this->canRefundAmountForOrder($order, (float)$refund['base']['amount'])) {
+                    if (!isset($data['refund_capture']['status'])
+                        || $data['refund_capture']['status'] !== 'succeeded') {
+                        $this->webhookEventManager->markWebhookEventAsDone(
+                            $this,
+                            __('Refund capture not yet succeeded. Currently %1.', $data['refund_capture']['status'])
+                        );
+                        return;
+                    }
+
+                    if (!isset($refund['status']) || $refund['status'] !== 'succeeded') {
+                        $order->addStatusHistoryComment(__(
+                            'Refund for %1 amount initiated from Flow did not succeed.',
+                            $order->formatBasePrice($refund['base']['amount'])))
+                        ->save();
+
+                        $this->webhookEventManager->markWebhookEventAsDone(
+                            $this,
+                            __('Refund capture refund not yet succeeded. Currently %1.', $refund['status'])
+                        );
+                        return;
+                    }
+
+                    $orderPayment
+                        ->setTransactionId($refund['key'])
+                        ->setIsTransactionClosed(1)
+                        ->setShouldCloseParentTransaction(1)
+                        ->setParentTransactionId($flowPaymentRef);
+                    $orderPayment->registerRefundNotification($refund['base']['amount']);
+                    $order->save();
                 } else {
                     // Ignore, refund was initiated by Magento.
                 }
@@ -1017,8 +966,42 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             /** @var Payment|null $orderPayment */
             $orderPayment = $this->getOrderPaymentByFlowAuthorizationId($authorizationId);
             if ($orderPayment) {
-                if ($orderPayment->canRefund()) {
-                    $orderPayment->registerRefundNotification($refund['amount']);
+                $order = $orderPayment->getOrder();
+                if ($orderPayment->canRefund()
+                        && $this->canRefundOrder($order)
+                        && $this->canRefundAmountForOrder($order, (float)$refund['base']['amount'])) {
+                    if (!isset($data['refund_capture']['status'])
+                     || $data['refund_capture']['status'] !== 'succeeded') {
+                        $this->webhookEventManager->markWebhookEventAsDone(
+                            $this,
+                            __('Refund capture not yet succeeded. Currently %1.', $data['refund_capture']['status'])
+                        );
+                        return;
+                    }
+
+                    if (!isset($refund['status']) || $refund['status'] !== 'succeeded') {
+                        $order->addStatusHistoryComment(__(
+                            'Refund for %1 amount initiated from Flow did not succeed.',
+                            $order->formatBasePrice($refund['base']['amount'])))
+                        ->save();
+
+                        $this->webhookEventManager->markWebhookEventAsDone(
+                            $this,
+                            __('Refund capture refund not yet succeeded. Currently %1.', $refund['status'])
+                        );
+                        return;
+                    }
+
+                    $flowPaymentRef = $orderPayment->getAdditionalInformation(self::FLOW_PAYMENT_REFERENCE);
+                    if ($flowPaymentRef == $authorizationId) {
+                        $orderPayment
+                            ->setTransactionId($refund['key'])
+                            ->setIsTransactionClosed(1)
+                            ->setShouldCloseParentTransaction(1)
+                            ->setParentTransactionId($flowPaymentRef);
+                        $orderPayment->registerRefundNotification($refund['base']['amount']);
+                        $order->save();
+                    }
                 } else {
                     // Ignore, refund was initiated by Magento.
                 }
@@ -1030,6 +1013,28 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
         } else {
             throw new WebhookException('Event data does not have Flow order number or Flow authorization ID.');
         }
+    }
+
+    /**
+     * @param Order $order
+     * @return bool
+     */
+    private function canRefundOrder(Order $order) {
+        return !(bool)$order->getBaseTotalRefunded();
+    }
+
+    /**
+     * @param Order $order
+     * @param float $amount
+     * @return bool
+     */
+    private function canRefundAmountForOrder(Order $order, float $amount) {
+        $baseOrderRefund = round($order->getBaseTotalRefunded() + $amount, 2);
+        if ($baseOrderRefund <= round($order->getBaseTotalPaid(), 2)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1408,7 +1413,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             throw new WebhookException(__(sprintf('Order #%s is already invoiced or not ready for creating invoice.', $order->getIncrementId())));
         }
         $invoice = $this->invoiceService->prepareInvoice($order);
-        $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
+        $invoice->setRequestedCaptureCase(Invoice::CAPTURE_ONLINE);
         $invoice->register();
         $transaction = $this->transactionFactory->create()
             ->addObject($invoice)

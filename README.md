@@ -253,5 +253,11 @@ This extension dispatches several events that observers can listen to:
 - An event is dispatched if the customer changed their email address during Flow Hosted Checkout.
   - The event name is `Flow\FlowConnector\Model\WebhookEvent::EVENT_FLOW_CHECKOUT_EMAIL_CHANGED`.
 
+## Limitations
+
+### Refunds Support
+
+Flow Connector supports refunds functionality, but note that partial refunds are supported only when refunding from Magento, whereas from Flow Console it is only possible to perform full refunds. In the event that partial refund was performed from Flow Console, it is necessary to create matching offline refund from Magento admin.
+
 ## Conclusion
 Congratulations, your Magento 2 store is now integrated with Flow via the Flow Connector extension! Please contact a Flow representative to review your Flow organization settings and test the integration thoroughly prior to launching with live customers. When entering an international Flow experience you should see all product prices in the local currency and clicking checkout anywhere on the site should send you to Flow Checkout UI. Since Flow Checkout UI is hosted by Flow and is external to your Magento store, you may also want to host CSS and JS files which a Flow representative can help import to your Flow Checkout UI page load for branding and analytics consistency purposes.

@@ -8,6 +8,7 @@
                 <model>FlowCommerce\FlowConnector\Model\Payment\FlowPaymentMethod</model>
                 <title>Flow Payment</title>
                 <order_status>pending_payment</order_status>
+                <debug>1</debug>
             </flowpayment>
         </payment>
         <carriers>

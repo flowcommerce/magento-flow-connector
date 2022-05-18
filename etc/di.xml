@@ -223,4 +223,10 @@
             <argument name="resourceModel" xsi:type="string">FlowCommerce\FlowConnector\Model\ResourceModel\SyncOrder</argument>
         </arguments>
     </type>
+
+    <!-- Make sure that Creditmemo Totals have valid tax information -->
+    <type name="Magento\Sales\Model\Order\Creditmemo\Total\Tax">
+        <plugin name="flowcommerce_flowconnector_creditmemo_total_tax"
+            type="FlowCommerce\FlowConnector\Plugin\Magento\Sales\Model\Order\Creditmemo\Total\Tax"/>
+    </type>
 </config>

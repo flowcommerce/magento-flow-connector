@@ -34,4 +34,3 @@ $this->createWebhookEventsFixture->createOnlineAuthorizationUpsertedWebhooks(
 *createOnlineAuthorizationUpsertedWebhooks*
 *createOrderPlacedWebhooks*
 *createRefundCaptureUpsertedWebhooks*
-*createRefundUpsertedWebhooks*

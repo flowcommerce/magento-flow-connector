@@ -54,12 +54,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase
         $controller->execute();
     }
 
-    public function testRefundUpsertedV2()
-    {
-        $controller = $this->getController('\FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2');
-        $controller->execute();
-    }
-
     private function getController($className)
     {
         $reflection = new \ReflectionClass($className);

@@ -8,7 +8,6 @@ use FlowCommerce\FlowConnector\Controller\Webhooks\FraudStatusChanged;
 use FlowCommerce\FlowConnector\Controller\Webhooks\LabelUpserted;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2;
-use FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced;
 
 /**
@@ -32,7 +31,6 @@ class EndpointsConfiguration
             $this->getRouteStub(LabelUpserted::class) => [LabelUpserted::EVENT_TYPE],
             $this->getRouteStub(OnlineAuthorizationUpsertedV2::class) => [OnlineAuthorizationUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(RefundCaptureUpsertedV2::class) => [RefundCaptureUpsertedV2::EVENT_TYPE],
-            $this->getRouteStub(RefundUpsertedV2::class) => [RefundUpsertedV2::EVENT_TYPE],
             $this->getRouteStub(OrderPlaced::class) => [OrderPlaced::EVENT_TYPE],
         ];
     }

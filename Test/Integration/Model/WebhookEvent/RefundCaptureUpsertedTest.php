@@ -109,14 +109,11 @@ class RefundCaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process();
-        
+
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process();
 
         $captureEvents = $this->createWebhookEventsFixture->createCaptureUpsertedWebhooks();
-        $this->webhookEventManager->process();
-
-        $refundEvents = $this->createWebhookEventsFixture->createRefundUpsertedWebhooks();
         $this->webhookEventManager->process();
 
         $refundCaptureEvents = $this->createWebhookEventsFixture->createRefundCaptureUpsertedWebhooks();
@@ -152,14 +149,22 @@ class RefundCaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
         }
         //Validate all "done" events
+        $webhookCollectionNeq = $this->webhookEventCollectionFactory->create();
+        $webhookCollectionNeq->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, ['neq' => WebhookEvent::STATUS_DONE]);
+        $webhookCollectionNeq->load();
+        $neqIds = [];
+        foreach($webhookCollectionNeq as $webhookCollectionNeqItem) {
+            $neqIds[] = $webhookCollectionNeqItem->getData(WebhookEvent::DATA_KEY_MESSAGE);
+        }
+
         $webhookCollection = $this->webhookEventCollectionFactory->create();
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_DONE);
         $webhookCollection->load();
         $this->assertEquals(
             count($orderPlacedEvents) +
-            count($cardAuthorizationUpsertedEvents)+ count($captureEvents) + count($refundCaptureEvents)+
-            count($refundEvents),
-            $webhookCollection->count()
+            count($cardAuthorizationUpsertedEvents)+ count($captureEvents) + count($refundCaptureEvents),
+            $webhookCollection->count(),
+            implode('|', $neqIds)
         );
     }
 }

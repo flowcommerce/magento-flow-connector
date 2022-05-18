@@ -9,7 +9,6 @@ use FlowCommerce\FlowConnector\Controller\Webhooks\LabelUpserted;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OnlineAuthorizationUpsertedV2;
 use FlowCommerce\FlowConnector\Controller\Webhooks\OrderPlaced;
 use FlowCommerce\FlowConnector\Controller\Webhooks\RefundCaptureUpsertedV2;
-use FlowCommerce\FlowConnector\Controller\Webhooks\RefundUpsertedV2;
 use FlowCommerce\FlowConnector\Model\WebhookEvent;
 use FlowCommerce\FlowConnector\Model\WebhookEventManager;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
@@ -152,16 +151,6 @@ class CreateWebhookEvents
     public function createRefundCaptureUpsertedWebhooks($filenames = null)
     {
         return $this->createWebhooks(RefundCaptureUpsertedV2::EVENT_TYPE, $filenames);
-    }
-
-    /**
-     * Create and process webhook event
-     * @param null|string[] $filenames
-     * @return WebhookEvent[]
-     */
-    public function createRefundUpsertedWebhooks($filenames = null)
-    {
-        return $this->createWebhooks(RefundUpsertedV2::EVENT_TYPE, $filenames);
     }
 
     /**

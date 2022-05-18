@@ -118,7 +118,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
         foreach ($orderPlacedEvents as $orderPlacedEvent) {
             $payload = $orderPlacedEvent->getPayloadData();
             $flowOrderId = $payload['order']['number'];
-            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId); 
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
                 ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
@@ -132,7 +132,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals($trimExtOrderId, $order->getExtOrderId(), 'Order could not be found with number:' . $flowOrderId);
             $this->assertEquals(1, $orders->count());
         }
-        
+
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $webhookCollection = $this->webhookEventCollectionFactory->create();
         $webhookCollection->addFieldToFilter(WebhookEvent::DATA_KEY_STATUS, WebhookEvent::STATUS_NEW);
@@ -172,7 +172,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             $captureInfo = $payload['capture'];
             $authorizationInfo = $captureInfo['authorization'];
             $flowOrderId = $authorizationInfo['order']['number'];
-            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId); 
+            $trimExtOrderId = $this->subject->getTrimExtOrderId($flowOrderId);
 
             $searchCriteria = $this->searchCriteriaBuilder
                 ->addFilter(Order::EXT_ORDER_ID, $trimExtOrderId, 'eq')
@@ -192,6 +192,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
             }
 
             foreach ($order->getPaymentsCollection() as $payment) {
+                /** @var \Magento\Sales\Model\Order\Payment $payment */
                 //Extract payment information
                 $flowPaymentReference = $payment->getAdditionalInformation(WebhookEvent::FLOW_PAYMENT_REFERENCE);
 
@@ -199,7 +200,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($authorizationInfo['id'], $flowPaymentReference);
 
                 //Transaction is closed
-                if ($payment->canCapture()) {
+                if ($order->canInvoice()) {
                     $this->assertTrue($payment->hasIsTransactionClosed());
                 } else {
                     $this->assertFalse($payment->hasIsTransactionClosed());
@@ -284,7 +285,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($authorizationInfo['id'], $flowPaymentReference);
 
                 //Transaction is closed
-                if ($payment->canCapture()) {
+                if ($order->canInvoice()) {
                     $this->assertTrue($payment->hasIsTransactionClosed());
                 } else {
                     $this->assertFalse($payment->hasIsTransactionClosed());
@@ -315,7 +316,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process();
-        
+
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process();
 
@@ -367,9 +368,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($authorizationInfo['id'], $flowPaymentReference);
 
                 //Transaction is closed
-                if ($payment->canCapture()) {
-                    $this->assertTrue($payment->hasIsTransactionClosed());
-                } else {
+                if ($order->canInvoice()) {
                     $this->assertFalse($payment->hasIsTransactionClosed());
                 }
             }
@@ -397,7 +396,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $orderPlacedEvents = $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process();
-        
+
         $cardAuthorizationUpsertedEvents = $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process();
 
@@ -448,9 +447,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($authorizationInfo['id'], $flowPaymentReference);
 
                 //Transaction is closed
-                if ($payment->canCapture()) {
-                    $this->assertTrue($payment->hasIsTransactionClosed());
-                } else {
+                if ($order->canInvoice()) {
                     $this->assertFalse($payment->hasIsTransactionClosed());
                 }
             }
@@ -479,7 +476,7 @@ class CaptureUpsertedTest extends \PHPUnit\Framework\TestCase
 
         $this->createWebhookEventsFixture->createOrderPlacedWebhooks();
         $this->webhookEventManager->process();
-        
+
         $this->createWebhookEventsFixture->createCardAuthorizationUpsertedWebhooks();
         $this->webhookEventManager->process();
 

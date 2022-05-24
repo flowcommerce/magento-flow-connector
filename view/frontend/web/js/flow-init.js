@@ -98,13 +98,18 @@ define([
             var customOptionSelectPriceElements = $('.catalog-product-view .product-custom-option [price]');
             $(customOptionSelectPriceElements).each(function() {
                 var priceLabel = $(this).text();
-                var priceLabelArray = priceLabel.split('+');
+                var priceLabelSplit = '+';
+                var priceLabelArray = priceLabel.split(priceLabelSplit);
+                if(priceLabelArray.length < 2) {
+                    priceLabelSplit = '-';
+                    var priceLabelArray = priceLabel.split(priceLabelSplit);
+                }
                 if(priceLabelArray.length == 2) {
-                    var priceAmount = $(this).val();
+                    var priceAmount = $(this).attr('price');
                     if(priceAmount) {
-                        $(this).attr('data-flow-price-conversion-amount', priceAmount);
+                        $(this).attr('data-flow-price-conversion-amount', Math.abs(priceAmount));
                         $(this).attr('data-flow-price-conversion-base-currency', config.base_currency_code);
-                        $(this).attr('data-flow-item-prefix', priceLabelArray[0] + '+');
+                        $(this).attr('data-flow-item-prefix', priceLabelArray[0] + priceLabelSplit);
                     }
                 }
             });

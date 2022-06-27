@@ -382,7 +382,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($city, $order->getShippingAddress()->getCity());
 
                 $shippingProvince = isset($shippingAddress['province']) ? $shippingAddress['province'] : '';
-                $this->assertEquals(strtoupper($shippingProvince), strtoupper($order->getShippingAddress()->getRegion()));
+                $this->assertEquals(strtoupper((string)$shippingProvince), strtoupper((string)$order->getShippingAddress()->getRegion()));
 
                 $postal = isset($shippingAddress['postal']) ? $shippingAddress['postal'] : '';
                 $this->assertEquals($postal, $order->getShippingAddress()->getPostcode());
@@ -415,7 +415,7 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $this->assertEquals($city, $order->getBillingAddress()->getCity());
 
                 $billingProvince = isset($billingAddress['province']) ? $billingAddress['province'] : '';
-                $this->assertEquals(strtoupper($billingProvince), strtoupper($order->getBillingAddress()->getRegion()));
+                $this->assertEquals(strtoupper((string)$billingProvince), strtoupper((string)$order->getBillingAddress()->getRegion()));
 
                 $postal = isset($billingAddress['postal']) ? $billingAddress['postal'] : '';
                 $this->assertEquals($postal, $order->getBillingAddress()->getPostcode());

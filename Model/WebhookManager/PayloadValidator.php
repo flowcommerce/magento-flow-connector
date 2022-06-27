@@ -4,7 +4,7 @@ namespace FlowCommerce\FlowConnector\Model\WebhookManager;
 
 use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\App\DeploymentConfig;
-use phpseclib\Crypt\Hash;
+use phpseclib3\Crypt\Hash;
 
 /**
  * Class PayloadValidator

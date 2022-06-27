@@ -32,7 +32,8 @@ define([
 
             _OnClick: function ($this, $widget) {
                 var productId = $widget.options.jsonConfig.productId,
-                    selectedOptionId = $this.val() || $this.context.attributes["data-option-id"].value,
+                    $parent = $this.parents('.' + $widget.options.classes.attributeClass),
+                    selectedOptionId = $this.val() || $parent.attr('data-option-selected'),
                     optionsMap = _.toArray($widget.optionsMap);
                 window.flow.magento2.optionsSelected = window.flow.magento2.optionsSelected || [];
                 if (window.flow.magento2.optionsSelected[productId] == undefined) {
@@ -44,7 +45,7 @@ define([
                 _.each(optionsMap, function(options, key) {
                     if (typeof(options[selectedOptionId]) == "object") {
                         if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
-                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
+                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId;
                         } else {
                             window.flow.magento2.optionsSelected[productId][key] = false;
                         }
@@ -67,7 +68,7 @@ define([
                 _.each(optionsMap, function(options, key) {
                     if (typeof(options[selectedOptionId]) == "object") {
                         if (window.flow.magento2.optionsSelected[productId][key] != selectedOptionId) {
-                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId; 
+                            window.flow.magento2.optionsSelected[productId][key] = selectedOptionId;
                         } else {
                             window.flow.magento2.optionsSelected[productId][key] = false;
                         }

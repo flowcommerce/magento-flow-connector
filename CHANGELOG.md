@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.7.2
+- Magento 2.4.4 compatibility
+
 ## 2.7.1
 - Fix for issue where wrong amounts are being localized for drop-down and multiselect custom option types
 - Fix for issue where negative amounts are not localized for drop-down and multiselect custom option types

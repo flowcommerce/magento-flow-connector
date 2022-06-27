@@ -1030,7 +1030,7 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
      */
     private function canRefundAmountForOrder(Order $order, float $amount) {
         $baseOrderRefund = round($order->getBaseTotalRefunded() + $amount, 2);
-        if ($baseOrderRefund <= round($order->getBaseTotalPaid(), 2)) {
+        if ($baseOrderRefund <= round((float)$order->getBaseTotalPaid(), 2)) {
             return true;
         }
 

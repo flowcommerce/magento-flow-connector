@@ -13,13 +13,13 @@ use FlowCommerce\FlowConnector\Model\GuzzleHttp\ClientFactory as HttpClientFacto
 use FlowCommerce\FlowConnector\Model\WebhookManager as Subject;
 use FlowCommerce\FlowConnector\Model\WebhookManager\EndpointsConfiguration as WebhookEndpointsConfig;
 use GuzzleHttp\Psr7\Response as HttpResponse;
-use Magento\Framework\DataObject;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\ObjectManagerInterface as ObjectManager;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Psr7\Utils;
 
 /**
  * Class WebhookManagerTest
@@ -245,8 +245,7 @@ class WebhookManagerTest extends TestCase
     public function testWebhookRegistrationSuccessfullyExecutesWhenModuleEnabled()
     {
         foreach ($this->storeManager->getStores() as $store) {
-            $getResponseBody = $this->objectManager->create(DataObject::class);
-            $getResponseBody->setContents($this->getWebhooksMockResponse());
+            $getResponseBody = Utils::streamFor($this->getWebhooksMockResponse());
             $this->httpClientDelete
                 ->expects($this->never())
                 ->method('request');
@@ -258,7 +257,7 @@ class WebhookManagerTest extends TestCase
                 ->expects($this->once())
                 ->method('request')
                 ->with(
-                    $this->equalTo('get'),
+                    $this->equalTo('GET'),
                     $this->equalTo($this->urlBuilder->getFlowApiEndpoint(WebhookApiClientGet::URL_STUB_PREFIX)),
                     $this->equalto(['auth' => $this->auth->getAuthHeader(self::STORE_ID)])
                 )
@@ -272,7 +271,7 @@ class WebhookManagerTest extends TestCase
                 ->expects($this->exactly(count($this->webhookEndpointsConfig->getEndpointsConfiguration())))
                 ->method('request')
                 ->with(
-                    $this->equalTo('post'),
+                    $this->equalTo('POST'),
                     $this->equalTo($this->urlBuilder->getFlowApiEndpoint(WebhookApiClientGet::URL_STUB_PREFIX)),
                     $this->callback([$this, 'validateWebhookSaveRequest'])
                 )

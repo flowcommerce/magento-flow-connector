@@ -16,6 +16,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\StoreManagerInterface as StoreManager;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Psr7\Utils;
 
 /**
  * Class InventoryCenterManagerTest
@@ -145,8 +146,7 @@ class InventoryCenterManagerTest extends TestCase
      */
     public function testSuccessfullyExecutesWhenModuleEnabled()
     {
-        $getResponse = $this->dataObjectFactory->create();
-        $getResponse->setData('contents', $this->getInventoryCentersMockResponse());
+        $getResponse = Utils::streamFor($this->getInventoryCentersMockResponse());
         $this->httpResponseGet
             ->expects($this->once())
             ->method('getBody')
@@ -155,7 +155,7 @@ class InventoryCenterManagerTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with(
-                $this->equalTo('get'),
+                $this->equalTo('GET'),
                 $this->equalTo($this->urlBuilder->getFlowApiEndpoint(InventoryCenterApiGet::URL_STUB_PREFIX)),
                 $this->equalto(['auth' => $this->auth->getAuthHeader(self::STORE_ID)])
             )
@@ -166,7 +166,8 @@ class InventoryCenterManagerTest extends TestCase
         foreach ($this->storeManager->getStores() as $store) {
             $this->assertEquals(
                 self::INVENTORY_CENTER_KEY,
-                $this->subject->getDefaultCenterKeyForStore($store->getId())
+                $this->subject->getDefaultCenterKeyForStore($store->getId()),
+                $getResponse->getContents()
             );
         }
     }
@@ -179,8 +180,7 @@ class InventoryCenterManagerTest extends TestCase
     {
         $inventoryCentersResponse = [
             [
-                'key' => self::INVENTORY_CENTER_KEY,
-                'name' => 'Inventory Center'
+                'key' => self::INVENTORY_CENTER_KEY
             ]
         ];
         return $this->jsonSerializer->serialize($inventoryCentersResponse);

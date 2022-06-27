@@ -2,7 +2,7 @@
     "name": "flowcommerce/flowconnector",
     "description": "Flow Connector",
     "type": "magento2-module",
-    "version": "2.7.1",
+    "version": "2.7.2",
     "license": "proprietary",
     "authors": [
         {
@@ -19,6 +19,7 @@
         }
     },
     "require": {
-        "guzzlehttp/guzzle": "^6.2.0"
+        "guzzlehttp/guzzle": "^7.3",
+        "phpseclib/phpseclib": "^3.0"
     }
 }

@@ -4,7 +4,7 @@ trap '>&2 echo Error: Command \`$BASH_COMMAND\` on line $LINENO failed with exit
 
 echo "==> Installing Magento 2 CE (Version $MAGENTO_VERSION) over composer create-project ..."
 cd $HOME
-composer create-project "magento/community-edition:$MAGENTO_VERSION" magento
+composer create-project --repository-url="https://repo.magento.com/" "magento/project-community-edition:$MAGENTO_VERSION" magento
 cd $HOME/magento
 
 if [ "$TRAVIS_TAG" != "" ]; then
@@ -23,8 +23,16 @@ else
 fi
 
 echo "==> Requiring flowcommerce/flowconnector from the $build_branch branch"
-composer config repositories.flowconnector vcs git@github.com:$GITHUB_ORGANIZATION_NAME/$GITHUB_REPOSITORY_NAME.git
-composer require --no-interaction "flowcommerce/flowconnector:$build_branch"
+composer config repositories.flowconnector git git@github.com:$GITHUB_ORGANIZATION_NAME/$GITHUB_REPOSITORY_NAME.git
+composer config "allow-plugins.cweagans/composer-patches" true
+composer config --json "extra.patches.magento/framework" '{"Magento 2 bug #33802 patch": "https://gist.githubusercontent.com/Marko-M/cddfcc65a4edf1b0c9ba7b6021977bad/raw/152a87ebba6cda29fc1883e3ae92dc535c6712da/gistfile1.txt"}'
+composer require --no-plugins --no-interaction "flowcommerce/flowconnector:$build_branch"
+composer require --no-interaction "cweagans/composer-patches"
+composer update
+
+curl https://gist.githubusercontent.com/Marko-M/6133134472d1619fb391539e9c4e26c1/raw/ecd93f118a9f53104e3d5d3d6199d5f5c57ef33a/gistfile1.txt > 35604.patch
+patch -p1 < 35604.patch
+
 
 if [ "$TEST_SUITE" != "static_flow" ]; then
     echo "==> Installing Magento 2"
@@ -105,4 +113,3 @@ mysql -uroot -e '
     CREATE DATABASE magento_integration_tests;
 '
 cp ./vendor/flowcommerce/flowconnector/install-config-mysql.travis.php.dist dev/tests/integration/etc/install-config-mysql.php
-#cp dev/tests/integration/etc/post-install-setup-command-config.php.dist dev/tests/integration/etc/post-install-setup-command-config.php

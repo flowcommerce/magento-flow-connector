@@ -155,7 +155,7 @@ class SyncSkuPriceAttributesManager extends TestCase
                 ->expects($this->exactly(count(Subject::PRICE_ATTRIBUTE_CODES)))
                 ->method('request')
                 ->with(
-                    $this->equalTo('put'),
+                    $this->equalTo('PUT'),
                     $this->callback([$this, 'validateAttributeSaveUrl']),
                     $this->callback([$this, 'validateAttributeSaveRequest'])
                 )

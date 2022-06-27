@@ -109,7 +109,7 @@
         </arguments>
     </type>
 
-    <virtualType name="FlowCommerceFlowConnectorModelCryptHashSha256" type="phpseclib\Crypt\Hash">
+    <virtualType name="FlowCommerceFlowConnectorModelCryptHashSha256" type="phpseclib3\Crypt\Hash">
         <arguments>
             <argument name="hash" xsi:type="string">sha256</argument>
         </arguments>

@@ -14,20 +14,20 @@ env:
   - MAGENTO_HOST_NAME="travis.flow.io"
 matrix:
   include:
-  - php: 7.4
-    env: MAGENTO_VERSION=2.4.2 TEST_SUITE=static_flow
+  - php: 8.1
+    env: MAGENTO_VERSION=2.4.4 TEST_SUITE=static_flow
     if: branch=main
-  - php: 7.4
-    env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_flow
+  - php: 8.1
+    env: MAGENTO_VERSION=2.4.4 TEST_SUITE=integration_flow
     if: branch=main
-  # - php: 7.4
-  #   env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_core INTEGRATION_INDEX=1
+  # - php: 8.1
+  #   env: MAGENTO_VERSION=2.4.4 TEST_SUITE=integration_core INTEGRATION_INDEX=1
   #   if: branch=main
-  # - php: 7.4
-  #   env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_core INTEGRATION_INDEX=2
+  # - php: 8.1
+  #   env: MAGENTO_VERSION=2.4.4 TEST_SUITE=integration_core INTEGRATION_INDEX=2
   #   if: branch=main
-  # - php: 7.4
-  #   env: MAGENTO_VERSION=2.4.2 TEST_SUITE=integration_core INTEGRATION_INDEX=3
+  # - php: 8.1
+  #   env: MAGENTO_VERSION=2.4.4 TEST_SUITE=integration_core INTEGRATION_INDEX=3
   #   if: branch=main
 cache:
   apt: true

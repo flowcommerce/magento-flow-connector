@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.7.3
+- Send order confirmation email only when order has been approved in terms of fraud status
+
 ## 2.7.2
 - Magento 2.4.4 compatibility
 

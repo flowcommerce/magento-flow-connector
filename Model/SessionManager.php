@@ -282,7 +282,8 @@ class SessionManager implements SessionManagementInterface
                         'address' => (object)[
                             'streets' => $address->getStreet(),
                             'city' => $address->getCity(),
-                            'province' => (gettype($address->getRegion()) == 'string' ? $address->getRegion() : $address->getRegion()->getRegionCode()),
+                            'province' => (in_array(gettype($address->getRegion()), ['string', 'NULL'])
+                                ? (string)$address->getRegion() : $address->getRegion()->getRegionCode()),
                             'postal' => $address->getPostcode(),
                             'country' => $address->getCountryId()
                         ],

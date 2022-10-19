@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.7.5
+- Fix multiple approved fraud_status_changed events dispatching multiple order confirmation emails
+
 ## 2.7.4
 - Fix to support empty province field in Magento address when redirecting to Flow checkout
 

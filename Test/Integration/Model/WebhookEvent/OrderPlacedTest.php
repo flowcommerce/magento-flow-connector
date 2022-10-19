@@ -216,8 +216,8 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
             $baseDutyAmount = isset($pricesInfo['duty']['base']['amount']) ? $pricesInfo['duty']['base']['amount'] : 0;
             $baseTaxAmount = $baseVatAmount + $baseDutyAmount;
 
-            $this->assertEquals($baseTaxAmount, $order->getBaseTaxAmount());
-            $this->assertEquals($taxAmount, $order->getTaxAmount());
+            $this->assertEquals(round((float) $baseTaxAmount, 4), $order->getBaseTaxAmount());
+            $this->assertEquals(round((float) $taxAmount, 4), $order->getTaxAmount());
 
             //Order discount
             $baseDiscount = isset($pricesInfo['discount']['base']['amount']) ?
@@ -316,29 +316,28 @@ class OrderPlacedTest extends \PHPUnit\Framework\TestCase
                 $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['included'], $quantity);
                 $subtotalAmounts = $this->subject->allocateSubtotalAmounts($subtotalAmounts, $allocationItems[$orderItemSku]['not_included'], $quantity);
                 $this->assertEquals($quantity, $quantityOrdered);
-                $this->assertEquals($subtotalAmounts['rawItemPrice'], $item->getOriginalPrice());
-                $this->assertEquals($subtotalAmounts['baseRawItemPrice'], $item->getBaseOriginalPrice());
-                $this->assertEquals($subtotalAmounts['itemPrice'], $item->getPrice());
-                $this->assertEquals($subtotalAmounts['baseItemPrice'], $item->getBasePrice());
-                $this->assertEquals($subtotalAmounts['itemPrice'] * $quantity, $item->getRowTotal());
-                $this->assertEquals($subtotalAmounts['baseItemPrice'] * $quantity, $item->getBaseRowTotal());
-                $this->assertEquals(round(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) / $subtotalAmounts['itemPrice'] * 100, 4), $item->getTaxPercent());
-                $this->assertEquals(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity, $item->getTaxAmount());
-                $this->assertEquals(($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']) * $quantity, $item->getBaseTaxAmount());
-                $this->assertEquals($subtotalAmounts['itemPriceInclTax'], $item->getPriceInclTax());
-                $this->assertEquals($subtotalAmounts['baseItemPriceInclTax'], $item->getBasePriceInclTax());
-                $this->assertEquals($subtotalAmounts['itemPriceInclTax'] * $quantity, $item->getRowTotalInclTax());
-                $this->assertEquals($subtotalAmounts['baseItemPriceInclTax'] * $quantity, $item->getBaseRowTotalInclTax());
-                $this->assertEquals($subtotalAmounts['rawItemPrice'] * $quantity, $item->getFlowConnectorItemPrice());
-                $this->assertEquals($subtotalAmounts['baseRawItemPrice'] * $quantity, $item->getFlowConnectorBaseItemPrice());
-                $this->assertEquals($subtotalAmounts['vatPrice'] * $quantity, $item->getFlowConnectorVat());
-                $this->assertEquals($subtotalAmounts['baseVatPrice'] * $quantity, $item->getFlowConnectorBaseVat());
-                $this->assertEquals($subtotalAmounts['dutyPrice'] * $quantity, $item->getFlowConnectorDuty());
-                $this->assertEquals($subtotalAmounts['baseDutyPrice'] * $quantity, $item->getFlowConnectorBaseDuty());
-                $this->assertEquals($subtotalAmounts['roundingPrice'] * $quantity, $item->getFlowConnectorRounding());
-                $this->assertEquals($subtotalAmounts['baseRoundingPrice'] * $quantity, $item->getFlowConnectorBaseRounding());
-                $this->assertEquals($subtotalAmounts['vatPct'] * 100, $item->getFlowConnectorVatRatePercent());
-                $this->assertEquals($subtotalAmounts['dutyPct'] * 100, $item->getFlowConnectorDutyRatePercent());
+                $this->assertEquals(round((float) $subtotalAmounts['rawItemPrice'], 4), $item->getOriginalPrice());
+                $this->assertEquals(round((float) $subtotalAmounts['baseRawItemPrice'], 4), $item->getBaseOriginalPrice());
+                $this->assertEquals(round((float) $subtotalAmounts['itemPrice'], 4), $item->getPrice());
+                $this->assertEquals(round((float) $subtotalAmounts['baseItemPrice'], 4), $item->getBasePrice());
+                $this->assertEquals(round((float) $subtotalAmounts['itemPrice'] * $quantity, 4), $item->getRowTotal());
+                $this->assertEquals(round((float) $subtotalAmounts['baseItemPrice'] * $quantity, 4), $item->getBaseRowTotal());
+                $this->assertEquals(round((float)(($subtotalAmounts['vatPrice'] + $subtotalAmounts['dutyPrice']) * $quantity), 4), $item->getTaxAmount());
+                $this->assertEquals(round((float)(($subtotalAmounts['baseVatPrice'] + $subtotalAmounts['baseDutyPrice']) * $quantity), 4), $item->getBaseTaxAmount());
+                $this->assertEquals(round((float) $subtotalAmounts['itemPriceInclTax'], 4), $item->getPriceInclTax());
+                $this->assertEquals(round((float) $subtotalAmounts['baseItemPriceInclTax'], 4), $item->getBasePriceInclTax());
+                $this->assertEquals(round((float) $subtotalAmounts['itemPriceInclTax'] * $quantity, 4), $item->getRowTotalInclTax());
+                $this->assertEquals(round((float) $subtotalAmounts['baseItemPriceInclTax'] * $quantity, 4), $item->getBaseRowTotalInclTax());
+                $this->assertEquals(round((float) $subtotalAmounts['rawItemPrice'] * $quantity, 4), $item->getFlowConnectorItemPrice());
+                $this->assertEquals(round((float) $subtotalAmounts['baseRawItemPrice'] * $quantity, 4), $item->getFlowConnectorBaseItemPrice());
+                $this->assertEquals(round((float) $subtotalAmounts['vatPrice'] * $quantity, 4), $item->getFlowConnectorVat());
+                $this->assertEquals(round((float) $subtotalAmounts['baseVatPrice'] * $quantity, 4), $item->getFlowConnectorBaseVat());
+                $this->assertEquals(round((float) $subtotalAmounts['dutyPrice'] * $quantity, 4), $item->getFlowConnectorDuty());
+                $this->assertEquals(round((float) $subtotalAmounts['baseDutyPrice'] * $quantity, 4), $item->getFlowConnectorBaseDuty());
+                $this->assertEquals(round((float) $subtotalAmounts['roundingPrice'] * $quantity, 4), $item->getFlowConnectorRounding());
+                $this->assertEquals(round((float) $subtotalAmounts['baseRoundingPrice'] * $quantity, 4), $item->getFlowConnectorBaseRounding());
+                $this->assertEquals(round((float) $subtotalAmounts['vatPct'] * 100, 4), $item->getFlowConnectorVatRatePercent());
+                $this->assertEquals(round((float) $subtotalAmounts['dutyPct'] * 100, 4), $item->getFlowConnectorDutyRatePercent());
 
                 // Check if requested options were actually applied to order item
                 if (isset($lines[$orderItemSku]['attributes']['options'])) {

@@ -1051,14 +1051,43 @@ class WebhookEvent extends AbstractModel implements WebhookEventInterface, Ident
             if ($order->getState() != OrderModel::STATE_COMPLETE &&
                 $order->getState() != OrderModel::STATE_CLOSED &&
                 $order->getState() != OrderModel::STATE_CANCELED) {
-                if ($data['status'] == 'pending') {
+                if ($data['status'] == 'pending' && $order->getState() != OrderModel::STATE_PENDING_PAYMENT) {
+                    $this->logger->info(sprintf(
+                        'Processing fraud_status_changed data: Setting state to %s for order #%s [%s].',
+                        OrderModel::STATE_PENDING_PAYMENT,
+                        $order->getIncrementId(),
+                        $data['order']['number']
+                    ));
                     $order->setState(OrderModel::STATE_PENDING_PAYMENT);
-                } elseif ($data['status'] == 'approved') {
+                } elseif ($data['status'] == 'approved' && $order->getState() != OrderModel::STATE_PROCESSING) {
+                    $this->logger->info(sprintf(
+                        'Processing fraud_status_changed data: Setting state to %s for order #%s [%s].',
+                        OrderModel::STATE_PROCESSING,
+                        $order->getIncrementId(),
+                        $data['order']['number']
+                    ));
                     $order->setState(OrderModel::STATE_PROCESSING);
                     if(!$order->getEmailSent()) {
+                        $this->logger->info(sprintf(
+                            'Processing fraud_status_changed data: Dispatching order confirmation email for order #%s [%s].',
+                            $order->getIncrementId(),
+                            $data['order']['number']
+                        ));
                         $this->orderSender->send($order);
+                    } else {
+                        $this->logger->info(sprintf(
+                            'Processing fraud_status_changed data: Order confirmation email for order #%s [%s] already dispatched.',
+                            $order->getIncrementId(),
+                            $data['order']['number']
+                        ));
                     }
-                } elseif ($data['status'] == 'declined') {
+                } elseif ($data['status'] == 'declined' && $order->getState() != OrderModel::STATE_CANCELED) {
+                    $this->logger->info(sprintf(
+                        'Processing fraud_status_changed data: Setting state to %s for order #%s [%s].',
+                        OrderModel::STATE_CANCELED,
+                        $order->getIncrementId(),
+                        $data['order']['number']
+                    ));
                     $order->cancel();
                 }
                 $order->save();

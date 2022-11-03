@@ -1,5 +1,8 @@
 # Flow Connector for Magento 2 Change Log
 
+## 2.7.6
+- Additional logging to assist with debugging
+
 ## 2.7.5
 - Fix multiple approved fraud_status_changed events dispatching multiple order confirmation emails
 

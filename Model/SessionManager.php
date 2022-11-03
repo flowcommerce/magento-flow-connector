@@ -324,7 +324,7 @@ class SessionManager implements SessionManagementInterface
                 WebhookEvent::QUOTE_ID => $quote->getId(),
                 WebhookEvent::CHECKOUT_SESSION_ID => $this->checkoutSession->getSessionId(),
                 WebhookEvent::CUSTOMER_SESSION_ID => $this->customerSession->getSessionId(),
-                WebhookEvent::DATA_KEY_STORE_ID => $store->getId()  
+                WebhookEvent::DATA_KEY_STORE_ID => $store->getId()
             ]
         ];
 
@@ -404,6 +404,13 @@ class SessionManager implements SessionManagementInterface
             $lineItem->attributes['options'] = $this->getItemOptionsSerialized($item);
             $orderForm->items[] = $lineItem;
         }
+
+        $this->logger->info(sprintf(
+            'Checkout token order Form for %d [%s]: %s',
+            $quote->getId(),
+            $this->checkoutSession->getSessionId(),
+            var_export($orderForm, true)
+        ));
 
         return $orderForm;
     }
